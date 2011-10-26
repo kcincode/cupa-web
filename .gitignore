@@ -1,0 +1,4 @@
+nbproject
+application/configs/application.ini
+application/logs/*
+library/*
