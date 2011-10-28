@@ -37,6 +37,14 @@ class AuthController extends Zend_Controller_Action
      */
     public function loginAction()
     {
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+        
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        
         // load the css for the login page
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/login.css');
         
@@ -48,13 +56,13 @@ class AuthController extends Zend_Controller_Action
 
         // if the form is submitted
         if($this->getRequest()->isPost()) {
+            $this->_helper->viewRenderer->setNoRender(true);
+            
             // get the post data
-            $post = $this->getRequest()->getPost();
-            if($form->isValid($post)) {
-                // if the data is valid get the values
-                $data = $form->getValues();
-                
+            $data = $this->getRequest()->getPost();
+            if(!empty($data['username']) and !empty($data['password'])) {
                 // get the user object
+                $userTable = new Cupa_Model_DbTable_User();
                 $user = $userTable->fetchUserBy('email', $data['username']);
                 
                 // check to see if the user exists
@@ -74,41 +82,37 @@ class AuthController extends Zend_Controller_Action
                         // set the user id in the session storage
                         Zend_Auth::getInstance()->getStorage()->write($user->id);
                         
-                        // get the redirect request if there is one
-                        $session = new Zend_Session_Namespace('request');
-                        if(!empty($session->request)) {
-                            // redirect to the give request path
-                            $this->_redirect($session->request->getPathInfo());
-                            $session->unsetAll();
-                        } else {
-                            // redirect to home page if request doesn't exist
-                            $this->_redirect('/');
-                        }
+                        // build the data to be sent
+                        $data = array('result' => 'Success');
+                        echo Zend_Json::encode($data);
                     } else {
                         // failed login
                         
-                        // display message
-                        $this->view->message('Invalid credentials', 'error');
-
                         // log the message
                         $logger->log("User login failed for `$user->first_name $user->last_name ($user->username)`", Zend_Log::ERR);
                         
                         // increment the login errors count
                         $user->login_errors++;
                         $user->save();
+                        
+                        // build the data to be sent
+                        $data = array('result' => 'Error', 'msg' => 'Invalid Credentials');
+                        echo Zend_Json::encode($data);
                     }
                     
                 } else {
-                    // display message
-                    $this->view->message('Invalid credentials', 'error');
-                    
                     // log the message
-                    $logger->log("User login failed for `{$data['usernmae']}` which doesn't exist.", Zend_Log::ERR);
+                    $logger->log("User login failed for `{$data['username']}` which doesn't exist.", Zend_Log::ERR);
+
+                    // build the data to be sent
+                    $data = array('result' => 'Error', 'msg' => 'Invalid Credentials');
+                    echo Zend_Json::encode($data);
                 }
                 
             } else {
-                // display form errors
-                $form->populate($post);
+                // build the data to be sent
+                $data = array('result' => 'Error', 'msg' => 'Please enter all information');
+                echo Zend_Json::encode($data);
             }
             
         }

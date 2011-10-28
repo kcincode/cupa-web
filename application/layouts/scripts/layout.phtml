@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CUPA - Cincinnati Ultimate Player Association</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/style.css" type="text/css" media="all" />
+        <!--[if IE]>
+        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/ie-fix.css" type="text/css" media="all"/>
+        <![endif]-->
+        <?php echo $this->headLink() . "\n"; ?>
+        <?php $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-ui-1.8.16.min.js') . "\n"; ?>
+        <?php $this->headScript()->appendFile($this->baseUrl() . '/js/global.js') . "\n"; ?>
+        <?php echo $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-1.6.4.min.js') . "\n"; ?>
+        <script>
+            var BASE_URL = '<?php echo $this->baseUrl(); ?>';
+        </script>
+        <link rel="shortcut icon" href="<?php echo $this->baseUrl(); ?>/favicon.ico" />
+    </head>
+    <body>
+        <header>
+            <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">&nbsp;</a>
+            <div id="login-container">Login Container</div>
+            <div class="menu">
+                <a id="login-link" href="">Login</a>
+                <?php //echo $this->partial('top-menu.phtml', array('user' => $this->user)); ?>
+            </div>            
+        </header>
+        <nav>
+            <?php //echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
+        </nav>
+        <div id="main-content">
+            <?php //echo $this->message(); ?>
+            <?php echo $this->layout()->content; ?>
+            <div class="clearfix">&nbsp;</div>
+        </div>
+        <footer>
+            <!--Hosted by: InMotion Hosting<br/> --> 
+            &copy;2010 Cincinnati Ultimate Players Association<br/> 
+            If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> 
+        </footer>
+    </body>
+</html>
