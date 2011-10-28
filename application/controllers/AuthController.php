@@ -119,7 +119,21 @@ class AuthController extends Zend_Controller_Action
 
     public function logoutAction()
     {
-        // action body
+        // clear the authentication identity
+        $auth = Zend_Auth::getInstance()->clearIdentity();
+        
+        $session = new Zend_Session_Namespace('request');
+        
+        // destroy session data
+        Zend_Session::destroy();
+
+        if(empty($session->request)) {
+            // redirect to login
+            $this->_redirect('/login');
+        } else {
+            // redirect to the stored request path
+            $this->_redirect($session->request->getPathInfo());
+        }
     }
 
     public function registerAction()
