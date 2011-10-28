@@ -31,7 +31,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view->title = 'CUPA - Cincinnati Ultimate Players Association';
         $view->headTitle($view->title);
 
-        // TODO: init the user data/object
+        // make sure that the db is loaded
+        $this->bootstrap('db');
+        
+        // load the user object from the session storage if a user is logged in
+        if(Zend_Auth::getInstance()->hasIdentity()) {
+            $view->user = $usersTable->find(Zend_Auth::getInstance()->getIdentity())->current();
+        }
         
         return $view;
     }
