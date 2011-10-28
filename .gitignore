@@ -1,4 +1,3 @@
 nbproject
+library/Zend
 application/configs/application.ini
-application/logs/*
-library/*
