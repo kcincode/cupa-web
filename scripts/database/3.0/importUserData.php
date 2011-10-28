@@ -59,7 +59,7 @@ foreach($stmt->fetchAll() as $row) {
     $user->email = $row['email'];
     $user->first_name = $row['name'];
     $user->last_name = $row['surname'];
-    $user->activation_code = $userTable->generateUniqueActivationCode();
+    $user->activation_code = $userTable->generateUniqueCodeFor('activation_code');
     $user->requested_at = $row['created'];
 
     if($row['active']) {
