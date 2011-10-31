@@ -1,6 +1,18 @@
 $(document).ready(function() {
     $('#login-container').hide();
 
+    $('#logout-link').click(function(e) {
+        alert('Logging Out');
+        e.preventDefault();
+        $.ajax({
+            type: 'get',
+            url: BASE_URL + '/logout',
+            success: function(response) {
+               window.location.reload();
+            }
+        });
+    });
+
     $('#login-link').click(function(e) {
         e.preventDefault();
         if($('#login-container').is(':visible')) {
@@ -12,6 +24,7 @@ $(document).ready(function() {
                success: function(response) {
                    $('#login-container').html(response);
                    $('#login-container').slideDown('fast');
+                   $('#error-string').html('');
                    
                    $('#login-submit').click(function(e) {
                        e.preventDefault();
@@ -22,10 +35,9 @@ $(document).ready(function() {
                            success: function(response) {
                                var obj = eval('(' + response + ')');
                                if(obj.result == 'Error') {
-                                   alert(obj.msg);
+                                   $('#error').html(obj.msg);
                                } else {
-                                   alert('Login Successful.');
-                                   //window.location.reload();
+                                   window.location.reload();
                                }
                                
                            }
@@ -35,4 +47,5 @@ $(document).ready(function() {
             });
         }
     });
+    
 });

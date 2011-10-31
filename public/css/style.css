@@ -6,6 +6,15 @@
     border: 1px solid #000;
 }
 
+#error {
+    color: #e00;
+    font-weight: bold;
+    margin: 2px 0 -15px 20px;
+    padding: 0;
+    width: 250px;
+    text-align: center;
+}
+
 .login-row {
     text-align: center;
     padding: 10px;

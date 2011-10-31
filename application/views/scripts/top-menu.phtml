@@ -1,0 +1,12 @@
+<ul>
+    <?php if($this->hasRole('admin')): ?>
+    <li><a href="">ADMIN</a> |</li>
+    <?php endif; ?>
+    <li><a href="<?php echo $this->url(array(), 'page_contact'); ?>">CONTACT US</a> |</li> 
+    <?php if($this->user): ?>
+    <li><a href="<?php echo $this->url(array(), 'page_home'); ?>">MY PROFILE</a> |</li>
+    <li><a id="logout-link" href="#">LOGOUT</a></li>
+    <?php else: ?>
+    <li><a id="login-link" href="#">LOGIN</a></li>
+    <?php endif; ?>
+</ul>

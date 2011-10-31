@@ -3,6 +3,7 @@
     <head>
         <title>CUPA - Cincinnati Ultimate Player Association</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="EXPIRES" content="0" />
         <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
@@ -22,11 +23,10 @@
     <body>
         <header>
             <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">&nbsp;</a>
-            <div id="login-container">Login Container</div>
             <div class="menu">
-                <a id="login-link" href="">Login</a>
-                <?php //echo $this->partial('top-menu.phtml', array('user' => $this->user)); ?>
+                <?php echo $this->partial('top-menu.phtml', array('user' => $this->user)); ?>
             </div>            
+            <div id="login-container">Login Container</div>
         </header>
         <nav>
             <?php //echo $this->partial('menu.phtml', array('user' => $this->user)); ?>

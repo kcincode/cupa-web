@@ -3,30 +3,8 @@
 class AuthController extends Zend_Controller_Action
 {
 
-    /**
-     * This will redirect and set the request variable depending on what
-     * action is requested.
-     * 
-     */
     public function init()
     {
-        // get the requested action
-        $action = $this->getRequest()->getActionName();
-        
-        if(in_array($action, array('login', 'register', 'activate', 'reset'))) {
-            // if user is already logged in redirect to home
-            if(Zend_Auth::getInstance()->hasIdentity()) {
-                $this->_redirect('/');
-            }
-        } else if(in_array($action, array('logout', 'impersonate'))) {
-            // if user is not logged in redirect to login page
-            if(!Zend_Auth::getInstance()->hasIdentity()) {
-                // get the request data and save it
-                $session = new Zend_Session_Namespace('request');
-                $session->request = $this->getRequest();
-                $this->_redirect('/login');
-            }
-        }
     }
 
     /**
@@ -63,7 +41,14 @@ class AuthController extends Zend_Controller_Action
             if(!empty($data['username']) and !empty($data['password'])) {
                 // get the user object
                 $userTable = new Cupa_Model_DbTable_User();
+                
+                // try to find the user by email
                 $user = $userTable->fetchUserBy('email', $data['username']);
+                
+                // if they don't exist try by username
+                if(empty($user)) {
+                    $user = $userTable->fetchUserBy('username', $data['username']);
+                }
                 
                 // check to see if the user exists
                 if($user) {
@@ -76,6 +61,7 @@ class AuthController extends Zend_Controller_Action
                         // update the salt if doesn't exist
                         if(empty($user->salt)) {
                             $user->salt = $userTable->generateUniqueCodeFor('salt');
+                            $user->password = sha1($user->salt . $data['password']);
                             $user->save();
                         }
                         
@@ -123,6 +109,15 @@ class AuthController extends Zend_Controller_Action
 
     public function logoutAction()
     {
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
         // clear the authentication identity
         $auth = Zend_Auth::getInstance()->clearIdentity();
         
@@ -130,14 +125,6 @@ class AuthController extends Zend_Controller_Action
         
         // destroy session data
         Zend_Session::destroy();
-
-        if(empty($session->request)) {
-            // redirect to login
-            $this->_redirect('/login');
-        } else {
-            // redirect to the stored request path
-            $this->_redirect($session->request->getPathInfo());
-        }
     }
 
     public function registerAction()

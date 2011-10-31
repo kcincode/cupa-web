@@ -19,11 +19,11 @@ class Cupa_Model_Authenticate {
             $passwordHash = md5($password);
         } else if($algorithm == 'sha1') {
             // generate sha1 hash of the salt + password
-            $passwordHash = sha1($user->salt . $password);
+            $passwordHash = sha1($this->_user->salt . $password);
         }
 
         // check to see if the hashes match
-        if($passwordHash == $user->password) {
+        if($passwordHash == $this->_user->password) {
             return true;
         }
 
