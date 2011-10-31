@@ -1,6 +1,8 @@
 $(document).ready(function() {
+    // hide the login window by default
     $('#login-container').hide();
 
+    // logout link handler
     $('#logout-link').click(function(e) {
         e.preventDefault();
         $.ajax({
@@ -12,6 +14,7 @@ $(document).ready(function() {
         });
     });
 
+    // login link handler
     $('#login-link').click(function(e) {
         e.preventDefault();
         if($('#login-container').is(':visible')) {
@@ -47,4 +50,6 @@ $(document).ready(function() {
         }
     });
     
+    // remove the messages if there are any after 3 sec
+    setTimeout(function() { $('ul.message').fadeOut('fast'); }, 3000);
 });

@@ -29,10 +29,10 @@
             </div>            
         </header>
         <nav>
-            <?php //echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
+            <?php echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
         </nav>
+        <?php echo $this->message(); ?>
         <div id="main-content">
-            <?php //echo $this->message(); ?>
             <?php echo $this->layout()->content; ?>
             <div class="clearfix">&nbsp;</div>
         </div>

@@ -34,3 +34,13 @@ p {
 #registration-container input[type=submit] {
     padding: 5px 15px;
 }
+
+#email-status span.ok {
+    color: #0c0;
+    font-weight: bold;
+}
+    
+#email-status span.error {
+    color: #c00;
+    font-weight: bold;
+}

@@ -8,14 +8,9 @@ class PageController extends Zend_Controller_Action
         /* Initialize action controller here */
     }
 
-    public function indexAction()
-    {
-        // action body
-    }
-
     public function homeAction()
     {
-        // action body
+        $this->view->message('This is just a test message', 'success');
     }
 
     public function viewAction()
