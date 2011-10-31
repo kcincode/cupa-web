@@ -15,12 +15,12 @@
 
     <div class="login-right-cel">
         Don't have an account?<br/>
-        <a href="#">Sign Up</a>
+        <a href="<?php echo $this->url(array(), 'auth_registration') ?>">Sign Up</a>
     </div>
     
     <div class="login-row">
-        <a href="#">Forgot Username?</a> |
-        <a href="#">Forgot Password?</a>
+        <a href="<?php echo $this->url(array('code' => null), 'auth_password_reset') ?>">Forgot Username?</a> |
+        <a href="<?php echo $this->url(array('code' => null), 'auth_password_reset') ?>">Forgot Password?</a>
     </div>
 
 </form>

@@ -51,7 +51,7 @@ body, button, input, select, textarea { font-family: sans-serif; color: #222; }
    ========================================================================== */
 
 a { color: #00e; }
-a:visited { color: #551a8b; }
+a:visited { color: #00e; }
 a:hover { color: #06e; }
 a:focus { outline: thin dotted; }
 
@@ -426,6 +426,7 @@ div.notice {
 .login-row dt {
     text-align: left;
     marign: 0;
+    font-weight: bold;
 }
 
 .login-row dd {
