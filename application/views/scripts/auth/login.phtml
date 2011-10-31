@@ -10,7 +10,7 @@
     </div>
 
     <div class="login-left-cel">
-        <input id="login-submit" type="submit" value="Login"/>
+        <input class="button" id="login-submit" type="submit" value="Login"/>
     </div>
 
     <div class="login-right-cel">
@@ -19,8 +19,8 @@
     </div>
     
     <div class="login-row">
-        <a href="<?php echo $this->url(array('code' => null), 'auth_password_reset') ?>">Forgot Username?</a> |
-        <a href="<?php echo $this->url(array('code' => null), 'auth_password_reset') ?>">Forgot Password?</a>
+        <a href="<?php echo $this->url(array(), 'auth_password_reset') ?>">Forgot Username?</a> |
+        <a href="<?php echo $this->url(array(), 'auth_password_reset') ?>">Forgot Password?</a>
     </div>
 
 </form>

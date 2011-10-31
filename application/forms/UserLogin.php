@@ -21,13 +21,5 @@ class Cupa_Form_UserLogin extends Zend_Form
             'required' => true,
             'label' => 'Password:',
         ));
-        
-        $login = $this->addElement('submit', 'login', array(
-            'required' => false,
-            'ignore' => true,
-            'label' => 'Login',
-        ));
     }
-
-
 }

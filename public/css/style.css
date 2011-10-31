@@ -454,13 +454,17 @@ div.notice {
 }
 
 .login-left-cel input {
-    padding: 3px 35px;
+    padding: 7px 35px;
 }
 
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
     padding: 0;
+}
+
+h1 {
+    text-align: center;
 }
 
 /* ==|== non-semantic helper classes ========================================

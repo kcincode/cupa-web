@@ -47,4 +47,40 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
             return $this->fetchRow($select);
         }
     }
+    
+    public function createNewUser($firstName, $lastName, $email)
+    {
+        $expire = date('Y-m-d H:i:s', time() + 604800);
+        $date = date('Y-m-d H:i:s');
+        
+        $username = substr($email, 0, strpos($email, '@'));
+        
+        $data = array(
+            'username' => $username,
+            'salt' => null,
+            'password' => md5('sdfughaiudgbsfdgsdfgwrthwrhyterHethns'),
+            'email' => $email,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'activation_code' => $this->generateUniqueCodeFor('activation_code'),
+            'requested_at' => $date,
+            'activated_at' => null,
+            'expires_at' => $expire,
+            'updated_at' => $date,
+            'last_login' => null,
+            'login_errors' => 0,
+            'is_active' => 0,
+        );
+        
+        $userId = $this->insert($data);
+        
+        if(is_numeric($userId)) {
+            $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+            $userProfile = $userProfileTable->createRow();
+            $userProfile->user_id = $userId;
+            $userProfile->save();
+        }
+        
+        return $userId;
+    }
 }

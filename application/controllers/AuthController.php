@@ -129,7 +129,59 @@ class AuthController extends Zend_Controller_Action
 
     public function registerAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/register.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/auth/register.js');
+        
+        $form = new Cupa_Form_UserRegister();
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $userTable = new Cupa_Model_DbTable_User();
+            $userId = $userTable->createNewUser($post['first_name'], $post['last_name'], $post['email']);
+            
+            if(is_numeric($userId)) {
+                Cupa_Model_Email::sendActivationEmail($userTable->find($userId)->current());
+                $this->view->message('Created user in the system, please check your email for activation email.', 'success');
+            } else {
+                $this->view->message('Could not create user in the system.', 'error');
+            }
+        }
+         
+        $this->view->form = $form;
+    }
+    
+    public function checkemailAction()
+    {
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $email = $this->getRequest()->getUserParam('email');
+        if(isset($email)) {
+            $validateEmail = new Zend_Validate_EmailAddress();
+            if(!$validateEmail->isValid($email)) {
+                echo "invalid";
+                return;
+            }
+            
+            $userTable = new Cupa_Model_DbTable_User();
+            $user = $userTable->fetchUserBy('email', $email);
+            if($user) {
+                echo "error";
+                return;
+            } else {
+                echo "ok";
+                return;
+            }
+            
+            echo "unknown";
+        }
     }
 
     public function activateAction()

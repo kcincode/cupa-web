@@ -1,4 +1,45 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Auth</b> and script/action name <b>register</b></p>
+<h1>User Registration</h1>
+
+<p>
+    Once you submit your registration an email will be sent to the email address 
+    that you have entered.  <strong>You will not be able to log in until you activate your 
+    account with a link that is sent to you.</strong>  This link is active for 1 week so if you wait 
+    too long to activate your account it may not work.  At any time if you have 
+    any questions or have not received an email then you may 
+    <a href="<?php echo $this->url(array(), 'page_contact'); ?>">contact us</a> 
+    with any issues you may be having.
+</p>
+
+<p>
+    You may only use one email address for an account, if you do not remember 
+    your password please use the 
+    <a href="<?php echo $this->url(array(), 'auth_password_reset'); ?>">password reset</a> 
+    to reset your password for that email address.
+</p>
+
+<?php echo $this->message(); ?>
+
+<div id="registration-container">
+    <form id="registration-form" method="post">
+        <div class="row">
+            <?php echo $this->form->first_name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->last_name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->email; ?>
+        </div>
+        <div class="row">
+            <dt>&nbsp;</dt>
+            <dd id="email-status">&nbsp;</dd>
+        </div>
+        <div class="row">
+            <dt>&nbsp;</dt>
+            <dd>
+                <input id="reg-submit-button" class="button" type="submit" value="Register for an Account"/>
+            </dd>
+        </div>
+        
+    </form>
 </div>
