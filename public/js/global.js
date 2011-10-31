@@ -2,7 +2,6 @@ $(document).ready(function() {
     $('#login-container').hide();
 
     $('#logout-link').click(function(e) {
-        alert('Logging Out');
         e.preventDefault();
         $.ajax({
             type: 'get',
@@ -16,14 +15,14 @@ $(document).ready(function() {
     $('#login-link').click(function(e) {
         e.preventDefault();
         if($('#login-container').is(':visible')) {
-            $('#login-container').slideUp('fast');
+            $('#login-container').fadeOut('fast');
         } else {
             $.ajax({
                type: 'get',
                url: BASE_URL + '/login',
                success: function(response) {
                    $('#login-container').html(response);
-                   $('#login-container').slideDown('fast');
+                   $('#login-container').fadeIn('fast');
                    $('#error-string').html('');
                    
                    $('#login-submit').click(function(e) {
