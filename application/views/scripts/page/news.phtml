@@ -1,4 +1,18 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>news</b></p>
+<div class="title">
+    <?php echo $this->news->title; ?>
 </div>
+
+<div class="subtitle">
+    <?php if($this->news->posted_at == $this->news->edited_at): ?>
+    Posted by <?php echo $this->fullname($this->news->posted_by); ?> on <?php echo date('m/d/Y @ h:i:s A', strtotime($this->news->posted_at)); ?>
+    <?php else: ?>
+    Updated by <?php echo $this->fullname($this->news->last_edited_by); ?> on <?php echo date('m/d/Y @ h:i:s A', strtotime($this->news->edited_at)); ?>
+    <?php endif; ?>
+    
+</div>
+
+<div class="content">
+    <?php echo $this->news->content; ?>
+</div>
+
+<div class="clearfix">&nbsp;</div>

@@ -1,0 +1,24 @@
+.title, .subtitle {
+    width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    color: #111;
+    text-shadow: 1px 1px 3px #888;
+}
+
+.title {
+    padding-top: 40px;
+    font-size: 28pt;
+}
+
+.subtitle {
+    font-style: italic;
+    font-size: 10pt;
+}
+
+.content {
+    width: 700px;
+    margin: 20px auto;
+    text-align: justify;
+    font-size: 12pt;
+}

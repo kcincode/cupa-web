@@ -153,7 +153,19 @@ class PageController extends Zend_Controller_Action
 
     public function newsAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
+        
+        $news = $this->getRequest()->getUserParam('news');
+        $newsTable = new Cupa_Model_DbTable_News();
+        $userTable = new Cupa_Model_DbTable_User();
+        $news = $newsTable->find($news)->current();
+        
+        if($news and $news->is_visible) {
+            $this->view->news = $news;
+        } else {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
     }
 
     public function newsaddAction()
@@ -168,43 +180,3 @@ class PageController extends Zend_Controller_Action
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
