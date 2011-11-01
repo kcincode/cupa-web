@@ -38,6 +38,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         if(Zend_Auth::getInstance()->hasIdentity()) {
             $userTable = new Cupa_Model_DbTable_User();
             $view->user = $userTable->find(Zend_Auth::getInstance()->getIdentity())->current();
+            
+            $session = new Zend_Session_Namespace('adminuser');
+            if($session->oldUser) {
+                $view->isImpersonated = true;
+            } else {
+                $view->isImpersonated = false;
+            }
         }
         
         return $view;

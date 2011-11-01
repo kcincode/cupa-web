@@ -24,7 +24,7 @@
         <header>
             <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">&nbsp;</a>
             <div class="menu">
-                <?php echo $this->partial('top-menu.phtml', array('user' => $this->user)); ?>
+                <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
                 <div id="login-container">Login Container</div>
             </div>            
         </header>

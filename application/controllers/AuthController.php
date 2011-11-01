@@ -113,15 +113,20 @@ class AuthController extends Zend_Controller_Action
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-
+        
         // disable the layout and view
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
+        $session = new Zend_Session_Namespace('adminuser');
+        if($session->oldUser) {
+            Zend_Auth::getInstance()->getStorage()->write($session->oldUser);
+            $session->unsetAll();
+            return;
+        }
+
         // clear the authentication identity
         $auth = Zend_Auth::getInstance()->clearIdentity();
-        
-        $session = new Zend_Session_Namespace('request');
         
         // destroy session data
         Zend_Session::destroy();
@@ -250,7 +255,24 @@ class AuthController extends Zend_Controller_Action
 
     public function impersonateAction()
     {
-        // action body
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        Zend_Debug::dump(Zend_Auth::getInstance()->hasIdentity());
+        Zend_Debug::dump($this->view->user->id);
+        if(Zend_Auth::getInstance()->hasIdentity() and $userRoleTable->hasRole($this->view->user->id, 'admin')) {
+            
+            
+            $user = $this->getRequest()->getUserParam('user');
+            if(is_numeric($user)) {
+                $oldUserId = $this->view->user->id;
+                $session = new Zend_Session_Namespace('adminuser');
+                $session->oldUser = $oldUserId;
+
+                Zend_Auth::getInstance()->getStorage()->write($user);
+                $this->_redirect('/');
+            }
+        } else {
+            $this->view->message('You do not have access to impersonate a user.', 'error');
+        }
     }
 
 
