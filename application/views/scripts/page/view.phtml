@@ -1,4 +1,28 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>view</b></p>
+<div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
+<div id="page-header" class="<?php echo $this->pageClass(); ?>">
+    <span class="title">
+        <h2><?php echo $this->page->title; ?></h2>
+    </span>
+    <span class="actions">
+        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
+        <?php endif; ?>
+    </span>
+  
+</div>
+
+<div id="page-content" class="<?php echo $this->pageClass(); ?>">
+    <?php echo $this->page->content; ?>
+</div>
+  
+<div id="page-links" class="<?php echo $this->pageClass(); ?>">
+    <ul>
+        <?php foreach($this->links as $link): ?>
+        <?php if($link->name == $this->page->name): ?>
+        <li><?php echo $link->title; ?></li>
+        <?php else: ?>
+        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
+        <?php endif; ?>
+        <?php endforeach; ?>
+    </ul>
 </div>

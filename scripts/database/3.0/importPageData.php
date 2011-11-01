@@ -18,9 +18,11 @@ foreach($stmt->fetchAll() as $row) {
     $page->url = (empty($row['url'])) ? null : $row['url'];
     $page->target = (empty($row['target'])) ? '_self' : $row['target'];
     $page->weight = 0;
-    $page->visible = $row['active'];
+    $page->is_visible = $row['active'];
     $page->created_at = date('Y-m-d H:i:s');
+    $page->created_by = 1;
     $page->updated_at = date('Y-m-d H:i:s');
+    $page->last_updated_by = 1;
     $page->save();
     echo "Done\n";
 }

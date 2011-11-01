@@ -15,12 +15,33 @@ class PageController extends Zend_Controller_Action
 
     public function viewAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        
+        $page = $this->getRequest()->getUserParam('page');
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', $page);
+        
+        if($page and $page->is_visible) {
+            $this->view->page = $page;
+            $this->view->links = $pageTable->fetchChildren($page);
+        } else {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
     }
 
     public function editAction()
     {
-        // action body
+        $page = $this->getRequest()->getUserParam('page');
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', $page);
+        
+        if($page) {
+            $this->view->page = $page;
+        } else {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
     }
 
     public function adminAction()

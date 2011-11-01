@@ -1,0 +1,158 @@
+nav ul li a {
+    padding: 5px 0  5px 0;
+}
+
+.main-content {
+    padding: 0;
+    margin: 0;
+}
+  
+#page-banner {
+    margin: 0;
+    padding: 0;
+    height: 140px;
+}
+  
+#page-header {
+    margin-top: -85px;
+    line-height: 85px;
+    height: 85px;
+}
+  
+#page-header span.title {
+    font-size: 22pt;
+    font-weight: bold;
+    float: left;
+    margin: 10px 0 0 30px;
+    text-shadow: 0 2px 2px #000;
+    text-decoration: none;
+    width: 720px;
+}
+  
+#page-header span.actions {
+    margin-top: -80px;
+    float: right;
+    padding-right: 20px;
+    line-height: 85px;
+    width: 210px;
+    text-align: right;
+}
+  
+  
+/*******************************************************************************
+ * About page CSS
+ ******************************************************************************/
+#page-banner.about {
+    background: url('../../images/banners/about.jpg');
+}
+  
+#page-header.about span.title,
+#page-content.about a,
+#page-content.about h1,
+#page-content.about h2,
+#page-content.about h3,
+#page-links.about a  {
+    color: #c00;
+}
+  
+/*******************************************************************************
+ * Youth page CSS
+ ******************************************************************************/
+#page-banner.youth {
+    background: url('../../images/banners/youth.jpg');
+}
+  
+#page-header.youth span.title,
+#page-content.youth a,
+#page-content.youth h1,
+#page-content.youth h2,
+#page-content.youth h3,
+#page-links.youth a  {
+    color: #800080;
+}
+  
+/*******************************************************************************
+ * Leagues page CSS
+ ******************************************************************************/
+#page-banner.leagues {
+    background: url('../../images/banners/leagues.jpg');
+}
+  
+#page-header.leagues span.title,
+#page-content.leagues a,
+#page-content.leagues h1,
+#page-content.leagues h2,
+#page-content.leagues h3,
+#page-links.leagues a  {
+    color: #f88017;
+}
+  
+/*******************************************************************************
+ * Pickup page CSS
+ ******************************************************************************/
+#page-banner.pickup {
+    background: url('../../images/banners/pickup.jpg');
+}
+  
+#page-header.pickup span.title,
+#page-content.pickup a,
+#page-content.pickup h1,
+#page-content.pickup h2,
+#page-content.pickup h3,
+#page-links.pickup a  {
+    color: #080;
+}
+  
+/*******************************************************************************
+ * Clubs page CSS
+ ******************************************************************************/
+#page-banner.clubs {
+    background: url('../../images/banners/clubs.jpg');
+}
+  
+#page-header.clubs span.title,
+#page-content.clubs a,
+#page-content.clubs h1,
+#page-content.clubs h2,
+#page-content.clubs h3,
+#page-links.clubs a  {
+    color: #443377;
+}
+  
+/*******************************************************************************
+ * Links page CSS
+ ******************************************************************************/
+#page-banner.links {
+    background: url('../../images/banners/links.jpg');
+}
+  
+#page-header.links span.title,
+#page-content.links a,
+#page-content.links h1,
+#page-content.links h2,
+#page-content.links h3,
+#page-links.links a  {
+    color: #088;
+}
+  
+#page-content { 
+    padding:  0 10px 10px 10px;
+    width: 710px;
+    float: left;
+}
+  
+#page-links {
+    width: 210px;
+    float: right;
+    border-left: 2px solid #aaa;
+    padding-top: 0;
+}
+  
+#page-links ul {
+    list-style: none;
+    margin-left: -20px;
+}
+  
+#page-links ul li {
+    margin-bottom: 3px;
+}

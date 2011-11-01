@@ -14,8 +14,8 @@ try {
     $db->query("DROP TABLE IF EXISTS `user_role`");
     $db->query("DROP TABLE IF EXISTS `user_level`");
     $db->query("DROP TABLE IF EXISTS `user_profile`");
-    $db->query("DROP TABLE IF EXISTS `user`");
     $db->query("DROP TABLE IF EXISTS `page`");
+    $db->query("DROP TABLE IF EXISTS `user`");
     echo "Done\n";
 } catch(Exception $e) {
     echo 'Error: ' . $e->getMessage() . "\n";
@@ -193,16 +193,22 @@ try {
           `url` varchar(255) DEFAULT NULL,
           `target` enum('_self','_blank','_top','_parent') NOT NULL DEFAULT '_self',
           `weight` int(11) NOT NULL DEFAULT '0',
-          `visible` tinyint(1) NOT NULL DEFAULT '0',
+          `is_visible` tinyint(1) NOT NULL DEFAULT '0',
           `created_at` datetime NOT NULL,
+          `created_by` int(11) DEFAULT NULL,
           `updated_at` datetime NOT NULL,
+          `last_updated_by` int(11) DEFAULT NULL,
           PRIMARY KEY (`id`),
-          KEY `parent` (`parent`)
+          KEY `parent` (`parent`),
+          KEY `created_by` (`created_by`),
+          KEY `last_updated_by` (`last_updated_by`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-    
+
     $db->query("
         ALTER TABLE `page`
-          ADD CONSTRAINT `page_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+          ADD CONSTRAINT `page_ibfk_3` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+          ADD CONSTRAINT `page_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+          ADD CONSTRAINT `page_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
 
     $db->commit();
     echo "Done.\n";
