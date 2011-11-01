@@ -6,6 +6,8 @@ echo "Creating Database Schema:\n";
 // Database table links
 $userTable = new Cupa_Model_DbTable_User();
 $userLevelTable = new Cupa_Model_DbTable_UserLevel();
+$newsCategoryTable = new Cupa_Model_DbTable_NewsCategory();
+
 $db = $userTable->getAdapter();
 
 try {
@@ -15,6 +17,7 @@ try {
     $db->query("DROP TABLE IF EXISTS `user_level`");
     $db->query("DROP TABLE IF EXISTS `user_profile`");
     $db->query("DROP TABLE IF EXISTS `page`");
+    $db->query("DROP TABLE IF EXISTS `news`");
     $db->query("DROP TABLE IF EXISTS `user`");
     echo "Done\n";
 } catch(Exception $e) {
@@ -276,6 +279,76 @@ try {
     $db->query("
         ALTER TABLE `user_password_reset`
           ADD CONSTRAINT `user_password_reset_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * NEWS_CATEGORY TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `NewsCategory` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `news_category` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY `name` (`name`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    $db->commit();
+    
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * NEWS TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `News` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `news` (
+          `id` bigint(20) NOT NULL AUTO_INCREMENT,
+          `category_id` int(11) DEFAULT NULL,
+          `slug` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+          `title` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `info` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+          `content` text COLLATE utf8_unicode_ci NOT NULL,
+          `url` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `type` enum('internal','external','news','text') NOT NULL,
+          `is_visible` tinyint(1) NOT NULL DEFAULT '1',
+          `posted_at` datetime NOT NULL,
+          `posted_by` int(11) DEFAULT NULL,
+          `edited_at` datetime NOT NULL,
+          `last_edited_by` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          KEY `last_edited_by` (`last_edited_by`),
+          KEY `posted_by` (`posted_by`),
+          KEY `category_id` (`category_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    $db->query("
+        ALTER TABLE `news`
+          ADD CONSTRAINT `news_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `news_category` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+          ADD CONSTRAINT `news_ibfk_1` FOREIGN KEY (`posted_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+          ADD CONSTRAINT `news_ibfk_2` FOREIGN KEY (`last_edited_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
 
     $db->commit();
     echo "Done.\n";
