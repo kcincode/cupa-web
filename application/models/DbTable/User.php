@@ -83,4 +83,20 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
         
         return $userId;
     }
+    
+    public function updateUserPasswordFromCode($code, $password)
+    {
+        $user = $this->fetchUserBy('activation_code', $code);
+        if($user) {
+            if(empty($user->salt)) {
+                $user->salt = $this->generateUniqueCodeFor('salt');
+                $user->password = sha1($user->salt . $password);
+                $user->updated_at = date('Y-m-d H:i:s');
+                $user->save();
+                return $user->id;
+            }
+        }
+        
+        return false;
+    }
 }

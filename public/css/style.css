@@ -357,24 +357,6 @@ ul.error_list {
   color: #c00;
 }
   
-div.success {
-  background-image: url('../images/ico-success.png');
-  background-color: rgba(204,255,204,0.9);
-  border: 1px solid rgb(104,155,104);
-}
-  
-div.error {
-  border: 1px solid rgb(155,104,104);
-  background-image: url('../images/ico-error.png');
-  background-color: rgba(255,204,204,0.9);
-}
-  
-div.notice {
-  border: 1px solid rgb(104,104,154);
-  background-image: url('../images/ico-info.png');
-  background-color: rgba(232,232,232,0.9);
-}
-
 .button {
     color: #333;
     background-color: #d0d0d0;

@@ -51,5 +51,5 @@ $(document).ready(function() {
     });
     
     // remove the messages if there are any after 3 sec
-    setTimeout(function() { $('ul.message').fadeOut('fast'); }, 3000);
+    setTimeout(function() { $('ul.message').fadeOut('fast'); }, 4000);
 });

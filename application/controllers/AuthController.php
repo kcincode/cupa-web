@@ -186,7 +186,61 @@ class AuthController extends Zend_Controller_Action
 
     public function activateAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/activate.css');
+
+        $code = $this->getRequest()->getUserParam('code');
+        $form = new Cupa_Form_UserActivation();
+        if(!empty($code)) {
+            $userTable = new Cupa_Model_DbTable_User();
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+                if($form->isValid($post)) {
+                    $user = $userTable->fetchUserBy('email', $post['email']);
+                    if($user and $user->activation_code == $code) {
+                        $userId = $userTable->updateUserPasswordFromCode($code, $post['password']);
+                        if($userId) {
+                            $user->activated_at = date('Y-m-d H:i:s');
+                            $user->last_login = date('Y-m-d H:i:s');
+                            $user->is_active = 1;
+                            $user->save();
+                            Zend_Auth::getInstance()->getStorage()->write($userId);
+                            $this->_redirect('/');
+                        } else {
+                            $this->view->message('An error occured please try again, if it persists please contact the webmaster.', 'error');
+                        }
+                    } else {
+                        $this->view->message('The email address entered does not match the expected email.', 'error');
+                    }
+                } else {
+                    $form->populate($post);
+                }
+            }
+        
+            $user = $userTable->fetchUserBy('activation_code', $code);
+            if(!$user) {
+                $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
+            } else {
+                if(!empty($user->activated_at)) {
+                    $error = 'User acount has already been activated, please contact the webmaster.';
+                } else if($user->expires_at < date('Y-m-d H:i:s')) {
+                    $error = 'Activation code has expired, please contact the webmaster.';
+                } else {
+                    $this->view->activateUser = $user;
+                    $error = null;
+                }
+            }
+        } else {
+            $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
+            
+        }
+        
+        if(isset($error)) {
+            $this->view->message($error, 'error');
+            $this->_redirect('/contact');
+        }
+        
+        $this->view->form = $form;
     }
 
     public function resetAction()
