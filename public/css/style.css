@@ -277,6 +277,9 @@ nav ul li a {
     color: #fff !important;
     font-weight: bold;
     text-shadow: 0 1px 1px #000;
+    -webkit-box-shadow: inset 0 -5px 15px -5px #444;
+    -moz-box-shadow: inset 0 -5px 15px -5px #444;
+    box-shadow: inset 0 -5px 15px -5px #444;
 }
 
 nav ul li a:hover, nav ul li a:active {
