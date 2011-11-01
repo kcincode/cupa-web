@@ -99,4 +99,23 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
         
         return false;
     }
+    
+    public function updateUserPasswordFromId($id, $password)
+    {
+        $user = $this->find($id)->current();
+        if($user) {
+            if(empty($user->salt)) {
+                $user->salt = $this->generateUniqueCodeFor('salt');
+                $user->password = sha1($user->salt . $password);
+            } else {
+                $user->password = sha1($user->salt . $password);
+            }
+            
+            $user->updated_at = date('Y-m-d H:i:s');
+            $user->save();
+            return $user->id;
+        }
+        
+        return false;
+    }
 }

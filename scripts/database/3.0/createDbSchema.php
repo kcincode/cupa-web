@@ -261,8 +261,9 @@ try {
           `user_id` int(11) NOT NULL,
           `requested_at` datetime NOT NULL,
           `expires_at` datetime NOT NULL,
-          `completed_at` datetime NOT NULL,
+          `completed_at` datetime DEFAULT NULL,
           PRIMARY KEY (`id`),
+          UNIQUE KEY `code` (`code`),
           KEY `user_id` (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
     

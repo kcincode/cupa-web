@@ -2,11 +2,6 @@
 
 class AuthController extends Zend_Controller_Action
 {
-
-    public function init()
-    {
-    }
-
     /**
      * Handles the login action where a user can login to the system
      * It will redirect after successful login depeding on the saved 
@@ -209,7 +204,7 @@ class AuthController extends Zend_Controller_Action
                             $user->last_login = date('Y-m-d H:i:s');
                             $user->is_active = 1;
                             $user->save();
-                            Zend_Auth::getInstance()->getStorage()->write($userId);
+                            $this->view->message('You have successfully activated your account, you may now login with the password you entered.');
                             $this->_redirect('/');
                         } else {
                             $this->view->message('An error occured please try again, if it persists please contact the webmaster.', 'error');
@@ -235,6 +230,8 @@ class AuthController extends Zend_Controller_Action
                     $error = null;
                 }
             }
+
+            $this->view->form = $form;
         } else {
             $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
             
@@ -245,22 +242,107 @@ class AuthController extends Zend_Controller_Action
             $this->_redirect('/contact');
         }
         
-        $this->view->form = $form;
     }
 
     public function resetAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/reset.css');
+
+        $code = $this->getRequest()->getUserParam('code');
+        $form = new Cupa_Form_UserActivation();
+
+        $userPasswordResetTable = new Cupa_Model_DbTable_UserPasswordReset();
+        $userTable = new Cupa_Model_DbTable_User();
+        if(!empty($code)) {
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+                if($form->isValid($post)) {
+                    $passwordReset = $userPasswordResetTable->fetchByCode($code);
+                    if($passwordReset) {
+                        $user = $userTable->find($passwordReset->user_id)->current();
+                        if($post['email'] == $user->email) {
+                            $userId = $userTable->updateUserPasswordFromId($user->id, $post['password']);
+                            if($userId) {
+                                $passwordReset->completed_at = date('Y-m-d H:i:s');
+                                $passwordReset->save();
+                                $this->view->message('You have successfully reset your password, you may now login with that password.');
+                                $this->_redirect('/');
+                            } else {
+                                $this->view->message('An error occured please try again, if it persists please contact the webmaster.', 'error');
+                            }
+                        } else {
+                            $this->view->message('The email address entered does not match the expected email.', 'error');
+                        }
+                    } else {
+                        $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
+                    }
+                } else {
+                    $form->populate();
+                }
+            }
+            
+            $passwordReset = $userPasswordResetTable->fetchByCode($code);
+            if(!$passwordReset) {
+                $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
+            } else {
+                if(!empty($passwordReset->completed_at)) {
+                    $error = 'This code has already been used, please try to request a reset again.';
+                } else if($passwordReset->expires_at < date('Y-m-d H:i:s')) {
+                    $error = 'Reset code has expired, please resquest another reset.';
+                } else {
+                    $this->view->resetUser = $passwordReset;
+                    $error = null;
+                }
+            }
+            
+            $this->view->form = $form;
+            
+        } else {
+            $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
+        }
+        
+        if(isset($error)) {
+            $this->view->message($error, 'error');
+            $this->_redirect('/contact');
+        }
+    }
+    
+    public function forgotAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/forgot.css');
+        $form = new Cupa_Form_UserForgotPassword();
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();            
+            if($form->isValid($post)) {
+                $userTable = new Cupa_Model_DbTable_User();
+                $user = $userTable->fetchUserBy('email', $post['email']);
+                if($user) {
+                    $userPasswordResetTable = new Cupa_Model_DbTable_UserPasswordReset();
+                    $passwordReset = $userPasswordResetTable->createRow();
+                    $passwordReset->code = $userPasswordResetTable->generateUniqueCode();
+                    $passwordReset->user_id = $user->id;
+                    $passwordReset->requested_at = date('Y-m-d H:i:s');
+                    $passwordReset->expires_at = date('Y-m-d H:i:s', time() + 604800);
+                    $passwordReset->completed_at = null;
+                    $passwordReset->save();
+                    Cupa_Model_Email::sendPasswordResetEmail($user, $passwordReset);
+                    $this->view->message("An email has been sent to `{$post['email']}` with the password reset link.", 'success');
+                } else {
+                    $this->view->message("The email `{$post['email']}` does not exist in the system.", 'error');
+                }
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->form = $form;
     }
 
     public function impersonateAction()
     {
         $userRoleTable = new Cupa_Model_DbTable_UserRole();
-        Zend_Debug::dump(Zend_Auth::getInstance()->hasIdentity());
-        Zend_Debug::dump($this->view->user->id);
         if(Zend_Auth::getInstance()->hasIdentity() and $userRoleTable->hasRole($this->view->user->id, 'admin')) {
-            
-            
             $user = $this->getRequest()->getUserParam('user');
             if(is_numeric($user)) {
                 $oldUserId = $this->view->user->id;

@@ -1,4 +1,27 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Auth</b> and script/action name <b>reset</b></p>
+<?php if($this->resetUser): ?>
+<h1>Reset Your Password</h1>
+<p>
+    Please enter the email address you used to request an password reset.  
+    This is to further confirm you are who we think you are.  Also enter in the password you 
+    would like to use from now on for the system.  If you have any questions or problems please 
+    <a href="<?php echo $this->url(array(), 'page_contact'); ?>">contact the webmaster</a>.
+</p>
+<div id="reset-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->email; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->password; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->confirm; ?>
+        </div>
+        <div class="row">
+            <dt>&nbsp;</dt>
+            <dd><input class="button" type="submit" value="Reset Password" /></dd>
+        </div>
+    </form>
 </div>
+
+<?php endif; ?>
