@@ -1,4 +1,37 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>home</b></p>
-</div>
+    <div class="middle">
+        <section class="tourney">
+            <h2>Tournaments/Leagues</h2>
+            <div class="all">(<a href="<?php echo $this->url(array('category' => 'league'), 'news'); ?>">View All</a>)</div>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['league'])); ?>
+        </section>
+  
+        <section class="pickup">
+            <h2>Pick-Up Around Cincy</h2>
+            <div class="all">(<a href="<?php echo $this->url(array('category' => 'pickup'), 'news'); ?>">View All</a>)</div>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['pickup'])); ?>
+        </section>
+    </div>
+  
+    <div class="lower">
+        <section class="youth">
+            <h2>Youth Ultimate</h2>
+            <div class="all">(<a href="<?php echo $this->url(array('category' => 'youth'), 'news'); ?>">View All</a>)</div>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['youth'])); ?>
+        </section>
+  
+        <section class="calendar">
+            <h2>Calendar</h2>
+            <iframe src="http://www.google.com/calendar/embed?showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&mode=AGENDA&height=250&wkst=1&bgcolor=%23FFFFFF&src=4fgn2m8vi3pqaupf3kkge3i1fg%40group.calendar.google.com&color=%23A32929&ctz=America%2FNew_York"
+                    style=" border:solid 1px #777 " 
+                    width="275"
+                    height="270" 
+                    frameborder="0"
+                    scrolling="no">
+            </iframe>
+        </section>
+  
+        <section class="information">
+            <h2>Stay Informed</h2>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['info'])); ?>
+        </section>
+    </div>

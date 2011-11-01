@@ -41,7 +41,7 @@ function getNewsType($news)
         return 'news';
     } else if(strstr($news['url'], 'http') === true) {
         return 'external';
-    } else if(strstr($news['url'], 'http') === false) {
+    } else if(strstr($news['url'], 'http') === false and !empty($news['url'])) {
         return 'internal';
     } else {
         return 'text';

@@ -10,7 +10,19 @@ class PageController extends Zend_Controller_Action
 
     public function homeAction()
     {
-        $this->view->message('This is just a test message', 'success');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/home.css');
+        
+        // link to the db table
+        $newsTable = new Cupa_Model_DbTable_News();
+     
+        // get all news and seperate by type
+        $allNews = array();        
+        foreach($newsTable->fetchAllNews() as $news) {
+            $allNews[$news['category']][] = $news;
+        }
+        
+        // set the view variable
+        $this->view->news = $allNews;
     }
 
     public function viewAction()
@@ -130,6 +142,11 @@ class PageController extends Zend_Controller_Action
     }
 
     public function linkseditAction()
+    {
+        // action body
+    }
+
+    public function allnewsAction()
     {
         // action body
     }
