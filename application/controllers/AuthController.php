@@ -129,6 +129,7 @@ class AuthController extends Zend_Controller_Action
 
     public function registerAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/register.css');
         
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/auth/register.js');
@@ -186,6 +187,7 @@ class AuthController extends Zend_Controller_Action
 
     public function activateAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/activate.css');
 
         $code = $this->getRequest()->getUserParam('code');
@@ -246,6 +248,7 @@ class AuthController extends Zend_Controller_Action
 
     public function resetAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/reset.css');
 
         $code = $this->getRequest()->getUserParam('code');
@@ -309,6 +312,7 @@ class AuthController extends Zend_Controller_Action
     
     public function forgotAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/forgot.css');
         $form = new Cupa_Form_UserForgotPassword();
         

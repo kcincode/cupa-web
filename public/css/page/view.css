@@ -10,7 +10,6 @@ nav ul li a {
 #page-banner {
     margin: 0;
     padding: 0;
-    height: 140px;
 }
   
 #page-header {
@@ -37,13 +36,18 @@ nav ul li a {
     width: 210px;
     text-align: right;
 }
-  
+
+#page-banner {
+    background: url('../../images/menu_shadow.jpg') no-repeat;
+    height: 25px;
+}  
   
 /*******************************************************************************
  * About page CSS
  ******************************************************************************/
 #page-banner.about {
     background: url('../../images/banners/about.jpg');
+    height: 140px;
 }
   
 #page-header.about span.title,
@@ -60,6 +64,7 @@ nav ul li a {
  ******************************************************************************/
 #page-banner.youth {
     background: url('../../images/banners/youth.jpg');
+    height: 140px;
 }
   
 #page-header.youth span.title,
@@ -76,6 +81,7 @@ nav ul li a {
  ******************************************************************************/
 #page-banner.leagues {
     background: url('../../images/banners/leagues.jpg');
+    height: 140px;
 }
   
 #page-header.leagues span.title,
@@ -92,6 +98,7 @@ nav ul li a {
  ******************************************************************************/
 #page-banner.pickup {
     background: url('../../images/banners/pickup.jpg');
+    height: 140px;
 }
   
 #page-header.pickup span.title,
@@ -108,6 +115,7 @@ nav ul li a {
  ******************************************************************************/
 #page-banner.clubs {
     background: url('../../images/banners/clubs.jpg');
+    height: 140px;
 }
   
 #page-header.clubs span.title,
@@ -124,6 +132,7 @@ nav ul li a {
  ******************************************************************************/
 #page-banner.links {
     background: url('../../images/banners/links.jpg');
+    height: 140px;
 }
   
 #page-header.links span.title,

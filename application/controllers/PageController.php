@@ -63,7 +63,47 @@ class PageController extends Zend_Controller_Action
 
     public function contactAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
+        
+        // initialize the contact form and add the users email if valid
+        $form = new Cupa_Form_Contact();
+        
+        if(Zend_Auth::getInstance()->hasIdentity()) {
+            $form->getElement('from')->setValue($this->view->user->email);
+        }
+        
+        // handle the form post
+        if($this->getRequest()->isPost()) {
+            // get the posted data
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                // if form is valid get form values
+                $data = $form->getValues();
+/*                
+                // create the mail object and set the variables
+                $mail = new Zend_Mail();
+                $mail->addTo($data['to']);
+                $mail->addBcc('kcin1018@gmail.com');
+                $mail->setFrom($data['from']);
+                $mail->setSubject($data['subject']);
+                $mail->setBodyText($data['content']);
+                
+                // send the email or output the objec if development
+                if(APPLICATION_ENV != 'development') {
+                    $mail->send();
+                } else {
+                    Zend_Debug::dump($mail);
+                }
+ */
+            } else {
+                // display the form errors
+                $form->populate($post);
+            }
+        }
+        
+        // add the form variable to the view
+        $this->view->form = $form;
     }
 
     public function officersAction()

@@ -7,6 +7,7 @@ echo "Creating Database Schema:\n";
 $userTable = new Cupa_Model_DbTable_User();
 $userLevelTable = new Cupa_Model_DbTable_UserLevel();
 $newsCategoryTable = new Cupa_Model_DbTable_NewsCategory();
+$contactTable = new Cupa_Model_DbTable_Contact();
 
 $db = $userTable->getAdapter();
 
@@ -19,6 +20,7 @@ try {
     $db->query("DROP TABLE IF EXISTS `page`");
     $db->query("DROP TABLE IF EXISTS `news`");
     $db->query("DROP TABLE IF EXISTS `user`");
+    $db->query("DROP TABLE IF EXISTS `contact`");
     echo "Done\n";
 } catch(Exception $e) {
     echo 'Error: ' . $e->getMessage() . "\n";
@@ -63,6 +65,49 @@ try {
         ALTER TABLE `user`
           ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
 
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * CONTACT TABLE
+ * 
+ *******************************************************************************/
+$contacts = array(
+    array(
+        'name' => 'CUPA Information',
+        'email' => 'cincinnatiultimate@gmail.com',
+    ),
+    array(
+        'name' => 'Website Issues/Questions',
+        'email' => 'webmaster@cincyultimate.org',
+    ),
+);
+
+
+try {
+    echo "    Creating `Contact` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `contact` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `name` varchar(255) NOT NULL,
+          `email` varchar(255) NOT NULL,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY `name` (`name`),
+          UNIQUE KEY `email` (`email`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    foreach($contacts as $contact) {
+        $contactTable->insert($contact);
+    }
+    
     $db->commit();
     echo "Done.\n";
 } catch(Exception $e) {
