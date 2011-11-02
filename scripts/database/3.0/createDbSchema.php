@@ -339,6 +339,7 @@ try {
           `edited_at` datetime NOT NULL,
           `last_edited_by` int(11) DEFAULT NULL,
           PRIMARY KEY (`id`),
+          UNIQUE KEY `slug` (`slug`),
           KEY `last_edited_by` (`last_edited_by`),
           KEY `posted_by` (`posted_by`),
           KEY `category_id` (`category_id`)

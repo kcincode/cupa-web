@@ -166,10 +166,9 @@ class PageController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
         
-        $news = $this->getRequest()->getUserParam('news');
+        $slug = $this->getRequest()->getUserParam('slug');
         $newsTable = new Cupa_Model_DbTable_News();
-        $userTable = new Cupa_Model_DbTable_User();
-        $news = $newsTable->find($news)->current();
+        $news = $newsTable->fetchNewsBySlug($slug);
         
         if($news and $news->is_visible) {
             $this->view->news = $news;

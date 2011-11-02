@@ -9,7 +9,7 @@
 <?php endif; ?>
 
 <?php if($item['type'] == 'news'): ?>
-    <h3><?php echo $item['title']; ?> (<a href="<?php echo $this->url(array('news' => $item['id']), 'news_view'); ?>">More</a>)</h3>
+    <h3><?php echo $item['title']; ?> (<a href="<?php echo $this->url(array('slug' => $item['slug']), 'news_view'); ?>">More</a>)</h3>
 <?php endif; ?>
 
 <?php if($item['type'] == 'text'): ?>

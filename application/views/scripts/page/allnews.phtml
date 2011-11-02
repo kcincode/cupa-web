@@ -22,7 +22,7 @@
         <a href="<?php echo $this->baseUrl();?>/<?php echo $news['url']; ?>">Read More</a>
         <?php endif; ?>
         <?php if($news['type'] == 'news'): ?>
-        <a href="<?php echo $this->url(array('news' => $news['id']), 'news_view'); ?>">Read More</a>
+        <a href="<?php echo $this->url(array('slug' => $news['slug']), 'news_view'); ?>">Read More</a>
         <?php endif; ?>
     </div>
     <div class="clearfix">&nbsp;</div>

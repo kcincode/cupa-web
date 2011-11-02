@@ -35,4 +35,12 @@ class Cupa_Model_DbTable_News extends Zend_Db_Table
         $stmt = $this->getAdapter()->query($select);
         return $stmt->fetchAll();
     }
+    
+    public function fetchNewsBySlug($slug)
+    {
+        $select = $this->select() 
+                       ->where('slug = ?', $slug);
+        
+        return $this->fetchRow($select);
+    }
 }
