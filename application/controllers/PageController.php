@@ -80,22 +80,10 @@ class PageController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 // if form is valid get form values
                 $data = $form->getValues();
-/*                
-                // create the mail object and set the variables
-                $mail = new Zend_Mail();
-                $mail->addTo($data['to']);
-                $mail->addBcc('kcin1018@gmail.com');
-                $mail->setFrom($data['from']);
-                $mail->setSubject($data['subject']);
-                $mail->setBodyText($data['content']);
                 
-                // send the email or output the objec if development
-                if(APPLICATION_ENV != 'development') {
-                    $mail->send();
-                } else {
-                    Zend_Debug::dump($mail);
-                }
- */
+                Cupa_Model_Email::sendContactEmail($data);
+                $this->view->message('Email sent successfully.', 'success');
+                $this->_redirect('/contact');
             } else {
                 // display the form errors
                 $form->populate($post);

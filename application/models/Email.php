@@ -36,6 +36,19 @@ class Cupa_Model_Email {
         self::send($user, $mail);
     }
     
+    static public function sendContactEmail($data)
+    {
+        // create the mail object and set the variables
+        $mail = new Zend_Mail();
+        $mail->addTo($data['to']);
+        $mail->addBcc('kcin1018@gmail.com');
+        $mail->setFrom($data['from']);
+        $mail->setSubject($data['subject']);
+        $mail->setBodyText($data['content']);
+                
+        self::send($user, $mail);
+    }
+    
     static private function send($user, $mail)
     {
         if(APPLICATION_ENV == 'production') {
