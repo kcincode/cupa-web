@@ -13,6 +13,8 @@ class Cupa_Model_DbTable_UserRole extends Zend_Db_Table
         
         if($pageId) {
             $select->where('page_id = ?', $pageId);
+        } else {
+            $select->where('page_id IS NULL');
         }
         
         $result = $this->fetchRow($select);
