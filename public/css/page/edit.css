@@ -8,3 +8,7 @@ textarea {
     width: 800px;
     height: 600px;
 }
+
+#buttons-container {
+    margin-top: 40px;
+}
