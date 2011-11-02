@@ -148,7 +148,18 @@ class PageController extends Zend_Controller_Action
 
     public function allnewsAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/allnews.css');
+        
+        $category = $this->getRequest()->getUserParam('category');
+        $this->view->category = ucwords($category);
+        
+        $newsTable = new Cupa_Model_DbTable_News();
+        $this->view->news = $newsTable->fetchNewsByCategory($category);
+        
+        if(!count($this->view->news)) {
+            // throw a 404 error there is no news returned
+            throw new Zend_Controller_Dispatcher_Exception('Category does not exist');
+        }
     }
 
     public function newsAction()

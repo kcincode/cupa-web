@@ -24,10 +24,10 @@ foreach($stmt->fetchAll() as $row) {
     $news->url = (empty($row['url'])) ? null : $row['url'];
     $news->info = $row['blurb'];
     $news->is_visible = $row['visible'];
-    $news->posted_at = date('Y-m-d H:i:s');
+    $news->posted_at = $row['created_at'];
     $news->posted_by = 1;
     $news->type = getNewsType($row);
-    $news->edited_at = date('Y-m-d H:i:s');
+    $news->edited_at = $row['updated_at'];
     $news->last_edited_by = 1;
     $news->save();
     echo "Done\n";
@@ -39,9 +39,9 @@ function getNewsType($news)
 {
     if(!empty($news['content'])) {
         return 'news';
-    } else if(strstr($news['url'], 'http') === true) {
+    } else if(strpos($news['url'], 'http') !== false) {
         return 'external';
-    } else if(strstr($news['url'], 'http') === false and !empty($news['url'])) {
+    } else if(strpos($news['url'], 'http') === false and !empty($news['url'])) {
         return 'internal';
     } else {
         return 'text';

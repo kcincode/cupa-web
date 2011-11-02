@@ -1,0 +1,41 @@
+h1 {
+    padding-top: 20px;
+    text-align: center;
+}
+  
+.row {
+    width: 720px;
+    margin: 10px auto;
+    border: 1px solid #888;
+    -webkit-box-shadow: 0 0 10px #888;
+    -moz-box-shadow: 0 0 10px #888;
+    box-shadow: 0 0 10px #888;
+    padding: 5px;
+}
+  
+.title, .date, .blurb, .link {
+    float: left;
+    padding: 2px 5px;
+}
+  
+.title {
+    font-weight: bold;
+    font-size: 12pt;
+    width: 500px;
+    text-decoration: underline;
+}
+  
+.date {
+    width: 200px;
+    text-align: center;
+}
+  
+.blurb { 
+    width: 525px;
+    padding: 10px
+}
+
+.link {
+    width: 155px;
+    padding: 10px;
+}

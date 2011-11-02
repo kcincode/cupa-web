@@ -20,4 +20,19 @@ class Cupa_Model_DbTable_News extends Zend_Db_Table
         $stmt = $this->getAdapter()->query($select);
         return $stmt->fetchAll();
     }
+    
+    public function fetchNewsByCategory($category)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('n' => 'news'), array('*'))
+                       ->joinLeft(array('nc' => 'news_category'), 'nc.id = n.category_id', array('name AS category'));
+                       
+        
+        if($category != 'all') {
+            $select->where('nc.name = ?', $category);
+        }
+        
+        $stmt = $this->getAdapter()->query($select);
+        return $stmt->fetchAll();
+    }
 }
