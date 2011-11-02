@@ -66,8 +66,8 @@ class PageController extends Zend_Controller_Action
         }
 
         if($this->getRequest()->isPost()) {
-            $post = $this-getRequest()->getPost();
-             
+            $post = $this->getRequest()->getPost();
+
             $page->content = $post['content'];
             $page->updated_at = date('Y-m-d H:i:s');
             $page->save();

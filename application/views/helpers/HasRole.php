@@ -21,7 +21,11 @@ class My_View_Helper_HasRole extends Zend_View_Helper_Abstract
     {
         if($this->view->user) {
             $userRoleTable = new Cupa_Model_DbTable_UserRole();
-            return $userRoleTable->hasRole($this->view->user->id, $role);
+            if($this->view->page and $role == 'editor') {
+                return $userRoleTable->hasRole($this->view->user->id, $role, $this->view->page->id);
+            } else {
+                return $userRoleTable->hasRole($this->view->user->id, $role);
+            }
         }
         
         return false;
