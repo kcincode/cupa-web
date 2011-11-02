@@ -1,4 +1,19 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>edit</b></p>
-</div>
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->page->title; ?>
+<form method="post">
+    <div id="edit-container">
+        <textarea class="content"><?php echo $this->page->content; ?></textarea>
+    </div>
+
+    <div id="buttons-container">
+        <input class="button" type="submit" value="Save"/>
+        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_view'); ?>">Cancel</a>
+    </div>
+</form>
+<script type="text/javascript">
+	tinyMCE.init({
+		mode : "textareas",
+		theme : "simple"
+	});
+</script>

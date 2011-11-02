@@ -54,6 +54,31 @@ class PageController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
+
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
+           !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+           !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+            $this->view->message('You either are not logged in or you do not have permission to edit this page.');
+            $this->_redirect('/' . $page->name);
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this-getRequest()->getPost();
+             
+            $page->content = $post['content'];
+            $page->updated_at = date('Y-m-d H:i:s');
+            $page->save();
+            $this->view->message('Page udpated successfully.', 'success');
+            $this->_redirect('/' . $page->name);
+        }
+        
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        
     }
 
     public function adminAction()

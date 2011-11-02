@@ -1,0 +1,10 @@
+#edit-container {
+    width: 800px;
+    height: 600px;
+    margin: 20px auto;
+}
+
+textarea {
+    width: 800px;
+    height: 600px;
+}

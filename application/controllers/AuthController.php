@@ -52,6 +52,17 @@ class AuthController extends Zend_Controller_Action
                     // try the password for authentication
                     if($authentication->authenticate($data['password'])) {
                         // successfull login
+
+                        // check to see if the user is active
+                        if(!$user->is_active) {
+                            $logger->log("User login succeeded for `$user->first_name $user->last_name ($user->username)` but they are disabled.", Zend_Log::ERR);
+
+                            // build the data to be sent
+                            $data = array('result' => 'Error', 'msg' => 'Your account is disabled.');
+                            echo Zend_Json::encode($data);
+
+                            return;
+                        }
                         
                         // update the salt if doesn't exist
                         if(empty($user->salt)) {
