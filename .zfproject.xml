@@ -1,0 +1,673 @@
+<?xml version="1.0"?>
+<projectProfile type="default" version="1.11.11">
+  <projectDirectory>
+    <projectProfileFile filesystemName=".zfproject.xml"/>
+    <applicationDirectory classNamePrefix="Cupa_">
+      <apisDirectory enabled="false"/>
+      <configsDirectory>
+        <applicationConfigFile type="ini"/>
+      </configsDirectory>
+      <controllersDirectory>
+        <controllerFile controllerName="Index">
+          <actionMethod actionName="index"/>
+        </controllerFile>
+        <controllerFile controllerName="Error"/>
+        <controllerFile controllerName="Auth">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="login"/>
+          <actionMethod actionName="logout"/>
+          <actionMethod actionName="register"/>
+          <actionMethod actionName="activate"/>
+          <actionMethod actionName="reset"/>
+          <actionMethod actionName="impersonate"/>
+        </controllerFile>
+        <controllerFile controllerName="Page">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="home"/>
+          <actionMethod actionName="view"/>
+          <actionMethod actionName="edit"/>
+          <actionMethod actionName="admin"/>
+          <actionMethod actionName="contact"/>
+          <actionMethod actionName="404"/>
+          <actionMethod actionName="officers"/>
+          <actionMethod actionName="officersedit"/>
+          <actionMethod actionName="officersadd"/>
+          <actionMethod actionName="minutes"/>
+          <actionMethod actionName="minutesedit"/>
+          <actionMethod actionName="minutesadd"/>
+          <actionMethod actionName="directors"/>
+          <actionMethod actionName="leagues"/>
+          <actionMethod actionName="pickup"/>
+          <actionMethod actionName="pickupadd"/>
+          <actionMethod actionName="pickupedit"/>
+          <actionMethod actionName="clubs"/>
+          <actionMethod actionName="clubsadd"/>
+          <actionMethod actionName="clubsedit"/>
+          <actionMethod actionName="links"/>
+          <actionMethod actionName="linksadd"/>
+          <actionMethod actionName="linksedit"/>
+          <actionMethod actionName="news"/>
+          <actionMethod actionName="newsadd"/>
+          <actionMethod actionName="newsedit"/>
+        </controllerFile>
+        <controllerFile controllerName="Profile">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="personal"/>
+          <actionMethod actionName="minrors"/>
+          <actionMethod actionName="minorsadd"/>
+          <actionMethod actionName="minorsedit"/>
+          <actionMethod actionName="league"/>
+          <actionMethod actionName="public"/>
+          <actionMethod actionName="password"/>
+        </controllerFile>
+        <controllerFile controllerName="Officer">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="page"/>
+          <actionMethod actionName="edit"/>
+        </controllerFile>
+        <controllerFile controllerName="League">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="page"/>
+          <actionMethod actionName="winter"/>
+          <actionMethod actionName="spring"/>
+          <actionMethod actionName="summer"/>
+          <actionMethod actionName="fall"/>
+          <actionMethod actionName="other"/>
+          <actionMethod actionName="forms"/>
+          <actionMethod actionName="formsadd"/>
+          <actionMethod actionName="formsedit"/>
+          <actionMethod actionName="teams"/>
+          <actionMethod actionName="teamsadd"/>
+          <actionMethod actionName="teamsedit"/>
+          <actionMethod actionName="schedule"/>
+          <actionMethod actionName="scheduleadd"/>
+          <actionMethod actionName="scheduleedit"/>
+          <actionMethod actionName="schedulegenerate"/>
+          <actionMethod actionName="final"/>
+          <actionMethod actionName="finaladmin"/>
+          <actionMethod actionName="email"/>
+          <actionMethod actionName="rankings"/>
+          <actionMethod actionName="rankingsedit"/>
+          <actionMethod actionName="players"/>
+          <actionMethod actionName="shirts"/>
+          <actionMethod actionName="emergency"/>
+          <actionMethod actionName="status"/>
+          <actionMethod actionName="statusmark"/>
+          <actionMethod actionName="manage"/>
+          <actionMethod actionName="manageadd"/>
+          <actionMethod actionName="manageremove"/>
+        </controllerFile>
+        <controllerFile controllerName="Tournament">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="home"/>
+          <actionMethod actionName="homeadd"/>
+          <actionMethod actionName="homeedit"/>
+          <actionMethod actionName="bid"/>
+          <actionMethod actionName="bidedit"/>
+          <actionMethod actionName="teams"/>
+          <actionMethod actionName="teamsadd"/>
+          <actionMethod actionName="teamsedit"/>
+          <actionMethod actionName="schedule"/>
+          <actionMethod actionName="scheduleedit"/>
+          <actionMethod actionName="directions"/>
+          <actionMethod actionName="directionsedit"/>
+          <actionMethod actionName="lodging"/>
+          <actionMethod actionName="lodgingedit"/>
+          <actionMethod actionName="lodgingadd"/>
+          <actionMethod actionName="contact"/>
+          <actionMethod actionName="contactadd"/>
+          <actionMethod actionName="contactedit"/>
+        </controllerFile>
+        <controllerFile controllerName="Admin">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="contactedit"/>
+          <actionMethod actionName="users"/>
+          <actionMethod actionName="user"/>
+          <actionMethod actionName="useradd"/>
+          <actionMethod actionName="useredit"/>
+          <actionMethod actionName="page"/>
+          <actionMethod actionName="pageadd"/>
+          <actionMethod actionName="pageedit"/>
+          <actionMethod actionName="tournament"/>
+          <actionMethod actionName="tournamentadd"/>
+          <actionMethod actionName="tournamentedit"/>
+          <actionMethod actionName="file"/>
+          <actionMethod actionName="fileadd"/>
+          <actionMethod actionName="fileedit"/>
+          <actionMethod actionName="league"/>
+          <actionMethod actionName="leagueadd"/>
+          <actionMethod actionName="leagueedit"/>
+          <actionMethod actionName="report"/>
+        </controllerFile>
+      </controllersDirectory>
+      <formsDirectory>
+        <formFile formName="Login"/>
+        <formFile formName="UserRegister"/>
+        <formFile formName="UserActivation"/>
+        <formFile formName="UserForgotPassword"/>
+        <formFile formName="Contact"/>
+      </formsDirectory>
+      <layoutsDirectory>
+        <layoutScriptsDirectory>
+          <layoutScriptFile layoutName="layout"/>
+        </layoutScriptsDirectory>
+      </layoutsDirectory>
+      <modelsDirectory/>
+      <modulesDirectory enabled="false"/>
+      <viewsDirectory>
+        <viewScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Index">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Error">
+            <viewScriptFile forActionName="error"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Auth">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Auth">
+            <viewScriptFile forActionName="login"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Auth">
+            <viewScriptFile forActionName="logout"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Auth">
+            <viewScriptFile forActionName="register"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Auth">
+            <viewScriptFile forActionName="activate"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Auth">
+            <viewScriptFile forActionName="reset"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Auth">
+            <viewScriptFile forActionName="impersonate"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="home"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="view"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="edit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="admin"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="contact"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="404"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="personal"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="minrors"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="minorsadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="minorsedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="league"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="public"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Profile">
+            <viewScriptFile forActionName="password"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Officer">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Officer">
+            <viewScriptFile forActionName="page"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Officer">
+            <viewScriptFile forActionName="edit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="officers"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="officersedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="officersadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="minutes"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="minutesedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="minutesadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="directors"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="leagues"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="page"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="winter"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="spring"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="summer"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="fall"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="other"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="forms"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="formsadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="formsedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="teams"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="teamsadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="teamsedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="schedule"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="scheduleadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="scheduleedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="schedulegenerate"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="final"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="finaladmin"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="email"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="rankings"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="rankingsedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="players"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="shirts"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="emergency"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="status"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="statusmark"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="manage"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="manageadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="League">
+            <viewScriptFile forActionName="manageremove"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="pickup"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="pickupadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="pickupedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="clubs"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="clubsadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="clubsedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="links"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="linksadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="linksedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="home"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="homeadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="homeedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="bid"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="bidedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="teams"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="teamsadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="teamsedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="schedule"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="scheduleedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="directions"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="directionsedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="lodging"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="lodgingedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="lodgingadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="contact"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="contactadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Tournament">
+            <viewScriptFile forActionName="contactedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="contactedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="users"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="user"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="useradd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="useredit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="page"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="pageadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="pageedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="tournament"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="tournamentadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="tournamentedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="file"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="fileadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="fileedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="league"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="leagueadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="leagueedit"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Admin">
+            <viewScriptFile forActionName="report"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="news"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="newsadd"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Page">
+            <viewScriptFile forActionName="newsedit"/>
+          </viewControllerScriptsDirectory>
+        </viewScriptsDirectory>
+        <viewHelpersDirectory/>
+        <viewFiltersDirectory enabled="false"/>
+      </viewsDirectory>
+      <bootstrapFile filesystemName="Bootstrap.php"/>
+    </applicationDirectory>
+    <dataDirectory enabled="false">
+      <cacheDirectory enabled="false"/>
+      <searchIndexesDirectory enabled="false"/>
+      <localesDirectory enabled="false"/>
+      <logsDirectory enabled="false"/>
+      <sessionsDirectory enabled="false"/>
+      <uploadsDirectory enabled="false"/>
+    </dataDirectory>
+    <docsDirectory>
+      <file filesystemName="README.txt"/>
+    </docsDirectory>
+    <libraryDirectory>
+      <zfStandardLibraryDirectory enabled="false"/>
+    </libraryDirectory>
+    <publicDirectory>
+      <publicStylesheetsDirectory enabled="false"/>
+      <publicScriptsDirectory enabled="false"/>
+      <publicImagesDirectory enabled="false"/>
+      <publicIndexFile filesystemName="index.php"/>
+      <htaccessFile filesystemName=".htaccess"/>
+    </publicDirectory>
+    <projectProvidersDirectory enabled="false"/>
+    <temporaryDirectory enabled="false"/>
+    <testsDirectory>
+      <testPHPUnitConfigFile filesystemName="phpunit.xml"/>
+      <testPHPUnitBootstrapFile filesystemName="bootstrap.php"/>
+      <testApplicationDirectory>
+        <testApplicationControllerDirectory>
+          <testApplicationControllerFile forControllerName="Index">
+            <testApplicationActionMethod forActionName="index"/>
+          </testApplicationControllerFile>
+          <testApplicationControllerFile forControllerName="Auth">
+            <testApplicationActionMethod forActionName="index"/>
+            <testApplicationActionMethod forActionName="login"/>
+            <testApplicationActionMethod forActionName="logout"/>
+            <testApplicationActionMethod forActionName="register"/>
+            <testApplicationActionMethod forActionName="activate"/>
+            <testApplicationActionMethod forActionName="reset"/>
+            <testApplicationActionMethod forActionName="impersonate"/>
+          </testApplicationControllerFile>
+          <testApplicationControllerFile forControllerName="Page">
+            <testApplicationActionMethod forActionName="index"/>
+            <testApplicationActionMethod forActionName="home"/>
+            <testApplicationActionMethod forActionName="view"/>
+            <testApplicationActionMethod forActionName="edit"/>
+            <testApplicationActionMethod forActionName="admin"/>
+            <testApplicationActionMethod forActionName="contact"/>
+            <testApplicationActionMethod forActionName="404"/>
+            <testApplicationActionMethod forActionName="officers"/>
+            <testApplicationActionMethod forActionName="officersedit"/>
+            <testApplicationActionMethod forActionName="officersadd"/>
+            <testApplicationActionMethod forActionName="minutes"/>
+            <testApplicationActionMethod forActionName="minutesedit"/>
+            <testApplicationActionMethod forActionName="minutesadd"/>
+            <testApplicationActionMethod forActionName="directors"/>
+            <testApplicationActionMethod forActionName="leagues"/>
+            <testApplicationActionMethod forActionName="pickup"/>
+            <testApplicationActionMethod forActionName="pickupadd"/>
+            <testApplicationActionMethod forActionName="pickupedit"/>
+            <testApplicationActionMethod forActionName="clubs"/>
+            <testApplicationActionMethod forActionName="clubsadd"/>
+            <testApplicationActionMethod forActionName="clubsedit"/>
+            <testApplicationActionMethod forActionName="links"/>
+            <testApplicationActionMethod forActionName="linksadd"/>
+            <testApplicationActionMethod forActionName="linksedit"/>
+            <testApplicationActionMethod forActionName="news"/>
+            <testApplicationActionMethod forActionName="newsadd"/>
+            <testApplicationActionMethod forActionName="newsedit"/>
+          </testApplicationControllerFile>
+          <testApplicationControllerFile forControllerName="Profile">
+            <testApplicationActionMethod forActionName="index"/>
+            <testApplicationActionMethod forActionName="personal"/>
+            <testApplicationActionMethod forActionName="minrors"/>
+            <testApplicationActionMethod forActionName="minorsadd"/>
+            <testApplicationActionMethod forActionName="minorsedit"/>
+            <testApplicationActionMethod forActionName="league"/>
+            <testApplicationActionMethod forActionName="public"/>
+            <testApplicationActionMethod forActionName="password"/>
+          </testApplicationControllerFile>
+          <testApplicationControllerFile forControllerName="Officer">
+            <testApplicationActionMethod forActionName="index"/>
+            <testApplicationActionMethod forActionName="page"/>
+            <testApplicationActionMethod forActionName="edit"/>
+          </testApplicationControllerFile>
+          <testApplicationControllerFile forControllerName="League">
+            <testApplicationActionMethod forActionName="index"/>
+            <testApplicationActionMethod forActionName="page"/>
+            <testApplicationActionMethod forActionName="winter"/>
+            <testApplicationActionMethod forActionName="spring"/>
+            <testApplicationActionMethod forActionName="summer"/>
+            <testApplicationActionMethod forActionName="fall"/>
+            <testApplicationActionMethod forActionName="other"/>
+            <testApplicationActionMethod forActionName="forms"/>
+            <testApplicationActionMethod forActionName="formsadd"/>
+            <testApplicationActionMethod forActionName="formsedit"/>
+            <testApplicationActionMethod forActionName="teams"/>
+            <testApplicationActionMethod forActionName="teamsadd"/>
+            <testApplicationActionMethod forActionName="teamsedit"/>
+            <testApplicationActionMethod forActionName="schedule"/>
+            <testApplicationActionMethod forActionName="scheduleadd"/>
+            <testApplicationActionMethod forActionName="scheduleedit"/>
+            <testApplicationActionMethod forActionName="schedulegenerate"/>
+            <testApplicationActionMethod forActionName="final"/>
+            <testApplicationActionMethod forActionName="finaladmin"/>
+            <testApplicationActionMethod forActionName="email"/>
+            <testApplicationActionMethod forActionName="rankings"/>
+            <testApplicationActionMethod forActionName="rankingsedit"/>
+            <testApplicationActionMethod forActionName="players"/>
+            <testApplicationActionMethod forActionName="shirts"/>
+            <testApplicationActionMethod forActionName="emergency"/>
+            <testApplicationActionMethod forActionName="status"/>
+            <testApplicationActionMethod forActionName="statusmark"/>
+            <testApplicationActionMethod forActionName="manage"/>
+            <testApplicationActionMethod forActionName="manageadd"/>
+            <testApplicationActionMethod forActionName="manageremove"/>
+          </testApplicationControllerFile>
+          <testApplicationControllerFile forControllerName="Tournament">
+            <testApplicationActionMethod forActionName="index"/>
+            <testApplicationActionMethod forActionName="home"/>
+            <testApplicationActionMethod forActionName="homeadd"/>
+            <testApplicationActionMethod forActionName="homeedit"/>
+            <testApplicationActionMethod forActionName="bid"/>
+            <testApplicationActionMethod forActionName="bidedit"/>
+            <testApplicationActionMethod forActionName="teams"/>
+            <testApplicationActionMethod forActionName="teamsadd"/>
+            <testApplicationActionMethod forActionName="teamsedit"/>
+            <testApplicationActionMethod forActionName="schedule"/>
+            <testApplicationActionMethod forActionName="scheduleedit"/>
+            <testApplicationActionMethod forActionName="directions"/>
+            <testApplicationActionMethod forActionName="directionsedit"/>
+            <testApplicationActionMethod forActionName="lodging"/>
+            <testApplicationActionMethod forActionName="lodgingedit"/>
+            <testApplicationActionMethod forActionName="lodgingadd"/>
+            <testApplicationActionMethod forActionName="contact"/>
+            <testApplicationActionMethod forActionName="contactadd"/>
+            <testApplicationActionMethod forActionName="contactedit"/>
+          </testApplicationControllerFile>
+          <testApplicationControllerFile forControllerName="Admin">
+            <testApplicationActionMethod forActionName="index"/>
+            <testApplicationActionMethod forActionName="contactedit"/>
+            <testApplicationActionMethod forActionName="users"/>
+            <testApplicationActionMethod forActionName="user"/>
+            <testApplicationActionMethod forActionName="useradd"/>
+            <testApplicationActionMethod forActionName="useredit"/>
+            <testApplicationActionMethod forActionName="page"/>
+            <testApplicationActionMethod forActionName="pageadd"/>
+            <testApplicationActionMethod forActionName="pageedit"/>
+            <testApplicationActionMethod forActionName="tournament"/>
+            <testApplicationActionMethod forActionName="tournamentadd"/>
+            <testApplicationActionMethod forActionName="tournamentedit"/>
+            <testApplicationActionMethod forActionName="file"/>
+            <testApplicationActionMethod forActionName="fileadd"/>
+            <testApplicationActionMethod forActionName="fileedit"/>
+            <testApplicationActionMethod forActionName="league"/>
+            <testApplicationActionMethod forActionName="leagueadd"/>
+            <testApplicationActionMethod forActionName="leagueedit"/>
+            <testApplicationActionMethod forActionName="report"/>
+          </testApplicationControllerFile>
+        </testApplicationControllerDirectory>
+      </testApplicationDirectory>
+      <testLibraryDirectory/>
+    </testsDirectory>
+  </projectDirectory>
+</projectProfile>
