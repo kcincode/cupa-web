@@ -23,6 +23,9 @@ class PageController extends Zend_Controller_Action
         
         // set the view variable
         $this->view->news = $allNews;
+        
+        $session = new Zend_Session_Namespace('newsbackbutton');
+        $session->unsetAll();
     }
 
     public function viewAction()
@@ -217,10 +220,21 @@ class PageController extends Zend_Controller_Action
             // throw a 404 error there is no news returned
             throw new Zend_Controller_Dispatcher_Exception('Category does not exist');
         }
+        
+        $session = new Zend_Session_Namespace('newsbackbutton');
+        $session->unsetAll();
     }
 
     public function newsAction()
     {
+        $session = new Zend_Session_Namespace('newsbackbutton');
+        if($_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/' or 
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/youth') {
+            $session->url = $_SERVER['HTTP_REFERER'];
+        }
+        
+        $this->view->backUrl = $session->url;
+        
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
         
