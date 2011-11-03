@@ -29,4 +29,17 @@ class Cupa_Model_DbTable_Page extends Zend_Db_Table
             return $this->fetchChildren($this->find($page->parent)->current());
         }
     }
+    
+    public function fetchAllParentPages($showHidden = false)
+    {
+        $select = $this->select()
+                       ->where('parent IS NULL')
+                       ->order('name');
+        
+        if(!$showHidden) {
+            $select->where('is_visible = ?', 1);
+        }
+        
+        return $this->fetchAll($select);
+    }
 }

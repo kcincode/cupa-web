@@ -2,13 +2,24 @@
 
 <h1>Edit <?php echo $this->page->title; ?></h1>
 <form method="post">
-    <p>
-        Page is Visible: <input type="checkbox" name="is_visible"<?php echo ($this->page->is_visible == 1) ? ' checked' : ''; ?> />
-    </p>
     <div id="edit-container">
-        <textarea id="content" class="content" name="content"><?php echo $this->page->content; ?></textarea>
-    </div>
+        <div class="row">
+            <?php echo $this->form->title; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->url; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->target; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->weight; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->content; ?>
+        </div>
 
+    </div>
     <div id="buttons-container">
         <input class="button" type="submit" value="Save"/>
         <a class="button button-red" href="<?php echo $this->url(array('page' => $this->page->name), 'page_view'); ?>">Cancel</a>

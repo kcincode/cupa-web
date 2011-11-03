@@ -1,12 +1,30 @@
 #edit-container {
-    width: 700px;
-    height: 400px;
-    margin: 20px auto;
+    width: 850px;
+    margin: 50px auto;
+    padding: 20px;
+    -webkit-box-shadow: 0 0 7px #444;
+    
 }
 
-textarea {
-    width: 700px;
+
+#edit-container dt {
+    font-size: 12pt;
+    font-weight: bold;
+    width: 80px;
+    text-align: right;
+    float: left;
+    margin-right: 10px;
+    padding-top: 7px;
+}
+
+#edit-container textarea {
+    width: 710px;
     height: 400px;
+}
+
+#edit-container input[type=text], #edit-container select {
+    padding: 5px;
+    font-size: 12pt;
 }
 
 #buttons-container {
@@ -19,6 +37,17 @@ textarea {
     padding: 3px 25px;
 }
 
-p {
+#url, #title {
+    width: 500px;
+}
+
+#weight {
+    width: 50px;
     text-align: center;
+}
+
+p.description {
+    color: #a0a0a0;
+    margin: 0 0 10px 55px;
+    padding: 0;
 }

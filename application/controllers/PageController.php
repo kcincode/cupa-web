@@ -54,12 +54,13 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Cupa_Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
         
-        if($page) {
-            $this->view->page = $page;
-        } else {
+        if(!$page) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
+
+        $form = new Cupa_Form_PageEdit();
+        $form->loadFromPage($page);
 
         $userRoleTable = new Cupa_Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
@@ -73,24 +74,78 @@ class PageController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-
-            $page->content = $post['content'];
-            $page->is_visible = (isset($post['is_visible'])) ? 1 : 0;
-            $page->updated_at = date('Y-m-d H:i:s');
-            $page->last_updated_by = $this->view->user->id;
-            $page->save();
-            $this->view->message('Page udpated successfully.', 'success');
-            $this->_redirect('/' . $page->name);
-        }
+            
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $page->title = $data['title'];
+                $page->url = (empty($data['url'])) ? null : $data['url'];
+                $page->target = $data['target'];
+                $page->weight = $data['weight'];
+                $page->content = $data['content'];
+                $page->updated_at = date('Y-m-d H:i:s');
+                $page->last_updated_by = $this->view->user->id;
+                $page->save();
+                
+                $this->view->message('Page updated successfully.', 'success');
+                $this->_redirect('/' . $page->name);
+            } else {
+                $form->populate($post);
+            }
+       }
         
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        
+        $this->view->page = $page;
+        $this->view->form = $form;
     }
 
     public function adminAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/admin.css');
+
+        $page = $this->getRequest()->getUserParam('page');
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', $page);
+        
+        if(!$page) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $form = new Cupa_Form_PageAdmin();
+        $form->loadFromPage($page);
+        
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$userRoleTable->hasRole($this->view->user->id, 'admin'))) {
+            $this->view->message('You either are not logged in or you do not have permission to edit this page.');
+            $this->_redirect('/' . $page->name);
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $page->parent = ($post['parent'] == 0) ? null : $post['parent'];
+                $page->name = $post['name'];
+                $page->is_visible = $post['is_visible'];
+                $page->updated_at = date('Y-m-d H:i:s');
+                $page->last_updated_by = $this->view->user->id;
+                $page->save();
+                
+                $this->view->message('Page updated successfully.', 'success');
+                $this->_redirect('/' . $page->name);                
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->page = $page;
+        $this->view->form = $form;
     }
 
     public function contactAction()

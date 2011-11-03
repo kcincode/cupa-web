@@ -147,6 +147,8 @@
         <formFile formName="UserForgotPassword"/>
         <formFile formName="Contact"/>
         <formFile formName="News"/>
+        <formFile formName="PageAdmin"/>
+        <formFile formName="PageEdit"/>
       </formsDirectory>
       <layoutsDirectory>
         <layoutScriptsDirectory>
