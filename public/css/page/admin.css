@@ -1,12 +1,12 @@
 #admin-container {
-    width: 600px;
+    width: 525px;
     margin: 50px auto;
     padding: 20px;
     -webkit-box-shadow: 0 0 7px #444;
 }
 
 #admin-container .row dt {
-    width: 150px;
+    width: 80px;
     text-align: right;
     float: left;
     padding-top: 8px;
