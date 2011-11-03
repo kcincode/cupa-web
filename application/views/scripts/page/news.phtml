@@ -1,10 +1,18 @@
 <div class="back">
-    <a class="button" href="<?php echo $_SERVER['HTTP_REFERER']; ?>">Back</a>
+    <?php if($this->hasRole("reporter") or $this->hasRole('admin')): ?>
+    <a class="button" href="<?php echo $this->url(array('slug' => $this->news->slug), 'news_edit'); ?>">Edit News</a>
+    <?php endif; ?>
 </div>
 
 <div class="title">
-    <?php echo $this->news->title; ?>
+    <?php echo $this->news->title; ?><br/>
 </div>
+
+<?php if(!$this->news->is_visible): ?>
+<div class="visible">
+    *** This news item is not yet visible to the public ***
+</div>
+<?php endif; ?>
 
 <div class="subtitle">
     <?php if($this->news->posted_at == $this->news->edited_at): ?>

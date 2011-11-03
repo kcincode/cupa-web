@@ -146,6 +146,7 @@
         <formFile formName="UserActivation"/>
         <formFile formName="UserForgotPassword"/>
         <formFile formName="Contact"/>
+        <formFile formName="News"/>
       </formsDirectory>
       <layoutsDirectory>
         <layoutScriptsDirectory>

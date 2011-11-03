@@ -1,14 +1,24 @@
 #edit-container {
-    width: 800px;
-    height: 600px;
+    width: 700px;
+    height: 400px;
     margin: 20px auto;
 }
 
 textarea {
-    width: 800px;
-    height: 600px;
+    width: 700px;
+    height: 400px;
 }
 
 #buttons-container {
     margin-top: 40px;
+    text-align: center;
+}
+
+.button, button-red {
+    font-size: 14pt;
+    padding: 3px 25px;
+}
+
+p {
+    text-align: center;
 }

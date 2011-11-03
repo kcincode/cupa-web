@@ -151,7 +151,7 @@ legend { border: 0; *margin-left: -7px; padding: 0; }
  * 3. Define consistent vertical alignment display in all browsers
  */
 
-button, input, select, textarea { font-size: 100%; margin: 0; vertical-align: baseline; *vertical-align: middle; }
+., input, select, textarea { font-size: 100%; margin: 0; vertical-align: baseline; *vertical-align: middle; }
 
 /*
  * 1. Define line-height as normal to match FF3/4 (set using !important in the UA stylesheet)
@@ -382,6 +382,25 @@ ul.error_list {
 
 .button:visited {
     color: #333;
+}
+
+.button-red {
+    color: #c00;
+    background-color: #f0d0d0;
+}
+
+.button-red:hover {
+    color: #c00;
+    background-color: #f0e0e0;
+}
+
+.button-red:active {
+    color: #c00;
+    background-color: #f0e0e0;
+}
+
+.button-red:visited {
+    color: #c00;
 }
 
 #login-container {

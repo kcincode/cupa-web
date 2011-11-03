@@ -16,7 +16,7 @@ class PageController extends Zend_Controller_Action
         $newsTable = new Cupa_Model_DbTable_News();
      
         // get all news and seperate by type
-        $allNews = array();        
+        $allNews = array();
         foreach($newsTable->fetchAllNews() as $news) {
             $allNews[$news['category']][] = $news;
         }
@@ -33,7 +33,10 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Cupa_Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
         
-        if($page and $page->is_visible) {
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if($page and ($page->is_visible or (Zend_Auth::getInstance()->hasIdentity() and ($userRoleTable->hasRole($this->view->user->id, 'admin') or
+           $userRoleTable->hasRole($this->view->user->id, 'editor') or
+           $userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))))) {
             $this->view->page = $page;
             $this->view->links = $pageTable->fetchChildren($page);
         } else {
@@ -69,7 +72,9 @@ class PageController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
 
             $page->content = $post['content'];
+            $page->is_visible = (isset($post['is_visible'])) ? 1 : 0;
             $page->updated_at = date('Y-m-d H:i:s');
+            $page->last_updated_by = $this->view->user->id;
             $page->save();
             $this->view->message('Page udpated successfully.', 'success');
             $this->_redirect('/' . $page->name);
@@ -78,7 +83,6 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-        
     }
 
     public function adminAction()
@@ -223,8 +227,13 @@ class PageController extends Zend_Controller_Action
         $newsTable = new Cupa_Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
         
-        if($news and $news->is_visible) {
-            $this->view->news = $news;
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if($news and 
+           (Zend_Auth::getInstance()->hasIdentity() and 
+            ($userRoleTable->hasRole($this->view->user->id, 'reporter') or
+             $userRoleTable->hasRole($this->view->user->id, 'admin')) or 
+           $news->is_visible)) {            
+                $this->view->news = $news;
         } else {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -238,8 +247,41 @@ class PageController extends Zend_Controller_Action
 
     public function newseditAction()
     {
-        // action body
+        $slug = $this->getRequest()->getUserParam('slug');
+        $newsTable = new Cupa_Model_DbTable_News();
+        $news = $newsTable->fetchNewsBySlug($slug);
+        
+        $form = new Cupa_Form_News();
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $news->is_visible = $post['is_visible'];
+            $news->title = $post['title'];
+            $news->slug = $newsTable->slugifyTitle($post['title']);
+            $news->url = (empty($post['url'])) ? null : $post['url'];
+            $news->info = $post['info'];
+            $news->content = $post['content'];
+            $news->edited_at = date('Y-m-d H:i:s');
+            $news->type = $newsTable->getNewsType($news);
+            $news->last_edited_by = $this->view->user->id;
+            $news->save();
+
+            $this->view->message('News item updated successfully.', 'success');
+            $this->_redirect('/news/' . $news->slug);
+        }
+        
+        if($news) {
+            $form->loadFromNews($news);
+            $this->view->news = $news;
+        } else {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/newsedit.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        
+        $this->view->form = $form;
     }
-
-
 }

@@ -165,3 +165,19 @@ nav ul li a {
 #page-links ul li {
     margin-bottom: 3px;
 }
+
+.visible {
+    position: absolute;
+    float: right;
+    padding: 5px;
+    margin-left: 350px;
+    margin-top: -10px;
+    font-size: 14pt;
+    color: #FF3333;
+    background-color: #f0c0c0;
+    line-height: 30px;
+    border: 1px solid #FF3333;
+    -webkit-box-shadow: 1px 1px 5px #444;
+    -moz-box-shadow: 1px 1px 5px #444;
+    box-shadow: 1px 1px 5px #444;
+}

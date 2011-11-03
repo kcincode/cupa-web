@@ -17,4 +17,12 @@ class Cupa_Model_DbTable_NewsCategory extends Zend_Db_Table
         
         return false;
     }
+    
+    public function fetchAllCategories()
+    {
+        $select = $this->select()
+                       ->order('name');
+        
+        return $this->fetchAll($select);
+    }
 }
