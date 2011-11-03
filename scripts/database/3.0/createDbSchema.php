@@ -19,6 +19,8 @@ try {
     $db->query("DROP TABLE IF EXISTS `user_profile`");
     $db->query("DROP TABLE IF EXISTS `page`");
     $db->query("DROP TABLE IF EXISTS `news`");
+    $db->query("DROP TABLE IF EXISTS `club_captain`");
+    $db->query("DROP TABLE IF EXISTS `club`");
     $db->query("DROP TABLE IF EXISTS `user`");
     $db->query("DROP TABLE IF EXISTS `contact`");
     echo "Done\n";
@@ -404,11 +406,79 @@ try {
     endWithError();
 }
 
-echo "Finished\n\n";
+/*******************************************************************************
+ * 
+ * CLUB TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `Club` Table..."; 
+    $db->beginTransaction();
 
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `club` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `begun` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `end` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+          `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `website` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+          `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `updated_at` datetime NOT NULL,
+          `last_updated_by` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          KEY `last_updated_by` (`last_updated_by`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    $db->query("
+        ALTER TABLE `club`
+          ADD CONSTRAINT `club_ibfk_1` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * CLUB_CAPTAIN TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `ClubCaptain` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `club_captain` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `club_id` int(11) NOT NULL,
+          `user_id` int(11) NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `user_id` (`user_id`),
+          KEY `club_id` (`club_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    $db->query("
+        ALTER TABLE `club_captain`
+          ADD CONSTRAINT `club_captain_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+          ADD CONSTRAINT `club_captain_ibfk_1` FOREIGN KEY (`club_id`) REFERENCES `club` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+echo "Finished\n\n";
 
 function endWithError()
 {
     echo "Finished with Errors.\n\n";
     exit();
 }
+

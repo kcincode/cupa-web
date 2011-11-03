@@ -6,6 +6,7 @@ try {
     include('importUserData.php');
     include('importPageData.php');
     include('importNewsData.php');
+    include('importClubData.php');
     echo "Finished\n";
 } catch(Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
