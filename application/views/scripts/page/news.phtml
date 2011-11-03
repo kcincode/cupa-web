@@ -1,3 +1,5 @@
+<div id="page-banner">&nbsp;</div>
+
 <div class="back">
     <?php if($this->hasRole("reporter") or $this->hasRole('admin')): ?>
     <a class="button" href="<?php echo $this->url(array('slug' => $this->news->slug), 'news_edit'); ?>">Edit News</a>

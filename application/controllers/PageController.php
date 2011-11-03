@@ -221,6 +221,7 @@ class PageController extends Zend_Controller_Action
 
     public function newsAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
         
         $slug = $this->getRequest()->getUserParam('slug');
