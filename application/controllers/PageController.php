@@ -233,7 +233,16 @@ class PageController extends Zend_Controller_Action
 
     public function clubsAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubs.css');
+        
+        $clubTable = new Cupa_Model_DbTable_Club();
+        $this->view->activeClubs = $clubTable->fetchAll();
+        
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $this->view->page = $pageTable->fetchBy('name', 'clubs');
+        $this->view->links = $pageTable->fetchChildren($this->view->page);
+        
     }
 
     public function clubsaddAction()
