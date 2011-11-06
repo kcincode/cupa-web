@@ -1,0 +1,25 @@
+h3 {
+    font-size: 20pt;
+    text-decoration: underline;
+    margin-bottom: 20px;
+}
+
+.club {
+
+}
+
+.club .name {
+    font-weight: bold;
+    font-size: 18pt;
+}
+
+.club .date {
+    font-style: italic;
+    float: left;
+    margin-right: 10px;
+}
+
+span.club-type {
+    font-size: 12pt;
+    color: #888;
+}

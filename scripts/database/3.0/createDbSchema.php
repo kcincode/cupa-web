@@ -419,6 +419,7 @@ try {
         CREATE TABLE IF NOT EXISTS `club` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `type` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
           `begun` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
           `end` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
           `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,

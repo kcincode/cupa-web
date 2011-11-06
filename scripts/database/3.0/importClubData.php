@@ -31,7 +31,7 @@ $clubs = array(
         'email' => 'neil.narayan@gmail.com',
         'website' => null,
         'content' => '<p><a href="mailto:bsageccp@gmail.com">Ben Sage</a> and 
-            <a href="mailto:neil.narayan@gmail.com">Neil Narayan</a>would like 
+            <a href="mailto:neil.narayan@gmail.com">Neil Narayan</a> would like 
             to officially announce that we are starting a new open ultimate team 
             for this 2011 season. Although we have not yet finalized our schedule, 
             we are planning on holding practice once or twice per week, and 
@@ -47,7 +47,7 @@ $clubs = array(
         'email' => 'gwhite15@cinci.rr.com',
         'website' => null,
         'content' => "<p>Since rising from the ashes of their youth in the late 
-            1990\'s, Age Against the Machine has led the struggle for spirited 
+            1990's, Age Against the Machine has led the struggle for spirited 
             Old Man Ultimate. With appearances at the 2001 and 2004 Masters 
             Nationals, and 2009 and 2010 Grand Masters Nationals, this collection 
             of crafty, crusty and creaky men continue to encourage their 
@@ -65,8 +65,20 @@ $captains = array(
         'user_id' => 299,
     ),
     array(
+        'club_id' => 1,
+        'user_id' => 83,
+    ),
+    array(
+        'club_id' => 1,
+        'user_id' => 41,
+    ),
+    array(
         'club_id' => 2,
         'user_id' => 49,
+    ),
+    array(
+        'club_id' => 2,
+        'user_id' => 65,
     ),
     array(
         'club_id' => 3,
@@ -78,6 +90,7 @@ foreach($clubs as $club) {
     echo "        Importing club item `{$club['name']}`...";
     $clubObject = $clubTable->createRow();
     $clubObject->name = $club['name'];
+    $clubObject->type = $club['type'];
     $clubObject->begun = $club['begun'];
     $clubObject->end = $club['end'];
     $clubObject->email = $club['email'];

@@ -16,16 +16,32 @@
         <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
         <?php endif; ?>
     </span>
-  
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    <h2>Current Active Teams</h2>
+    <h3>Current Active Teams</h3>
+    
     <?php foreach($this->activeClubs as $club): ?>
     <div class="club">
-        <div class="name"><?php echo $club->name; ?></div>
-        <div class="url"><?php echo $club->website; ?></div>
+        <div class="name"><?php echo $club->name; ?> <span class="club-type">(<?php echo $club->type; ?>)</span></div>
+        <div class="date"><?php echo $club->begun; ?> - <?php echo 'Current'; ?></div>
+        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $club->website . '">Website</a>)'; ?></div>
         <div class="captains"><?php echo $this->getClubCaptains($club->id); ?></div>
+        <div class="contact"><strong>Contact Email:</strong> <?php echo $this->displayEmail($club->email); ?></div>
+        <div class="info"><?php echo $club->content; ?></div>
+    </div>
+    <?php endforeach; ?>
+    
+    <h3>Past Teams</h3>
+    
+    <?php foreach($this->pastClubs as $club): ?>
+    <div class="club">
+        <div class="name"><?php echo $club->name; ?> (<?php echo $club->type; ?>)</div>
+        <div class="date"><?php echo $club->begun; ?> - <?php echo $club->end; ?></div>
+        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $club->website . '">Website</a>)'; ?></div>
+        <div class="captains"><?php echo $this->getClubCaptains($club->id); ?></div>
+        <div class="contact"><strong>Contact Email:</strong> <?php echo $this->displayEmail($club->email); ?></div>
+        <div class="info"><?php echo $club->content; ?></div>
     </div>
     <?php endforeach; ?>
 </div>

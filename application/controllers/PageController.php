@@ -237,7 +237,8 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubs.css');
         
         $clubTable = new Cupa_Model_DbTable_Club();
-        $this->view->activeClubs = $clubTable->fetchAll();
+        $this->view->activeClubs = $clubTable->fetchAllByType('current');
+        $this->view->pastClubs = $clubTable->fetchAllByType('past');
         
         $pageTable = new Cupa_Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'clubs');
