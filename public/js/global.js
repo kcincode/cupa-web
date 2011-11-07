@@ -27,6 +27,7 @@ $(document).ready(function() {
                    $('#login-container').html(response);
                    $('#login-container').fadeIn('fast');
                    $('#error-string').html('');
+                   $('#username').focus();
                    
                    $('#login-submit').click(function(e) {
                        e.preventDefault();

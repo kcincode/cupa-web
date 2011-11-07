@@ -20,4 +20,24 @@ class Cupa_Model_DbTable_Club extends Zend_Db_Table
         
         return $this->fetchAll($select);
     }
+    
+    public function fetchByName($name)
+    {
+        $select = $this->select()
+                       ->where('name = ?', $name);
+        
+        return $this->fetchRow($select);
+    }
+    
+    public function isUnique($name)
+    {
+        $result = $this->fetchByName($name);
+        
+        Zend_Debug::dump($result);
+        if(isset($result->id)) {
+            return false;
+        }
+        
+        return true;
+    }
 }

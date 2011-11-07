@@ -236,6 +236,8 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubs.css');
         
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/clubs.js');
+
         $clubTable = new Cupa_Model_DbTable_Club();
         $this->view->activeClubs = $clubTable->fetchAllByType('current');
         $this->view->pastClubs = $clubTable->fetchAllByType('past');
@@ -248,7 +250,42 @@ class PageController extends Zend_Controller_Action
 
     public function clubsaddAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubsadd.css');
+        
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+        
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $clubTable = new Cupa_Model_DbTable_Club();
+            if($clubTable->isUnique($post['name'])) {
+                $club = $clubTable->createRow();
+                $club->name = $post['name'];
+                $club->type = 'Unknown';
+                $club->begun = 'Unknown';
+                $club->content = '';
+                $club->updated_at = date('Y-m-d H:i:s');
+                $club->last_updated_by = $this->view->user->id;
+                $club->save();
+                
+                $this->view->message('Club Team created successfully.');
+                echo Zend_Json::encode(array('result' => 'success', 'data' => $club->id));
+            } else {
+                $this->_helper->viewRenderer->setNoRender(true);
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Name Already Exists'));
+                return;
+            }
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
     }
 
     public function clubseditAction()
