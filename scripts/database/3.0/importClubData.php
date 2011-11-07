@@ -11,6 +11,8 @@ $clubs = array(
     array(
         'name' => 'Steamboat',
         'type' => 'Club Mixed',
+        'facebook' => '/steamboatultimate',
+        'twitter' => 'cincysfb',
         'begun' => 'Summer 2008',
         'end' => null,
         'email' => 'cincymixedultimate@gmail.com',
@@ -26,6 +28,8 @@ $clubs = array(
     array(
         'name' => 'Hustle',
         'type' => 'Club Open',
+        'facebook' => null,
+        'twitter' => null,
         'begun' => 'Summer 2011',
         'end' => null,
         'email' => 'neil.narayan@gmail.com',
@@ -41,10 +45,12 @@ $clubs = array(
     ),
     array(
         'name' => 'Age Against the Machine',
-        'type' => 'Masters',
+        'type' => 'Masters, Grand Masters',
+        'facebook' => null,
+        'twitter' => null,
         'begun' => 'Summer 1990',
-        'end' => null,
-        'email' => 'gwhite15@cinci.rr.com',
+        'end' => 'Fall 2010',
+        'email' => null,
         'website' => null,
         'content' => "<p>Since rising from the ashes of their youth in the late 
             1990's, Age Against the Machine has led the struggle for spirited 
@@ -57,6 +63,52 @@ $clubs = array(
             lacking in skill what they also lack in speed, will rise up one final 
             time against the unrelenting Machine.</p>",
     ),
+    array(
+        'name' => 'Fine Young Callahans',
+        'type' => 'Masters',
+        'facebook' => null,
+        'twitter' => null,
+        'begun' => 'Fall 2011',
+        'end' => null,
+        'email' => null,
+        'website' => null,
+        'content' => "<p>Starting up for the 2011 season, Fine Young Callahans 
+            intends to build up to Nationals-level caliber in the masters division.  
+            See Michael Rimler or Russ Johnson for more information.</p>",
+    ),
+    array(
+        'name' => 'Dish',
+        'type' => 'Club Mixed',
+        'facebook' => null,
+        'twitter' => null,
+        'begun' => 'Unknown',
+        'end' => 'Unknown',
+        'email' => null,
+        'website' => null,
+        'content' => "<p>Cincinnati's co-ed team, perennial favorites at the Annual 
+            Co-ed Tournament Gender Blender.</p>",
+    ),/*
+    array(
+        'name' => 'Cinister',
+        'type' => 'College Open',
+        'facebook' => '/pages/Cinister-Ultimate-Frisbee/195271320488338',
+        'twitter' => 'CinisterUF',
+        'begun' => '2008',
+        'end' => null,
+        'email' => 'cinisterultimate@gmail.com',
+        'website' => 'http://www.uc.edu/groups/ultimatefrisbee/',
+        'content' => "<p>This is one of Cincinnati's college teams from University of Cincinnati.</p>",
+    ),
+    array(
+        'name' => 'BLOB',
+        'type' => 'College Open',
+        'facebook' => null,
+        'twitter' => 'BLOB_ultimate',
+        'begun' => 'Fall 2007',
+        'end' => null,
+        'website' => 'http://www.xavier.edu/clubsports/ultimate-frisbee',
+        'content' => "<p>This is one of Cincinnati's college teams from Xavier University.</p>",
+    ),*/
 );
 
 $captains = array(
@@ -91,6 +143,8 @@ foreach($clubs as $club) {
     $clubObject = $clubTable->createRow();
     $clubObject->name = $club['name'];
     $clubObject->type = $club['type'];
+    $clubObject->facebook = $club['facebook'];
+    $clubObject->twitter = $club['twitter'];
     $clubObject->begun = $club['begun'];
     $clubObject->end = $club['end'];
     $clubObject->email = $club['email'];

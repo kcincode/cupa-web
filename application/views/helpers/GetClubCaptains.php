@@ -22,6 +22,6 @@ class My_View_Helper_GetClubCaptains extends Zend_View_Helper_Abstract
             $string .= ', ' . $captain['name'];
         }
         
-        return '<strong>Captained by:</strong> ' . substr($string, 2);
+        return substr($string, 2);
     }
 }
