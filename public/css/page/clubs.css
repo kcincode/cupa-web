@@ -5,7 +5,11 @@ h3 {
 }
 
 .club {
+    margin-bottom: 35px;
+}
 
+.highlight {
+    background-color: #f0f0f0;
 }
 
 .club .name {
@@ -86,4 +90,12 @@ h4 {
     padding: 0;
     width: 430px;
     text-align: center;
+}
+
+.links {
+    float: right;
+}
+
+.links a img {
+    width: 20px;
 }

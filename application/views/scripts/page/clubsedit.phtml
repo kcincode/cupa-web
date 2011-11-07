@@ -1,4 +1,42 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>clubsedit</b></p>
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->club->name; ?></h1>
+<div id="clubs-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->type; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->facebook; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->twitter; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->begin; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->end; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->email; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->website; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->content; ?>
+        </div>
+        
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array(), 'page_clubs'); ?>">Cancel</a>
+        </div>
+    </form>
+    
+    <?php echo $this->partial('tinymce.phtml', array('element' => 'content')); ?>
 </div>
+

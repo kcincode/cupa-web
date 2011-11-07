@@ -250,8 +250,6 @@ class PageController extends Zend_Controller_Action
 
     public function clubsaddAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubsadd.css');
-        
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
@@ -269,7 +267,7 @@ class PageController extends Zend_Controller_Action
                 $club = $clubTable->createRow();
                 $club->name = $post['name'];
                 $club->type = 'Unknown';
-                $club->begun = 'Unknown';
+                $club->begin = 'Unknown';
                 $club->content = '';
                 $club->updated_at = date('Y-m-d H:i:s');
                 $club->last_updated_by = $this->view->user->id;
@@ -290,9 +288,98 @@ class PageController extends Zend_Controller_Action
 
     public function clubseditAction()
     {
-        // action body
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubsedit.css');
+        
+        $clubTable = new Cupa_Model_DbTable_Club();
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+
+        $page = $pageTable->fetchBy('name', 'clubs');
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
+            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
+            $this->_redirect('/clubs');
+        }
+
+        $clubId = $this->getRequest()->getUserParam('club');
+        $club = $clubTable->find($clubId)->current();
+        
+        if(!$club) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $form = new Cupa_Form_ClubEdit();
+        $form->loadFromClub($club);
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $club->name = $data['name'];
+                $club->type = $data['type'];
+                $club->facebook = (empty($data['facebook'])) ? null : $data['facebook'];
+                $club->twitter = (empty($data['twitter'])) ? null : $data['twitter'];
+                $club->begin = $data['begin'];
+                $club->end = (empty($data['end'])) ? null : $data['end'];
+                $club->email = (empty($data['email'])) ? null : $data['email'];
+                $club->website = (empty($data['website'])) ? null : $data['website'];
+                $club->content = $data['content'];
+                $club->save();
+                
+                $this->view->message('Team ' . $club->name . ' updated successfully.', 'success');
+                $this->_redirect('/clubs');
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        
+        $this->view->club = $club;
+        $this->view->form = $form;
     }
 
+    public function clubsdeleteAction()
+    {
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        
+        $clubTable = new Cupa_Model_DbTable_Club();
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+
+        $page = $pageTable->fetchBy('name', 'clubs');
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
+            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
+            $this->_redirect('/clubs');
+        }
+
+        $clubId = $this->getRequest()->getUserParam('club');
+        if(is_numeric($clubId)) {
+            $clubTable = new Cupa_Model_DbTable_Club();
+            $club = $clubTable->find($clubId)->current();
+            if($club) {
+                $club->delete();
+                
+                $this->view->message('The ' . $club->name . ' club has been removed.', 'success');
+            }
+        }
+        
+        $this->_redirect('/clubs');
+    }
+
+    
     public function linksAction()
     {
         // action body

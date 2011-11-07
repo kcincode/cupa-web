@@ -422,7 +422,7 @@ try {
           `type` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
           `facebook` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
           `twitter` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
-          `begun` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `begin` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
           `end` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
           `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
           `website` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,

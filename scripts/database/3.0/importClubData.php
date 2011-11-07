@@ -10,10 +10,10 @@ echo "    Importing `Club` data:\n";
 $clubs = array(
     array(
         'name' => 'Steamboat',
-        'type' => 'Club Mixed',
-        'facebook' => '/steamboatultimate',
+        'type' => 'Mixed',
+        'facebook' => 'steamboatultimate',
         'twitter' => 'cincysfb',
-        'begun' => 'Summer 2008',
+        'begin' => '2008',
         'end' => null,
         'email' => 'cincymixedultimate@gmail.com',
         'website' => 'https://sites.google.com/site/steamboatultimate/',
@@ -27,10 +27,10 @@ $clubs = array(
     ),
     array(
         'name' => 'Hustle',
-        'type' => 'Club Open',
+        'type' => 'Open',
         'facebook' => null,
         'twitter' => null,
-        'begun' => 'Summer 2011',
+        'begin' => '2011',
         'end' => null,
         'email' => 'neil.narayan@gmail.com',
         'website' => null,
@@ -48,8 +48,8 @@ $clubs = array(
         'type' => 'Masters, Grand Masters',
         'facebook' => null,
         'twitter' => null,
-        'begun' => 'Summer 1990',
-        'end' => 'Fall 2010',
+        'begin' => '1990',
+        'end' => '2010',
         'email' => null,
         'website' => null,
         'content' => "<p>Since rising from the ashes of their youth in the late 
@@ -68,7 +68,7 @@ $clubs = array(
         'type' => 'Masters',
         'facebook' => null,
         'twitter' => null,
-        'begun' => 'Fall 2011',
+        'begin' => '2011',
         'end' => null,
         'email' => null,
         'website' => null,
@@ -78,10 +78,10 @@ $clubs = array(
     ),
     array(
         'name' => 'Dish',
-        'type' => 'Club Mixed',
+        'type' => 'Mixed',
         'facebook' => null,
         'twitter' => null,
-        'begun' => 'Unknown',
+        'begin' => 'Unknown',
         'end' => 'Unknown',
         'email' => null,
         'website' => null,
@@ -91,7 +91,7 @@ $clubs = array(
     array(
         'name' => 'Cinister',
         'type' => 'College Open',
-        'facebook' => '/pages/Cinister-Ultimate-Frisbee/195271320488338',
+        'facebook' => 'pages/Cinister-Ultimate-Frisbee/195271320488338',
         'twitter' => 'CinisterUF',
         'begun' => '2008',
         'end' => null,
@@ -145,7 +145,7 @@ foreach($clubs as $club) {
     $clubObject->type = $club['type'];
     $clubObject->facebook = $club['facebook'];
     $clubObject->twitter = $club['twitter'];
-    $clubObject->begun = $club['begun'];
+    $clubObject->begin = $club['begin'];
     $clubObject->end = $club['end'];
     $clubObject->email = $club['email'];
     $clubObject->website = $club['website'];

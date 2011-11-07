@@ -149,6 +149,7 @@
         <formFile formName="News"/>
         <formFile formName="PageAdmin"/>
         <formFile formName="PageEdit"/>
+        <formFile formName="ClubEdit"/>
       </formsDirectory>
       <layoutsDirectory>
         <layoutScriptsDirectory>

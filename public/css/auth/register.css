@@ -9,6 +9,8 @@ p {
     margin: 50px auto;
     padding: 20px;
     -webkit-box-shadow: 0 0 7px #444;
+    -moz-box-shadow: 0 0 7px #444;
+    box-shadow: 0 0 7px #444;
 }
 
 #registration-container input[type=text] {
