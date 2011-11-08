@@ -1,0 +1,31 @@
+.officer {
+    float: left;
+    margin: 10px;
+}
+
+.officer .info {
+    float: left;
+    width: 235px;
+    padding: 10px;
+}
+
+.officer .image img {
+    width: 75px;
+    height: 75px;
+}
+
+.officer .image {
+    float: left;
+    -webkit-box-shadow: 1px 1px 5px #444;
+    -moz-box-shadow: 1px 1px 5px #444;
+    box-shadow: 1px 1px 5px #444;
+}
+
+span.name {
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+span.position {
+    color: #c55;
+}

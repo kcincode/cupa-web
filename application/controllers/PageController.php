@@ -183,7 +183,16 @@ class PageController extends Zend_Controller_Action
 
     public function officersAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officers.css');
+        
+        $officerTable = new Cupa_Model_DbTable_Officer();
+        $this->view->officers = $officerTable->fetchAllOfficers();
+        
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'officers');
+        $this->view->page = $page;
+        $this->view->links = $pageTable->fetchChildren($page);
     }
 
     public function officerseditAction()

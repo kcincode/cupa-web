@@ -8,7 +8,8 @@ class My_View_Helper_Fullname extends Zend_View_Helper_Abstract
     public function setView(Zend_View_Interface $view)
     {
         $this->view = $view;
-    }    
+    }
+    
     /**
      * This helper will return true if the userId has the role
      * specified and false otherwise 

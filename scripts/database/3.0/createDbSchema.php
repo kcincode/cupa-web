@@ -21,6 +21,7 @@ try {
     $db->query("DROP TABLE IF EXISTS `news`");
     $db->query("DROP TABLE IF EXISTS `club_captain`");
     $db->query("DROP TABLE IF EXISTS `club`");
+    $db->query("DROP TABLE IF EXISTS `officer`");
     $db->query("DROP TABLE IF EXISTS `user`");
     $db->query("DROP TABLE IF EXISTS `contact`");
     echo "Done\n";
@@ -476,6 +477,45 @@ try {
     $db->rollback();
     endWithError();
 }
+
+/*******************************************************************************
+ * 
+ * OFFICER TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `Officer` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `officer` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `user_id` int(11) NOT NULL,
+          `position` varchar(100) NOT NULL,
+          `since` date NOT NULL,
+          `to` date DEFAULT NULL,
+          `weight` int(11) NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `user_id` (`user_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    $db->query("
+        ALTER TABLE `officer`
+          ADD CONSTRAINT `officer_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+
+
+
+
+
 
 echo "Finished\n\n";
 
