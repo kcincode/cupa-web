@@ -1,4 +1,73 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>minutes</b></p>
+<div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
+<div id="page-header" class="<?php echo $this->pageClass(); ?>">
+    <span class="title">
+        <h2><?php echo $this->page->title; ?></h2>
+    </span>
+    <?php if(!$this->page->is_visible): ?>
+    <div class="visible">
+        *** This page is not yet visible to the public ***
+    </div>
+    <?php endif; ?>
+    <span class="actions">
+        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+        <a class="button" id="add-officer" href="#">Add Officer</a>
+        <div id="add-officers-container"></div>
+        <?php endif; ?>
+    </span>
+  
+</div>
+
+<div id="page-content" class="<?php echo $this->pageClass(); ?>">
+    <div id="minute-container">
+        <div class="minute header">
+            <div class="when header">When</div>
+            <div class="location header">Where</div>
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <div class="links header">Actions</div>
+            <?php else: ?>
+            <div class="links header">Download</div>
+            <?php endif; ?>
+        </div>
+        <?php $row = 'even'; foreach($this->minutes['visible'] as $minute): ?>
+        <?php $row = ($row == 'even') ? 'odd' : 'even'; ?>
+        <div class="minute <?php echo $row; ?>">
+            <div class="when"><?php echo $minute['when']; ?></div>
+            <div class="location"><?php echo $minute['location']; ?></div>
+            <div class="links">
+                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
+                    <img title="Download Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-pdf.png"/>
+                </a>
+
+                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
+                    <img title="Edit Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
+                </a>
+                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
+                    <img title="Delete Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
+                </a>
+                <?php endif; ?>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <?php endforeach; ?>
+
+        <?php if($this->hasRole('admin') and isset($this->minutes['hidden'])): ?>
+        <h2>Hidden Minutes</h2>
+
+        <?php foreach($this->minutes['hidden'] as $minute): ?>
+        <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div id="page-links" class="<?php echo $this->pageClass(); ?>">
+    <ul>
+        <?php foreach($this->links as $link): ?>
+        <?php if($link->name == $this->page->name): ?>
+        <li><?php echo $link->title; ?></li>
+        <?php else: ?>
+        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
+        <?php endif; ?>
+        <?php endforeach; ?>
+    </ul>
 </div>

@@ -24,6 +24,7 @@ try {
     $db->query("DROP TABLE IF EXISTS `officer`");
     $db->query("DROP TABLE IF EXISTS `user`");
     $db->query("DROP TABLE IF EXISTS `contact`");
+    $db->query("DROP TABLE IF EXISTS `minute`");
     echo "Done\n";
 } catch(Exception $e) {
     echo 'Error: ' . $e->getMessage() . "\n";
@@ -511,11 +512,35 @@ try {
     endWithError();
 }
 
+/*******************************************************************************
+ * 
+ * MINUTES TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `Minutes` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `minute` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `when` datetime NOT NULL,
+          `location` text NOT NULL,
+          `pdf` longblob,
+          `is_visible` tinyint(1) NOT NULL DEFAULT '1',
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
 
 
-
-
-
+ 
 
 echo "Finished\n\n";
 

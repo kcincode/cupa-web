@@ -316,7 +316,16 @@ class PageController extends Zend_Controller_Action
 
     public function minutesAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutes.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutes.js');
+        
+        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $this->view->minutes = $minuteTable->fetchAllMinutes();
+        
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $this->view->page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        $this->view->links = $pageTable->fetchChildren($this->view->page);
     }
 
     public function minuteseditAction()
