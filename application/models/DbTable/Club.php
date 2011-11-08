@@ -33,7 +33,6 @@ class Cupa_Model_DbTable_Club extends Zend_Db_Table
     {
         $result = $this->fetchByName($name);
         
-        Zend_Debug::dump($result);
         if(isset($result->id)) {
             return false;
         }

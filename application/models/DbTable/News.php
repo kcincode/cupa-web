@@ -59,4 +59,16 @@ class Cupa_Model_DbTable_News extends Zend_Db_Table
         
         return $this->fetchRow($select);
     }
+
+    public function isUnique($title)
+    {
+        $slug = $this->slugifyTitle($title);
+        $result = $this->fetchNewsBySlug($slug);
+        
+        if(isset($result->id)) {
+            return false;
+        }
+        
+        return true;
+    }
 }

@@ -397,8 +397,10 @@ class PageController extends Zend_Controller_Action
 
     public function allnewsAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/allnews.css');
-        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/news.js');
+
         $category = $this->getRequest()->getUserParam('category');
         $this->view->category = ucwords($category);
         
@@ -418,7 +420,11 @@ class PageController extends Zend_Controller_Action
     {
         $session = new Zend_Session_Namespace('newsbackbutton');
         if($_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/' or 
-           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/youth') {
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/youth' or 
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/leagues' or 
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/pickup' or 
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/info' or 
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews') {
             $session->url = $_SERVER['HTTP_REFERER'];
         }
         
@@ -440,17 +446,68 @@ class PageController extends Zend_Controller_Action
                 $this->view->news = $news;
         } else {
             // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+            throw new Zend_Controller_Dispatcher_Exception('News item not found');
         }
     }
 
     public function newsaddAction()
     {
-        // action body
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
+             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('News item not found');
+        }
+        
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+        
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->_helper->viewRenderer->setNoRender(true);
+            $newsTable = new Cupa_Model_DbTable_News();
+            
+            if($newsTable->isUnique($post['title'])) {
+                $news = $newsTable->createRow();
+                $news->title = $post['title'];
+                $news->is_visible = 0;
+                $news->slug = $newsTable->slugifyTitle($post['title']);
+                $news->url = null;
+                $news->info = '';
+                $news->content = '';
+                $news->type = $newsTable->getNewsType($news);
+                $news->last_edited_by = $this->view->user->id;
+                $news->edited_at = date('Y-m-d H:i:s');
+                $news->save();
+            
+                $this->view->message('News item created successfully.');
+                echo Zend_Json::encode(array('result' => 'success', 'data' => $news->id));
+            } else {
+                $this->_helper->viewRenderer->setNoRender(true);
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'News Title Already Exists'));
+                return;
+            }                    
+        }
+        
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
     }
 
     public function newseditAction()
     {
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
+             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('News item not found');
+        }
+        
         $slug = $this->getRequest()->getUserParam('slug');
         $newsTable = new Cupa_Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);

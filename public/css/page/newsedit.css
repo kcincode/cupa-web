@@ -60,3 +60,9 @@ dd.disabled {
 #is_visible-element {
     margin-top: 7px;
 }
+
+ul.errors {
+    color: #c00;
+    margin: 0 0 0 80px;
+    list-style: none;
+}
