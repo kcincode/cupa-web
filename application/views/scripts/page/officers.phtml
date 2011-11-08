@@ -9,11 +9,9 @@
     </div>
     <?php endif; ?>
     <span class="actions">
-        <?php if($this->hasRole('admin')): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>">Admin</a>
-        <?php endif; ?>
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
+        <a class="button" id="add-officer" href="#">Add Officer</a>
+        <div id="add-officers-container"></div>
         <?php endif; ?>
     </span>
   
@@ -26,6 +24,18 @@
 <div class="officer">
     <div class="image"><img src="<?php echo $this->officerImageUrl($officer['user_id']); ?>"/></div>
     <div class="info">
+        <div class="links">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <a href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_edit'); ?>">
+                <img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
+            </a>
+            <?php endif; ?>
+            <?php if($this->hasRole('admin')): ?>
+            <a onclick="if(!confirm('Are you sure you would like to delete this officer?')) { return false; }" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_delete'); ?>">
+                <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
+            </a>
+            <?php endif; ?>
+        </div>
         <span class="name"><?php echo $this->fullname($officer['user_id']); ?></span><br/>
         <span class="position"><?php echo $officer['position']; ?></span></br>
         <span class="since">Since: <?php echo date('M dS, Y', strtotime($officer['since'])); ?></span>
@@ -33,10 +43,29 @@
 </div>
 <?php endforeach; ?>
 
-<?php if($this->hasRole('admin')): ?>
+<?php if($this->hasRole('admin') and isset($this->officers['past'])): ?>
 <h2>Past Board Members</h2>
 <?php foreach($this->officers['past'] as $officer): ?>
-
+<div class="officer">
+    <div class="image"><img src="<?php echo $this->officerImageUrl($officer['user_id']); ?>"/></div>
+    <div class="info">
+        <div class="links">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <a href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_edit'); ?>">
+                <img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
+            </a>
+            <?php endif; ?>
+            <?php if($this->hasRole('admin')): ?>
+            <a onclick="if(!confirm('Are you sure you would like to delete this officer?')) { return false; }" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_delete'); ?>">
+                <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
+            </a>
+            <?php endif; ?>
+        </div>
+        <span class="name"><?php echo $this->fullname($officer['user_id']); ?></span><br/>
+        <span class="position"><?php echo $officer['position']; ?></span></br>
+        <span class="since"><?php echo date('M dS, Y', strtotime($officer['since'])); ?> - <?php echo date('M dS, Y', strtotime($officer['to'])); ?></span>
+    </div>
+</div>
 <?php endforeach; ?>
 <?php endif; ?>
 </div>

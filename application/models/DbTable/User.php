@@ -118,4 +118,17 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
         
         return false;
     }
+    
+    public function fetchAllUsers($showDisabled = false)
+    {
+        $select = $this->select()
+                       ->order('last_name')
+                       ->order('first_name');
+        
+        if(!$showDisabled) {
+            $select->where('is_active = ?', 1);
+        }
+        
+        return $this->fetchAll($select);
+    }
 }

@@ -1,4 +1,28 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>officersedit</b></p>
-</div>
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit Officer</h1>
+
+<form method="post">
+    <div id="officersedit-container">
+            <div class="row">
+                <?php echo $this->form->user_id; ?>
+            </div>
+            <div class="row">
+                <?php echo $this->form->position; ?>
+            </div>
+            <div class="row">
+                <?php echo $this->form->since; ?>
+            </div>
+            <div class="row">
+                <?php echo $this->form->to; ?>
+            </div>
+            <div class="row">
+                <?php echo $this->form->weight; ?>
+            </div>
+    </div>
+
+    <div id="buttons-container">
+        <input class="button" type="submit" value="Save"/>
+        <a class="button button-red" href="<?php echo $this->url(array(), 'page_officers'); ?>">Cancel</a>
+    </div>
+</form>

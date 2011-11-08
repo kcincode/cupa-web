@@ -490,7 +490,7 @@ try {
     $db->query("
         CREATE TABLE IF NOT EXISTS `officer` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
-          `user_id` int(11) NOT NULL,
+          `user_id` int(11) DEFAULT NULL,
           `position` varchar(100) NOT NULL,
           `since` date NOT NULL,
           `to` date DEFAULT NULL,

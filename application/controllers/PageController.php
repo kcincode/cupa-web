@@ -185,7 +185,8 @@ class PageController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officers.css');
-        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officers.js');
+
         $officerTable = new Cupa_Model_DbTable_Officer();
         $this->view->officers = $officerTable->fetchAllOfficers();
         
@@ -197,12 +198,120 @@ class PageController extends Zend_Controller_Action
 
     public function officerseditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officersedit.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officersedit.js');
+
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'officers');
+
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'editor') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id) and
+             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $officerId = $this->getRequest()->getUserParam('officer');
+        $officerTable = new Cupa_Model_DbTable_Officer();
+        $officer = $officerTable->find($officerId)->current();
+        
+        if(!$officer) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $form = new Cupa_Form_OfficerEdit();
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $officer->user_id = $data['user_id'];
+                $officer->position = $data['position'];
+                $officer->since = $data['since'];
+                $officer->to = (empty($data['to'])) ? null : $data['to'];
+                $officer->weight = $data['weight'];
+                $officer->save();
+                
+                $this->view->message('Officer updated successfully.', 'success');
+                $this->_redirect('/officers');
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $form->loadFromOfficer($officer);
+        $this->view->form = $form;
     }
 
     public function officersaddAction()
     {
-        // action body
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'officers');
+
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'editor') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id) and
+             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/officers');
+        }
+        
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        
+        $officerTable = new Cupa_Model_DbTable_Officer();
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $officer = $officerTable->createRow();
+            $officer->user_id = null;
+            $officer->position = $post['position'];
+            $officer->since = date('Y-m-d');
+            $officer->to = null;
+            $officer->weight = $officerTable->getNextWeight($post['position']);
+            $officer->save();
+            
+            $this->view->message('Officer created successfully.');
+            echo Zend_Json::encode(array('result' => 'success', 'data' => $officer->id));
+        }
+    }
+    
+    public function officersdeleteAction()
+    {
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+             !$userRoleTable->hasRole($this->view->user->id, 'admin'))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        
+        $officerId = $this->getRequest()->getUserParam('officer');
+        $officerTable = new Cupa_Model_DbTable_Officer();
+        $officer = $officerTable->find($officerId)->current();
+        
+        if(!$officer) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $officer->delete();
+        $this->view->message('Officer deleted successfully.', 'success');
+        $this->_redirect('/officers');
     }
 
     public function minutesAction()
@@ -471,7 +580,7 @@ class PageController extends Zend_Controller_Action
         
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
+            $this->_redirect('/allnews');
         }
         
         // disable the layout

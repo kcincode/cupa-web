@@ -150,6 +150,7 @@
         <formFile formName="PageAdmin"/>
         <formFile formName="PageEdit"/>
         <formFile formName="ClubEdit"/>
+        <formFile formName="OfficerEdit"/>
       </formsDirectory>
       <layoutsDirectory>
         <layoutScriptsDirectory>
