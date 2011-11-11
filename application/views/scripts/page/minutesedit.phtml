@@ -1,4 +1,23 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>minutesedit</b></p>
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->minute->when; ?> <?php echo $this->minute->location; ?></h1>
+<div id="minutesedit-container">
+    <form method="post" enctype="multipart/form-data">
+        <div class="row">
+            <?php echo $this->form->when; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->location; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->pdf; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->is_visible; ?>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array(), 'page_minutes'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>

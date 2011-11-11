@@ -10,15 +10,19 @@
     <?php endif; ?>
     <span class="actions">
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" id="add-officer" href="#">Add Officer</a>
-        <div id="add-officers-container"></div>
+        <a class="button" id="add-minutes" href="#">Add Minutes</a>
+        <div id="add-minutes-container"></div>
         <?php endif; ?>
     </span>
   
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    <div id="minute-container">
+    
+    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+    <h2>Viewable Minutes</h2>
+    <?php endif; ?>
+    <div class="minute-container">
         <div class="minute header">
             <div class="when header">When</div>
             <div class="location header">Where</div>
@@ -34,9 +38,11 @@
             <div class="when"><?php echo $minute['when']; ?></div>
             <div class="location"><?php echo $minute['location']; ?></div>
             <div class="links">
+                <?php if($minute['pdf'] != null): ?>
                 <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
                     <img title="Download Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-pdf.png"/>
                 </a>
+                <?php endif; ?>
 
                 <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
                 <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
@@ -50,14 +56,46 @@
             <div class="clearfix"></div>
         </div>
         <?php endforeach; ?>
-
-        <?php if($this->hasRole('admin') and isset($this->minutes['hidden'])): ?>
-        <h2>Hidden Minutes</h2>
-
-        <?php foreach($this->minutes['hidden'] as $minute): ?>
-        <?php endforeach; ?>
-        <?php endif; ?>
     </div>
+
+    <?php if(($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)) and isset($this->minutes['hidden'])): ?>
+    <h2>Hidden Minutes</h2>
+    <div class="minute-container">
+        <div class="minute header">
+            <div class="when header">When</div>
+            <div class="location header">Where</div>
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <div class="links header">Actions</div>
+            <?php else: ?>
+            <div class="links header">Download</div>
+            <?php endif; ?>
+        </div>
+        <?php $row = 'even'; foreach($this->minutes['hidden'] as $minute): ?>
+        <?php $row = ($row == 'even') ? 'odd' : 'even'; ?>
+        <div class="minute <?php echo $row; ?>">
+            <div class="when"><?php echo $minute['when']; ?></div>
+            <div class="location"><?php echo $minute['location']; ?></div>
+            <div class="links">
+                <?php if($minute['pdf'] != null): ?>
+                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
+                    <img title="Download Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-pdf.png"/>
+                </a>
+                <?php endif; ?>
+
+                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
+                    <img title="Edit Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
+                </a>
+                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
+                    <img title="Delete Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
+                </a>
+                <?php endif; ?>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
 </div>
 
 <div id="page-links" class="<?php echo $this->pageClass(); ?>">

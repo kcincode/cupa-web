@@ -330,46 +330,118 @@ class PageController extends Zend_Controller_Action
 
     public function minuteseditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutesedit.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/jquery-ui-timepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutesedit.js');
+        
+        $minuteId = $this->getRequest()->getUserParam('minute');
+        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $minute = $minuteTable->find($minuteId)->current();
+
+        if($minute) {
+            $this->view->minute = $minute;
+            $form = new Cupa_Form_MinuteEdit();
+            $form->loadFromMinute($minute);
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+                if($form->isValid($post)) {
+                    $data = $form->getValues();
+
+                    $minute->when = $data['when'];
+                    $minute->location = $data['location'];
+                    $minute->is_visible = $data['is_visible'];
+                    
+                    if(!empty($data['pdf'])) {
+                        if(file_exists($_FILES['pdf']['tmp_name'])) {
+                            $fp = fopen($_FILES['pdf']['tmp_name'], 'r');
+                        } else {
+                            $fp = fopen('/tmp/' . $_FILES['pdf']['name'], 'r');
+                        }
+                        if($fp) {
+                            $minute->pdf = addslashes(fread($fp, $_FILES['pdf']['size']));
+                            fclose($fp);
+                        } else {
+                            $this->view->message('Could not upload meeting mintues pdf.', 'error');
+                        }
+                    }
+
+                    $minute->save();
+                    $this->view->message('Meeting minutes updated successfully.', 'success');
+                    //$this->_redirect('/board_meeting_minutes');
+                } else {
+                    $form->populate($post);
+                }
+            }
+
+            $this->view->form = $form;
+        }
     }
 
     public function minutesaddAction()
     {
-        // action body
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+        
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $minuteTable = new Cupa_Model_DbTable_Minute();
+            $minute = $minuteTable->createRow();
+            $minute->location = $post['location'];
+            $minute->when = date('Y-m-d H:i:s');
+            $minute->pdf = null;
+            $minute->is_visible = 0;
+            $minute->save();
+
+            $this->view->message('Minutes created successfully.', 'success');
+            echo Zend_Json::encode(array('result' => 'success', 'data' => $minute->id));
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
     }
     
     public function minutesdownloadAction()
     {
         $minuteId = $this->getRequest()->getUserParam('minute');
         
-            $this->_helper->layout()->disableLayout();
-            $this->_helper->viewRenderer->setNoRender(true);
-            
-            $minuteTable = new Cupa_Model_DbTable_Minute();
-            $minute = $minuteTable->find($minuteId)->current();
-            
-            apache_setenv('no-gzip', '1');
-            ob_end_clean();
-            
-            header('Pragma: public');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-            header('Cache-Control: public', FALSE);
-            header('Content-Description: File Transfer');
-            header('Content-type: octet-stream');
-            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
-                header('Content-Type: application/force-download');
-            }
-            header('Accept-Ranges: bytes');
-            header('Content-Disposition: attachment; filename="' . $minute->when . '-' . $minute->location . '.pdf";');
-            header('Content-Transfer-Encoding: binary');
-            //header('Content-Length: ' . sizeof($boardMeeting->pdf));
-            
-            set_time_limit(0);
-            echo stripslashes($minute->pdf);
-            flush();
-            
-            return;
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $minute = $minuteTable->find($minuteId)->current();
+
+        apache_setenv('no-gzip', '1');
+        ob_end_clean();
+
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: public', FALSE);
+        header('Content-Description: File Transfer');
+        header('Content-type: octet-stream');
+        if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+            header('Content-Type: application/force-download');
+        }
+        header('Accept-Ranges: bytes');
+        header('Content-Disposition: attachment; filename="' . str_replace(' ', '_', $minute->when) . '-' . str_replace(' ', '_', $minute->location) . '.pdf";');
+        header('Content-Transfer-Encoding: binary');
+        //header('Content-Length: ' . sizeof($boardMeeting->pdf));
+
+        set_time_limit(0);
+        echo stripslashes($minute->pdf);
+        flush();
+
+        return;
     }
 
     public function directorsAction()
