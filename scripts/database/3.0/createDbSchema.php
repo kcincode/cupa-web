@@ -22,6 +22,7 @@ try {
     $db->query("DROP TABLE IF EXISTS `club_captain`");
     $db->query("DROP TABLE IF EXISTS `club`");
     $db->query("DROP TABLE IF EXISTS `officer`");
+    $db->query("DROP TABLE IF EXISTS `pickup`");
     $db->query("DROP TABLE IF EXISTS `user`");
     $db->query("DROP TABLE IF EXISTS `contact`");
     $db->query("DROP TABLE IF EXISTS `minute`");
@@ -540,7 +541,46 @@ try {
 }
 
 
+/*******************************************************************************
+ * 
+ * PICKUP TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `Pickup` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `pickup` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `title` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `day` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
+          `time` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+          `info` text COLLATE utf8_unicode_ci DEFAULT NULL,
+          `user_id` int(11) DEFAULT NULL,
+          `email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `where` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `map` text COLLATE utf8_unicode_ci DEFAULT NULL,
+          `weight` int(11) NOT NULL DEFAULT 0,
+          `is_visible` tinyint(1) NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `user_id` (`user_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+    
+    $db->query("
+        ALTER TABLE `pickup`
+          ADD CONSTRAINT `pickup_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
  
+
+
 
 echo "Finished\n\n";
 

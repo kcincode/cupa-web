@@ -330,6 +330,18 @@ class PageController extends Zend_Controller_Action
 
     public function minuteseditAction()
     {
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+             !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('News item not found');
+        }
+        
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutesedit.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
@@ -382,6 +394,18 @@ class PageController extends Zend_Controller_Action
 
     public function minutesaddAction()
     {
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+             !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('News item not found');
+        }
+        
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
@@ -451,17 +475,47 @@ class PageController extends Zend_Controller_Action
 
     public function pickupAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickup.css');
+
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $this->view->page = $pageTable->fetchBy('name', 'pickup');
+        $this->view->links = $pageTable->fetchChildren($this->view->page);
+        
+        $pickupTable = new Cupa_Model_DbTable_Pickup();
+        $this->view->pickups = $pickupTable->fetchAllPickups();
     }
 
     public function pickupaddAction()
     {
-        // action body
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id)))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
     }
 
     public function pickupeditAction()
     {
-        // action body
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id)))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
     }
 
     public function clubsAction()
@@ -610,22 +664,6 @@ class PageController extends Zend_Controller_Action
         }
         
         $this->_redirect('/clubs');
-    }
-
-    
-    public function linksAction()
-    {
-        // action body
-    }
-
-    public function linksaddAction()
-    {
-        // action body
-    }
-
-    public function linkseditAction()
-    {
-        // action body
     }
 
     public function allnewsAction()
