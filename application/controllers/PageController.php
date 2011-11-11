@@ -337,6 +337,40 @@ class PageController extends Zend_Controller_Action
     {
         // action body
     }
+    
+    public function minutesdownloadAction()
+    {
+        $minuteId = $this->getRequest()->getUserParam('minute');
+        
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $minuteTable = new Cupa_Model_DbTable_Minute();
+            $minute = $minuteTable->find($minuteId)->current();
+            
+            apache_setenv('no-gzip', '1');
+            ob_end_clean();
+            
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . $minute->when . '-' . $minute->location . '.pdf";');
+            header('Content-Transfer-Encoding: binary');
+            //header('Content-Length: ' . sizeof($boardMeeting->pdf));
+            
+            set_time_limit(0);
+            echo stripslashes($minute->pdf);
+            flush();
+            
+            return;
+    }
 
     public function directorsAction()
     {
