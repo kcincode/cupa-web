@@ -25,11 +25,12 @@
     
     <h3>Pickup Ultimate Around Town</h3>
     <?php foreach($this->pickups['visible'] as $pickup): ?>
-    <div class="pickup">
+    <div class="pickup-container">
         <div class="title"><?php echo $pickup['title']; ?></div>
+        <div class="map"><?php echo (empty($pickup['map'])) ? '&nbsp;' : '(<a href="' . $pickup['map'] . '">Map</a>)'; ?></div>
         <div class="when"><?php echo $pickup['day']; ?> <?php echo $pickup['time']; ?></div>
-        <div class="contact"><?php echo $pickup['email']; ?> <?php echo $pickup['user_id']; ?></div>
-        <div class="info"><?php echo $pickup['info']; ?></div>
+        <div class="contact"><b>Contact:</b> <?php echo (empty($pickup['email'])) ? $this->Fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
+        <div class="info"><?php echo (empty($pickup['info'])) ? '&nbsp;' : $pickup['info']; ?></div>
     </div>
     <?php endforeach; ?>
 </div>

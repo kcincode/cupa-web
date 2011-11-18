@@ -1,3 +1,34 @@
 h3 {
     font-size: 17pt;
 }
+
+.pickup-container {
+    border-bottom: 1px solid #c0c0c0;
+    margin: 20px 0;
+    
+}
+
+.pickup .title {
+    font-size: 14pt;
+    font-weight: bold;
+    margin: 0 10px 0 0;
+    float: left;
+}
+
+.pickup .map {
+    clear: right;
+    padding: 5px 0 2px 0;
+}
+
+.pickup .when {
+    font-style: italic;
+    color: #508050;
+}
+
+.pickup .contact {
+    
+}
+
+.pickup .info {
+    padding: 5px;
+}

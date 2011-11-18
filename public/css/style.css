@@ -42,8 +42,8 @@ body, button, input, select, textarea { font-family: sans-serif; color: #222; }
  * Also: hot pink! (or customize the background color to match your design)
  */
 
-::-moz-selection { background: #bbddbb; color: #464; text-shadow: none; }
-::selection { background: #bbddbb; color: #464; text-shadow: none; }
+::-moz-selection { background: #c0c0c0; color: #444; text-shadow: none; }
+::selection { background: #c0c0c0; color: #444; text-shadow: none; }
 
 
 /* =============================================================================
@@ -537,6 +537,11 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
     text-align: center;
+}
+
+span.email {
+    color: #00e;
+    text-decoration: underline;
 }
 
 /* ==|== non-semantic helper classes ========================================

@@ -554,8 +554,8 @@ try {
         CREATE TABLE IF NOT EXISTS `pickup` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `title` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-          `day` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-          `time` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+          `day` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+          `time` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
           `info` text COLLATE utf8_unicode_ci DEFAULT NULL,
           `user_id` int(11) DEFAULT NULL,
           `email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,

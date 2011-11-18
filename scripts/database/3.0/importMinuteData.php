@@ -48,7 +48,7 @@ echo "    Importing `Minutes` data:\n";
 foreach($data as $row) {
     $filesize = filesize(__DIR__ . '/' . $row['pdf']);
     $fp = fopen(__DIR__ . '/' . $row['pdf'], 'r');
-    echo "        Importing page `{$row['when']} {$row['location']}`...";
+    echo "        Importing minutes `{$row['when']} {$row['location']}`...";
     $minute = $minuteTable->createRow();
     $minute->when = $row['when'];
     $minute->location = $row['location'];
