@@ -1,38 +1,39 @@
 $(document).ready(function() {
-    $('#add-officers-container').hide();
+    $('#add-pickup-container').hide();
    
-    $('#add-officer').click(function(e) {
+   
+    $('#add-pickup').click(function(e) {
         e.preventDefault();
-        if($('#add-officers-container').is(':visible')) {
-            $('#add-officers-container').fadeOut('fast');
+        if($('#add-pickup-container').is(':visible')) {
+            $('#add-pickup-container').fadeOut('fast');
         } else {
             $.ajax({
                type: 'get',
-               url: BASE_URL + '/officers/add',
+               url: BASE_URL + '/pickup/add',
                success: function(response) {
-                   $('#add-officers-container').html(response);
-                   $('#add-officers-container').fadeIn('fast');
-                   $('#officers-position').focus();
+                   $('#add-pickup-container').html(response);
+                   $('#add-pickup-container').fadeIn('fast');
+                   $('#pickup-name').focus();
                    $('#error-string').html('');
                    
-                   $('#add-officers-submit').click(function(e) {
+                   $('#add-pickup-submit').click(function(e) {
                        e.preventDefault();
                        
-                       if($('#officers-position').val() == '') {
-                           $('#error-string').html('Please enter a position.');
+                       if($('#pickup-name').val() == '') {
+                           $('#error-string').html('Please enter a pickup name.');
                            return;
                        }
                        
                        $.ajax({
                            type: 'post',
-                           url: BASE_URL + '/officers/add',
-                           data: 'position='+$('#officers-position').val(),
+                           url: BASE_URL + '/pickup/add',
+                           data: 'pickup='+$('#pickup-name').val(),
                            success: function(response) {
                                var obj = eval('(' + response + ')');
                                if(obj.result == 'error') {
                                    $('#error-string').html(obj.message);
                                } else {
-                                   window.location = BASE_URL + '/officers/' + obj.data;
+                                   window.location = BASE_URL + '/pickup/' + obj.data;
                                }
                            }
                        });

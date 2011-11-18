@@ -9,11 +9,9 @@
     </div>
     <?php endif; ?>
     <span class="actions">
-        <?php if($this->hasRole('admin')): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>">Admin</a>
-        <?php endif; ?>
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
+        <a class="button" id="add-pickup" href="#">Add Pickup</a>
+        <div id="add-pickup-container"></div>
         <?php endif; ?>
     </span>
   
@@ -26,13 +24,24 @@
     <h3>Pickup Ultimate Around Town</h3>
     <?php foreach($this->pickups['visible'] as $pickup): ?>
     <div class="pickup-container">
-        <div class="title"><?php echo $pickup['title']; ?></div>
-        <div class="map"><?php echo (empty($pickup['map'])) ? '&nbsp;' : '(<a href="' . $pickup['map'] . '">Map</a>)'; ?></div>
-        <div class="when"><?php echo $pickup['day']; ?> <?php echo $pickup['time']; ?></div>
-        <div class="contact"><b>Contact:</b> <?php echo (empty($pickup['email'])) ? $this->Fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
+        <div class="links">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <a href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_edit'); ?>"><img title="Edit Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png" /></a>
+            <?php endif; ?>
+            <?php if($this->hasRole('admin')): ?>
+            <a onclick="if(!confirm('Are you sure you want to delete the pickup <?php echo str_replace("'", "\'", $pickup['title']); ?>?')) { return false; } " href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_delete'); ?>"><img title="Delete Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+            <?php endif; ?>
+        </div>
+        <div class="title"><?php echo $pickup['title']; ?><?php echo (empty($pickup['map'])) ? '' : ' (<a href="' . $pickup['map'] . '">Map</a>)'; ?></div>
+        <div class="when"><strong>When/Where:</strong> <?php echo $pickup['day']; ?> <?php echo $pickup['time']; ?> at <?php echo $pickup['location']; ?></div>
+        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->Fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
         <div class="info"><?php echo (empty($pickup['info'])) ? '&nbsp;' : $pickup['info']; ?></div>
     </div>
     <?php endforeach; ?>
+    
+    <h3>Disc Golf Locations</h3>
+    
+    <p>The PDGA manages a list of <a href="http://www.pdga.com/course_directory/zipcode?filter0=45201">locations</a> around Cincinnati.</p>
 </div>
   
 <div id="page-links" class="<?php echo $this->pageClass(); ?>">

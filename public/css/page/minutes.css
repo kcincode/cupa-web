@@ -54,11 +54,10 @@
 #add-minutes-container {
     position: absolute;
     background-color: #fafafa;
-    width: 430px;
-    height: 125px;
+    width: 450px;
+    height: 105px;
     border: 1px solid #000;
-    margin-left: -205px;
-    margin-top: 0;
+    margin: 0 0 0 -225px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -68,11 +67,10 @@
     z-index: 100;
 }
 
-
-
 #add-minutes-container .row {
     margin: 0;
     padding: 0;
+    line-height: 75px;
 }
 
 #add-minutes-container .row dd {
@@ -100,9 +98,9 @@
     font-size: 12pt;
 }
 
-h4 {
-    margin: -20px 0 -45px 0;
-    padding: 0;
+#add-minutes-container h4 {
+    margin: -35px 0 -60px 0;
+    padding: 10px;
     text-align: center;
     font-size: 12pt;
 }
@@ -111,8 +109,10 @@ h4 {
     position: absolute;
     color: #e00;
     font-weight: bold;
-    margin: 30px 0 0 0;
+    top: 70px;
+    margin: 0;
     padding: 0;
+    line-height: 30px;
     width: 430px;
     text-align: center;
 }

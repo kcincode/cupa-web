@@ -31,7 +31,7 @@ $(document).ready(function() {
                            success: function(response) {
                                var obj = eval('(' + response + ')');
                                if(obj.result == 'error') {
-                                   $('#error').html(obj.msg);
+                                   $('#error-string').html(obj.message);
                                } else {
                                    window.location = BASE_URL + '/news/' + obj.data + '/edit';
                                }

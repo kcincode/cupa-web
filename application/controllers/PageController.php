@@ -318,6 +318,7 @@ class PageController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutes.css');
+        
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutes.js');
         
         $minuteTable = new Cupa_Model_DbTable_Minute();
@@ -335,11 +336,11 @@ class PageController extends Zend_Controller_Action
         
         $userRoleTable = new Cupa_Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
+            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor') and
              !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('News item not found');
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
         
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
@@ -399,11 +400,11 @@ class PageController extends Zend_Controller_Action
         
         $userRoleTable = new Cupa_Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
+            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor') and
              !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('News item not found');
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
         
         // make sure its an AJAX request
@@ -477,6 +478,9 @@ class PageController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickup.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/pickup.js');
+
 
         $pageTable = new Cupa_Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'pickup');
@@ -489,7 +493,7 @@ class PageController extends Zend_Controller_Action
     public function pickupaddAction()
     {
         $pageTable = new Cupa_Model_DbTable_Page();
-        $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        $page = $pageTable->fetchBy('name', 'pickup');
         
         $userRoleTable = new Cupa_Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
@@ -499,13 +503,53 @@ class PageController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
+        
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+        
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
 
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $pickupTable = new Cupa_Model_DbTable_Pickup();
+            
+            if($pickupTable->isUnique($post['pickup'])) {
+                $pickup = $pickupTable->createRow();
+                $pickup->title = $post['pickup'];
+                $pickup->day = 'Unknown';
+                $pickup->time = 'Unknown';
+                $pickup->info = '';
+                $pickup->user_id = null;
+                $pickup->email = null;
+                $pickup->location = 'Unknown';
+                $pickup->map = null;
+                $pickup->is_visible = 0;
+                $pickup->save();
+
+                $this->view->message('Pickup created successfully.', 'success');
+                echo Zend_Json::encode(array('result' => 'success', 'data' => $pickup->id));
+                return;
+            } else {
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Pickup Already Exists'));
+                return;
+            }
+        }
     }
 
     public function pickupeditAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickupedit.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+
         $pageTable = new Cupa_Model_DbTable_Page();
-        $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        $page = $pageTable->fetchBy('name', 'pickup');
         
         $userRoleTable = new Cupa_Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
@@ -516,6 +560,32 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
+        $pickupTable = new Cupa_Model_DbTable_Pickup();
+        $form = new Cupa_Form_PickupEdit();
+        $pickupId = $this->getRequest()->getUserParam('pickup');
+        $pickup = $pickupTable->find($pickupId)->current();
+        $form->loadFromPickup($pickup);
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            $pickup->title = $post['title'];
+            $pickup->day = $post['day'];
+            $pickup->time = $post['time'];
+            $pickup->info = $post['info'];
+            $pickup->user_id = ($post['user_id'] == 0) ? null : $post['user_id'];
+            $pickup->email = (empty($post['email'])) ? null : $post['email'];
+            $pickup->location = $post['location'];
+            $pickup->map = (empty($post['map'])) ? null : $post['map'];
+            $pickup->is_visible = $post['is_visible'];
+            $pickup->save();
+
+            $this->view->message('Pickup updated successfully.', 'success');
+            $this->_redirect('/pickup');
+        }
+        
+        $this->view->pickup = $pickup;
+        $this->view->form = $form;
     }
 
     public function clubsAction()

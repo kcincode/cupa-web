@@ -22,4 +22,21 @@ class Cupa_Model_DbTable_Pickup extends Zend_Db_Table
                 
         return $data;
     }
+    
+    public function isUnique($title)
+    {
+        if(empty($title)) {
+            return false;
+        }
+        
+        $select = $this->select()
+                       ->where('title = ?', $title);
+        
+        $result = $this->fetchRow($select);
+        if(isset($result->id)) {
+            return false;
+        }
+        
+        return true;
+    }
 }

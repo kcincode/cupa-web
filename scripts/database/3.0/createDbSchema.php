@@ -559,7 +559,7 @@ try {
           `info` text COLLATE utf8_unicode_ci DEFAULT NULL,
           `user_id` int(11) DEFAULT NULL,
           `email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-          `where` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `location` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
           `map` text COLLATE utf8_unicode_ci DEFAULT NULL,
           `weight` int(11) NOT NULL DEFAULT 0,
           `is_visible` tinyint(1) NOT NULL,
