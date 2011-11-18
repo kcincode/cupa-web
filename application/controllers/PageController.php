@@ -587,6 +587,25 @@ class PageController extends Zend_Controller_Action
         $this->view->pickup = $pickup;
         $this->view->form = $form;
     }
+    
+    public function pickupdeleteAction()
+    {
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $pickupTable = new Cupa_Model_DbTable_Pickup();
+        $pickupId = $this->getRequest()->getUserParam('pickup');
+        $pickup = $pickupTable->find($pickupId)->current();
+        
+        $pickup->delete();
+        
+        $this->view->message('Pickup deleted successfully.', 'success');
+        $this->_redirect('/pickup');
+    }
 
     public function clubsAction()
     {

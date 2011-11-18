@@ -38,6 +38,22 @@
         <div class="info"><?php echo (empty($pickup['info'])) ? '&nbsp;' : $pickup['info']; ?></div>
     </div>
     <?php endforeach; ?>
+
+    <?php if($this->hasRole('admin') and !empty($this->pickups['hidden']) ): ?>
+    <h3>Pickup Ultimate Around Town **HIDDEN**</h3>
+    <?php foreach($this->pickups['hidden'] as $pickup): ?>
+    <div class="pickup-container">
+        <div class="links">
+            <a href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_edit'); ?>"><img title="Edit Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png" /></a>
+            <a onclick="if(!confirm('Are you sure you want to delete the pickup <?php echo str_replace("'", "\'", $pickup['title']); ?>?')) { return false; } " href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_delete'); ?>"><img title="Delete Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+        </div>
+        <div class="title"><?php echo $pickup['title']; ?><?php echo (empty($pickup['map'])) ? '' : ' (<a href="' . $pickup['map'] . '">Map</a>)'; ?></div>
+        <div class="when"><strong>When/Where:</strong> <?php echo $pickup['day']; ?> <?php echo $pickup['time']; ?> at <?php echo $pickup['location']; ?></div>
+        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->Fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
+        <div class="info"><?php echo (empty($pickup['info'])) ? '&nbsp;' : $pickup['info']; ?></div>
+    </div>
+    <?php endforeach; ?>
+    <?php endif; ?>
     
     <h3>Disc Golf Locations</h3>
     
