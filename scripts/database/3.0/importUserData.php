@@ -117,5 +117,44 @@ foreach($stmt->fetchAll() as $row) {
     echo "Done.\n";
 }
 
+$stmt = $origDb->prepare('SELECT * FROM user_minors ORDER BY id');
+$stmt->execute();
+foreach($stmt->fetchAll() as $row) {
+    // capitalize the first letter
+    $row['first_name'] = ucfirst(strtolower($row['first_name']));
+    $row['last_name'] = ucfirst(strtolower($row['last_name']));
+    
+    echo "        Importing minor user `{$row['first_name']} {$row['last_name']}`...";
+    $user = $userTable->createRow();
+    $user->parent = $row['parent_id'];
+    $user->username = null;
+    $user->salt = null;
+    $user->password = null;
+    $user->email = null;
+    $user->first_name = $row['first_name'];
+    $user->last_name = $row['last_name'];
+    $user->activation_code = null;
+    $user->requested_at = date('Y-m-d H:i:s');
+    $user->activated_at = null;
+    $user->expires_at = null;
+    $user->updated_at = null;
+    $user->last_login = date('Y-m-d H:i:s');
+    $user->login_errors = 0;
+    $user->is_active = 1;
+    $user->save();
+    
+    $userProfile = $userProfileTable->createRow();
+    $userProfile->user_id = $user->id;
+    $userProfile->gender = (empty($row['gender'])) ? null : $row['gender'];
+    $userProfile->birthday = (empty($row['birthday'])) ? null : $row['birthday'];
+    $userProfile->phone = null;    
+    $userProfile->nickname = null; 
+    $userProfile->height = null; 
+    $userProfile->level = null; 
+    $userProfile->experience = null;
+    $userProfile->save();
+    echo "Done\n";
+}
+
 $userTable->getAdapter()->commit();
 echo "    Finished Importing Users.\n";

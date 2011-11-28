@@ -10,6 +10,7 @@ try {
     include('importOfficerData.php');
     include('importMinuteData.php');
     include('importPickupData.php');
+    include('importLeagueData.php');
     echo "Finished\n";
 } catch(Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";

@@ -12,19 +12,48 @@ $contactTable = new Cupa_Model_DbTable_Contact();
 $db = $userTable->getAdapter();
 
 try {
-    echo "    Dropping all tables..."; 
+    echo "    Dropping all tables:\n"; 
+    echo "        UserPasswordReset\n";
     $db->query("DROP TABLE IF EXISTS `user_password_reset`");
+    echo "        UserRole\n";
     $db->query("DROP TABLE IF EXISTS `user_role`");
+    echo "        UserLevel\n";
     $db->query("DROP TABLE IF EXISTS `user_level`");
+    echo "        UserProfile\n";
     $db->query("DROP TABLE IF EXISTS `user_profile`");
+    echo "        Page\n";
     $db->query("DROP TABLE IF EXISTS `page`");
+    echo "        News\n";
     $db->query("DROP TABLE IF EXISTS `news`");
+    echo "        ClubCaptain\n";
     $db->query("DROP TABLE IF EXISTS `club_captain`");
+    echo "        Club\n";
     $db->query("DROP TABLE IF EXISTS `club`");
+    echo "        Officer\n";
     $db->query("DROP TABLE IF EXISTS `officer`");
+    echo "        Pickup\n";
     $db->query("DROP TABLE IF EXISTS `pickup`");
+    echo "        LeagueGameData\n";
+    $db->query("DROP TABLE IF EXISTS `league_game_data`");
+    echo "        LeagueGame\n";
+    $db->query("DROP TABLE IF EXISTS `league_game`");
+    echo "        LeagueMember\n";
+    $db->query("DROP TABLE IF EXISTS `league_member`");
+    echo "        LeagueTeam\n";
+    $db->query("DROP TABLE IF EXISTS `league_team`");
+    echo "        LeagueInformation\n";
+    $db->query("DROP TABLE IF EXISTS `league_information`");
+    echo "        LeagueLimit\n";
+    $db->query("DROP TABLE IF EXISTS `league_limit`");
+    echo "        LeagueLocation\n";
+    $db->query("DROP TABLE IF EXISTS `league_location`");
+    echo "        League\n";
+    $db->query("DROP TABLE IF EXISTS `league`");
+    echo "        User\n";
     $db->query("DROP TABLE IF EXISTS `user`");
+    echo "        Contact\n";
     $db->query("DROP TABLE IF EXISTS `contact`");
+    echo "        Minute\n";
     $db->query("DROP TABLE IF EXISTS `minute`");
     echo "Done\n";
 } catch(Exception $e) {
@@ -45,13 +74,13 @@ try {
         CREATE TABLE IF NOT EXISTS `user` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `parent` int(11) DEFAULT NULL,
-          `username` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `username` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
           `salt` varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
-          `password` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-          `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `password` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+          `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
           `first_name` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
           `last_name` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-          `activation_code` varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+          `activation_code` varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
           `requested_at` datetime DEFAULT NULL,
           `activated_at` datetime DEFAULT NULL,
           `expires_at` datetime DEFAULT NULL,
@@ -579,6 +608,285 @@ try {
     endWithError();
 }
  
+
+/*******************************************************************************
+ * 
+ * LEAGUES TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `League` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `year` int(11) NOT NULL,
+          `season` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') COLLATE utf8_unicode_ci NOT NULL,
+          `name` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `info` text COLLATE utf8_unicode_ci NOT NULL,
+          `registration_begin` datetime NOT NULL,
+          `registration_end` datetime NOT NULL,
+          `visible_from` datetime NOT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
+    
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * LEAGUE_TEAM TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueTeam` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_team` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `league_id` int(11) NOT NULL,
+          `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `color` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+          `color_code` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
+          `text_code` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
+          `final_rank` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          KEY `league_id` (`league_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `league_team`
+          ADD CONSTRAINT `league_team_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * LEAGUE_GAME TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueGame` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_game` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `league_id` int(11) NOT NULL,
+          `day` datetime NOT NULL,
+          `week` int(11) NOT NULL,
+          `field` int(11) NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `league_id` (`league_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `league_game`
+          ADD CONSTRAINT `league_game_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * LEAGUE_GAME_DATA TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueGameData` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_game_data` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `league_game_id` int(11) NOT NULL,
+          `type` enum('home','away') COLLATE utf8_unicode_ci NOT NULL,
+          `league_team_id` int(11) DEFAULT NULL,
+          `score` int(11) NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `league_game_id` (`league_game_id`),
+          KEY `league_team_id` (`league_team_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `league_game_data`
+          ADD CONSTRAINT `league_game_data_ibfk_2` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+          ADD CONSTRAINT `league_game_data_ibfk_1` FOREIGN KEY (`league_game_id`) REFERENCES `league_game` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * LEAGUE_INFORMATION TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueInformation` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_information` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `league_id` int(11) NOT NULL,
+          `is_youth` tinyint(1) NOT NULL,
+          `user_teams` tinyint(1) NOT NULL,
+          `is_pods` tinyint(1) NOT NULL,
+          `contact_email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `cost` int(11) DEFAULT 0,
+          `paypal_code` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `description` text COLLATE utf8_unicode_ci,
+          PRIMARY KEY (`id`),
+          KEY `league_id` (`league_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `league_information`
+          ADD CONSTRAINT `league_information_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * LEAGUE_LIMIT TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueLimit` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_limit` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `league_id` int(11) NOT NULL,
+          `male_players` int(11) DEFAULT NULL,
+          `female_players` int(11) DEFAULT NULL,
+          `total_players` int(11) DEFAULT NULL,
+          `teams` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          KEY `league_id` (`league_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `league_limit`
+          ADD CONSTRAINT `league_limit_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * LEAGUE_MEMBER TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueMember` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_member` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `league_id` int(11) NOT NULL,
+          `user_id` int(11) NOT NULL,
+          `position` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+          `league_team_id` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          KEY `league_id` (`league_id`),
+          KEY `user_id` (`user_id`),
+          KEY `legaue_team_id` (`league_team_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `league_member`
+          ADD CONSTRAINT `league_member_ibfk_3` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+          ADD CONSTRAINT `league_member_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+          ADD CONSTRAINT `league_member_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * LEAGUE_LOCATION TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueLocation` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_location` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `league_id` int(11) NOT NULL,
+          `type` enum('draft','tournament','league') COLLATE utf8_unicode_ci NOT NULL,
+          `location` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `map_link` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+          `photo_link` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `address_street` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+          `address_city` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+          `address_state` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
+          `address_zip` int(11) NOT NULL,
+          `start` datetime NOT NULL,
+          `end` datetime NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `league_id` (`league_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `league_location`
+          ADD CONSTRAINT `league_location_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+
+
+
 
 
 

@@ -131,4 +131,14 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
         
         return $this->fetchAll($select);
     }
+    
+    public function fetchMinor($parentId, $first, $last)
+    {
+        $select = $this->select()
+                       ->where('parent = ?', $parentId)
+                       ->where('first_name = ?', $first)
+                       ->where('last_name = ?', $last);
+        
+        return $this->fetchRow($select);
+    }
 }
