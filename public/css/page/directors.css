@@ -1,0 +1,18 @@
+h3 {
+    font-size: 18pt;
+}
+
+.director {
+    float: left;
+    width: 300px;
+    padding: 10px;
+}
+
+.name {
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.league {
+    color: #c55; 
+}

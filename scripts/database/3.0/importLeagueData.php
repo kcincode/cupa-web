@@ -91,7 +91,8 @@ foreach($stmt->fetchAll() as $row) {
     $leagueInformation->league_id = $league->id;
     $leagueInformation->is_youth = $row['youth'];
     $leagueInformation->user_teams = $row['user_teams'];
-    $leagueInformation->is_pods = 0;
+    $leagueInformation->is_hat = (strstr(strtolower($league->name), 'hat')) ? 1 : 0;
+    $leagueInformation->is_clinic = (strstr(strtolower($league->name), 'clinic')) ? 1 : 0;
     $leagueInformation->contact_email = (empty($row['contact_email'])) ? null : $row['contact_email'];
     $leagueInformation->cost = $row['cost'];
     $leagueInformation->paypal_code = getPaypalId($row['confirm']);
@@ -171,6 +172,8 @@ foreach($stmt->fetchAll() as $row) {
         $leagueMember->user_id = $row2['user_id'];
         $leagueMember->position = 'director';
         $leagueMember->league_team_id = null;
+        $leagueMember->created_at = $league->registration_begin;
+        $leagueMember->modified_at = $league->registration_begin;
         $leagueMember->save();
         echo "Done\n";
     }
@@ -423,6 +426,9 @@ function generateName($name, $seasons)
     // rename roman numerals to 3
     $name = str_replace('ii', 'II', $name);
     $name = str_replace('iii', 'III', $name);
+    
+    // remove slashes
+    $name = str_replace('/', '', $name);
     
     return ucwords(trim($name));
 }
