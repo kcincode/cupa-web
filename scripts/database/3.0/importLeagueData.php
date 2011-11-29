@@ -12,6 +12,9 @@ $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
 $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
 $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
 $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+$leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+$leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+$leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
 
 $season = array(
     1 => 'Winter',
@@ -210,6 +213,8 @@ foreach($stmt->fetchAll() as $row) {
     $leagueMember->user_id = $row['captain'];
     $leagueMember->position = 'captain';
     $leagueMember->league_team_id = null;
+    $leagueMember->created_at = date('Y-m-d H:i:s');
+    $leagueMember->modified_at = date('Y-m-d H:i:s');
     $leagueMember->save();
     echo "Done\n";
 }
@@ -218,6 +223,8 @@ foreach($stmt->fetchAll() as $row) {
 $stmt = $origDb->prepare('SELECT * FROM event_players');
 $stmt->execute();
 foreach($stmt->fetchAll() as $row) {
+    
+    $league = $leagueTable->find($row['event_id'])->current();
     
     if(strstr($row['user_id'], '-')) {
         list($parentId, $minorId) = explode('-', $row['user_id']);
@@ -244,6 +251,9 @@ foreach($stmt->fetchAll() as $row) {
                 $leagueMember->league_team_id = null;
 
             }
+            
+            $leagueMember->created_at = $league->registration_end;
+            $leagueMember->modified_at = $league->registration_end;
 
             $leagueMember->save();
             echo "Done\n";
@@ -256,6 +266,10 @@ foreach($stmt->fetchAll() as $row) {
         $leagueMember->user_id = $row['user_id'];
         $leagueMember->position = 'player';
         $leagueMember->league_team_id = ($row['team_id'] == 0) ? null : $row['team_id'];
+        
+        $leagueMember->created_at = $league->registration_end;
+        $leagueMember->modified_at = $league->registration_end;
+
         $leagueMember->save();
         echo "Done\n";
     }
@@ -301,6 +315,94 @@ foreach($stmt->fetchAll() as $row) {
         
         echo "Done\n";    
 }
+
+// insert the league players
+$stmt = $origDb->prepare('SELECT * FROM event_questions');
+$stmt->execute();
+foreach($stmt->fetchAll() as $row) {
+    echo "            Importing league question '{$row['name']}'...";
+    $leagueQuestion = $leagueQuestionTable->createRow();
+    $leagueQuestion->name = $row['name'];
+    $leagueQuestion->title = $row['title'];
+    $leagueQuestion->type = $row['type'];
+    $leagueQuestion->answers = $row['answers'];
+    $leagueQuestion->save();
+    
+    $notEvents = array();
+    if($row['event_id'] == 0) {
+        $notEvents = explode(',', $row['not_events']);
+
+        foreach($leagueTable->fetchAll() as $league) {
+            if(!in_array($league->id, $notEvents)) {
+                $leagueQuestionList = $leagueQuestionListTable->createRow();
+                $leagueQuestionList->league_id = $league->id;
+                $leagueQuestionList->league_question_id = $leagueQuestion->id;
+                $leagueQuestionList->required = $row['required'];
+                $leagueQuestionList->weight = $row['order'];
+                $leagueQuestionList->save();
+            }
+        }
+    } else {
+        $leagueQuestionList = $leagueQuestionListTable->createRow();
+        $leagueQuestionList->league_id = $league->id;
+        $leagueQuestionList->league_question_id = $leagueQuestion->id;
+        $leagueQuestionList->required = $row['required'];
+        $leagueQuestionList->weight = $row['order'];
+        $leagueQuestionList->save();
+    }
+    
+    echo "Done.\n";
+}
+
+// insert the league players
+$stmt = $origDb->prepare('SELECT * FROM event_info');
+$stmt->execute();
+foreach($stmt->fetchAll() as $row) {
+    
+    $user = null;
+    
+    if(strstr($row['user_id'], '-')) {
+        list($parentId, $minorId) = explode('-', $row['user_id']);
+
+        // get minor data
+        $stmt = $origDb->prepare('SELECT * FROM user_minors WHERE id = ?');
+        $stmt->execute(array($minorId));
+        $minor = $stmt->fetch();
+
+        // get new user id
+        $user = $userTable->fetchMinor($parentId, $minor['first_name'], $minor['last_name']);
+    }
+
+    if($user) {
+        $row['user_id'] =  $user->id;
+    }
+    
+    $leagueMember = $leagueMemberTable->fetchMember($row['event_id'], $row['user_id']);
+
+
+    if($leagueMember) {
+        echo "            Importing league answers for user #'{$row['user_id']}'...";
+        $leagueMember->paid = $row['paid'];
+        $leagueMember->release = $row['release'];
+        $leagueMember->save();
+
+        foreach(Zend_Json::decode($row['data']) as $question => $answer) {
+            //echo "                Importing league answer for '$question'...";
+            $leagueQuestion = $leagueQuestionTable->fetchQuestion($question);
+            if($leagueQuestion) {
+                $leagueAnswer = $leagueAnswerTable->createRow();
+                $leagueAnswer->league_member_id = $leagueMember->id;
+                $leagueAnswer->league_question_id = $leagueQuestion->id;
+                $leagueAnswer->answer = $answer;
+                $leagueAnswer->save();
+            }
+            //echo "Done.\n";
+        }
+
+        echo "Done.\n";
+    }
+}
+
 
 
 echo "        Done\n";
