@@ -19,7 +19,12 @@ h3 {
 .pickup .title {
     font-size: 14pt;
     font-weight: bold;
+    text-decoration: underline;
     margin: 0 10px 0 0;
+}
+
+.pickup .title, .pickup .when, .pickup .info, .pickup .contact {
+    margin-left: 20px;
 }
 
 .pickup .title a {
@@ -28,6 +33,10 @@ h3 {
 
 .pickup .info {
     padding: 5px;
+}
+
+.pickup p {
+    margin-left: 20px;
 }
 
 #add-pickup-container {
