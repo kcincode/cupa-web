@@ -20,12 +20,29 @@
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
+    <?php $i = 0; ?>
     <?php foreach($this->leagues as $league): ?>
     <div class="league">
+        <div class="links">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <?php if($i != 0): ?>
+                <a href="<?php echo $this->url(array('season_id' => $league['id'], 'weight' => $i - 1), 'leagues_move');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-uparrow.png" title="Move Up"/></a>
+            <?php endif; ?>
+            <?php if($i != count($this->leagues) - 1): ?>
+                <a href="<?php echo $this->url(array('season_id' => $league['id'], 'weight' => $i + 1), 'leagues_move');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-downarrow.png" title="Move Down"/></a>
+            <?php endif; ?>
+                <a href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit"/></a>
+            <?php endif; ?>
+            <?php if($this->hasRole('admin')): ?>
+                <a onclick="return confirm('Are you sure you want to delete this season?');" href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_delete');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete"/></a>
+            <?php endif; ?>
+            </form>
+        </div>
         <div class="name"><a href="<?php echo $this->url(array('type' => $league['name']), 'league');?>"><?php echo $this->escape(ucwords($league['name']));?> League</a></div>
         <div class="when">( <span class="when-text"><?php echo $this->escape($league['when']);?></span> )</div>
         <div class="information"><?php echo $league['information'];?></div>
     </div>
+    <?php $i++; ?>
     <?php endforeach; ?>
 </div>
   

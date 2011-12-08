@@ -87,6 +87,7 @@ $seasons = array(
             </p><p>It is a bit expensive to play. Why?!?, Field rental makes up 
             over 95% of the league fees. We are working very hard to get you the 
             most playing time for the least amount of money.</p>",
+        'weight' => 0,
     ),
     array(
         'name' => 'spring',
@@ -101,6 +102,7 @@ $seasons = array(
             be limited depending upon the location so get registered as soon 
             as you can.</p><p>There is also a Mens League and a Women's Clinic 
             & League so there are plenty of oppourtunities to learn and play.</p>",
+        'weight' => 1,
     ),
     array(
         'name' => 'summer',
@@ -120,6 +122,7 @@ $seasons = array(
             players while still maintaining the fun of a league.  If you think 
             you are one of the best around, this is the the league for you.  
             It will challenge you and hopefully make you a better player.</p>",
+        'weight' => 2,
     ),
     array(
         'name' => 'fall',
@@ -131,6 +134,7 @@ $seasons = array(
             players that would like a few last games to play can do so.  It also
             gets people out to play more ultimate which is always good.  Come
             on out and join for the Fall.</p>",
+        'weight' => 3,
     ),
     
 );
@@ -142,6 +146,7 @@ foreach($seasons as $season) {
     $leagueSeason = $leagueSeasonTable->createRow();
     $leagueSeason->name = $season['name'];
     $leagueSeason->when = $season['when'];
+    $leagueSeason->weight = $season['weight'];
     $leagueSeason->information = $season['information'];
     $leagueSeason->save();
     echo "Done.\n";    

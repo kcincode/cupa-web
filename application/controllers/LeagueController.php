@@ -11,15 +11,103 @@ class LeagueController extends Zend_Controller_Action
     public function indexAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/leagues.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/index.css');
+
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/index.js');
+
         $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
         $pageTable = new Cupa_Model_DbTable_Page();
         
         $this->view->page = $pageTable->fetchBy('name', 'leagues');
         $this->view->links = $leagueSeasonTable->generateLinks();
-        $this->view->leagues = $leagueSeasonTable->fetchAll();
+        $this->view->leagues = $leagueSeasonTable->fetchAllSeasons();
+    }
+    
+    public function moveseasonAction()
+    {
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $weight = $this->getRequest()->getUserParam('weight');
+        $seasonId = $this->getRequest()->getUserParam('season_id');
+        
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueSeasonTable->moveSeason($seasonId, $weight);
+        
+        $this->_redirect('leagues');
+    }
+    
+    public function editseasonAction()
+    {
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+        $this->view->page = $page;
+        
+        if(!$this->view->hasRole('admin') and 
+           !$this->view->hasRole('editor') and 
+           !$this->view->hasRole('editor', $page->id) ) {
+            $this->_redirect('leagues');
+        }
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/index.css');
+        
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+
+        $seasonId = $this->getRequest()->getUserParam('season_id');
+        $this->view->season = $leagueSeasonTable->find($seasonId)->current();
+        
+        $form = new Cupa_Form_LeagueSeasonEdit();
+        $form->loadFromSeason($this->view->season);
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $this->view->season->name = $data['name'];
+                $this->view->season->when = $data['when'];
+                $this->view->season->information = $data['information'];
+                $this->view->season->save();
+                
+                $this->view->message("Season `{$data['name']}` updated successfully.", 'success');
+                $this->_redirect('leagues');
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->form = $form;
     }
 
+    public function createseasonAction()
+    {
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+
+    } 
+    
+    public function deleteseasonAction()
+    {
+        if(!$this->view->hasRole('admin')) {
+            $this->_redirect('leagues');
+        }
+        
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $seasonId = $this->getRequest()->getUserParam('season_id');
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        
+        $where = $leagueSeasonTable->getAdapter()->quoteInto('id = ?', $seasonId);
+        $leagueSeasonTable->delete($where);
+
+        $this->_redirect('leagues');
+    }
+    
     public function pageAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');

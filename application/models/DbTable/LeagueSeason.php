@@ -5,10 +5,10 @@ class Cupa_Model_DbTable_LeagueSeason extends Zend_Db_Table
     protected $_name = 'league_season';
     protected $_primary = 'id';
     
-    public function fetchAllSeasons()
+    public function fetchAllSeasons($order = 'weight ASC')
     {
         $select = $this->select()
-                       ->order('weight ASC');
+                       ->order($order);
         
         return $this->fetchAll($select);
     }
@@ -27,4 +27,19 @@ class Cupa_Model_DbTable_LeagueSeason extends Zend_Db_Table
         return $data;
     }
     
+    public function moveSeason($seasonId, $weight)
+    {
+        $activeSeason = $this->find($seasonId)->current();
+        $prevWeight = $activeSeason->weight;
+        $activeSeason->weight = $weight;
+        $activeSeason->save();
+        
+        foreach($this->fetchAllSeasons() as $row) {
+            if($row->id != $seasonId and $row->weight == $weight) {
+                $row->weight = $prevWeight;
+                $row->save();
+            }
+        }      
+    }
+   
 }

@@ -1,0 +1,24 @@
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->season->name; ?></h1>
+<div id="season-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->when; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->information; ?>
+        </div>
+        
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array(), 'leagues'); ?>">Cancel</a>
+        </div>
+    </form>
+    
+    <?php echo $this->partial('tinymce.phtml', array('element' => 'information')); ?>
+</div>
+
