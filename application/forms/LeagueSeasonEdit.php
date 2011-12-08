@@ -8,7 +8,7 @@ class Cupa_Form_LeagueSeasonEdit extends Zend_Form
         $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
         $name = $this->addElement('text', 'name', array(
-            'filters' => array('StringTrim'),
+            'filters' => array('StringTrim', 'StringToLower'),
             'required' => true,
             'label' => 'Name:',
             'description' => 'Enter the name of the season.',

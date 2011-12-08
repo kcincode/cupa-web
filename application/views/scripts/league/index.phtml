@@ -9,11 +9,9 @@
     </div>
     <?php endif; ?>
     <span class="actions">
-        <?php if($this->hasRole('admin')): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>">Admin</a>
-        <?php endif; ?>
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
+        <a class="button" id="add-season" href="#">Add Season</a>
+        <div id="add-season-container"></div>
         <?php endif; ?>
     </span>
   

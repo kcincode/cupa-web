@@ -665,9 +665,6 @@ class PageController extends Zend_Controller_Action
                 return;
             }
         }
-
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
     }
 
     public function clubseditAction()

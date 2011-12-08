@@ -23,7 +23,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->leagues = $leagueSeasonTable->fetchAllSeasons();
     }
     
-    public function moveseasonAction()
+    public function seasonmoveAction()
     {
         // disable the layout and view
         $this->_helper->layout()->disableLayout();
@@ -38,7 +38,7 @@ class LeagueController extends Zend_Controller_Action
         $this->_redirect('leagues');
     }
     
-    public function editseasonAction()
+    public function seasoneditAction()
     {
         $pageTable = new Cupa_Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
@@ -82,14 +82,39 @@ class LeagueController extends Zend_Controller_Action
         $this->view->form = $form;
     }
 
-    public function createseasonAction()
+    public function seasonaddAction()
     {
-        // disable the layout and view
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+        
+        // disable the layout
         $this->_helper->layout()->disableLayout();
-
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+            if($leagueSeasonTable->isUnique($post['name'])) {
+                $season = $leagueSeasonTable->createRow();
+                $season->name = $post['name'];
+                $season->when = 'Unknown';
+                $season->information = '';
+                $season->weight = $leagueSeasonTable->fetchNextWeight();
+                $season->save();
+                
+                $this->view->message('Season created successfully.');
+                echo Zend_Json::encode(array('result' => 'success', 'data' => $season->id));
+            } else {
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Season Already Exists'));
+                return;
+            }
+        }
     } 
     
-    public function deleteseasonAction()
+    public function seasondeleteAction()
     {
         if(!$this->view->hasRole('admin')) {
             $this->_redirect('leagues');

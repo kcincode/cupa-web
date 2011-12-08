@@ -41,5 +41,29 @@ class Cupa_Model_DbTable_LeagueSeason extends Zend_Db_Table
             }
         }      
     }
+    
+    public function fetchNextWeight()
+    {
+        $select = $this->select()
+                       ->order('weight DESC');
+        
+        $result = $this->fetchRow($select);
+        
+        return $result->weight + 1;
+    }
+    
+    public function isUnique($name)
+    {
+        $select = $this->select()
+                       ->where('name = ?', $name);
+        
+        $result = $this->fetchRow($select);
+        
+        if(isset($result->id)) {
+            return false;
+        }
+        
+        return true;
+    }
    
 }
