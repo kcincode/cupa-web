@@ -89,6 +89,16 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('/');
         }
         
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+        $this->view->page = $page;
+        
+        if(!$this->view->hasRole('admin') and 
+           !$this->view->hasRole('editor') and 
+           !$this->view->hasRole('editor', $page->id) ) {
+            return;
+        }
+        
         // disable the layout
         $this->_helper->layout()->disableLayout();
         
