@@ -57,6 +57,8 @@ try {
     $db->query("DROP TABLE IF EXISTS `league_location`");
     echo "        League\n";
     $db->query("DROP TABLE IF EXISTS `league`");
+    echo "        LeagueSeason\n";
+    $db->query("DROP TABLE IF EXISTS `league_season`");
     echo "        User\n";
     $db->query("DROP TABLE IF EXISTS `user`");
     echo "        Contact\n";
@@ -616,6 +618,33 @@ try {
     endWithError();
 }
  
+/*******************************************************************************
+ * 
+ * LEAGUE_SEASON TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `LeagueSeason` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `league_season` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `when` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+          `information` text COLLATE utf8_unicode_ci NOT NULL,
+          `weight` int(11) DEFAULT 0,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
+    
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
 
 /*******************************************************************************
  * 
@@ -630,7 +659,7 @@ try {
         CREATE TABLE IF NOT EXISTS `league` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `year` int(11) NOT NULL,
-          `season` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+          `season` int(11) DEFAULT NULL,
           `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') COLLATE utf8_unicode_ci NOT NULL,
           `name` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
           `info` text COLLATE utf8_unicode_ci NOT NULL,
@@ -640,6 +669,10 @@ try {
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
     
+    $db->query("
+        ALTER TABLE `league`
+          ADD CONSTRAINT `league_ibfk_1` FOREIGN KEY (`season`) REFERENCES `league_season` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
+
     $db->commit();
     echo "Done.\n";
 } catch(Exception $e) {

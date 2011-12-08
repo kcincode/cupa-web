@@ -16,13 +16,6 @@ $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
 $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
 $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
 
-$season = array(
-    1 => 'Winter',
-    2 => 'Spring',
-    3 => 'Summer',
-    4 => 'Fall',
-);
-
 $colorLookupTable = array(
     'sapphire blue' => '#48a0c7',
     'sapphire' => '#48a0c7',
@@ -69,8 +62,94 @@ $colorLookupTable = array(
     'all' => '#fff',
 );
 
-
 echo "    Importing `League` data:\n";
+$seasons = array(
+    array(
+        'name' => 'winter',
+        'when' => 'January - March',
+        'information' => "<p>What could be better than playing ultimate in the 
+            dead of winter?  Playing on two twin full-sized indoor fields.</p>
+            <p>The indoor facility is called 
+            <a href=\"http://www.wall2wallsoccer.com/\">Wall 2 Wall Soccer</a> 
+            and it is located on Route 42 (Reading Rd) 3-4 miles north of I-275.
+            Or if your coming from the north, about 1 mile south of Tylersville. 
+            It's about 10 minutes from the summer league location. Click 
+            <a href=\"http://www.wall2wallsoccer.com/directions.htm\">here</a> 
+            for a map.</p><div 
+            class=\"img-right\" style=\"float: right;\">
+            <img src=\"http://cincyultimate.org/upload/turf.gif\" 
+            alt=\"Indoor Turf\"/></div><p>The turf at the indoor facility is the 
+            latest in technical innovation for synthetic turf. SportsTurf is 
+            made up of a rubber base with a 2 inch pile of Thiolon Flex. This 
+            surface closely mimics outdoor conditions such that you can wear 
+            cleats or turf shoes without any problem. Typical problems with 
+            artificial turf such as shin splints DO NOT apply with this surface.
+            </p><p>It is a bit expensive to play. Why?!?, Field rental makes up 
+            over 95% of the league fees. We are working very hard to get you the 
+            most playing time for the least amount of money.</p>",
+    ),
+    array(
+        'name' => 'spring',
+        'when' => "March - April",
+        'information' => "<p>Get ready for the summer season with our spring 
+            session on stable artificial turf.</p><p>The weather is getting 
+            warmer and is a great time to start getting ready for the CUPA 
+            summer league.  We are trying to make it a co-ed league so females 
+            are more than welcome.</p><p>The fields have lights so when it get 
+            late and dark we are still able to play just fine.  Who doesn't like 
+            playing under the lights and on some turf fields?</p><p>Space might 
+            be limited depending upon the location so get registered as soon 
+            as you can.</p><p>There is also a Mens League and a Women's Clinic 
+            & League so there are plenty of oppourtunities to learn and play.</p>",
+    ),
+    array(
+        'name' => 'summer',
+        'when' => "June - August",
+        'information' => "<p>The original and still the best.  Summer league is 
+            our most popular set of leagues with several levels of experience to 
+            fit everyones needs.</p><p>For those new to the game or not quite
+            ready to play for real we have a Beginners league that usually has
+            an experienced player coaching/leading the team.  This will help you
+            understand the rules, how to play, and answer any questions you may
+            have.</p><p>The next level is an intermediate league.  This league
+            is one step up and has player just above beginners all the way to 
+            some elite players.  The elite players are limited per team so that
+            one team is not all elite players.</p><p>The elite league has been 
+            re-developed recently to try to bring the most elite players from 
+            around Cincinnati to come and play against all the other elite 
+            players while still maintaining the fun of a league.  If you think 
+            you are one of the best around, this is the the league for you.  
+            It will challenge you and hopefully make you a better player.</p>",
+    ),
+    array(
+        'name' => 'fall',
+        'when' => "September - November",
+        'information' => "<p>This is for those that just didn't get enough
+            ultimate in the summer and are still looking to get the last little
+            bit of ultimate in before the winter cold sets in.</p><p>It is 
+            usually after the club season or near the end so the club level 
+            players that would like a few last games to play can do so.  It also
+            gets people out to play more ultimate which is always good.  Come
+            on out and join for the Fall.</p>",
+    ),
+    
+);
+
+$seasonsArray = array();
+foreach($seasons as $season) {
+    echo "        Importing league season `{$season['name']}`:\n";
+    $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+    $leagueSeason = $leagueSeasonTable->createRow();
+    $leagueSeason->name = $season['name'];
+    $leagueSeason->when = $season['when'];
+    $leagueSeason->information = $season['information'];
+    $leagueSeason->save();
+    echo "Done.\n";    
+    
+    $seasonsArray[] = $season['name'];
+}
+
+
 
 $stmt = $origDb->prepare('SELECT * FROM events e LEFT JOIN event_data ed ON ed.event_id = e.id');
 $stmt->execute();
@@ -78,9 +157,9 @@ foreach($stmt->fetchAll() as $row) {
     echo "        Importing league `{$row['name']}`:\n";
     $league = $leagueTable->createRow();
     $league->year = $row['year'];
-    $league->season = ($row['type'] < 5 and $row['type'] != 0) ? $season[$row['type']] : 'Other';
+    $league->season = ($row['type'] < 5 and $row['type'] != 0) ? $row['type'] : null;
     $league->day = (empty($row['day'])) ? 'Sunday' : $row['day'];
-    $league->name = generateName($row['name'], $season);
+    $league->name = generateName($row['name'], $seasonsArray);
     $league->info = '';
     $league->registration_begin = $row['start'] . ' 00:00:00';
     $league->registration_end = $row['end'] . ' 23:59:59';

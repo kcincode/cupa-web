@@ -56,4 +56,35 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
         return $data;
     }
     
+    public function fetchAllByType($leagueId, $position)
+    {
+        $select = $this->select()
+                       ->where('league_id = ?', $leagueId)
+                       ->where('position = ?', $position);
+        
+        return $this->fetchAll($select);
+    }
+    
+    public function fetchAllPlayersByGender($leagueId)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array('*'))
+                       ->joinLeft(array('up' => 'user_profile'), 'up.user_id = lm.user_id', array('gender'))
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->where('lm.position = ?', 'player');
+        
+        $stmt = $this->getAdapter()->query($select);
+        $data = array('male_players' => 0, 'female_players' => 0);
+        
+        foreach($stmt->fetchAll() as $row) {
+            if($row['gender'] == 'Male') {
+                $data['male_players']++;
+            } else {
+                $data['female_players']++;
+            }
+        }
+        
+        return $data;
+    }
+    
 }

@@ -10,37 +10,32 @@ class LeagueController extends Zend_Controller_Action
 
     public function indexAction()
     {
-
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/leagues.css');
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $pageTable = new Cupa_Model_DbTable_Page();
+        
+        $this->view->page = $pageTable->fetchBy('name', 'leagues');
+        $this->view->links = $pageTable->fetchChildren($this->view->page);
+        $this->view->leagues = $leagueSeasonTable->fetchAll();
     }
 
     public function pageAction()
     {
-        // action body
-    }
-
-    public function winterAction()
-    {
-        // action body
-    }
-
-    public function springAction()
-    {
-        // action body
-    }
-
-    public function summerAction()
-    {
-        // action body
-    }
-
-    public function fallAction()
-    {
-        // action body
-    }
-
-    public function otherAction()
-    {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/page.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/page.js');
+        
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $leagueTable = new Cupa_Model_DbTable_League();
+        
+        $season = $this->getRequest()->getUserParam('type');
+        
+        $this->view->page = $pageTable->fetchBy('name', $season . '_league');
+        $this->view->links = $pageTable->fetchChildren($this->view->page);
+        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season);
     }
 
     public function formsAction()

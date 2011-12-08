@@ -1,4 +1,42 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>index</b></p>
+<div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
+<div id="page-header" class="<?php echo $this->pageClass(); ?>">
+    <span class="title">
+        <h2><?php echo $this->page->title; ?></h2>
+    </span>
+    <?php if(!$this->page->is_visible): ?>
+    <div class="visible">
+        *** This page is not yet visible to the public ***
+    </div>
+    <?php endif; ?>
+    <span class="actions">
+        <?php if($this->hasRole('admin')): ?>
+        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>">Admin</a>
+        <?php endif; ?>
+        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
+        <?php endif; ?>
+    </span>
+  
+</div>
+
+<div id="page-content" class="<?php echo $this->pageClass(); ?>">
+    <?php foreach($this->leagues as $league): ?>
+    <div class="league">
+        <div class="name"><a href="<?php echo $this->url(array('type' => $league['name']), 'league');?>"><?php echo $this->escape(ucwords($league['name']));?> League</a></div>
+        <div class="when">( <span class="when-text"><?php echo $this->escape($league['when']);?></span> )</div>
+        <div class="information"><?php echo $league['information'];?></div>
+    </div>
+    <?php endforeach; ?>
+</div>
+  
+<div id="page-links" class="<?php echo $this->pageClass(); ?>">
+    <ul>
+        <?php foreach($this->links as $link): ?>
+        <?php if($link->name == $this->page->name): ?>
+        <li><?php echo $link->title; ?></li>
+        <?php else: ?>
+        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
+        <?php endif; ?>
+        <?php endforeach; ?>
+    </ul>
 </div>

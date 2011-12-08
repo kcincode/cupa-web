@@ -10,7 +10,7 @@ class My_View_Helper_Leaguename extends Zend_View_Helper_Abstract
      * @param string $role 
      * @return boolean
      */
-    public function leaguename($league, $showYear = false)
+    public function leaguename($league, $showYear = false, $showDay = false, $showSeason = false, $showLeague = false)
     {
         if(is_numeric($league)) {
             $leagueTable = new Cupa_Model_DbTable_League();
@@ -23,21 +23,25 @@ class My_View_Helper_Leaguename extends Zend_View_Helper_Abstract
         if($leagueObject) {
             $name = '';
             
-            if($showYear) {
+            if($showYear === true) {
                 $name .= $leagueObject->year;
             }
             
-            $name .= ' ' . $leagueObject->day . ' ';
+            if($showDay === true) {
+                $name .= ' ' . $leagueObject->day . ' ';
+            }
 
-            if($leagueObject->season != 'Other') {
-                $name .= ' ' . $leagueObject->season;
+            if($showSeason === true) {
+                $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+                $season = $leagueSeasonTable->find($leagueObject->season)->current();
+                $name .= ' ' . ucwords($season->name);
             }
 
             if(!empty($leagueObject->name)) {
                 $name .= ' ' . $leagueObject->name;
             }
 
-            if($this->isLeague($name)) {
+            if($this->isLeague($name) and $showLeague === true) {
                 $name .= ' League';
                 
             }
