@@ -59,6 +59,8 @@ try {
     $db->query("DROP TABLE IF EXISTS `league`");
     echo "        LeagueSeason\n";
     $db->query("DROP TABLE IF EXISTS `league_season`");
+    echo "        UserWaiver\n";
+    $db->query("DROP TABLE IF EXISTS `user_waiver`");
     echo "        User\n";
     $db->query("DROP TABLE IF EXISTS `user`");
     echo "        Contact\n";
@@ -257,6 +259,40 @@ try {
     $db->query("
         ALTER TABLE `user_profile`
           ADD CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ * 
+ * USER_WAIVER TABLE
+ * 
+ *******************************************************************************/
+try {
+    echo "    Creating `UserWaiver` Table..."; 
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `user_waiver` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `user_id` int(11) NOT NULL,
+          `year` int(11) NOT NULL,
+          `modified_at` datetime NOT NULL,
+          `modified_by` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          KEY `user_id` (`user_id`),
+          KEY `modified_by` (`modified_by`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    $db->query("
+        ALTER TABLE `user_waiver`
+          ADD CONSTRAINT `user_waiver_ibfk_2` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+          ADD CONSTRAINT `user_waiver_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 
     $db->commit();
     echo "Done.\n";
@@ -872,17 +908,20 @@ try {
           `release` tinyint(1) NOT NULL DEFAULT '0',
           `created_at` datetime NOT NULL,
           `modified_at` datetime NOT NULL,
+          `modified_by` int(11) DEFAULT NULL,
           PRIMARY KEY (`id`),
           KEY `league_id` (`league_id`),
           KEY `user_id` (`user_id`),
-          KEY `legaue_team_id` (`league_team_id`)
+          KEY `legaue_team_id` (`league_team_id`),
+          KEY `modified_by` (`modified_by`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 
     $db->query("
         ALTER TABLE `league_member`
-          ADD CONSTRAINT `league_member_ibfk_3` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+          ADD CONSTRAINT `league_member_ibfk_4` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `league_member_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `league_member_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+          ADD CONSTRAINT `league_member_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+          ADD CONSTRAINT `league_member_ibfk_3` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 
     $db->commit();
     echo "Done.\n";

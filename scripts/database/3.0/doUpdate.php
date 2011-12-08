@@ -4,6 +4,7 @@ try {
     echo "Importing Data:\n";
     include('createDbSchema.php');
     include('importUserData.php');
+    include('importUserWaiverData.php');
     include('importPageData.php');
     include('importNewsData.php');
     include('importClubData.php');

@@ -137,11 +137,12 @@
 <div id="page-links" class="<?php echo $this->pageClass(); ?>">
     <ul>
         <?php foreach($this->links as $link): ?>
-        <?php if($link->name == $this->page->name): ?>
-        <li><?php echo $link->title; ?></li>
+        <?php if($link['name'] == substr($this->page->name, -7)): ?>
+        <li><?php echo $link['title']; ?></li>
         <?php else: ?>
-        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
+        <li><a href="<?php echo $this->url(array('type' => $link['name']), 'league');?>"><?php echo $link['title']; ?></a></li>
         <?php endif; ?>
         <?php endforeach; ?>
+        <li><a href="<?php echo $this->url(array(), 'league_waivers');?>">Waivers & Forms</a></li>
     </ul>
 </div>

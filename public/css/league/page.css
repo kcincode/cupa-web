@@ -54,15 +54,19 @@ p.links {
     font-weight: bold;
 }
 
-.location-draft, .location-draft-photo {
+.location-league-photo, .location-league-address {
+    margin: 0 0 0 87px;
+}
+
+.location-draft, .location-draft-photo, .location-draft-address {
     margin: 0 0 0 77px;
 }
 
-.location-tournament, .location-tournament-photo {
+.location-tournament, .location-tournament-photo, .location-tournament-address {
     margin: 0 0 0 140px;
     
 }
 
-.location-draft, .location-tournament {
+.location-draft-address, .location-tournament-address, .location-league-address {
     margin-top: -10px;
 }

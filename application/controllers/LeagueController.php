@@ -16,7 +16,7 @@ class LeagueController extends Zend_Controller_Action
         $pageTable = new Cupa_Model_DbTable_Page();
         
         $this->view->page = $pageTable->fetchBy('name', 'leagues');
-        $this->view->links = $pageTable->fetchChildren($this->view->page);
+        $this->view->links = $leagueSeasonTable->generateLinks();
         $this->view->leagues = $leagueSeasonTable->fetchAll();
     }
 
@@ -30,11 +30,12 @@ class LeagueController extends Zend_Controller_Action
         
         $pageTable = new Cupa_Model_DbTable_Page();
         $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
         
         $season = $this->getRequest()->getUserParam('type');
         
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
-        $this->view->links = $pageTable->fetchChildren($this->view->page);
+        $this->view->links = $leagueSeasonTable->generateLinks();
         $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season);
     }
 
