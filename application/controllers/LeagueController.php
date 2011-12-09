@@ -156,10 +156,228 @@ class LeagueController extends Zend_Controller_Action
         $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
         
         $season = $this->getRequest()->getUserParam('type');
+        $this->view->season = $season;
         
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
         $this->view->links = $leagueSeasonTable->generateLinks();
         $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season);
+    }
+    
+    public function pageeditAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $this->view->league = $leagueTable->fetchLeagueData($leagueId);
+        $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
+
+        $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->hasRole('admin') and 
+           !$this->view->hasRole('editor') and 
+           !$this->view->hasRole('editor', $page->id) ) {
+            $this->_redirect('leagues/' . $this->view->season);
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
+                
+        $form = new Cupa_Form_LeagueEdit();
+        $form->loadSection($leagueId, 'league');
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $league = $leagueTable->find($leagueId)->current();
+
+                if($this->view->hasRole('admin')) {
+                    $league->year = $data['year'];
+                    $league->season = $data['season'];
+                    $league->day = $data['day'];                    
+                }
+                $league->name = $data['name'];
+                $league->info = $data['info'];
+                $league->save();
+                
+                $this->view->message('League data saved successfully.'. 'success');
+                $this->_redirect('leagues/' . $this->view->season);
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
+    }
+
+    public function pageinformationeditAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $this->view->league = $leagueTable->fetchLeagueData($leagueId);
+        $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
+
+        $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->hasRole('admin') and 
+           !$this->view->hasRole('editor') and 
+           !$this->view->hasRole('editor', $page->id) ) {
+            $this->_redirect('leagues/' . $this->view->season);
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
+
+        $form = new Cupa_Form_LeagueEdit();
+        $form->loadSection($leagueId, 'information');
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                Zend_Debug::dump($data);
+
+                $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                
+                // remove all of the directors that are not in the list
+                $dbDirectors = array();
+                foreach($leagueMemberTable->fetchAllByType($leagueId, 'director') as $director) {
+                    if(!in_array($director->user_id, array_values($data['directors']))) {
+                        $director->delete();
+                    } else {
+                        $dbDirectors[] = $director->user_id;
+                    }
+                }
+                
+                // add the directors that are not in the DB
+                foreach($data['directors'] as $directorId) {
+                    if(!in_array($directorId, $dbDirectors)) {
+                        $leagueMember = $leagueMemberTable->createRow();
+                        $leagueMember->league_id = $leagueId;
+                        $leagueMember->user_id = $directorId;
+                        $leagueMember->position = 'director';
+                        $leagueMember->league_team_id = null;
+                        $leagueMember->paid = 0;
+                        $leagueMember->release = 0;
+                        $leagueMember->created_at = date('Y-m-d H:i:s');
+                        $leagueMember->modified_at = date('Y-m-d H:i:s');
+                        $leagueMember->modified_by = $this->view->user->id;
+                        $leagueMember->save();
+                    }
+                }
+                
+                $leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
+                $league = $leagueLocationTable->fetchByType($leagueId, 'league');
+                $league->location = $data['league_name'];
+                $league->map_link = $data['league_map_link'];
+                $league->photo_link = (empty($data['league_photo_link'])) ? null : $data['league_photo_link'];
+                $league->address_street = $data['league_addres_street'];
+                $league->address_city = $data['league_addres_city'];
+                $league->address_state = $data['league_addres_state'];
+                $league->address_zip = $data['league_addres_zip'];
+                $league->start = $data['league_start'];
+                $league->end = $data['league_end'];
+                $league->save();
+                
+                
+                if(!$data['tournament_ignore']) {
+                    $tournament = $leagueLocationTable->fetchByType($leagueId, 'tournament');
+                    if($tournament) {
+                        if($data['tournament_ignore']) {
+                            $tournament->delete();
+                        } else {
+                            $tournament->location = $data['tournament_name'];
+                            $tournament->map_link = $data['tournament_map_link'];
+                            $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
+                            $tournament->address_street = $data['tournament_addres_street'];
+                            $tournament->address_city = $data['tournament_addres_city'];
+                            $tournament->address_state = $data['tournament_addres_state'];
+                            $tournament->address_zip = $data['tournament_addres_zip'];
+                            $tournament->start = $data['tournament_start'];
+                            $tournament->end = $data['tournament_end'];
+                            $tournament->save();
+                        }
+                    } else if(!$data['tournament_ignore']) {
+                        $tournament = $leagueLocationTable->createRow();
+                        $tournament->location = $data['tournament_name'];
+                        $tournament->map_link = $data['tournament_map_link'];
+                        $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
+                        $tournament->address_street = $data['tournament_addres_street'];
+                        $tournament->address_city = $data['tournament_addres_city'];
+                        $tournament->address_state = $data['tournament_addres_state'];
+                        $tournament->address_zip = $data['tournament_addres_zip'];
+                        $tournament->start = $data['tournament_start'];
+                        $tournament->end = $data['tournament_end'];
+                        $tournament->save();
+                    }
+                }
+                
+                
+                if(!$data['draft_ignore']) {
+                    $draft = $leagueLocationTable->fetchByType($leagueId, 'draft');
+                    if($draft) {
+                        if(empty($data['draft_ignore'])) {
+                            $draft->delete();
+                        } else {
+                            $draft->location = $data['draft_name'];
+                            $draft->map_link = $data['draft_map_link'];
+                            $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
+                            $draft->address_street = $data['draft_addres_street'];
+                            $draft->address_city = $data['draft_addres_city'];
+                            $draft->address_state = $data['draft_addres_state'];
+                            $draft->address_zip = $data['draft_addres_zip'];
+                            $draft->start = $data['draft_start'];
+                            $draft->end = $data['draft_end'];
+                            $draft->save();
+                        }
+                    } else if(!$data['draft_ignore']) {
+                        $draft = $leagueLocationTable->createRow();
+                        $draft->location = $data['draft_name'];
+                        $draft->map_link = $data['draft_map_link'];
+                        $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
+                        $draft->address_street = $data['draft_addres_street'];
+                        $draft->address_city = $data['draft_addres_city'];
+                        $draft->address_state = $data['draft_addres_state'];
+                        $draft->address_zip = $data['draft_addres_zip'];
+                        $draft->start = $data['draft_start'];
+                        $draft->end = $data['draft_end'];
+                        $draft->save();
+                    }
+                }
+
+                $this->view->message('League Information updated successfully.', 'success');
+                //$this->_redirect('leagues/' . $this->view->season);
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
+    }
+    
+    public function pageaddAction()
+    {
+        
     }
 
     public function formsAction()

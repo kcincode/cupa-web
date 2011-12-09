@@ -10,10 +10,7 @@
     <?php endif; ?>
     <span class="actions">
         <?php if($this->hasRole('admin')): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>">Admin</a>
-        <?php endif; ?>
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
+        <a class="button" href="#">Add <?php echo ucwords($this->season);?> League</a>
         <?php endif; ?>
     </span>
   
@@ -29,104 +26,139 @@
    
         <?php foreach($this->leagues as $league): ?>
         <div id="leagues-<?php echo $league['id'];?>" class="<?php echo $this->pageClass; ?>">
-            <p class="links">
-                <?php if($league['teams'] > 0): ?>
-                <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_schedule'); ?>">Schedule</a> -
-                <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Teams</a> -
-                <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_results'); ?>">Results</a>
-                <?php elseif($this->hasRole('admin') or $this->isLeagueDirector($league['id'])): ?>
-                <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Event Page</a>
-                <?php endif; ?>
-            </p>
+            <div class="section">
+                <div class="edit-links">
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League"/></a>
+                    <?php endif; ?>
+                    <?php if($this->hasRole('admin')): ?>
+                    <a href="#"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete League"/></a>
+                    <?php endif; ?>
+                </div>
+                <p class="links">
+                    <?php if($league['teams'] > 0): ?>
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_schedule'); ?>">Schedule</a> -
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Teams</a> -
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_results'); ?>">Results</a>
+                    <?php elseif($this->hasRole('admin') or $this->isLeagueDirector($league['id'])): ?>
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Event Page</a>
+                    <?php endif; ?>
+                </p>
+            </div>
             <hr/>
-            <h2 class="<?php echo $this->pageClass; ?>">Information</h2>
-            <p>
-                <strong>League Director(s):</strong>
-                <?php $i = 1; foreach($league['directors'] as $director): ?>
-                <?php if(!empty($league['information']['contact_email'])): ?>
-                <a href="mailto:<?php echo $league['information']['contact_email']; ?>"><?php echo $this->fullname($director['user_id']); ?></a>
-                <?php else: ?>
-                <a href="mailto:<?php echo $this->displayEmail($director['user_id']); ?>"><?php echo $this->fullname($director['user_id']); ?></a>
-                <?php if($i != sizeof($league['directors'])): ?>
-                ,
-                <?php endif; $i++; ?>
+            <div class="section">
+                <div class="edit-links">
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_information_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League Information"/></a>
+                    <?php endif; ?>
+                </div>
+                <h2 class="<?php echo $this->pageClass; ?>">Information</h2>
+                <?php if(!empty($league['info'])): ?>
+                <p>
+                    <?php echo $league['info'];?>
+                </p>
                 <?php endif; ?>
-                <?php endforeach; ?>
-            </p>
-  
-            <p>
-                <strong>When:</strong>
-                <?php echo $league['day']; ?>s, 
-                <?php echo date('F jS Y', strtotime($league['locations']['league']['start']));?> -
-                <?php echo date('F jS Y', strtotime($league['locations']['league']['end']));?>
-                <?php echo date('h:i A', strtotime($league['locations']['league']['start']));?> -
-                <?php echo date('h:i A', strtotime($league['locations']['league']['end']));?>
-            </p>
-  
-            <p>
-                <strong>Where:</strong>
-                <?php echo $this->leagueLocation($league['locations']['league']); ?>
-            </p>
-  
-            <?php if(isset($league['locations']['draft'])): ?>
-            <p>
-                <strong>Draft:</strong>
-                <?php echo $this->leagueLocation($league['locations']['draft']); ?>
-            </p>
-            <?php endif; ?>
-  
-            <?php if(isset($league['locations']['tournament'])): ?>
-            <p>
-                <strong>Tournament:</strong>
-                <?php echo $this->leagueLocation($league['locations']['tournament']); ?>
-            </p>
-            <?php endif; ?>
-  
-            <p>
-                <?php echo $league['info']; ?>
-            </p>
-  
-            <hr/>
-            <h2 class="<?php echo $this->pageClass;?>">Registration</h2>
-            <p>
-                <strong>When:</strong>
-                <?php echo date('D, F jS Y', strtotime($league['registration_begin'])); ?> -
-                <?php echo date('D, F jS Y', strtotime($league['registration_end'])); ?>
-            </p>
-            <p>
-                <strong>Cost:</strong> $<?php echo ($league['information']['cost'] > 0) ? $league['information']['cost'] : 'Free'; ?>
-            <p>
-                <strong>Waiver:</strong>
-                All players must have a waiver on file with CUPA from a previous 
-                <?php echo $league['year']; ?> league or present a printed
-                and signed copy before play begins.  You may check your status
-                <a href="<?php echo $this->url(array(), 'profile'); ?>">here</a>.
-            </p>
-            
-            <?php if($this->isLeagueRegistrationOpen($league['registration_begin'], $league['registration_end'])): ?>
-            <?php if($league['limits']['male_players'] !== null and $league['limits']['female_players'] !== null): ?>
-            <?php echo $this->leagueBar('Male players', $league['male_players'], $league['limits']['male_players']); ?>
-            <?php echo $this->leagueBar('Female players', $league['female_players'], $league['limits']['female_players']); ?>
-            <?php else: ?>
-            <?php echo $this->leagueBar('Total Players', $league['total_players'], $league['limits']['total_players']); ?>
-            <?php endif; ?>
-            
-            <?php if($league['teams'] < $league['limits']['teams'] and $league['information']['user_teams']): ?>
-            <?php echo $this->leagueBar('Total Teams', $league['teams'], $league['limits']['teams']); ?>
-            <?php endif; ?>
-            
-            <div class="clearfix">&nbsp;</div>
-            <p class="register-link"><a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_register'); ?>">Register</a> for the league now!</p>
-            <?php else: ?>
-            <p class="register-link">Registration is <span class="closed">Closed</span>
-            <?php endif; ?>
-            <p class="pay-link">You may also <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_register_success'); ?>">Pay</a> for your registration if you have already registered.</p>
+                <p>
+                    <strong>League Director(s):</strong>
+                    <?php $i = 1; foreach($league['directors'] as $director): ?>
+                    <?php if(!empty($league['information']['contact_email'])): ?>
+                    <a href="mailto:<?php echo $league['information']['contact_email']; ?>"><?php echo $this->fullname($director['user_id']); ?></a>
+                    <?php else: ?>
+                    <a href="mailto:<?php echo $this->displayEmail($director['user_id']); ?>"><?php echo $this->fullname($director['user_id']); ?></a>
+                    <?php if($i != sizeof($league['directors'])): ?>
+                    ,
+                    <?php endif; $i++; ?>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                </p>
 
+                <p>
+                    <strong>When:</strong>
+                    <?php echo $league['day']; ?>s, 
+                    <?php echo date('F jS Y', strtotime($league['locations']['league']['start']));?> -
+                    <?php echo date('F jS Y', strtotime($league['locations']['league']['end']));?>
+                    <?php echo date('h:i A', strtotime($league['locations']['league']['start']));?> -
+                    <?php echo date('h:i A', strtotime($league['locations']['league']['end']));?>
+                </p>
+
+                <p>
+                    <strong>Where:</strong>
+                    <?php echo $this->leagueLocation($league['locations']['league']); ?>
+                </p>
+
+                <?php if(isset($league['locations']['draft'])): ?>
+                <p>
+                    <strong>Draft:</strong>
+                    <?php echo $this->leagueLocation($league['locations']['draft']); ?>
+                </p>
+                <?php endif; ?>
+
+                <?php if(isset($league['locations']['tournament'])): ?>
+                <p>
+                    <strong>Tournament:</strong>
+                    <?php echo $this->leagueLocation($league['locations']['tournament']); ?>
+                </p>
+                <?php endif; ?>
+
+                <p>
+                    <?php echo $league['info']; ?>
+                </p>
+            </div>
+  
             <hr/>
-            <h2 class="<?php echo $this->pageClass;?>">Description</h2>
-            <p class="description">
-                <?php echo $league['information']['description'];?>
-            </p>  
+            <div class="section">
+                <div class="edit-links">
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_registration_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League Registration"/></a>
+                    <?php endif; ?>
+                </div>
+                <h2 class="<?php echo $this->pageClass;?>">Registration</h2>
+                <p>
+                    <strong>When:</strong>
+                    <?php echo date('D, F jS Y', strtotime($league['registration_begin'])); ?> -
+                    <?php echo date('D, F jS Y', strtotime($league['registration_end'])); ?>
+                </p>
+                <p>
+                    <strong>Cost:</strong> $<?php echo ($league['information']['cost'] > 0) ? $league['information']['cost'] : 'Free'; ?>
+                <p>
+                    <strong>Waiver:</strong>
+                    All players must have a waiver on file with CUPA from a previous 
+                    <?php echo $league['year']; ?> league or present a printed
+                    and signed copy before play begins.  You may check your status
+                    <a href="<?php echo $this->url(array(), 'profile'); ?>">here</a>.
+                </p>
+
+                <?php if($this->isLeagueRegistrationOpen($league['registration_begin'], $league['registration_end'])): ?>
+                <?php if($league['limits']['male_players'] !== null and $league['limits']['female_players'] !== null): ?>
+                <?php echo $this->leagueBar('Male players', $league['male_players'], $league['limits']['male_players']); ?>
+                <?php echo $this->leagueBar('Female players', $league['female_players'], $league['limits']['female_players']); ?>
+                <?php else: ?>
+                <?php echo $this->leagueBar('Total Players', $league['total_players'], $league['limits']['total_players']); ?>
+                <?php endif; ?>
+
+                <?php if($league['teams'] < $league['limits']['teams'] and $league['information']['user_teams']): ?>
+                <?php echo $this->leagueBar('Total Teams', $league['teams'], $league['limits']['teams']); ?>
+                <?php endif; ?>
+
+                <div class="clearfix">&nbsp;</div>
+                <p class="register-link"><a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_register'); ?>">Register</a> for the league now!</p>
+                <?php else: ?>
+                <p class="register-link">Registration is <span class="closed">Closed</span>
+                <?php endif; ?>
+                <p class="pay-link">You may also <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_register_success'); ?>">Pay</a> for your registration if you have already registered.</p>
+            </div>
+            <hr/>
+            <div class="section">
+                <div class="edit-links">
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_description_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League Description"/></a>
+                    <?php endif; ?>
+                </div>
+                <h2 class="<?php echo $this->pageClass;?>">Description</h2>
+                <p class="description">
+                    <?php echo $league['information']['description'];?>
+                </p>
+            </div>
 
         </div>
         <?php endforeach; ?>
@@ -140,7 +172,7 @@
         <?php if($link['name'] == substr($this->page->name, -7)): ?>
         <li><?php echo $link['title']; ?></li>
         <?php else: ?>
-        <li><a href="<?php echo $this->url(array('type' => $link['name']), 'league');?>"><?php echo $link['title']; ?></a></li>
+        <li><a href="<?php echo $this->url(array('type' => $link['name']), 'leagues_view');?>"><?php echo $link['title']; ?></a></li>
         <?php endif; ?>
         <?php endforeach; ?>
         <li><a href="<?php echo $this->url(array(), 'league_waivers');?>">Waivers & Forms</a></li>

@@ -65,5 +65,10 @@ class Cupa_Model_DbTable_LeagueSeason extends Zend_Db_Table
         
         return true;
     }
-   
+
+    public function fetchName($seasonId)
+    {
+        $result = $this->find($seasonId)->current();
+        return $result->name;
+    }
 }

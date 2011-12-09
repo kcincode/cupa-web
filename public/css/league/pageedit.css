@@ -1,0 +1,119 @@
+#leagueedit-container {
+    width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    -webkit-box-shadow: 0 0 7px #444;
+    -moz-box-shadow: 0 0 7px #444;
+    box-shadow: 0 0 7px #444;
+}
+#leagueedit-container h2 {
+    font-size: 22pt;
+}
+
+#leagueedit-container input[type=text] {
+    padding: 5px;
+    font-size: 12pt;
+    width: 300px;
+}
+
+#leagueedit-container .row {
+    padding: 10px;
+}
+
+#leagueedit-container dt {
+    font-weight: bold;
+    font-size: 12pt;
+    float: left;
+    width: 125px;
+    padding-top: 7px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+#leagueedit-container input[type=submit] {
+    padding: 5px 15px;
+}
+
+#leagueedit-container select {
+    padding: 5px;
+    font-size: 12pt;
+}
+
+#buttons-container {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.button, button-red {
+    font-size: 14pt;
+    padding: 3px 25px;
+}
+
+p.description {
+    color: #909090;
+    margin: 0 0 10px 100px;
+    padding: 0;
+}
+
+#directors {
+    width: 500px;
+    padding: 5px;
+}
+
+#leagueedit-container #league_address_street,
+#leagueedit-container #tournament_address_street,
+#leagueedit-container #draft_address_street,
+#leagueedit-container #league_name,
+#leagueedit-container #tournament_name,
+#leagueedit-container #draft_name,
+#leagueedit-container #league_map_link,
+#leagueedit-container #tournament_map_link,
+#leagueedit-container #draft_map_link,
+#leagueedit-container #league_photo_link,
+#leagueedit-container #tournament_photo_link,
+#leagueedit-container #draft_photo_link
+{
+    width: 465px;
+}
+
+#leagueedit-container #league_address_city,
+#leagueedit-container #tournament_address_city,
+#leagueedit-container #draft_address_city {
+    width: 310px;
+    margin-left: 95px;
+}
+
+#leagueedit-container #league_address_state,
+#leagueedit-container #tournament_address_state,
+#leagueedit-container #draft_address_state {
+    width: 40px;
+    text-align: center;
+}
+
+#leagueedit-container #league_address_zip,
+#leagueedit-container #tournament_address_zip,
+#leagueedit-container #draft_address_zip {
+    width: 75px;
+    text-align: center;
+}
+
+#leagueedit-container #league_start,
+#leagueedit-container #tournament_start,
+#leagueedit-container #draft_start,
+#leagueedit-container #league_end,
+#leagueedit-container #tournament_end,
+#leagueedit-container #draft_end {
+    width: 150px;
+    
+}
+
+#leagueedit-container .exists {
+    float: right;
+    width: 160px;
+    text-align: center;
+}
+
+#leagueedit-container #tournament_exists,
+#leagueedit-container #draft_exists {
+    margin-top: 10px;
+}

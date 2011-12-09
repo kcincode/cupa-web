@@ -1,0 +1,35 @@
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->leaguename($this->league['id'], true, true, true, true); ?></h1>
+<div id="leagueedit-container">
+    <form method="post">
+        <div class="row">
+            <h2>League Data</h2>
+        </div>
+        <?php if($this->hasRole('admin')): ?>
+        <div class="row">
+            <?php echo $this->form->year; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->season; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->day; ?>
+        </div>
+        <?php endif; ?>
+        
+        <div class="row">
+            <?php echo $this->form->name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->info; ?>
+        </div>
+        
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('type' => $this->season), 'leagues_view'); ?>">Cancel</a>
+        </div>
+    </form>
+    <?php echo $this->partial('tinymce.phtml', array('element' => 'info')); ?>
+</div>
+

@@ -70,3 +70,23 @@ p.links {
 .location-draft-address, .location-tournament-address, .location-league-address {
     margin-top: -10px;
 }
+
+.edit-links {
+    float: right;
+}
+
+.edit-links img {
+    width: 30px;
+    height: 30px;
+}
+
+.section {
+    padding: 5px;
+}
+
+.highlight {
+    background-color: #f0f0f0;
+    -webkit-box-shadow: inset 0 0 15px #aaa;
+    -moz-box-shadow: inset 0 0 15px #aaa;
+    box-shadow: inset 0 0 15px #aaa;    
+}
