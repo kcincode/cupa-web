@@ -131,6 +131,24 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'separator' => '&nbsp;&nbsp;'
         ));
         
+        $contact_email = $this->addElement('text', 'contact_email', array(
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('EmailAddress'),
+            ),
+            'required' => false,
+            'label' => 'Contact Email:',
+            'description' => 'Enter the email address for league contact. (opional)',
+            'value' => $this->_leagueData['information']['contact_email'],
+        ));
+        
+        $visible_from = $this->addElement('text', 'visible_from', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Visible From:',
+            'description' => 'Enter the date/time when the league becomes visible to all.',
+            'value' => $this->_leagueData['visible_from'],
+        ));
     }
     
     private function information()
@@ -401,7 +419,7 @@ class Cupa_Form_LeagueEdit extends Zend_Form
         ));
         
         $male_players = $this->addElement('text', 'male_players', array(
-            'filters' => array('StringTrim'),
+            'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Male Players:',
             'description' => 'Enter the max # of male players. (optional)',
@@ -409,7 +427,7 @@ class Cupa_Form_LeagueEdit extends Zend_Form
         ));
         
         $female_players = $this->addElement('text', 'female_players', array(
-            'filters' => array('StringTrim'),
+            'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Female Players:',
             'description' => 'Enter the max # of female players. (optional)',
@@ -417,7 +435,7 @@ class Cupa_Form_LeagueEdit extends Zend_Form
         ));
         
         $total_players = $this->addElement('text', 'total_players', array(
-            'filters' => array('StringTrim'),
+            'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Total Players:',
             'description' => 'Enter the max # of total players.',
@@ -425,11 +443,19 @@ class Cupa_Form_LeagueEdit extends Zend_Form
         ));
         
         $teams = $this->addElement('text', 'teams', array(
-            'filters' => array('StringTrim'),
+            'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Teams:',
             'description' => 'Enter the max # of teams.',
             'value' => $this->_leagueData['limits']['teams'],
+        ));
+
+        $paypal_code = $this->addElement('text', 'paypal_code', array(
+            'filters' => array('StringTrim'),
+            'required' => false,
+            'label' => 'Paypal Code:',
+            'description' => 'Enter the paypal code for payment.',
+            'value' => $this->_leagueData['information']['paypal_code'],
         ));
     }
     

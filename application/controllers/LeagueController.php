@@ -189,6 +189,10 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
+
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
                 
         $form = new Cupa_Form_LeagueEdit();
         $form->loadSection($leagueId, 'league');
@@ -210,9 +214,12 @@ class LeagueController extends Zend_Controller_Action
                     $leagueInformation->is_hat = $data['is_hat'];
                     $leagueInformation->is_clinic = $data['is_clinic'];
                     $leagueInformation->user_teams = $data['user_teams'];
+                    $leagueInformation->contact_email = $data['contact_email'];
                     $leagueInformation->save();
                     
                 }
+                
+                $league->visible_from = $data['visible_from'];
                 $league->name = $data['name'];
                 $league->save();
                 
@@ -443,6 +450,7 @@ class LeagueController extends Zend_Controller_Action
         
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
 
         $form = new Cupa_Form_LeagueEdit();
         $form->loadSection($leagueId, 'registration');
@@ -485,6 +493,11 @@ class LeagueController extends Zend_Controller_Action
                 $leagueLimit->teams = (empty($data['teams'])) ? null : $data['teams'];
                 $leagueLimit->save();
                 
+                $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+                $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
+                $leagueInformation->paypal_code = (empty($data['paypal_code'])) ? null : $data['paypal_code'];
+                $leagueInformation->save();
+                
                 $this->view->message('League registration updated successfully.', 'success');
                 $this->_redirect('leagues/' . $this->view->season);
                 
@@ -522,6 +535,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
         
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         
         $form = new Cupa_Form_LeagueEdit();
         $form->loadSection($leagueId, 'description');

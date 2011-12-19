@@ -1,4 +1,11 @@
 $(document).ready(function() {
+    $('#visible_from').datetimepicker({
+        changeMonth: true,
+	changeYear: true,
+        dateFormat: 'yy-mm-dd',
+        timeFormat: 'hh:mm:ss',
+    });
+
     $('#directors').chosen();
     
     $('#league_start').datetimepicker({
