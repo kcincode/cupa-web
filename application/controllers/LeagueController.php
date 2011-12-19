@@ -253,10 +253,26 @@ class LeagueController extends Zend_Controller_Action
         
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+            
+            // disable the fields if hidden
+            if($post['tournament_ignore']) {
+                $form->getElement('tournament_name')->setRequired(false);
+                $form->getElement('tournament_map_link')->setRequired(false);
+                $form->getElement('tournament_address')->setRequired(false);
+                $form->getElement('tournament_start')->setRequired(false);
+                $form->getElement('tournament_end')->setRequired(false);
+            }
+            
+            if($post['draft_ignore']) {
+                    $form->getElement('draft_name')->setRequired(false);
+                    $form->getElement('draft_map_link')->setRequired(false);
+                    $form->getElement('draft_address')->setRequired(false);
+                    $form->getElement('draft_start')->setRequired(false);
+                    $form->getElement('draft_end')->setRequired(false);
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                Zend_Debug::dump($data);
-
                 $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
                 
                 // remove all of the directors that are not in the list
@@ -286,15 +302,21 @@ class LeagueController extends Zend_Controller_Action
                     }
                 }
                 
+                $league = $leagueTable->find($leagueId)->current();
+                $league->info = (empty($data['info'])) ? null : $data['info'];
+                $league->save();
+                
                 $leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
                 $league = $leagueLocationTable->fetchByType($leagueId, 'league');
                 $league->location = $data['league_name'];
                 $league->map_link = $data['league_map_link'];
                 $league->photo_link = (empty($data['league_photo_link'])) ? null : $data['league_photo_link'];
-                $league->address_street = $data['league_addres_street'];
-                $league->address_city = $data['league_addres_city'];
-                $league->address_state = $data['league_addres_state'];
-                $league->address_zip = $data['league_addres_zip'];
+                $matches = array();
+                preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['league_address'], $matches);
+                $league->address_street = $matches[1];
+                $league->address_city = $matches[2];
+                $league->address_state = $matches[3];
+                $league->address_zip = $matches[4];
                 $league->start = $data['league_start'];
                 $league->end = $data['league_end'];
                 $league->save();
@@ -309,10 +331,12 @@ class LeagueController extends Zend_Controller_Action
                             $tournament->location = $data['tournament_name'];
                             $tournament->map_link = $data['tournament_map_link'];
                             $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
-                            $tournament->address_street = $data['tournament_addres_street'];
-                            $tournament->address_city = $data['tournament_addres_city'];
-                            $tournament->address_state = $data['tournament_addres_state'];
-                            $tournament->address_zip = $data['tournament_addres_zip'];
+                            $matches = array();
+                            preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['tournament_address'], $matches);
+                            $tournament->address_street = $matches[1];
+                            $tournament->address_city = $matches[2];
+                            $tournament->address_state = $matches[3];
+                            $tournament->address_zip = $matches[4];
                             $tournament->start = $data['tournament_start'];
                             $tournament->end = $data['tournament_end'];
                             $tournament->save();
@@ -322,10 +346,12 @@ class LeagueController extends Zend_Controller_Action
                         $tournament->location = $data['tournament_name'];
                         $tournament->map_link = $data['tournament_map_link'];
                         $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
-                        $tournament->address_street = $data['tournament_addres_street'];
-                        $tournament->address_city = $data['tournament_addres_city'];
-                        $tournament->address_state = $data['tournament_addres_state'];
-                        $tournament->address_zip = $data['tournament_addres_zip'];
+                        $matches = array();
+                        preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['tournament_address'], $matches);
+                        $tournament->address_street = $matches[1];
+                        $tournament->address_city = $matches[2];
+                        $tournament->address_state = $matches[3];
+                        $tournament->address_zip = $matches[4];
                         $tournament->start = $data['tournament_start'];
                         $tournament->end = $data['tournament_end'];
                         $tournament->save();
@@ -342,10 +368,12 @@ class LeagueController extends Zend_Controller_Action
                             $draft->location = $data['draft_name'];
                             $draft->map_link = $data['draft_map_link'];
                             $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
-                            $draft->address_street = $data['draft_addres_street'];
-                            $draft->address_city = $data['draft_addres_city'];
-                            $draft->address_state = $data['draft_addres_state'];
-                            $draft->address_zip = $data['draft_addres_zip'];
+                            $matches = array();
+                            preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['draft_address'], $matches);
+                            $draft->address_street = $matches[1];
+                            $draft->address_city = $matches[2];
+                            $draft->address_state = $matches[3];
+                            $draft->address_zip = $matches[4];
                             $draft->start = $data['draft_start'];
                             $draft->end = $data['draft_end'];
                             $draft->save();
@@ -355,10 +383,12 @@ class LeagueController extends Zend_Controller_Action
                         $draft->location = $data['draft_name'];
                         $draft->map_link = $data['draft_map_link'];
                         $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
-                        $draft->address_street = $data['draft_addres_street'];
-                        $draft->address_city = $data['draft_addres_city'];
-                        $draft->address_state = $data['draft_addres_state'];
-                        $draft->address_zip = $data['draft_addres_zip'];
+                        $matches = array();
+                        preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['draft_address'], $matches);
+                        $draft->address_street = $matches[1];
+                        $draft->address_city = $matches[2];
+                        $draft->address_state = $matches[3];
+                        $draft->address_zip = $matches[4];
                         $draft->start = $data['draft_start'];
                         $draft->end = $data['draft_end'];
                         $draft->save();
@@ -366,7 +396,7 @@ class LeagueController extends Zend_Controller_Action
                 }
 
                 $this->view->message('League Information updated successfully.', 'success');
-                //$this->_redirect('leagues/' . $this->view->season);
+                $this->_redirect('leagues/' . $this->view->season);
             } else {
                 $form->populate($post);
             }

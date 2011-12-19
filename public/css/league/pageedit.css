@@ -117,3 +117,9 @@ p.description {
 #leagueedit-container #draft_exists {
     margin-top: 10px;
 }
+
+#leagueedit-container #info {
+    height: 50px;
+    width: 500px;
+}
+

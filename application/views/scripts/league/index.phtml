@@ -36,7 +36,7 @@
             <?php endif; ?>
             </form>
         </div>
-        <div class="name"><a href="<?php echo $this->url(array('type' => $league['name']), 'league');?>"><?php echo $this->escape(ucwords($league['name']));?> League</a></div>
+        <div class="name"><a href="<?php echo $this->url(array('type' => $league['name']), 'leagues_view');?>"><?php echo $this->escape(ucwords($league['name']));?> League</a></div>
         <div class="when">( <span class="when-text"><?php echo $this->escape($league['when']);?></span> )</div>
         <div class="information"><?php echo $league['information'];?></div>
     </div>
@@ -50,7 +50,7 @@
         <?php if($link['name'] == substr($this->page->name, -7)): ?>
         <li><?php echo $link['title']; ?></li>
         <?php else: ?>
-        <li><a href="<?php echo $this->url(array('type' => $link['name']), 'league');?>"><?php echo $link['title']; ?></a></li>
+        <li><a href="<?php echo $this->url(array('type' => $link['name']), 'leagues_view');?>"><?php echo $link['title']; ?></a></li>
         <?php endif; ?>
         <?php endforeach; ?>
         <li><a href="<?php echo $this->url(array(), 'league_waivers');?>">Waivers & Forms</a></li>

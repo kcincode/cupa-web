@@ -18,4 +18,13 @@ class Cupa_Model_DbTable_LeagueLocation extends Zend_Db_Table
         return $data;
 
     }
+    
+    public function fetchByType($leagueId, $type)
+    {
+        $select = $this->select()
+                       ->where('league_id = ?', $leagueId)
+                       ->where('type = ?', $type);
+        
+        return $this->fetchRow($select);
+    }
 }

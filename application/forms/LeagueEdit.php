@@ -103,6 +103,14 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'data-placeholder' => 'Select one or more directors'
         ));
 
+        $info = $this->addElement('textarea', 'info', array(
+            'filters' => array('StringTrim'),
+            'required' => false,
+            'label' => 'League Information:',
+            'description' => 'Enter a quick description of the league (optional)',
+            'value' => $this->_leagueData['info'],
+        ));
+
         $league_name = $this->addElement('text', 'league_name', array(
             'filters' => array('StringTrim'),
             'required' => true,
