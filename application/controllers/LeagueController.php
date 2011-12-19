@@ -169,6 +169,7 @@ class LeagueController extends Zend_Controller_Action
         $leagueTable = new Cupa_Model_DbTable_League();
         $pageTable = new Cupa_Model_DbTable_Page();
         $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
@@ -197,14 +198,22 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $league = $leagueTable->find($leagueId)->current();
+                $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
 
                 if($this->view->hasRole('admin')) {
                     $league->year = $data['year'];
                     $league->season = $data['season'];
-                    $league->day = $data['day'];                    
+                    $league->day = $data['day'];
+                    
+                    $leagueInformation->is_youth = $data['is_youth'];
+                    $leagueInformation->is_pods = $data['is_pods'];
+                    $leagueInformation->is_hat = $data['is_hat'];
+                    $leagueInformation->is_clinic = $data['is_clinic'];
+                    $leagueInformation->user_teams = $data['user_teams'];
+                    $leagueInformation->save();
+                    
                 }
                 $league->name = $data['name'];
-                $league->info = $data['info'];
                 $league->save();
                 
                 $this->view->message('League data saved successfully.'. 'success');
@@ -247,6 +256,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
 
         $form = new Cupa_Form_LeagueEdit();
         $form->loadSection($leagueId, 'information');
@@ -402,6 +412,137 @@ class LeagueController extends Zend_Controller_Action
             }
         }
 
+        $this->view->form = $form;
+    }
+    
+    public function pageregistrationeditAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $this->view->league = $leagueTable->fetchLeagueData($leagueId);
+        $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
+
+        $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->hasRole('admin') and 
+           !$this->view->hasRole('editor') and 
+           !$this->view->hasRole('editor', $page->id) ) {
+            $this->_redirect('leagues/' . $this->view->season);
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
+
+        $form = new Cupa_Form_LeagueEdit();
+        $form->loadSection($leagueId, 'registration');
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            if($post['limit_select'] == 1) {
+                $form->getElement('total_players')->setRequired(false);
+            } else {
+                $form->getElement('male_players')->setRequired(false);
+                $form->getElement('female_players')->setRequired(false);
+            }
+            
+            if($this->view->league['information']['user_teams'] == 0) {
+                $form->getElement('teams')->setRequired(false);
+            }
+            
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $league = $leagueTable->find($leagueId)->current();
+                $league->registration_begin = $data['registration_begin'];
+                $league->registration_end = $data['registration_end'];
+                $league->save();
+                                
+                $leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit();               
+                $leagueLimit = $leagueLimitTable->fetchLimits($leagueId);
+                
+                if($data['limit_select'] == 1) {
+                    $leagueLimit->male_players = $data['male_players'];
+                    $leagueLimit->female_players = $data['female_players'];
+                    $leagueLimit->total_players = null;
+                } else {
+                    $leagueLimit->male_players = null;
+                    $leagueLimit->female_players = null;
+                    $leagueLimit->total_players = $data['total_players'];
+                }
+                
+                $leagueLimit->teams = (empty($data['teams'])) ? null : $data['teams'];
+                $leagueLimit->save();
+                
+                $this->view->message('League registration updated successfully.', 'success');
+                $this->_redirect('leagues/' . $this->view->season);
+                
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->form = $form;
+    }
+    
+    public function pagedescriptioneditAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $this->view->league = $leagueTable->fetchLeagueData($leagueId);
+        $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
+
+        $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->hasRole('admin') and 
+           !$this->view->hasRole('editor') and 
+           !$this->view->hasRole('editor', $page->id) ) {
+            $this->_redirect('leagues/' . $this->view->season);
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        
+        $form = new Cupa_Form_LeagueEdit();
+        $form->loadSection($leagueId, 'description');
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+                $leagueInformationTable->description = $data['description'];
+                $leagueInformationTable->save();
+                
+                $this->view->message('League description updated successfully.', 'success');
+                $this->_redirect('leagues/' . $this->view->season);
+                
+            } else {
+                $form->populate($post);
+            }
+        }
+        
         $this->view->form = $form;
     }
     

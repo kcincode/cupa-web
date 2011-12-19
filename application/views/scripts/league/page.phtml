@@ -132,7 +132,7 @@
                 <?php echo $this->leagueBar('Total Players', $league['total_players'], $league['limits']['total_players']); ?>
                 <?php endif; ?>
 
-                <?php if($league['teams'] < $league['limits']['teams'] and $league['information']['user_teams']): ?>
+                <?php if($league['information']['user_teams'] and $league['teams'] < $league['limits']['teams']): ?>
                 <?php echo $this->leagueBar('Total Teams', $league['teams'], $league['limits']['teams']); ?>
                 <?php endif; ?>
 

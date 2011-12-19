@@ -1,0 +1,20 @@
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->escape($this->leaguename($this->league['id'], true, true, true, true)); ?></h1>
+<div id="leagueedit-container">
+    <form method="post">
+        <div id="edit-container">
+            <div class="row">
+                <h2>League Description</h2>
+            </div>
+            <div class="row">
+                <?php echo $this->form->description; ?>
+            </div>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('type' => $this->season), 'leagues_view'); ?>">Cancel</a>
+        </div>
+        <?php echo $this->partial('tinymce.phtml', array('element' => 'description')); ?>
+    </form>
+</div>

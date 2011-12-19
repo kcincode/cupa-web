@@ -1,0 +1,45 @@
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->escape($this->leaguename($this->league['id'], true, true, true, true)); ?></h1>
+<div id="leagueedit-container">
+    <form method="post">
+        <div class="row">
+            <h2>League Registration</h2>
+        </div>
+        <div class="row">
+            <?php echo $this->form->registration_begin; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->registration_end; ?>
+        </div>
+        <div class="row">
+            <h2>League Limits</h2>
+        </div>
+
+        <div class="row">
+            <?php echo $this->form->limit_select; ?>
+        </div>
+        
+        <div id="gender-players">
+            <div class="row">
+                <?php echo $this->form->male_players; ?>
+            </div>
+            <div class="row">
+                <?php echo $this->form->female_players; ?>
+            </div>
+        </div>
+        <div id="all-players">
+            <div class="row">
+                <?php echo $this->form->total_players; ?>
+            </div>
+        </div>
+        <div class="row">
+            <?php echo $this->form->teams; ?>
+        </div>        
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('type' => $this->season), 'leagues_view'); ?>">Cancel</a>
+        </div>
+    </form>
+</div>
+

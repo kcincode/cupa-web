@@ -74,6 +74,63 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['name'],
         ));
         
+        $radioSelect = array('1' => 'Yes', '0' => 'No');
+        
+        $is_youth = $this->addElement('radio', 'is_youth', array(
+            'validators' => array(
+                array('InArray', false, array(array_keys($radioSelect))),
+            ),
+            'required' => true,
+            'label' => 'Is the league a youth league?',
+            'value' => $this->_leagueData['information']['is_youth'],
+            'multiOptions' => $radioSelect,
+            'separator' => '&nbsp;&nbsp;'
+        ));
+        
+        $user_teams = $this->addElement('radio', 'user_teams', array(
+            'validators' => array(
+                array('InArray', false, array(array_keys($radioSelect))),
+            ),
+            'required' => true,
+            'label' => 'Are registrants able to create teams?',
+            'value' => $this->_leagueData['information']['user_teams'], 
+            'multiOptions' => $radioSelect,
+            'separator' => '&nbsp;&nbsp;'
+        ));
+        
+        $is_pods = $this->addElement('radio', 'is_pods', array(
+            'validators' => array(
+                array('InArray', false, array(array_keys($radioSelect))),
+            ),
+            'required' => true,
+            'label' => 'Does the league have pods?',
+            'value' => $this->_leagueData['information']['is_pods'], 
+            'multiOptions' => $radioSelect,
+            'separator' => '&nbsp;&nbsp;'
+        ));
+        
+        $is_hat = $this->addElement('radio', 'is_hat', array(
+            'validators' => array(
+                array('InArray', false, array(array_keys($radioSelect))),
+            ),
+            'required' => true,
+            'label' => 'Is this a hat tournament?',
+            'value' => $this->_leagueData['information']['is_hat'], 
+            'multiOptions' => $radioSelect,
+            'separator' => '&nbsp;&nbsp;'
+        ));
+        
+        $is_clinic = $this->addElement('radio', 'is_clinic', array(
+            'validators' => array(
+                array('InArray', false, array(array_keys($radioSelect))),
+            ),
+            'required' => true,
+            'label' => 'Is this a clinic too?',
+            'value' => $this->_leagueData['information']['is_clinic'], 
+            'multiOptions' => $radioSelect,
+            'separator' => '&nbsp;&nbsp;'
+        ));
+        
     }
     
     private function information()
@@ -308,6 +365,82 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'label' => 'Photo Link:',
             'description' => 'A link to photos.',
             'value' => $this->_leagueData['locations']['draft']['photo_link'],
+        ));
+        
+    }
+    
+    private function registration()
+    {
+        $registration_begin = $this->addElement('text', 'registration_begin', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Registration Begin:',
+            'description' => 'Enter a date/time when registration should begin.',
+            'value' => $this->_leagueData['registration_begin'],
+        ));
+        
+        $registration_end = $this->addElement('text', 'registration_end', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Registration End:',
+            'description' => 'Enter a date/time when registration should end.',
+            'value' => $this->_leagueData['registration_end'],
+        ));
+        
+        $limitGenders = 0;
+        if(!empty($this->_leagueData['limits']['male_players']) and 
+           !empty($this->_leagueData['limits']['female_players']) and
+           empty($this->_leagueData['limits']['total_players'])) {
+           $limitGenders = 1;
+        }
+        
+        $limit_select = $this->addElement('checkbox', 'limit_select', array(
+            'required' => false,
+            'label' => 'Enter specific gender limits',
+            'value' => $limitGenders, 
+        ));
+        
+        $male_players = $this->addElement('text', 'male_players', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Max Male Players:',
+            'description' => 'Enter the max # of male players. (optional)',
+            'value' => $this->_leagueData['limits']['male_players'],
+        ));
+        
+        $female_players = $this->addElement('text', 'female_players', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Max Female Players:',
+            'description' => 'Enter the max # of female players. (optional)',
+            'value' => $this->_leagueData['limits']['female_players'],
+        ));
+        
+        $total_players = $this->addElement('text', 'total_players', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Max Total Players:',
+            'description' => 'Enter the max # of total players.',
+            'value' => $this->_leagueData['limits']['total_players'],
+        ));
+        
+        $teams = $this->addElement('text', 'teams', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Max Teams:',
+            'description' => 'Enter the max # of teams.',
+            'value' => $this->_leagueData['limits']['teams'],
+        ));
+    }
+    
+    private function description()
+    {
+        $description = $this->addElement('textarea', 'description', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'League Description:',
+            'description' => 'Enter the information you want displayed for the league here.',
+            'value' => $this->_leagueData['information']['description'],
         ));
         
     }

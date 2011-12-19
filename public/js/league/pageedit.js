@@ -10,7 +10,7 @@ $(document).ready(function() {
             var start = $(this).datetimepicker('getDate');
             $('#league_end').datetimepicker('option', 'minDate', new Date(start));
         },
-    }) 
+    });
     
     $('#league_end').datetimepicker({
         changeMonth: true,
@@ -18,7 +18,7 @@ $(document).ready(function() {
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#league_start').val(),
-    })     
+    });
     
     $('#tournament_start').datetimepicker({
         changeMonth: true,
@@ -29,7 +29,7 @@ $(document).ready(function() {
             var start = $(this).datetimepicker('getDate');
             $('#tournament_end').datetimepicker('option', 'minDate', new Date(start));
         },
-    }) 
+    });
     
     $('#tournament_end').datetimepicker({
         changeMonth: true,
@@ -37,7 +37,7 @@ $(document).ready(function() {
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#tournament_start').val(),
-    })     
+    });
 
     $('#draft_start').datetimepicker({
         changeMonth: true,
@@ -48,7 +48,7 @@ $(document).ready(function() {
             var start = $(this).datetimepicker('getDate');
             $('#draft_end').datetimepicker('option', 'minDate', new Date(start));
         },
-    }) 
+    });
     
     $('#draft_end').datetimepicker({
         changeMonth: true,
@@ -56,7 +56,7 @@ $(document).ready(function() {
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#draft_start').val(),
-    })     
+    });
 
 
     $('#registration_begin').datetimepicker({
@@ -64,7 +64,7 @@ $(document).ready(function() {
 	changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
-    }) 
+    });
     
     $('#registration_end').datetimepicker({
         changeMonth: true,
@@ -72,7 +72,7 @@ $(document).ready(function() {
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#registration_begin').val(),
-    }) 
+    });
     
     $('#tournament_ignore').click(function(){
         if($(this).prop('checked')) {
@@ -110,7 +110,42 @@ $(document).ready(function() {
     if($('#draft_ignore').prop('checked')) {
         hideLocation('draft');
     }
+
+    $('#registration_start').datetimepicker({
+        changeMonth: true,
+	changeYear: true,
+        dateFormat: 'yy-mm-dd',
+        timeFormat: 'hh:mm:ss',
+        onSelect: function ( selectedDateTime ) {
+            var start = $(this).datetimepicker('getDate');
+            $('#registration_end').datetimepicker('option', 'minDate', new Date(start));
+        },
+    });
+    
+    $('#registration_end').datetimepicker({
+        changeMonth: true,
+	changeYear: true,
+        dateFormat: 'yy-mm-dd',
+        timeFormat: 'hh:mm:ss',
+        minDate: $('#league_start').val(),
+    }); 
+    
+    $('#limit_select').click(function () {
+        if($(this).prop('checked')) {
+            showGenderLimits();
+        } else {
+            hideGenderLimits();
+        }
         
+    });
+    
+    if($('#limit_select').prop('checked')) {
+            showGenderLimits();
+    } else {
+            hideGenderLimits();
+    }
+
+
 });
 
 function hideLocation(type)
@@ -170,4 +205,16 @@ function showLocation(type)
     if(type == 'tournament') {
         $('#copy_league').show();
     }
+}
+
+function showGenderLimits()
+{
+    $('#gender-players').show();
+    $('#all-players').hide();
+}
+
+function hideGenderLimits()
+{
+    $('#gender-players').hide();
+    $('#all-players').show();
 }

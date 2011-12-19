@@ -16,6 +16,21 @@
         <div class="row">
             <?php echo $this->form->day; ?>
         </div>
+        <div class="row radio">
+            <?php echo $this->form->is_youth; ?>
+        </div>
+        <div class="row radio">
+            <?php echo $this->form->user_teams; ?>
+        </div>
+        <div class="row radio">
+            <?php echo $this->form->is_pods; ?>
+        </div>
+        <div class="row radio">
+            <?php echo $this->form->is_hat; ?>
+        </div>
+        <div class="row radio">
+            <?php echo $this->form->is_clinic; ?>
+        </div>
         <?php endif; ?>
         
         <div class="row">
@@ -30,6 +45,5 @@
             <a class="button button-red" href="<?php echo $this->url(array('type' => $this->season), 'leagues_view'); ?>">Cancel</a>
         </div>
     </form>
-    <?php echo $this->partial('tinymce.phtml', array('element' => 'info')); ?>
 </div>
 

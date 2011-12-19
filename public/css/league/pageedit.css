@@ -1,4 +1,4 @@
-#leagueedit-container {
+    #leagueedit-container {
     width: 800px;
     margin: 50px auto;
     padding: 20px;
@@ -20,7 +20,7 @@
     padding: 10px;
 }
 
-#leagueedit-container dt {
+#leagueedit-container .row dt {
     font-weight: bold;
     font-size: 12pt;
     float: left;
@@ -28,6 +28,24 @@
     padding-top: 7px;
     text-align: right;
     margin-right: 10px;
+}
+
+#leagueedit-container .radio dt {
+    font-weight: bold;
+    font-size: 12pt;
+    float: left;
+    width: 625px;
+    padding-top: 7px;
+    text-align: left;
+    clear: both;
+}
+
+#leagueedit-container .radio dd {
+    width: 500px;
+    clear: both;
+    text-align: left;
+    margin-left: 135px;
+    padding: 5px;
 }
 
 #leagueedit-container input[type=submit] {
@@ -123,3 +141,19 @@ p.description {
     width: 500px;
 }
 
+#leagueedit-container #male_players,
+#leagueedit-container #female_players,
+#leagueedit-container #total_players,
+#leagueedit-container #teams {
+    width: 50px;
+    text-align: center;
+}
+
+#leagueedit-container #limit_select,
+#leagueedit-container #is_youth,
+#leagueedit-container #user_teams,
+#leagueedit-container #is_pods,
+#leagueedit-container #is_hat,
+#leagueedit-container #is_clinic {
+    height: 32px;
+}
