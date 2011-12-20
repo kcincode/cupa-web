@@ -698,10 +698,11 @@ try {
           `season` int(11) DEFAULT NULL,
           `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') COLLATE utf8_unicode_ci NOT NULL,
           `name` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-          `info` text COLLATE utf8_unicode_ci NOT NULL,
+          `info` text COLLATE utf8_unicode_ci DEFAULT NULL,
           `registration_begin` datetime NOT NULL,
           `registration_end` datetime NOT NULL,
           `visible_from` datetime NOT NULL,
+          `is_archived` TINYINT(1) DEFAULT 0 NOT NULL,
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
     

@@ -149,6 +149,18 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'description' => 'Enter the date/time when the league becomes visible to all.',
             'value' => $this->_leagueData['visible_from'],
         ));
+        
+        $is_archived = $this->addElement('radio', 'is_archived', array(
+            'validators' => array(
+                array('InArray', false, array(array_keys($radioSelect))),
+            ),
+            'required' => true,
+            'label' => 'Is this league archived (not viewable)?',
+            'value' => $this->_leagueData['is_archived'], 
+            'multiOptions' => $radioSelect,
+            'separator' => '&nbsp;&nbsp;'
+        ));
+        
     }
     
     private function information()

@@ -160,7 +160,8 @@ class LeagueController extends Zend_Controller_Action
         
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
         $this->view->links = $leagueSeasonTable->generateLinks();
-        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season);
+        $admin = $this->view->hasRole('admin') or $this->view->hasRole('editor') or $this->view->hasRole('editor', $this->view->page->id);
+        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $admin);
     }
     
     public function pageeditAction()
@@ -208,6 +209,7 @@ class LeagueController extends Zend_Controller_Action
                     $league->year = $data['year'];
                     $league->season = $data['season'];
                     $league->day = $data['day'];
+                    $league->is_archived = $data['is_archived'];
                     
                     $leagueInformation->is_youth = $data['is_youth'];
                     $leagueInformation->is_pods = $data['is_pods'];
@@ -558,11 +560,39 @@ class LeagueController extends Zend_Controller_Action
         }
         
         $this->view->form = $form;
+
     }
     
     public function pageaddAction()
     {
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
         
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $leagueTable = new Cupa_Model_DbTable_League();
+            if($leagueTable->isUnique($post['year'], $post['season'], $post['day'])) {
+                
+                $id = $leagueTable->createBlankLeague($post['year'], $post['season'], $post['day'], null, $this->view->user->id);
+                if(is_numeric($id)) {
+                    $this->view->message('League created successfully.');
+                    echo Zend_Json::encode(array('result' => 'success', 'data' => $post['season']));
+                } else {
+                    echo Zend_Json::encode(array('result' => 'error', 'message' => 'Error Creating League'));
+                    return;
+                }
+            } else {
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'League Already Exists'));
+                return;
+            }
+        }
     }
 
     public function formsAction()
@@ -682,62 +712,3 @@ class LeagueController extends Zend_Controller_Action
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

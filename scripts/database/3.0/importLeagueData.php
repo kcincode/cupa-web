@@ -165,10 +165,11 @@ foreach($stmt->fetchAll() as $row) {
     $league->season = ($row['type'] < 5 and $row['type'] != 0) ? $row['type'] : null;
     $league->day = (empty($row['day'])) ? 'Sunday' : $row['day'];
     $league->name = generateName($row['name'], $seasonsArray);
-    $league->info = '';
+    $league->info = null;
     $league->registration_begin = $row['start'] . ' 00:00:00';
     $league->registration_end = $row['end'] . ' 23:59:59';
     $league->visible_from = $row['start'] . ' 00:00:00';
+    $league->is_archived = ($row['year'] < date('Y')) ? 1 : 0;
     $league->save();
     
     $leagueInformation = $leagueInformationTable->createRow();
@@ -514,7 +515,8 @@ function generateName($name, $seasons)
     // remove slashes
     $name = str_replace('/', '', $name);
     
-    return ucwords(trim($name));
+    $name = ucwords(trim($name));
+    return (empty($name)) ? null : $name;
 }
 
 function getPaypalId($text)

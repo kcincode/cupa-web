@@ -1,3 +1,5 @@
+<script>var season = '<?php echo $this->escape($this->season);?>';</script>
+
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
 <div id="page-header" class="<?php echo $this->pageClass(); ?>">
     <span class="title">
@@ -10,7 +12,8 @@
     <?php endif; ?>
     <span class="actions">
         <?php if($this->hasRole('admin')): ?>
-        <a class="button" href="#">Add <?php echo $this->escape(ucwords($this->season));?> League</a>
+        <a id="add-league" class="button" href="#">Add <?php echo $this->escape(ucwords($this->season));?> League</a>
+        <div id="add-league-container"></div>
         <?php endif; ?>
     </span>
   

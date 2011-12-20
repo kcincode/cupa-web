@@ -42,6 +42,11 @@
         <div class="row">
             <?php echo $this->form->visible_from; ?>
         </div>
+        <?php if($this->hasRole('admin')): ?>
+        <div class="row radio">
+            <?php echo $this->form->is_archived; ?>
+        </div>
+        <?php endif; ?>
         
         <div id="buttons-container">
             <input class="button" type="submit" value="Save"/>
