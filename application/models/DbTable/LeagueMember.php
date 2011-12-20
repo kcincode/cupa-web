@@ -22,6 +22,7 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
     public function fetchUniqueDirectors()
     {
         $data = array();
+        $data['league'] = array();
         foreach(array('Winter', 'Spring', 'Summer', 'Fall') as $season) {
             $select = $this->getAdapter()->select()
                            ->from(array('l' => 'league', array('id')))

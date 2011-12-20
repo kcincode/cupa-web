@@ -1,7 +1,7 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
 <div id="page-header" class="<?php echo $this->pageClass(); ?>">
     <span class="title">
-        <h2><?php echo $this->view->escape($this->page->title); ?></h2>
+        <h2><?php echo $this->escape($this->page->title); ?></h2>
     </span>
     <?php if(!$this->page->is_visible): ?>
     <div class="visible">

@@ -15,6 +15,7 @@
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
+    <?php if(count($this->directors['league'])): ?>
     <h3>League Directors</h3>
     <?php foreach($this->directors['league'] as $directors): ?>
     <?php foreach($directors as $director): ?>
@@ -24,6 +25,7 @@
     </div>
     <?php endforeach; ?>
     <?php endforeach; ?>
+    <?php endif; ?>
 </div>
   
 <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
