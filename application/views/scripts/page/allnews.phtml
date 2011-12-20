@@ -6,7 +6,7 @@
 </div>
 <?php endif; ?>
 
-<h1>All <?php echo $this->category; ?> News</h1>
+<h1>All <?php echo $this->escape($this->category); ?> News</h1>
 <?php foreach($this->news as $news): ?>
 <div class="news-row">
     <?php if($this->hasRole('admin') or $this->hasRole('reporter')): ?>

@@ -1,7 +1,7 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
 <div id="page-header" class="<?php echo $this->pageClass(); ?>">
     <span class="title">
-        <h2><?php echo $this->page->title; ?></h2>
+        <h2><?php echo $this->escape($this->page->title); ?></h2>
     </span>
     <?php if(!$this->page->is_visible): ?>
     <div class="visible">
@@ -27,9 +27,9 @@
             <a onclick="if(!confirm('Are you sure you want to delete the club <?php echo $club->name; ?>?')) { return false; } " href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
         </div>
         <?php endif; ?>
-        <div class="name"><?php echo $club->name; ?> <span class="club-type">(<?php echo $club->type; ?>)</span></div>
-        <div class="date"><?php echo $club->begin; ?> - <?php echo 'Current'; ?></div>
-        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $club->website . '">Website</a>)'; ?></div>
+        <div class="name"><?php echo $this->escape($club->name); ?> <span class="club-type">(<?php echo $this->escape($club->type); ?>)</span></div>
+        <div class="date"><?php echo $this->escape($club->begin); ?> - Current</div>
+        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $this->escape($club->website) . '">Website</a>)'; ?></div>
         <div class="captains"><strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?></div>
         <?php if($club->email != null): ?><div class="contact"><strong>Contact Email:</strong> <?php echo $this->displayEmail($club->email); ?></div><?php endif; ?>
         <div class="info"><?php echo $club->content; ?></div>
@@ -46,9 +46,9 @@
             <a onclick="if(!confirm('Are you sure you want to delete the club <?php echo $club->name; ?>?')) { return false; } " href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
         </div>
         <?php endif; ?>
-        <div class="name"><?php echo $club->name; ?> <span class="club-type">(<?php echo $club->type; ?>)</span></div>
-        <div class="date"><?php echo $club->begin; ?> - <?php echo 'Current'; ?></div>
-        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $club->website . '">Website</a>)'; ?></div>
+        <div class="name"><?php echo $this->escape($club->name); ?> <span class="club-type">(<?php echo $this->escape($club->type); ?>)</span></div>
+        <div class="date"><?php echo $this->escape($club->begin); ?> - Current</div>
+        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $this->escape($club->website) . '">Website</a>)'; ?></div>
         <div class="captains"><strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?></div>
         <?php if($club->email != null): ?><div class="contact"><strong>Contact Email:</strong> <?php echo $this->displayEmail($club->email); ?></div><?php endif; ?>
         <div class="info"><?php echo $club->content; ?></div>
@@ -56,14 +56,4 @@
     <?php endforeach; ?>
 </div>
   
-<div id="page-links" class="<?php echo $this->pageClass(); ?>">
-    <ul>
-        <?php foreach($this->links as $link): ?>
-        <?php if($link->name == $this->page->name): ?>
-        <li><?php echo $link->title; ?></li>
-        <?php else: ?>
-        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
-        <?php endif; ?>
-        <?php endforeach; ?>
-    </ul>
-</div>
+<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

@@ -1,7 +1,7 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
 <div id="page-header" class="<?php echo $this->pageClass(); ?>">
     <span class="title">
-        <h2><?php echo $this->page->title; ?></h2>
+        <h2><?php echo $this->escape($this->page->title); ?></h2>
     </span>
     <?php if(!$this->page->is_visible): ?>
     <div class="visible">
@@ -37,7 +37,7 @@
             <?php endif; ?>
         </div>
         <span class="name"><?php echo $this->fullname($officer['user_id']); ?></span><br/>
-        <span class="position"><?php echo $officer['position']; ?></span></br>
+        <span class="position"><?php echo $this->escape($officer['position']); ?></span></br>
         <span class="since">Since: <?php echo date('M dS, Y', strtotime($officer['since'])); ?></span>
     </div>
 </div>
@@ -62,7 +62,7 @@
             <?php endif; ?>
         </div>
         <span class="name"><?php echo $this->fullname($officer['user_id']); ?></span><br/>
-        <span class="position"><?php echo $officer['position']; ?></span></br>
+        <span class="position"><?php echo $this->escape($officer['position']); ?></span></br>
         <span class="since"><?php echo date('M dS, Y', strtotime($officer['since'])); ?> - <?php echo date('M dS, Y', strtotime($officer['to'])); ?></span>
     </div>
 </div>
@@ -70,14 +70,4 @@
 <?php endif; ?>
 </div>
 
-<div id="page-links" class="<?php echo $this->pageClass(); ?>">
-    <ul>
-        <?php foreach($this->links as $link): ?>
-        <?php if($link->name == $this->page->name): ?>
-        <li><?php echo $link->title; ?></li>
-        <?php else: ?>
-        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
-        <?php endif; ?>
-        <?php endforeach; ?>
-    </ul>
-</div>
+<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

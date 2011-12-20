@@ -1,7 +1,7 @@
 <script type="text/javascript">
 	tinyMCE.init({
 		mode : "exact",
-                elements : "<?php echo $this->element; ?>",
+                elements : "<?php echo $this->escape($this->element); ?>",
 		theme : "advanced",
                 plugins : 'autolink, lists, spellchecker,pagebreak,style,layer,table',
                 

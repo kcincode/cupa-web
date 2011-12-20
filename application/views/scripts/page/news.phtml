@@ -4,7 +4,7 @@
     <?php if($this->hasRole("reporter") or $this->hasRole('admin')): ?>
     <a class="button" href="<?php echo $this->url(array('slug' => $this->news->slug), 'news_edit'); ?>">Edit News</a>
     <?php endif; ?>
-    <a class="button" href="<?php echo $this->backUrl; ?>">Back</a>
+    <a class="button" href="<?php echo $this->escape($this->backUrl); ?>">Back</a>
 </div>
 
 <div class="title">

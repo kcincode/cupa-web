@@ -46,7 +46,7 @@ class My_View_Helper_Leaguename extends Zend_View_Helper_Abstract
                 
             }
             
-            return trim($name);
+            return $this->view->escape(trim($name));
         }
         
         return 'Unknown';

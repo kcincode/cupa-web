@@ -1,7 +1,7 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
 <div id="page-header" class="<?php echo $this->pageClass(); ?>">
     <span class="title">
-        <h2><?php echo $this->page->title; ?></h2>
+        <h2><?php echo $this->escape($this->page->title); ?></h2>
     </span>
     <?php if(!$this->page->is_visible): ?>
     <div class="visible">
@@ -32,9 +32,9 @@
             <a onclick="if(!confirm('Are you sure you want to delete the pickup <?php echo str_replace("'", "\'", $pickup['title']); ?>?')) { return false; } " href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_delete'); ?>"><img title="Delete Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
             <?php endif; ?>
         </div>
-        <div class="title"><?php echo $pickup['title']; ?><?php echo (empty($pickup['map'])) ? '' : ' (<a href="' . $pickup['map'] . '">Map</a>)'; ?></div>
+        <div class="title"><?php echo $this->escape($pickup['title']); ?><?php echo (empty($pickup['map'])) ? '' : ' (<a href="' . $this->escape($pickup['map']) . '">Map</a>)'; ?></div>
         <div class="when"><strong>When/Where:</strong> <?php echo $pickup['day']; ?> <?php echo $pickup['time']; ?> at <?php echo $pickup['location']; ?></div>
-        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->Fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
+        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
         <div class="info"><?php echo (empty($pickup['info'])) ? '&nbsp;' : $pickup['info']; ?></div>
     </div>
     <?php endforeach; ?>
@@ -45,11 +45,11 @@
     <div class="pickup-container">
         <div class="links">
             <a href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_edit'); ?>"><img title="Edit Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png" /></a>
-            <a onclick="if(!confirm('Are you sure you want to delete the pickup <?php echo str_replace("'", "\'", $pickup['title']); ?>?')) { return false; } " href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_delete'); ?>"><img title="Delete Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+            <a onclick="if(!confirm('Are you sure you want to delete the pickup <?php echo $this->escape(str_replace("'", "\'", $pickup['title'])); ?>?')) { return false; } " href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_delete'); ?>"><img title="Delete Pickup" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
         </div>
-        <div class="title"><?php echo $pickup['title']; ?><?php echo (empty($pickup['map'])) ? '' : ' (<a href="' . $pickup['map'] . '">Map</a>)'; ?></div>
+        <div class="title"><?php echo $this->escape($pickup['title']); ?><?php echo (empty($pickup['map'])) ? '' : ' (<a href="' . $this->escape($pickup['map']) . '">Map</a>)'; ?></div>
         <div class="when"><strong>When/Where:</strong> <?php echo $pickup['day']; ?> <?php echo $pickup['time']; ?> at <?php echo $pickup['location']; ?></div>
-        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->Fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
+        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $this->escape($pickup['email']); ?></div>
         <div class="info"><?php echo (empty($pickup['info'])) ? '&nbsp;' : $pickup['info']; ?></div>
     </div>
     <?php endforeach; ?>
@@ -60,14 +60,4 @@
     <p>The PDGA manages a list of <a href="http://www.pdga.com/course_directory/zipcode?filter0=45201">locations</a> around Cincinnati.</p>
 </div>
   
-<div id="page-links" class="<?php echo $this->pageClass(); ?>">
-    <ul>
-        <?php foreach($this->links as $link): ?>
-        <?php if($link->name == $this->page->name): ?>
-        <li><?php echo $link->title; ?></li>
-        <?php else: ?>
-        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
-        <?php endif; ?>
-        <?php endforeach; ?>
-    </ul>
-</div>
+<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

@@ -1,6 +1,6 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Edit <?php echo $this->minute->when; ?> <?php echo $this->minute->location; ?></h1>
+<h1>Edit <?php echo $this->escape($this->minute->when); ?> <?php echo $this->escape($this->minute->location); ?></h1>
 <div id="minutesedit-container">
     <form method="post" enctype="multipart/form-data">
         <div class="row">

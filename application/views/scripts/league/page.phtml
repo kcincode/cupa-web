@@ -1,5 +1,5 @@
-<div id="page-banner" class="<?php echo $this->escape($this->pageClass()); ?>">&nbsp;</div>
-<div id="page-header" class="<?php echo $this->escape($this->pageClass()); ?>">
+<div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
+<div id="page-header" class="<?php echo $this->pageClass(); ?>">
     <span class="title">
         <h2><?php echo $this->escape($this->page->title); ?></h2>
     </span>
@@ -16,16 +16,16 @@
   
 </div>
 
-<div id="page-content" class="<?php echo $this->escape($this->pageClass()); ?>">
+<div id="page-content" class="<?php echo $this->pageClass(); ?>">
     <div id="leagues">
         <ul>
           <?php foreach($this->leagues as $league): ?>
-          <li><a href="#leagues-<?php echo $this->escape($league['id']);?>"><?php echo $this->escape($this->leagueName($league['id'], true, false, false, true)); ?></a></li>
+          <li><a href="#leagues-<?php echo $this->escape($league['id']);?>"><?php echo $this->leagueName($league['id'], true, false, false, true); ?></a></li>
           <?php endforeach; ?>
         </ul>
    
         <?php foreach($this->leagues as $league): ?>
-        <div id="leagues-<?php echo $this->escape($league['id']);?>" class="<?php echo $this->escape($this->pageClass); ?>">
+        <div id="leagues-<?php echo $this->escape($league['id']);?>" class="<?php echo $this->pageClass(); ?>">
             <div class="section">
                 <div class="edit-links">
                     <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
@@ -52,7 +52,7 @@
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_information_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League Information"/></a>
                     <?php endif; ?>
                 </div>
-                <h2 class="<?php echo $this->escape($this->pageClass); ?>">Information</h2>
+                <h2 class="<?php echo $this->pageClass(); ?>">Information</h2>
                 <?php if(!empty($league['info'])): ?>
                 <p>
                     <?php echo $league['info'];?>
@@ -162,15 +162,4 @@
     </div>
 </div>
   
-<div id="page-links" class="<?php echo $this->pageClass(); ?>">
-    <ul>
-        <?php foreach($this->links as $link): ?>
-        <?php if($link['name'] == substr($this->page->name, -7)): ?>
-        <li><?php echo $this->escape($link['title']); ?></li>
-        <?php else: ?>
-        <li><a href="<?php echo $this->url(array('type' => $link['name']), 'leagues_view');?>"><?php echo $this->escape($link['title']); ?></a></li>
-        <?php endif; ?>
-        <?php endforeach; ?>
-        <li><a href="<?php echo $this->url(array(), 'league_waivers');?>">Waivers & Forms</a></li>
-    </ul>
-</div>
+<?php echo $this->partial('league-page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

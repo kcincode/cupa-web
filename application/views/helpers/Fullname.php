@@ -23,9 +23,9 @@ class My_View_Helper_Fullname extends Zend_View_Helper_Abstract
         if(is_numeric($user)) {
             $userTable = new Cupa_Model_DbTable_User();
             $userObject = $userTable->find($user)->current();
-            return $userObject->first_name . ' ' . $userObject->last_name;
+            return $this->view->escape($userObject->first_name . ' ' . $userObject->last_name);
         } else if(get_class($user) == 'Zend_Db_Table_Row') {
-            return $user->first_name . ' ' . $user->last_name;
+            return $this->view->escape($user->first_name . ' ' . $user->last_name);
         } else {
             return 'Unknown';
         }

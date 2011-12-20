@@ -457,6 +457,11 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'description' => 'Enter the paypal code for payment.',
             'value' => $this->_leagueData['information']['paypal_code'],
         ));
+        
+        $leagueQuestionsTable = new Cupa_Model_DbTable_LeagueQuestion();
+        foreach($leagueQuestionsTable->fetchAllQuestionsFromLeague($this->_leagueData['id']) as $question) {
+            Zend_Debug::dump($question);
+        }
     }
     
     private function description()

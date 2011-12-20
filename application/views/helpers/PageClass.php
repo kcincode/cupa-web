@@ -17,11 +17,11 @@ class My_View_Helper_PageClass extends Zend_View_Helper_Abstract
     public function pageClass()
     {
         if(empty($this->view->page->parent)) {
-            return $this->view->page->name;
+            return $this->view->escape($this->view->page->name);
         } else {
             $pageTable = new Cupa_Model_DbTable_Page();
             $parent = $pageTable->find($this->view->page->parent)->current();
-            return $parent->name;
+            return $this->view->escape($parent->name);
         }
         
         return null;

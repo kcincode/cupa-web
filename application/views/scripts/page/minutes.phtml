@@ -1,7 +1,7 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
 <div id="page-header" class="<?php echo $this->pageClass(); ?>">
     <span class="title">
-        <h2><?php echo $this->page->title; ?></h2>
+        <h2><?php echo $this->escape($this->page->title); ?></h2>
     </span>
     <?php if(!$this->page->is_visible): ?>
     <div class="visible">
@@ -34,9 +34,9 @@
         </div>
         <?php $row = 'even'; foreach($this->minutes['visible'] as $minute): ?>
         <?php $row = ($row == 'even') ? 'odd' : 'even'; ?>
-        <div class="minute <?php echo $row; ?>">
-            <div class="when"><?php echo $minute['when']; ?></div>
-            <div class="location"><?php echo $minute['location']; ?></div>
+        <div class="minute <?php echo $this->escape($row); ?>">
+            <div class="when"><?php echo $this->escape($minute['when']); ?></div>
+            <div class="location"><?php echo $this->escape($minute['location']); ?></div>
             <div class="links">
                 <?php if($minute['pdf'] != null): ?>
                 <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
@@ -72,9 +72,9 @@
         </div>
         <?php $row = 'even'; foreach($this->minutes['hidden'] as $minute): ?>
         <?php $row = ($row == 'even') ? 'odd' : 'even'; ?>
-        <div class="minute <?php echo $row; ?>">
-            <div class="when"><?php echo $minute['when']; ?></div>
-            <div class="location"><?php echo $minute['location']; ?></div>
+        <div class="minute <?php echo $this->escape($row); ?>">
+            <div class="when"><?php echo $this->escape($minute['when']); ?></div>
+            <div class="location"><?php echo $this->escape($minute['location']); ?></div>
             <div class="links">
                 <?php if($minute['pdf'] != null): ?>
                 <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
@@ -98,14 +98,4 @@
     <?php endif; ?>
 </div>
 
-<div id="page-links" class="<?php echo $this->pageClass(); ?>">
-    <ul>
-        <?php foreach($this->links as $link): ?>
-        <?php if($link->name == $this->page->name): ?>
-        <li><?php echo $link->title; ?></li>
-        <?php else: ?>
-        <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $link->title; ?></a></li>
-        <?php endif; ?>
-        <?php endforeach; ?>
-    </ul>
-</div>
+<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

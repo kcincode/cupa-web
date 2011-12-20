@@ -1,19 +1,19 @@
 <?php foreach($this->data as $category => $item): ?>
 
 <?php if($item['type'] == 'internal'): ?>
-    <h3><?php echo $item['title']; ?> (<a href="<?php echo $this->baseUrl(); ?>/<?php echo $item['url']; ?>">Info</a>)</h3>
+    <h3><?php echo $this->escape($item['title']); ?> (<a href="<?php echo $this->baseUrl(); ?>/<?php echo $this->escape($item['url']); ?>">Info</a>)</h3>
 <?php endif; ?>
 
 <?php if($item['type'] == 'external'): ?>
-    <h3><?php echo $item['title']; ?> (<a href="<?php echo $item['url']; ?>">Info</a>)</h3>
+    <h3><?php echo $this->escape($item['title']); ?> (<a href="<?php echo $this->escape($item['url']); ?>">Info</a>)</h3>
 <?php endif; ?>
 
 <?php if($item['type'] == 'news'): ?>
-    <h3><?php echo $item['title']; ?> (<a href="<?php echo $this->url(array('slug' => $item['slug']), 'news_view'); ?>">More</a>)</h3>
+    <h3><?php echo $this->escape($item['title']); ?> (<a href="<?php echo $this->url(array('slug' => $item['slug']), 'news_view'); ?>">More</a>)</h3>
 <?php endif; ?>
 
 <?php if($item['type'] == 'text'): ?>
-    <h3><?php echo $item['title']; ?></h3>
+    <h3><?php echo $this->escape($item['title']); ?></h3>
 <?php endif; ?>
-    <p><?php echo $item['info']; ?></p>
+    <p><?php echo $this->escape($item['info']); ?></p>
 <?php endforeach; ?>
