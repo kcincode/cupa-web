@@ -2,6 +2,13 @@
 
 class My_View_Helper_DisplayEmail extends Zend_View_Helper_Abstract
 {
+    public $view;
+ 
+    public function setView(Zend_View_Interface $view)
+    {
+        $this->view = $view;
+    }    
+    
     public function displayEmail($email)
     {
         if(is_numeric($email)) {

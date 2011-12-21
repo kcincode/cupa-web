@@ -23,14 +23,14 @@ $colorLookupTable = array(
     'dark chocolate' => '#663033',
     'lime green' => '#b1fb17',
     'carolina blue' => '#539dc2',
-    'black' => '#000',
+    'black' => '#000000',
     'sport grey' => '#808080',
     'texas orange' => '#cc5500',
     'forest green' => '#254117',
     'forest' => '#254117',
     'azalea' => '#e6679a',
     'pink' => '#e6679a',
-    'red' => '#c00',
+    'red' => '#cc0000',
     'maroon' => '#800000',
     'green/maroon' => '#800000',
     'jade dome' => '#3ea99f',
@@ -49,17 +49,17 @@ $colorLookupTable = array(
     'royal' => '#2b60de',
     'violet' => '#b5b5f2',
     'kelly green' => '#4cc496',
-    'white' => '#fff',
-    'green' => '#0c0',
+    'white' => '#ffffff',
+    'green' => '#00cc00',
     'dark purple' => '#330066',
     'metro blue' => '#153e7e',
     'blue' => '#3273dc',
     'col. blue' => '#38acec',
-    'cardinal' => '#900',
+    'cardinal' => '#990000',
     'silver' => '#c0c0c0',
-    'clear' => '#fff',
-    'white or dark' => '#fff',
-    'all' => '#fff',
+    'clear' => '#ffffff',
+    'white or dark' => '#ffffff',
+    'all' => '#ffffff',
 );
 
 echo "    Importing `League` data:\n";
@@ -300,7 +300,7 @@ foreach($stmt->fetchAll() as $row) {
     $leagueMember->league_id = $row['event_id'];
     $leagueMember->user_id = $row['captain'];
     $leagueMember->position = 'captain';
-    $leagueMember->league_team_id = null;
+    $leagueMember->league_team_id = $leagueTeam->id;
     $leagueMember->created_at = date('Y-m-d H:i:s');
     $leagueMember->modified_at = date('Y-m-d H:i:s');
     $leagueMember->save();
@@ -577,9 +577,9 @@ function calculateTextColor($color)
     $diffBlack = colorDiff($r, $g, $b, 0, 0, 0);
 
     if($diffBlack >= $diffWhite) {
-        return '#000';
+        return '#000000';
     } else {
-        return '#fff';
+        return '#ffffff';
     }
 }
 

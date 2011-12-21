@@ -1,0 +1,16 @@
+.admin-menu {
+    padding-top: 7px;
+    height: 25px;
+    text-align: right;
+    margin-right: 5px;
+}
+  
+h1.league, h2.league {
+    text-align: center;
+}
+  
+.league-menu {
+    width: 400px;
+    margin: 10px auto;
+    text-align: center;
+}

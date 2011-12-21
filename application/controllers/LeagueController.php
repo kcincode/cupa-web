@@ -5,7 +5,7 @@ class LeagueController extends Zend_Controller_Action
 
     public function init()
     {
-        /* Initialize action controller here */
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/common.css');
     }
 
     public function indexAction()
@@ -612,17 +612,124 @@ class LeagueController extends Zend_Controller_Action
 
     public function teamsAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/teams.js');
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
+    }
+    
+    public function loadplayersAction()
+    {
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+        
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        
+        $teamId = $this->getRequest()->getUserParam('team_id');
+        
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        
+        $this->view->team = $leagueTeamTable->find($teamId)->current();
+        $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
     }
 
     public function teamsaddAction()
     {
-        // action body
     }
 
     public function teamseditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/colorpicker/css/layout.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/colorpicker/css/colorpicker.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teamsedit.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/teamsedit.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/colorpicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/eye.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/utils.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/layout.js');
+        
+        $teamId = $this->getRequest()->getUserParam('team_id');
+        
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $team = $leagueTeamTable->find($teamId)->current();
+
+        if(!$team) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $form = new Cupa_Form_LeagueTeamEdit($team);
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                
+                // remove all of the directors that are not in the list
+                $dbCaptains = array();
+                foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
+                    if(!in_array($captain->user_id, array_values($data['captains']))) {
+                        $captain->delete();
+                    } else {
+                        $dbCaptains[] = $captain->user_id;
+                    }
+                }
+                
+                // add the directors that are not in the DB
+                foreach($data['captains'] as $captainId) {
+                    if(!in_array($captainId, $dbCaptains)) {
+                        $leagueMember = $leagueMemberTable->createRow();
+                        $leagueMember->league_id = $team->league_id;
+                        $leagueMember->user_id = $captainId;
+                        $leagueMember->position = 'captain';
+                        $leagueMember->league_team_id = $team->id;
+                        $leagueMember->paid = 0;
+                        $leagueMember->release = 0;
+                        $leagueMember->created_at = date('Y-m-d H:i:s');
+                        $leagueMember->modified_at = date('Y-m-d H:i:s');
+                        $leagueMember->modified_by = $this->view->user->id;
+                        $leagueMember->save();
+                    }
+                }                
+                
+                $team->name = $data['name'];
+                $team->color = $data['color'];
+                $team->color_code = $data['color_code'];
+                $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
+                $team->save();
+                
+                $this->view->message('Team updated successfully.', 'success');
+                $this->_redirect('league/' . $team->league_id);
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        
+        $this->view->form = $form;
+        $this->view->team = $team;
     }
 
     public function scheduleAction()

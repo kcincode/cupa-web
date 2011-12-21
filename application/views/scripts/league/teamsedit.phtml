@@ -1,4 +1,32 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>teamsedit</b></p>
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit <?php echo $this->escape($this->team->name);?> Team</h1>
+<div id="teamedit-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->captains; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->color; ?>
+        </div>
+        <div class="row">
+            <dt><label for="color_code">Color Code:</label></dt>
+            <dd>
+                <input type="hidden" name="color_code" id="color_code" value="<?php echo $this->form->color_code->getValue();?>"/>
+                <div id="colorSelector"><div style="background-color: <?php echo $this->form->color_code->getValue();?>;"></div></div>
+            </dd>
+        </div>
+        <div class="row">
+            <?php echo $this->form->final_rank; ?>
+        </div>
+        
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('league_id' => $this->team->league_id), 'league_view'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>
+

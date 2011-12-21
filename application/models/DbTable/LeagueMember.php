@@ -57,11 +57,15 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
         return $data;
     }
     
-    public function fetchAllByType($leagueId, $position)
+    public function fetchAllByType($leagueId, $position, $teamId = null)
     {
         $select = $this->select()
                        ->where('league_id = ?', $leagueId)
                        ->where('position = ?', $position);
+        
+        if($teamId) {
+           $select->where('league_team_id = ?', $teamId); 
+        }
         
         return $this->fetchAll($select);
     }
@@ -86,6 +90,20 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
         }
         
         return $data;
+    }
+    
+    public function fetchAllPlayerData($leagueId, $teamId)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array())
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('*'))
+                       ->joinLeft(array('up' =>'user_profile'), 'up.user_id = lm.user_id', array('*'))
+                       ->where('league_id = ?', $leagueId)
+                       ->where('league_team_id = ?', $teamId)
+                       ->order('u.last_name')
+                       ->order('u.first_name');
+
+        return $this->getAdapter()->fetchAll($select);        
     }
     
 }
