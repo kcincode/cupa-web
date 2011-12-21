@@ -30,6 +30,11 @@
         <?php foreach($this->leagues as $league): ?>
         <div id="leagues-<?php echo $this->escape($league['id']);?>" class="<?php echo $this->pageClass(); ?>">
             <div class="section">
+                <?php if($league['visible_from'] > date('Y-m-d H:i:s')): ?>
+                <div class="notviewable">
+                    <p>*** This page is not yet viewable, it is only viewable to those that can edit it. ***</p>
+                </div>
+                <?php endif; ?>
                 <div class="edit-links">
                     <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League"/></a>

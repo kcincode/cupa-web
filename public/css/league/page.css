@@ -169,3 +169,7 @@ p.links {
     width: 430px;
     text-align: center;
 }
+
+.notviewable {
+    color: #c00;
+}
