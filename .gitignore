@@ -3,3 +3,4 @@ library/Zend
 application/configs/application.ini
 application/logs/*.log
 .DS_Store
+scripts/database/3.0/update.txt

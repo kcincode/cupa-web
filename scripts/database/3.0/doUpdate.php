@@ -1,5 +1,5 @@
 <?php
-
+echo "Starting Import:\n";
 try {
     echo "Importing Data:\n";
     include('createDbSchema.php');
@@ -17,4 +17,5 @@ try {
     echo "Error: " . $e->getMessage() . "\n";
     echo "Finished with errors\n";
 }
+echo "Import Finished Successfully.\n";
 
