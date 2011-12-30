@@ -77,7 +77,7 @@ span.team-name {
 }
   
 .info.selected {
-    background-color: #efe;
+    background-color: #eee;
     cursor: pointer;
     border-top: 1px solid #aca;
     border-right: 1px solid #aca;
