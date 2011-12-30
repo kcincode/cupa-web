@@ -8,7 +8,8 @@ class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
     public function fetchAllTeams($leagueId)
     {
         $select = $this->select()
-                       ->where('league_id = ?', $leagueId);
+                       ->where('league_id = ?', $leagueId)
+                       ->order('name');
         
         return $this->fetchAll($select);
     }
