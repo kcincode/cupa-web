@@ -61,6 +61,8 @@ try {
     $db->query("DROP TABLE IF EXISTS `league_season`");
     echo "        UserWaiver\n";
     $db->query("DROP TABLE IF EXISTS `user_waiver`");
+    echo "        UserAccessLog\n";
+    $db->query("DROP TABLE IF EXISTS `user_access_log`");
     echo "        User\n";
     $db->query("DROP TABLE IF EXISTS `user`");
     echo "        Contact\n";
@@ -293,6 +295,35 @@ try {
         ALTER TABLE `user_waiver`
           ADD CONSTRAINT `user_waiver_ibfk_2` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `user_waiver_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+    $db->commit();
+    echo "Done.\n";
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+/*******************************************************************************
+ *
+ * USER_ACCESS_LOG TABLE
+ *
+ *******************************************************************************/
+try {
+    echo "    Creating `UserAccessLog` Table...";
+    $db->beginTransaction();
+
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `user_access_log` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `user` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+          `time` datetime NOT NULL,
+          `client` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+          `session` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+          `type` enum('login-success','login-failed','logout') COLLATE utf8_unicode_ci NOT NULL,
+          `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
     $db->commit();
     echo "Done.\n";

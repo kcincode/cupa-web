@@ -39,6 +39,7 @@ $(document).ready(function() {
                                var obj = eval('(' + response + ')');
                                if(obj.result == 'Error') {
                                    $('#error').html(obj.msg);
+                                   $('#password').val('');
                                } else {
                                    window.location.reload();
                                }

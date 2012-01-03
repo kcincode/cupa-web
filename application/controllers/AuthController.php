@@ -24,8 +24,8 @@ class AuthController extends Zend_Controller_Action
         // initialize the Login form
         $form = new Cupa_Form_UserLogin();
 
-        // initialize the log file
-        $logger = new Zend_Log(new Zend_Log_Writer_Stream(APPLICATION_PATH . '/logs/login_errors.log'));
+        // create link to user_access_logs table
+        $userAccessLogTable = new Cupa_Model_DbTable_UserAccessLog();
 
         // if the form is submitted
         if($this->getRequest()->isPost()) {
@@ -55,7 +55,8 @@ class AuthController extends Zend_Controller_Action
 
                         // check to see if the user is active
                         if(!$user->is_active) {
-                            $logger->log("User login succeeded for `$user->first_name $user->last_name ($user->username)` but they are disabled.", Zend_Log::ERR);
+                            // log success to db
+                            $userAccessLogTable->log($user->username, 'login-failed', "User login succeeded for `$user->first_name $user->last_name ($user->username)` but they are disabled.");
 
                             // build the data to be sent
                             $data = array('result' => 'Error', 'msg' => 'Your account is disabled.');
@@ -73,6 +74,9 @@ class AuthController extends Zend_Controller_Action
                         
                         // set the user id in the session storage
                         Zend_Auth::getInstance()->getStorage()->write($user->id);
+
+                        // log the success
+                        $userAccessLogTable->log($user->username, 'login-success');
                         
                         // build the data to be sent
                         $data = array('result' => 'Success');
@@ -81,8 +85,8 @@ class AuthController extends Zend_Controller_Action
                         // failed login
                         
                         // log the message
-                        $logger->log("User login failed for `$user->first_name $user->last_name ($user->username)`", Zend_Log::ERR);
-                        
+                        $userAccessLogTable->log($user->username, 'login-failed', "Invalid Credentials.");
+
                         // increment the login errors count
                         $user->login_errors++;
                         $user->save();
@@ -94,7 +98,7 @@ class AuthController extends Zend_Controller_Action
                     
                 } else {
                     // log the message
-                    $logger->log("User login failed for `{$data['username']}` which doesn't exist.", Zend_Log::ERR);
+                    $userAccessLogTable->log($user->username, 'login-failed', "Username does not exist.");
 
                     // build the data to be sent
                     $data = array('result' => 'Error', 'msg' => 'Invalid Credentials');
@@ -130,6 +134,10 @@ class AuthController extends Zend_Controller_Action
             $session->unsetAll();
             return;
         }
+
+        // log the logout
+        $userAccessLogTable = new Cupa_Model_DbTable_UserAccessLog();
+        $userAccessLogTable->log($this->view->user->username, 'logout');
 
         // clear the authentication identity
         $auth = Zend_Auth::getInstance()->clearIdentity();
