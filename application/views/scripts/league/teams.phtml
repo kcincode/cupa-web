@@ -22,7 +22,7 @@
     </div>
     <div class="info" onclick="loadPlayers('<?php echo $this->escape($team->id); ?>')">
         <div class="links">
-            <?php if($this->isLeagueDirector($tthis->league->id)): ?>
+            <?php if($this->isLeagueDirector($this->league->id)): ?>
             <a href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League"/></a>
             <a onclick="return confirm('Are you sure you want to delete this team, it will reset all the players associated with this team.');" href="#"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete League"/></a>
             <?php endif; ?>
@@ -30,16 +30,18 @@
         <span class="team-name"><?php echo $this->escape($team->name);?></span><br/>
         <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team->color));?></span><br/>
         <span class="captains"><strong>Captain(s):</strong>
+        <?php foreach($this->getLeagueTeamCaptains($team->league_id, $team->id) as $captain): ?>
+            <?php echo $this->fullname($captain->user_id); ?>
+        <?php endforeach; ?>
         </span><br/>
         <span class="captains">
-        <strong>Record:</strong> <br/>
+        <strong>Record:</strong> <?php echo $this->getLeagueTeamRecord($team->league_id, $team->id); ?><br/>
         </span>
     </div>
     <div class="clearfix"></div>
     <div class="player-container team-<?php echo $this->escape($team->id); ?>">
     </div>
   </div>
-   
   <?php endforeach; ?>
   <div class="clearfix"></div>
   <?php else: ?>

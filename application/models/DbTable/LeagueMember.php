@@ -100,6 +100,7 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->joinLeft(array('up' =>'user_profile'), 'up.user_id = lm.user_id', array('*'))
                        ->where('league_id = ?', $leagueId)
                        ->where('league_team_id = ?', $teamId)
+                       ->where('position = ?', 'player')
                        ->order('u.last_name')
                        ->order('u.first_name');
 

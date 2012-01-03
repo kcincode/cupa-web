@@ -101,3 +101,8 @@ p {
     width: 25px;
     height: 25px;
 }
+
+span.email {
+    color: #a0a0a0;
+    font-style: italic;
+}
