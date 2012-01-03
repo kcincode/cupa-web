@@ -651,6 +651,49 @@ class LeagueController extends Zend_Controller_Action
 
     public function teamsaddAction()
     {
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            // make sure the user should be able to add a team
+            if(!$this->view->isLeagueDirector($post['league'])) {
+                $this->_redirect('league/' . $post['league']);
+            }
+
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+            if($leagueTeamTable->isUnique($post['league'], $post['name'])) {
+                $id = $leagueTeamTable->insert(array(
+                    'name' => $post['name'],
+                    'league_id' => $post['league'],
+                    'color' => 'white',
+                    'color_code' => '#ffffff',
+                    'text_code' => '#000000',
+                    'final_rank' => null,
+                ));
+
+                if($id) {
+                    echo Zend_Json::encode(array('result' => 'success', 'data' => $id));
+
+                    $this->view->message("Successfully created the team `{$post['name']}`", 'success');
+                    return;
+                }
+
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Error creating team.'));
+                return;
+            } else {
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Team Already Exists'));
+                return;
+            }
+        }
     }
 
     public function teamseditAction()
@@ -677,7 +720,11 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
+        if(!$this->view->isLeagueDirector($team->league_id)) {
+            $this->_redirect('league/' . $team->league_id);
+        }
+
         $form = new Cupa_Form_LeagueTeamEdit($team);
         
         if($this->getRequest()->isPost()) {
@@ -720,7 +767,7 @@ class LeagueController extends Zend_Controller_Action
                 $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
                 $team->save();
                 
-                $this->view->message('Team updated successfully.', 'success');
+                $this->view->message("Team `{$team->name}` updated successfully.", 'success');
                 $this->_redirect('league/' . $team->league_id);
             } else {
                 $form->populate($post);
@@ -730,6 +777,37 @@ class LeagueController extends Zend_Controller_Action
         
         $this->view->form = $form;
         $this->view->team = $team;
+    }
+
+    public function teamdeleteAction()
+    {
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $teamId = $this->getRequest()->getUserParam('team_id');
+
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $team = $leagueTeamTable->find($teamId)->current();
+
+        if(!$team) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->isLeagueDirector($team->league_id)) {
+            $this->_redirect('league/' . $team->league_id);
+        }
+
+        // save the league Id and delete the team
+        $leagueId = $team->league_id;
+        $name = $team->name;
+        $team->delete();
+
+        $this->view->message("Successfully deleted the team `$name`", 'success');
+
+        // redirect to teams page
+        $this->_redirect('league/' . $leagueId);
     }
 
     public function scheduleAction()

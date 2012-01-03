@@ -33,7 +33,6 @@ $(document).ready(function() {
                                if(obj.result == 'error') {
                                    $('#error-string').html(obj.message);
                                } else {
-                                   alert('Season: ' + obj.data);
                                    window.location = BASE_URL + '/leagues/' + obj.data;
                                }
                            }

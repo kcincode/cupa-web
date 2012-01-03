@@ -13,5 +13,20 @@ class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
         
         return $this->fetchAll($select);
     }
+
+    public function isUnique($leagueId, $name)
+    {
+        $select = $this->select()
+                       ->where('league_id = ?', $leagueId)
+                       ->where('name = ?', $name);
+
+        $result = $this->fetchRow($select);
+
+        if(isset($result->name)) {
+            return false;
+        }
+
+        return true;
+    }
     
 }
