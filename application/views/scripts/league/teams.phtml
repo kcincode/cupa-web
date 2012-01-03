@@ -29,8 +29,8 @@
     <div class="info" onclick="loadPlayers('<?php echo $this->escape($team->id); ?>')">
         <div class="links">
             <?php if($this->isLeagueDirector($this->league->id)): ?>
-            <a href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League"/></a>
-            <a href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_delete');?>" onclick="return confirm('Are you sure you want to delete this team, it will reset ALL DATA associated with this team.');" href="#"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete League"/></a>
+            <a href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit Team"/></a>
+            <a href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_delete');?>" onclick="return confirm('Are you sure you want to delete this team, it will reset ALL DATA associated with this team.');" href="#"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete Team"/></a>
             <?php endif; ?>
         </div>
         <span class="team-name"><?php echo $this->escape($team->name);?></span><br/>
