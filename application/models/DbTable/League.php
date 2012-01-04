@@ -61,7 +61,7 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
     {
         $select = $this->select()
                        ->where('year = ?', $year)
-                       ->where('season = ?', $season)
+                       ->where('season = ?', strtolower($season))
                        ->where('day = ?', $day);
         
         if($name) {

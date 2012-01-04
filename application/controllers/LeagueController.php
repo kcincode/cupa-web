@@ -569,7 +569,9 @@ class LeagueController extends Zend_Controller_Action
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
+        $this->view->season = $this->getRequest()->getUserParam('season');
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
         
@@ -583,7 +585,7 @@ class LeagueController extends Zend_Controller_Action
                 $id = $leagueTable->createBlankLeague($post['year'], $post['season'], $post['day'], null, $this->view->user->id);
                 if(is_numeric($id)) {
                     $this->view->message('League created successfully.');
-                    echo Zend_Json::encode(array('result' => 'success', 'data' => $post['season']));
+                    echo Zend_Json::encode(array('result' => 'success', 'data' => strtolower($post['season'])));
                 } else {
                     echo Zend_Json::encode(array('result' => 'error', 'message' => 'Error Creating League'));
                     return;
