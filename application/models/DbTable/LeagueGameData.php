@@ -11,7 +11,7 @@ class Cupa_Model_DbTable_LeagueGameData extends Zend_Db_Table
             ->from(array('lg' => $this->_name), array())
             ->join(array('lgdteam' => 'league_game_data'), 'lgdteam.league_game_id = lg.id', array('score AS team'))
             ->join(array('lgdopponent' => 'league_game_data'), 'lgdopponent.league_game_id = lg.id', array('score AS opponent'))
-            ->where('lg.league_id = ?', $leagueId)
+            ->where('lg.id = ?', $gameId)
             ->where('lgdteam.league_team_id = ?', $teamId)
             ->where('lgdopponent.league_team_id <> ?', $teamId)
             ->where('lgdteam.score > 0 OR lgdopponent.score > 0');

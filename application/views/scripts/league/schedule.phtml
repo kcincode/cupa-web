@@ -1,4 +1,36 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>schedule</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<div id="schedule">
+    <h1>League Schedule</h1>
+    <div class="weeks">
+        <div class="week">Jump to a week:</div>
+        <?php foreach($this->games as $week => $tmp): ?>
+        <div class="week"><a class="button" href="#week-<?php echo $this->escape($week); ?>"><?php echo $this->escape($week); ?></a></div>
+        <?php endforeach;?>
+        <div class="clearfix"></div>
+     </div>
+
+    <div class="clearfix">&nbsp;<br/>&nbsp;</div>
+
+    <div class="games">
+    <?php foreach($this->games as $week => $tmp): ?>
+
+        <a class="title" name="week-<?php echo $this->escape($week); ?>"><h2>Week <?php echo $this->escape($week); ?></h2></a>
+        <div class="week">
+        <?php foreach($tmp as $field => $data): ?>
+            <div class="field">Field #<?php echo $this->escape($field); ?></div>
+            <div class="team">
+                <span class="<?php echo $this->displayLeagueGameOutcome($data['id'], $data['away_team_id']);?>">
+                    <?php echo $this->escape($data['away_team']); ?>
+                </span>
+                at
+                <span class="<?php echo $this->displayLeagueGameOutcome($data['id'], $data['home_team_id']);?>">
+                    <?php echo $this->escape($data['home_team']); ?>
+                </span>
+            </div>
+            <div class="result"><?php echo $this->escape($data['away_score']);?> - <?php echo $this->escape($data['home_score']);?></div>
+        <?php endforeach; ?>
+            <div class="clearfix"></div>
+        </div>
+    <?php endforeach; ?>
+    </div>
 </div>

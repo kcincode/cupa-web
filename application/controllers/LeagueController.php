@@ -815,7 +815,22 @@ class LeagueController extends Zend_Controller_Action
 
     public function scheduleAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
+
+        //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/schedule.js');
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $this->view->games = $leagueGameTable->fetchSchedule($leagueId);
     }
 
     public function scheduleaddAction()

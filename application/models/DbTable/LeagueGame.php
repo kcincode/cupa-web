@@ -37,4 +37,28 @@ class Cupa_Model_DbTable_LeagueGame extends Zend_Db_Table
 
         return $win . '-' . $loss . '-' . $tie;
     }
+
+    public function fetchSchedule($leagueId)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lg' => $this->_name), array('*'))
+                       ->join(array('lgdaway' => 'league_game_data'), 'lgdaway.league_game_id = lg.id', array('league_team_id AS away_team_id', 'score AS away_score'))
+                       ->join(array('lgdhome' => 'league_game_data'), 'lgdhome.league_game_id = lg.id', array('league_team_id AS home_team_id', 'score AS home_score'))
+                       ->join(array('ltaway' => 'league_team'), 'ltaway.id = lgdaway.league_team_id', array('name AS away_team'))
+                       ->join(array('lthome' => 'league_team'), 'lthome.id = lgdhome.league_team_id', array('name AS home_team'))
+                       ->where('lg.league_id = ?', $leagueId)
+                       ->where('lgdaway.type = ?', 'away')
+                       ->where('lgdhome.type = ?', 'home')
+                       ->order('lg.week ASC')
+                       ->order('lg.day ASC')
+                       ->order('lg.field ASC');
+
+        $data = array();
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            $data[$row['week']][$row['field']] = $row;
+        }
+
+        return $data;
+    }
+
 }
