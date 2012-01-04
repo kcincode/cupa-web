@@ -2,6 +2,14 @@ h1 {
     padding-top: 10px;
 }
 
+#previous-link {
+    width: 200px;
+    float: right;
+    margin: -32px 150px 10px 0;
+    padding: 10px;
+
+}
+
 #player-card {
     border: 1px solid #444;
     width: 500px;

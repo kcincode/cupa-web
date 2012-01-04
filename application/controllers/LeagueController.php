@@ -625,8 +625,11 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+
+        $session = new Zend_Session_Namespace('previous');
+        $session->previousPage = 'league/' . $leagueId;
+
+            $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
     }
     

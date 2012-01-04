@@ -40,6 +40,9 @@ class ProfileController extends Zend_Controller_Action
 
     public function publicAction()
     {
+        $session = new Zend_Session_Namespace('previous');
+        $this->view->previousPage = $session->previousPage;
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/public.css');
 
         $userId = $this->getRequest()->getUserParam('user_id');
