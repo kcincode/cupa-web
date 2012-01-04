@@ -158,6 +158,7 @@ foreach($seasons as $season) {
 
 $stmt = $origDb->prepare('SELECT * FROM events e LEFT JOIN event_data ed ON ed.event_id = e.id');
 $stmt->execute();
+$prevYear = date('Y') - 1;
 foreach($stmt->fetchAll() as $row) {
     echo "        Importing league `{$row['name']}`:\n";
     $league = $leagueTable->createRow();
@@ -169,7 +170,11 @@ foreach($stmt->fetchAll() as $row) {
     $league->registration_begin = $row['start'] . ' 00:00:00';
     $league->registration_end = $row['end'] . ' 23:59:59';
     $league->visible_from = $row['start'] . ' 00:00:00';
-    $league->is_archived = ($row['year'] < date('Y')) ? 1 : 0;
+    $archived = 1;
+    if($row['year'] == date('Y') or (date('m') <= 8 and $row['year'] == $prevYear)) {
+        $archived = 0;
+    }
+    $league->is_archived = $archived;
     $league->save();
     
     $leagueInformation = $leagueInformationTable->createRow();

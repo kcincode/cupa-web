@@ -141,4 +141,33 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
         
         return $this->fetchRow($select);
     }
+
+    public function getPublicProfile($user)
+    {
+        $data = array(
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+        );
+
+        // get the public user profile data
+        $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+        $userLevelTable = new Cupa_Model_DbTable_UserLevel();
+        $userProfile = $userProfileTable->find($user->id)->current();
+        $data['profile'] = array(
+            'nickname' => $userProfile->nickname,
+            'gender' => $userProfile->gender,
+            'age' => $userProfile->birthday,
+            'height' => $userProfile->height,
+            'highest level' => (empty($userProfile->level)) ? null : $userLevelTable->find($userProfile->level)->current()->name,
+        );
+        $data['experience'] = $userProfile->experience;
+
+
+        // get users league data
+        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $data['leagues'] = $leagueMemberTable->getUserLeagues($user->id);
+
+
+        return $data;
+    }
 }

@@ -1,4 +1,50 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Profile</b> and script/action name <b>public</b></p>
+<h1>Player Card</h1>
+<div id="player-card">
+    <div class="name">
+        <?php echo $this->escape($this->data['first_name']); ?>
+        <?php echo $this->escape($this->data['last_name']); ?>
+    </div>
+    <div class="experience">
+        Playing Ultimate Since:
+        <?php if(!empty($this->data['experience'])): ?>
+        <?php echo $this->escape($this->data['experience']); ?> ( <?php echo $this->escape(date('Y') - $this->data['experience']);?> years )
+        <?php else: ?>
+        Unkown
+        <?php endif; ?>
+    </div>
+    <div class="profile">
+        <?php foreach($this->data['profile'] as $key => $value): ?>
+        <div class="key">
+            <?php echo $this->escape(ucwords($key)); ?>:
+        </div>
+        <div class="value">
+            <?php if($key == 'age'): ?>
+            <?php echo $this->displayAge($value); ?>
+            <?php elseif($key == 'height'): ?>
+            <?php echo $this->displayHeight($value); ?>
+            <?php else: ?>
+            <?php echo (empty($value)) ? 'Unknown' : $this->escape($value); ?>
+            <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="leagues">
+        <h3>Players' Leagues</h3>
+        <div class="row">
+            <div class="year header">Year</div>
+            <div class="league header">League</div>
+            <div class="team header">Team</div>
+            <div class="record header">Record</div>
+        </div>
+        <?php foreach($this->data['leagues'] as $row): ?>
+        <div class="row">
+            <div class="year"><?php echo $this->escape($row['year']); ?></div>
+            <div class="league"><?php echo $this->leaguename($row['league_id'], false, true, true, false); ?></div>
+            <div class="team"><?php echo $this->escape($row['team']); ?></div>
+            <div class="record"><?php echo $this->getLeagueTeamRecord($row['league_id'], $row['team_id']); ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <div class="clearfix">&nbsp;</div>
 </div>

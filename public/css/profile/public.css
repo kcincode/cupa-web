@@ -1,0 +1,82 @@
+h1 {
+    padding-top: 10px;
+}
+
+#player-card {
+    border: 1px solid #444;
+    width: 500px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.name, .experience {
+    background-color: #e0e0e0;
+    border: 1px solid #aaa;
+}
+
+.name {
+    font-weight: bold;
+    font-size: 20pt;
+    border-bottom: none;
+    padding: 10px 10px 0 10px;
+}
+
+.experience {
+    padding: 0 10px 10px 10px;
+    font-size: 12pt;
+    border-top: none;
+}
+
+.profile {
+    padding: 10px 0;
+}
+
+.profile .key, .profile .value {
+    float: left;
+    width: 100px;
+    padding: 5px;
+}
+
+.profile .key {
+    font-weight: bold;
+    text-align: right;
+}
+
+.leagues h3 {
+    margin: 10px 0;
+    background-color: #e0e0e0;
+    border: 1px solid #aaa;
+    padding: 5px;
+}
+.leagues .year,
+.leagues .league,
+.leagues .team,
+.leagues .record {
+    padding: 0;
+    margin: 0;
+    float: left;
+}
+.leagues .year {
+    width: 40px;
+}
+
+.leagues .league {
+    width: 205px;
+}
+
+.leagues .team {
+    width: 200px;
+}
+
+.leagues .record {
+    width: 55px;
+    text-align: center;
+}
+
+.leagues .header {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+
+
