@@ -18,6 +18,7 @@
         <div class="week">
         <?php foreach($tmp as $field => $data): ?>
             <div class="field">Field #<?php echo $this->escape($field); ?></div>
+            <div class="day"><?php echo date('m/d/Y h:i A', strtotime($this->escape($data['day']))); ?></div>
             <div class="team">
                 <span class="<?php echo $this->displayLeagueGameOutcome($data['id'], $data['away_team_id']);?>">
                     <?php echo $this->escape($data['away_team']); ?>

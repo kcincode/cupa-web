@@ -24,13 +24,19 @@
 }
 
 .games .week .field {
-    width: 150px;
+    width: 75px;
+    text-align: center;
+    float: left;
+}
+
+.games .week .day {
+    width: 175px;
     text-align: center;
     float: left;
 }
 
 .games .week .team {
-    width: 510px;
+    width: 460px;
     float: left;
 }
 
@@ -44,7 +50,7 @@
 
 .games .week .result {
     float: left;
-    width: 125px;
+    width: 75px;
     text-align: center;
 }
 

@@ -375,18 +375,19 @@ $stmt = $origDb->prepare('SELECT * FROM event_games');
 $stmt->execute();
 foreach($stmt->fetchAll() as $row) {
         echo "            Importing game #{$row['team2_id']} vs #{$row['team1_id']}...";
-        
-        // fetch or create the game
-        $leagueGame = $leagueGameTable->fetchGame($row['date'], $row['week'], $row['field']);
-        if(!$leagueGame) {
-            $leagueGame = $leagueGameTable->createRow();
-            $leagueGame->league_id = $row['event_id'];
-            $leagueGame->day = $row['date'];
-            $leagueGame->week = $row['week'];
-            $leagueGame->field = $row['field'];
-            $leagueGame->save();
+        $leagueLocation = $leagueLocationTable->fetchByType($row['event_id'], 'league');
+        if($leagueLocation) {
+            $row['date'] = $row['date'] . ' ' . date('H:i:s', strtotime($leagueLocation->start));
         }
-        
+
+        //create the game
+        $leagueGame = $leagueGameTable->createRow();
+        $leagueGame->league_id = $row['event_id'];
+        $leagueGame->day = $row['date'];
+        $leagueGame->week = $row['week'];
+        $leagueGame->field = $row['field'];
+        $leagueGame->save();
+
         if($leagueTeamTable->find($row['team2_id'])->current()) {
             // insert the game data for home and away teams
             $leagueGameData = $leagueGameDataTable->createRow();
