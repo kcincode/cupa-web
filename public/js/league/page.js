@@ -5,15 +5,6 @@ $(document).ready(function() {
         height: 200,
         autoOpen: false,
         title: 'Create a League',
-        open: function(event, ui) {
-            $.ajax({
-                type: 'get',
-                url: BASE_URL + '/league/add',
-                success: function(response) {
-                    $('#add-league-container').html(response);
-                }
-            });
-        },
         buttons: {
             "Save": function() {
                 $.ajax({
@@ -25,7 +16,7 @@ $(document).ready(function() {
                         if(obj.result == 'error') {
                             $('#error-string').html(obj.message);
                         } else {
-                            //window.location = BASE_URL + '/leagues/' + obj.data;
+                            window.location = BASE_URL + '/leagues/' + obj.data;
                         }
                     }
                 });
@@ -39,7 +30,7 @@ $(document).ready(function() {
    
     $('#add-league').click(function(e) {
         e.preventDefault();
-        $('#add-league-container').dialog('open');
+        $('#add-league-container').load(BASE_URL + '/league/add').dialog('open');
     });
 
     $('#leagues').tabs();
