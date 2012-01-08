@@ -32,69 +32,30 @@ span.club-type {
     color: #888;
 }
 
-#add-team-container {
-    position: absolute;
-    background-color: #fafafa;
-    width: 460px;
-    height: 105px;
-    border: 1px solid #000;
-    margin: 0 0 0 -225px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 2px 5px #444;
-    -moz-box-shadow: 0 2px 5px #444;
-    box-shadow: 0 2px 5px #444;
-    z-index: 100;
-}
-
-#add-team-container .row {
-    margin: 0;
-    padding: 0;
-    line-height: 75px;
-}
-
-#add-team-container .row dd {
-    text-align: left;
-    padding: 0;
-    margin: 0;
-    float: left;
-}
-
-#add-team-container .row dd input[type=text] {
+#add-club-container .row dd input[type=text] {
     font-size: 12pt;
     padding: 5px;
 }
 
-#add-team-container .row dd input[type=submit] {
+#add-club-container .row dd input[type=submit] {
     padding: 7px 15px;
     cursor: pointer;
 }
 
-#add-team-container .row dt {
+#add-club-container .row dt {
     float: left;
-    width: 100px;
+    width: 110px;
     text-align: right;
     margin-right: 10px;
     font-size: 12pt;
-}
-
-#add-team-container h4 {
-    margin: -35px 0 -60px 0;
-    padding: 10px;
-    text-align: center;
-    font-size: 12pt;
+    padding-top: 6px;
 }
 
 #error-string {
-    position: absolute;
     color: #e00;
     font-weight: bold;
-    top: 70px;
     margin: 0;
     padding: 0;
-    line-height: 30px;
-    width: 430px;
     text-align: center;
 }
 

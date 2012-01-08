@@ -6,7 +6,7 @@ $(document).ready(function() {
         autoOpen: false,
         title: 'Create a League',
         buttons: {
-            "Save": function() {
+            "Create": function() {
                 $.ajax({
                     type: 'post',
                     url: BASE_URL + '/league/add',

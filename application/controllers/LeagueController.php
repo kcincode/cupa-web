@@ -615,6 +615,7 @@ class LeagueController extends Zend_Controller_Action
 
     public function teamsAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
         

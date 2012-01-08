@@ -11,7 +11,7 @@
     <span class="actions">
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
         <a class="button" id="add-club" href="<?php echo $this->url(array(), 'page_clubs_add'); ?>">Add Team</a>
-        <div id="add-team-container"></div>
+        <div id="add-club-container"></div>
         <?php endif; ?>
     </span>
 </div>

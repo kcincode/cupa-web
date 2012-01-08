@@ -183,6 +183,7 @@ class PageController extends Zend_Controller_Action
 
     public function officersAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officers.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officers.js');
@@ -316,6 +317,7 @@ class PageController extends Zend_Controller_Action
 
     public function minutesAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutes.css');
         
@@ -484,6 +486,7 @@ class PageController extends Zend_Controller_Action
 
     public function pickupAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickup.css');
         
@@ -617,6 +620,7 @@ class PageController extends Zend_Controller_Action
 
     public function clubsAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubs.css');
         
@@ -762,6 +766,7 @@ class PageController extends Zend_Controller_Action
 
     public function allnewsAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/allnews.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/news.js');
@@ -794,7 +799,7 @@ class PageController extends Zend_Controller_Action
         }
         
         $this->view->backUrl = $session->url;
-        
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
         

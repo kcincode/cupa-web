@@ -6,7 +6,7 @@ $(document).ready(function() {
         autoOpen: false,
         title: 'Create a Season',
         buttons: {
-            "Save": function() {
+            "Create": function() {
                 if($('#season-name').val() == '') {
                     $('#error-string').html('Please enter a season name.');
                     return;
