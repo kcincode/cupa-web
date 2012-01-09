@@ -25,4 +25,20 @@ class Cupa_Model_DbTable_LeagueGameData extends Zend_Db_Table
         return ($result['team'] > $result['opponent']) ? 'win' : 'loss';
     }
 
+    public function fetchGameData($gameId, $type = null)
+    {
+        $select = $this->select()
+                       ->where('league_game_id = ?', $gameId)
+                       ->order('type');
+
+        if(!empty($type)) {
+            $select->where('type = ?', $type);
+            return $this->fetchRow($select);
+        }
+
+        return $this->fetchAll($select);
+    }
+
+
+
 }

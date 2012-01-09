@@ -844,7 +844,65 @@ class LeagueController extends Zend_Controller_Action
 
     public function scheduleeditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/scheduleedit.css');
+
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/scheduleedit.js');
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $gameId = $this->getRequest()->getUserParam('game_id');
+
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+
+        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $game = $leagueGameTable->find($gameId)->current();
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$game) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $form = new Cupa_Form_LeagueScheduleEdit($gameId);
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid(($post))) {
+                $data = $form->getValues();
+                $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+                $homeGameData = $leagueGameDataTable->fetchGameData($gameId, 'home');
+                $awayGameData = $leagueGameDataTable->fetchGameData($gameId, 'away');
+
+                $game->day = $data['day'];
+                $game->week = $data['week'];
+                $game->field = $data['field'];
+                $game->save();
+
+                $homeGameData->league_team_id = $data['home_team'];
+                $awayGameData->league_team_id = $data['away_team'];
+                $homeGameData->score = $data['home_score'];
+                $awayGameData->score = $data['away_score'];
+                $homeGameData->score = $data['home_score'];
+                $awayGameData->score = $data['away_score'];
+
+                $homeGameData->save();
+                $awayGameData->save();
+
+                $this->view->message('Game data updated successfully.', 'success');
+                $this->_redirect('league/' . $leagueId . '/schedule');
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
     }
 
     public function schedulegenerateAction()

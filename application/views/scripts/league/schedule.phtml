@@ -28,7 +28,15 @@
                     <?php echo $this->escape($data['home_team']); ?>
                 </span>
             </div>
-            <div class="result"><?php echo $this->escape($data['away_score']);?> - <?php echo $this->escape($data['home_score']);?></div>
+            <div class="result">
+                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <a title="Edit Score" href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $data['id']), 'league_schedule_edit'); ?>">
+                    <?php echo $this->escape($data['away_score']);?> - <?php echo $this->escape($data['home_score']);?>
+                </a>
+                <?php else: ?>
+                <?php echo $this->escape($data['away_score']);?> - <?php echo $this->escape($data['home_score']);?>ss
+                <?php endif; ?>
+            </div>
         <?php endforeach; ?>
             <div class="clearfix"></div>
         </div>

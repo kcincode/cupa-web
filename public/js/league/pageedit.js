@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $('#visible_from').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
     });
@@ -10,7 +10,7 @@ $(document).ready(function() {
     
     $('#league_start').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         onSelect: function ( selectedDateTime ) {
@@ -21,7 +21,7 @@ $(document).ready(function() {
     
     $('#league_end').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#league_start').val(),
@@ -29,7 +29,7 @@ $(document).ready(function() {
     
     $('#tournament_start').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         onSelect: function ( selectedDateTime ) {
@@ -40,7 +40,7 @@ $(document).ready(function() {
     
     $('#tournament_end').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#tournament_start').val(),
@@ -48,7 +48,7 @@ $(document).ready(function() {
 
     $('#draft_start').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         onSelect: function ( selectedDateTime ) {
@@ -59,7 +59,7 @@ $(document).ready(function() {
     
     $('#draft_end').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#draft_start').val(),
@@ -68,14 +68,14 @@ $(document).ready(function() {
 
     $('#registration_begin').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
     });
     
     $('#registration_end').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#registration_begin').val(),
@@ -120,7 +120,7 @@ $(document).ready(function() {
 
     $('#registration_start').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         onSelect: function ( selectedDateTime ) {
@@ -131,7 +131,7 @@ $(document).ready(function() {
     
     $('#registration_end').datetimepicker({
         changeMonth: true,
-	changeYear: true,
+        changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         minDate: $('#league_start').val(),
