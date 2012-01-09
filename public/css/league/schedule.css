@@ -27,17 +27,20 @@
     width: 75px;
     text-align: center;
     float: left;
+    padding: 3px 0;
 }
 
 .games .week .day {
     width: 175px;
     text-align: center;
     float: left;
+    padding: 3px 0;
 }
 
 .games .week .team {
-    width: 460px;
+    width: 455px;
     float: left;
+    padding: 3px 0;
 }
 
 .games .week .team span.win {
@@ -52,6 +55,23 @@
     float: left;
     width: 75px;
     text-align: center;
+    padding: 3px 0;
+}
+
+.games .week .delete {
+    float: right;
+    visibility: hidden;
+}
+
+.games .week .delete img {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.games .week.highlight .delete {
+    visibility: visible;
 }
 
 .title, .title:hover {

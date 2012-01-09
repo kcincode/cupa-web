@@ -46,6 +46,12 @@ $(document).ready(function() {
         }
     });
 
+    $('.week').hover(function(){
+        $(this).addClass('highlight');
+    }, function() {
+        $(this).removeClass('highlight');
+    });
+
     $('.delete a').click(function(e) {
         if(!confirm('Are you sure you would like to delete this game?')) {
             e.preventDefault();

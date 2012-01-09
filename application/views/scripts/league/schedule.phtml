@@ -51,7 +51,7 @@
             <div class="delete">
                 <?php if($this->isLeagueDirector($this->league->id)): ?>
                 <a href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $data['id']), 'league_schedule_delete'); ?>">
-                    <img title="Delete Game" src="<?php echo $this->baseUrl(); ?>/images/ico-delte.png"/>
+                    <img title="Delete Game" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
                 </a>
                 <?php endif; ?>
             </div>
