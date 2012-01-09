@@ -8,6 +8,13 @@
         <?php endforeach;?>
         <div class="clearfix"></div>
      </div>
+    <?php if($this->isLeagueDirector($this->league->id)): ?>
+    <div id="admin-buttons">
+        <a class="button" id="add-game" href="#">Add a Game</a>
+        <a class="button" id="generate-schedule" href="#">Auto Generate Schedule</a>
+        <div id="add-game-container"></div>
+    </div>
+    <?php endif; ?>
 
     <div class="clearfix">&nbsp;<br/>&nbsp;</div>
 
@@ -29,12 +36,23 @@
                 </span>
             </div>
             <div class="result">
+                <?php $result = $this->escape($data['away_score']) . ' - ' . $this->escape($data['home_score']); ?>
+                <?php if($result == '0 - 0'): ?>
+                <?php $result = 'No Result'; ?>
+                <?php endif; ?>
                 <?php if($this->isLeagueDirector($this->league->id)): ?>
                 <a title="Edit Score" href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $data['id']), 'league_schedule_edit'); ?>">
-                    <?php echo $this->escape($data['away_score']);?> - <?php echo $this->escape($data['home_score']);?>
+                    <?php echo $result; ?>
                 </a>
                 <?php else: ?>
-                <?php echo $this->escape($data['away_score']);?> - <?php echo $this->escape($data['home_score']);?>ss
+                <?php echo $result; ?>
+                <?php endif; ?>
+            </div>
+            <div class="delete">
+                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <a href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $data['id']), 'league_schedule_delete'); ?>">
+                    <img title="Delete Game" src="<?php echo $this->baseUrl(); ?>/images/ico-delte.png"/>
+                </a>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
@@ -43,3 +61,6 @@
     <?php endforeach; ?>
     </div>
 </div>
+<script>
+    var league_id = '<?php echo $this->league->id; ?>';
+</script>

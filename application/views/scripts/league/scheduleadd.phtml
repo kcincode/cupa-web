@@ -1,4 +1,20 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>scheduleadd</b></p>
+<div id="scheduleadd-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->day; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->week; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->field; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->away_team; ?>
+        </div>
+        <div class="row left">
+            <?php echo $this->form->home_team; ?>
+        </div>
+        <div id="error-string"></div>
+    </form>
 </div>

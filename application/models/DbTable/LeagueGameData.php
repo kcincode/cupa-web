@@ -39,6 +39,32 @@ class Cupa_Model_DbTable_LeagueGameData extends Zend_Db_Table
         return $this->fetchAll($select);
     }
 
+    public function isUnique($gameId, $homeTeamId, $awayTeamId)
+    {
+        if(is_object(($gameId)) and isset($gameId->id)) {
+            $gameId = $gameId->id;
+        }
 
+        // if the game id doesn't exist then its unique
+        if(!is_numeric($gameId)) {
+            return true;
+        }
+
+        // fetch the game data
+        $gameData = $this->fetchGameData($gameId);
+
+        // check to see if the game as teams
+        if(empty($gameData[0])) {
+            return true;
+        }
+
+        // check to see if the game data has the same away vs home teams
+        if($homeTeamId == $gameData[0]->league_team_id and $awayTeamId == $gameData[1]->league_team_id) {
+            return false;
+        }
+
+        // else is unique
+        return true;
+    }
 
 }

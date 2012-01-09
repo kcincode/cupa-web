@@ -58,3 +58,46 @@
     color: #444;
 }
 
+#admin-buttons {
+    text-align: center;
+}
+
+#scheduleadd-container dt {
+    width: 120px;
+    text-align: right;
+    float: left;
+    font-size: 12pt;
+    padding-top: 6px;
+    margin-right: 10px;
+}
+
+#scheduleadd-container input[type=text] {
+    font-size: 12pt;
+    padding: 2px 5px;
+    width: 50px;
+    text-align: center;
+}
+
+#scheduleadd-container #day {
+    width: 150px;
+}
+
+#scheduleadd-container select {
+    font-size:  12pt;
+    margin-top: 5px;
+}
+
+#scheduleadd-container .description {
+    font-size: 8pt;
+    color: #808080;
+    margin: 0 0 10px 90px;
+
+}
+
+#error-string {
+    color: #e00;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}

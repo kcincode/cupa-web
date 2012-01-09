@@ -819,10 +819,11 @@ class LeagueController extends Zend_Controller_Action
 
     public function scheduleAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
 
-        //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/schedule.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/schedule.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Cupa_Model_DbTable_League();
@@ -839,7 +840,69 @@ class LeagueController extends Zend_Controller_Action
 
     public function scheduleaddAction()
     {
-        // action body
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('/');
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $form = new Cupa_Form_LeagueScheduleEdit(null, $leagueId);
+
+        if($this->getRequest()->isPost()) {
+            $this->_helper->viewRenderer->setNoRender(true);
+            $post = $this->getRequest()->getPost();
+
+            $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+            $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+            $game = $leagueGameTable->fetchGame($post['day'], $post['week'], $post['field']);
+
+            if($leagueGameDataTable->isUnique($game, $post['home_team'], $post['away_team'])) {
+                $game = $leagueGameTable->fetchGame($post['day'], $post['week'], $post['field']);
+
+                if(!$game) {
+                    $game = $leagueGameTable->createRow();
+                    $game->league_id = $leagueId;
+                }
+
+                $game->day = $post['day'];
+                $game->week = $post['week'];
+                $game->field = $post['field'];
+                $game->save();
+
+                $homeTeam = $leagueGameDataTable->fetchGameData($game->id, 'home');
+                $awayTeam = $leagueGameDataTable->fetchGameData($game->id, 'away');
+
+                if(!$homeTeam) {
+                    $homeTeam = $leagueGameDataTable->createRow();
+                    $awayTeam = $leagueGameDataTable->createRow();
+
+                    $homeTeam->league_game_id = $game->id;
+                    $awayTeam->league_game_id = $game->id;
+                    $homeTeam->type = 'home';
+                    $awayTeam->type = 'away';
+                }
+
+                $homeTeam->league_team_id = $post['home_team'];
+                $awayTeam->league_team_id = $post['away_team'];
+
+                $homeTeam->score = 0;
+                $awayTeam->score = 0;
+
+                $homeTeam->save();
+                $awayTeam->save();
+
+                echo Zend_Json::encode(array('result' => 'success', 'data' => $game->id));
+                return;
+            } else {
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Game Already Exists'));
+                return;
+            }
+        }
+
+        $this->view->form = $form;
     }
 
     public function scheduleeditAction()
@@ -870,7 +933,11 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Cupa_Form_LeagueScheduleEdit($gameId);
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId . '/schedule');
+        }
+
+        $form = new Cupa_Form_LeagueScheduleEdit($gameId, $leagueId);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -903,6 +970,47 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $this->view->form = $form;
+    }
+
+    public function scheduledeleteAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $gameId = $this->getRequest()->getUserParam('game_id');
+
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $league = $leagueTable->find($leagueId)->current();
+
+        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $game = $leagueGameTable->find($gameId)->current();
+
+        if(!$league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$game) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId . '/schedule');
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+        $leagueGameData = $leagueGameDataTable->fetchGameData($gameId);
+
+        if(count($leagueGameData)) {
+            $leagueGameData[0]->delete();
+            $leagueGameData[1]->delete();
+        }
+
+        $this->view->message('Successfully deleted the game.', 'success');
+        $this->_redirect('league/' . $leagueId . '/schedule');
     }
 
     public function schedulegenerateAction()

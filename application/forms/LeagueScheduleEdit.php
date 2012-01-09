@@ -4,14 +4,19 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
 {
     private $_game;
     private $_gameData;
+    private $_leagueId;
 
-    public function __construct($gameId)
+    public function __construct($gameId = null, $leagueId = null)
     {
-        $gameTable = new Cupa_Model_DbTable_LeagueGame();
-        $gameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+        $this->_leagueId = $leagueId;
 
-        $this->_game = $gameTable->find($gameId)->current();
-        $this->_gameData = $gameDataTable->fetchGameData($gameId);
+        if(is_numeric($gameId)) {
+            $gameTable = new Cupa_Model_DbTable_LeagueGame();
+            $gameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+
+            $this->_game = $gameTable->find($gameId)->current();
+            $this->_gameData = $gameDataTable->fetchGameData($gameId);
+        }
 
         parent::__construct();
     }
@@ -25,7 +30,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
             'required' => true,
             'label' => 'Day/Time:',
             'description' => 'The day and time of the game.',
-            'value' => $this->_game->day,
+            'value' => (empty($this->_game->day)) ? null : $this->_game->day,
         ));
 
         $week = $this->addElement('text', 'week', array(
@@ -33,7 +38,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
             'required' => true,
             'label' => 'Week:',
             'description' => 'The week number of the game.',
-            'value' => $this->_game->week,
+            'value' => (empty($this->_game->week)) ? null : $this->_game->week,
         ));
 
         $field = $this->addElement('text', 'field', array(
@@ -41,12 +46,15 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
             'required' => true,
             'label' => 'Field:',
             'description' => 'The field number of the game.',
-            'value' => $this->_game->field,
+            'value' => (empty($this->_game->field)) ? null : $this->_game->field,
         ));
 
         $leagueTeams = array();
         $leagueTeamsTable = new Cupa_Model_DbTable_LeagueTeam();
-        foreach($leagueTeamsTable->fetchAllTeams($this->_game->league_id) as $row) {
+        if(empty($this->_gameData[0])) {
+            $leagueTeams[0] = 'Select a Team';
+        }
+        foreach($leagueTeamsTable->fetchAllTeams($this->_leagueId) as $row) {
             $leagueTeams[$row->id] = $row->name;
         }
 
@@ -58,7 +66,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
             'label' => 'Home Team:',
             'multiOptions' => $leagueTeams,
             'description' => 'Select the home team for the game.',
-            'value' => $this->_gameData[0]->league_team_id,
+            'value' => (empty($this->_gameData[0])) ? null : $this->_gameData[0]->league_team_id,
         ));
 
         $home_score = $this->addElement('text', 'home_score', array(
@@ -66,7 +74,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
             'required' => true,
             'label' => 'Score:',
             'description' => 'Home team score.',
-            'value' => $this->_gameData[0]->score,
+            'value' => (empty($this->_gameData[0])) ? null : $this->_gameData[0]->score,
         ));
 
         $away_team = $this->addElement('select', 'away_team', array(
@@ -77,7 +85,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
             'label' => 'Away Team:',
             'multiOptions' => $leagueTeams,
             'description' => 'Select the home team for the game.',
-            'value' => $this->_gameData[1]->league_team_id,
+            'value' => (empty($this->_gameData[1])) ? null : $this->_gameData[1]->league_team_id,
         ));
 
         $away_score = $this->addElement('text', 'away_score', array(
@@ -85,7 +93,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
             'required' => true,
             'label' => 'Score:',
             'description' => 'Away team score.',
-            'value' => $this->_gameData[1]->score,
+            'value' => (empty($this->_gameData[1])) ? null : $this->_gameData[1]->score,
         ));
 
     }
