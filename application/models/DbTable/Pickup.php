@@ -39,4 +39,18 @@ class Cupa_Model_DbTable_Pickup extends Zend_Db_Table
         
         return true;
     }
+    
+    public function fetchHighestWeight()
+    {
+        $select = $this->select()
+                       ->order('weight DESC');
+        
+        $result = $this->fetchRow($select);
+        
+        if(isset($result->weight)) {
+            return $result->weight + 1;
+        } else {
+            return 0;
+        }
+    }
 }

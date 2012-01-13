@@ -539,6 +539,7 @@ class PageController extends Zend_Controller_Action
                 $pickup->email = null;
                 $pickup->location = 'Unknown';
                 $pickup->map = null;
+                $pickup->weight = $pickupTable->fetchHighestWeight();
                 $pickup->is_visible = 0;
                 $pickup->save();
 

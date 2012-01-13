@@ -87,10 +87,12 @@ foreach($pickups as $pickup) {
     $pickupObject->email = $pickup['email'];
     $pickupObject->location = $pickup['location'];
     $pickupObject->map = $pickup['map'];
+    $pickupObject->weight = $pickupTable->fetchHighestWeight();
     $pickupObject->is_visible = $pickup['is_visible'];
     $pickupObject->save();
     echo "Done\n";
 }
+exit();
 
 
 echo "    Done\n";
