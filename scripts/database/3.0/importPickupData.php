@@ -92,7 +92,5 @@ foreach($pickups as $pickup) {
     $pickupObject->save();
     echo "Done\n";
 }
-exit();
-
 
 echo "    Done\n";
