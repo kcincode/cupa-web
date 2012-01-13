@@ -86,7 +86,7 @@
                 <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
                     <img title="Edit Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
                 </a>
-                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
+                <a onclick="return confirm('Are you sure you want to delete these minutes?');" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
                     <img title="Delete Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
                 </a>
                 <?php endif; ?>

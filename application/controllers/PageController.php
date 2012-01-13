@@ -385,7 +385,7 @@ class PageController extends Zend_Controller_Action
 
                     $minute->save();
                     $this->view->message('Meeting minutes updated successfully.', 'success');
-                    //$this->_redirect('/board_meeting_minutes');
+                    $this->_redirect('/board_meeting_minutes');
                 } else {
                     $form->populate($post);
                 }
@@ -435,6 +435,32 @@ class PageController extends Zend_Controller_Action
 
         // disable the layout
         $this->_helper->layout()->disableLayout();
+    }
+    
+    public function minutesdeleteAction()
+    {
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
+        
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if((!Zend_Auth::getInstance()->hasIdentity() or 
+            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
+             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+             !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $minuteId = $this->getRequest()->getUserParam('minute');
+        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $minute = $minuteTable->find($minuteId)->current();
+
+        if($minute) {
+            $minute->delete();
+        }
+        
+        $this->view->message('Minutes deleted successful.', 'success');
+        $this->_redirect('/board_meeting_minutes');
     }
     
     public function minutesdownloadAction()
