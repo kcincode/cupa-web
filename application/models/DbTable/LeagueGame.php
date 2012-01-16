@@ -5,9 +5,10 @@ class Cupa_Model_DbTable_LeagueGame extends Zend_Db_Table
     protected $_name = 'league_game';
     protected $_primary = 'id';
     
-    public function fetchGame($date, $week, $field)
+    public function fetchGame($leagueId, $date, $week, $field)
     {
         $select = $this->select()
+                       ->where('league_id = ?', $leagueId)
                        ->where('day = ?', $date)
                        ->where('week = ?', $week)
                        ->where('field = ?', $field);
@@ -59,6 +60,22 @@ class Cupa_Model_DbTable_LeagueGame extends Zend_Db_Table
         }
 
         return $data;
+    }
+    
+    public function createGame($leagueId, $date, $week, $field)
+    {
+        $result = $this->fetchGame($leagueId, $date, $week, $field);
+        
+        if(!$result) {
+            return $this->insert(array(
+                'league_id' => $leagueId,
+                'day' => $date,
+                'week' => $week,
+                'field' => $field,
+            ));
+        } else {
+            return $result->id;
+        }
     }
 
 }

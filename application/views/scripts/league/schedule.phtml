@@ -11,7 +11,7 @@
     <?php if($this->isLeagueDirector($this->league->id)): ?>
     <div id="admin-buttons">
         <a class="button" id="add-game" href="#">Add a Game</a>
-        <a class="button" id="generate-schedule" href="#">Auto Generate Schedule</a>
+        <a class="button" id="generate-schedule" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_schedule_generate'); ?>">Auto Generate Schedule</a>
         <div id="add-game-container"></div>
     </div>
     <?php endif; ?>

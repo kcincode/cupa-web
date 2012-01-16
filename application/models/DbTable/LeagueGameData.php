@@ -66,5 +66,22 @@ class Cupa_Model_DbTable_LeagueGameData extends Zend_Db_Table
         // else is unique
         return true;
     }
-
+    
+    public function addGameData($gameId, $type, $teamId)
+    {
+        $result = $this->fetchGameData($gameId, $type);
+        
+        if(!$result) {
+            $this->insert(array(
+                'league_game_id' => $gameId,
+                'type' => $type,
+                'league_team_id' => $teamId,
+                'score' => 0,
+            ));
+        } else {
+            $result->league_team_id = $teamId;
+            $result->score = 0;
+            $result->save();
+        }
+    }
 }

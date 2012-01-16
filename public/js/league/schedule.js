@@ -38,14 +38,6 @@ $(document).ready(function() {
         $('#add-game-container').load(BASE_URL + '/league/' + league_id + '/schedule/add').dialog('open');
     });
 
-    $('#generate-schedule').click(function(e) {
-        e.preventDefault();
-        if(confirm('This will delete all the current games to generate a new schedule.')) {
-            $('#add-game-container').load(BASE_URL + '/league/' + league_id + '/schedule/generate');
-            //window.location = BASE_URL + '/league/' + league_id + '/schedule/';
-        }
-    });
-
     $('.week').hover(function(){
         $(this).addClass('highlight');
     }, function() {

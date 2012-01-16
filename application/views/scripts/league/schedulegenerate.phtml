@@ -1,4 +1,53 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>schedulegenerate</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+
+<h1>Generate League Schedule</h1>
+<div id="schedulegenerate-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->number_of_teams; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->number_of_fields; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->home_advantage; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->home_field; ?>
+        </div>
+        
+        <div class="clearfix"></div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Generate"/>
+            <a class="button button-red" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_schedule'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>
+
+<?php if(count($this->schedule)): ?>
+<a name="generate"></a>
+<div class="games">
+<?php foreach($this->schedule as $week => $tmp): ?>
+
+    <h2>Week <?php echo $this->escape($week); ?></h2>
+    <div class="week">
+    <?php foreach($tmp as $data): ?>
+        <div class="field">Field #<?php echo $this->escape($data['field']); ?></div>
+        <div class="day"><?php echo date('m/d/Y h:i A', strtotime($this->escape($data['date']))); ?></div>
+        <div class="team">
+            <?php echo $this->escape($data['away_name']); ?> at <?php echo $this->escape($data['home_name']); ?>
+        </div>
+        <div class="result">&nbsp;</div>
+        <div class="delete">&nbsp;</div>
+
+    <?php endforeach; ?>
+        <div class="clearfix"></div>
+    </div>
+<?php endforeach; ?>
+</div>
+<form  method="post">
+    <div id="buttons-container">
+        <input class="button" name="save" type="submit" value="Save Schedule"/>
+    </div>
+</form>
+<?php endif; ?>

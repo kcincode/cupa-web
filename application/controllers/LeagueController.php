@@ -1015,8 +1015,205 @@ class LeagueController extends Zend_Controller_Action
 
     public function schedulegenerateAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/generate.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
+        
+        $session = new Zend_Session_Namespace('schedule_generation');
+        if($this->getRequest()->isGet()) {
+            $session->unsetAll();
+        }
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $league = $leagueTable->find($leagueId)->current();
+
+        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        if(!$league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        $this->view->league = $league;
+
+        $form = new Cupa_Form_GenerateSchedule($league);
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if(isset($post['save'])) {
+                $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+                
+                // remove all of the current games for the league
+                $leagueGameTable->getAdapter()->query('DELETE FROM league_game WHERE league_id = ' . $leagueId);
+                
+                // save the new schedule                
+                foreach($session->schedule as $week => $tmp) {
+                    foreach($tmp as $data) {
+                        $gameId = $leagueGameTable->createGame($leagueId, $data['date'], $week, $data['field']);
+                        $leagueGameDataTable->addGameData($gameId, 'home', $data['home_team']);
+                        $leagueGameDataTable->addGameData($gameId, 'away', $data['away_team']);
+                    }
+                }
+                
+                $this->view->message('League Schedule generated successfully.', 'success');
+                $this->_redirect('league/' . $leagueId . '/schedule');
+            }
+            if($form->isValid($post)) {
+                
+                // get start time from the league locations
+                $leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
+                $leagueLocation = $leagueLocationTable->fetchByType($leagueId, 'league');
+                
+                $startHour = date('H', strtotime($leagueLocation->start));
+                $endHour = date('H', strtotime($leagueLocation->end));
+                $dayHours = 24 - ($endHour - $startHour);
+                $weekSeconds = 7 * $dayHours * 60 * 60;
+                $weeks = ceil((strtotime($leagueLocation->end) - strtotime($leagueLocation->start)) / $weekSeconds);
+                
+                $fields = explode(',', $post['number_of_fields']);
+                
+                $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+                $teams = $leagueTeamTable->fetchAllTeams($leagueId)->toArray();
+                $numTeams = count($teams);
+                
+                $numFields = count($fields);
+                if($numFields < floor($numTeams / 2)) {
+                    $this->view->message('Not enough fields to play games. You need at least ' . floor($numTeams / 2) . ' fields.', 'warning');
+                    $session->unsetAll();
+                    $form->populate($post);
+                    $this->view->form = $form;
+                    return;
+                }
+
+                // shuffle team array so that the generation will be different
+                shuffle($teams);
+                
+                if($post['home_advantage'] != 0) {
+                    // reset the fields array with home field as the first item
+                    $newFields = array();
+                    $newFields[0] = $post['home_field'];
+                    foreach($fields as $field) {
+                        if($field != $post['home_field']) {
+                            $newFields[] = $field;
+                        }
+                    }
+                    $fields = $newFields;
+                    unset($newFields);
+                    
+                    $newTeams = array();
+                    $newTeams[0] = array();
+                    foreach($teams as $team) {
+                        if($team['id'] == $post['home_advantage']) {
+                            $newTeams[0] = $team;
+                        } else {
+                            $newTeams[] = $team;
+                        }
+                    }
+                    $teams = $newTeams;
+                    unset($newTeams);
+                }
+
+                $results = array();
+                for($week = 1; $week <= $weeks; $week++) {
+                    $str = $leagueLocation->start . ' +' . $week . ' Weeks';
+                    $date = date('Y-m-d H:i:s', strtotime($str));
+                    
+                    if($post['home_advantage'] != 0) {
+                        foreach($fields as $idx => $field) {
+                            if($teams[$idx]['id'] == $post['home_advantage']) {
+                                $results[$week][] = array(
+                                    'date' => $date,
+                                    'field' => $post['home_field'],
+                                    'away_team' => $teams[$numTeams - $idx - 1]['id'],
+                                    'away_name' => $teams[$numTeams - $idx - 1]['name'],
+                                    'home_team' => $teams[$idx]['id'],
+                                    'home_name' => $teams[$idx]['name'],
+                                );
+                            } else if ($teams[$numTeams - $idx - 1]['id'] == $post['home_advantage']) {
+                                $results[$week][] = array(
+                                    'date' => $date,
+                                    'field' => $post['home_field'],
+                                    'away_team' => $teams[$idx]['id'],
+                                    'away_name' => $teams[$idx]['name'],
+                                    'home_team' => $teams[$numTeams - $idx - 1]['id'],
+                                    'home_name' => $teams[$numTeams - $idx - 1]['name'],
+                                );
+                            }
+                            
+                            if($field == $post['home_field']) {
+                                continue;
+                            }
+                            
+                            if($idx <= floor($numTeams / 2)) {
+                                $results[$week][] = array(
+                                    'date' => $date,
+                                    'field' => $field,
+                                    'away_team' => $teams[$idx]['id'],
+                                    'away_name' => $teams[$idx]['name'],
+                                    'home_team' => $teams[$numTeams - $idx - 1]['id'],
+                                    'home_name' => $teams[$numTeams - $idx - 1]['name'],
+                                );
+                            } else {
+                                // more fields than teams
+                                $results[$week][] = array(
+                                    'date' => $date,
+                                    'field' => $field,
+                                    'away_team' => null,
+                                    'away_name' => null,
+                                    'home_team' => null,
+                                    'home_name' => null,
+                                );
+                            }
+                        }
+                        $teams = $this->rotateTeams($teams);
+                    } else {
+                        foreach($fields as $idx =>$field) {
+                            if($idx <= floor($numTeams / 2)) {
+                                $results[$week][] = array(
+                                    'date' => $date,
+                                    'field' => $field,
+                                    'away_team' => $teams[$idx]['id'],
+                                    'away_name' => $teams[$idx]['name'],
+                                    'home_team' => $teams[$numTeams - $idx - 1]['id'],
+                                    'home_name' => $teams[$numTeams - $idx - 1]['name'],
+                                );
+                            } else {
+                                // more fields than teams
+                                $results[$week][] = array(
+                                    'date' => $date,
+                                    'field' => $field,
+                                    'away_team' => null,
+                                    'away_name' => null,
+                                    'home_team' => null,
+                                    'home_name' => null,
+                                );
+                            }
+                        }
+                        $teams = $this->rotateTeams($teams);                        
+                    }
+                }
+                
+                $session->schedule = $results;
+                $this->view->schedule = $results;
+
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->form = $form;
     }
+    
+    private function rotateTeams($teams)
+    {
+        $lastElement = array_pop($teams);
+        $firstElement = array_shift($teams);
+
+        array_unshift($teams, $lastElement);
+        array_unshift($teams, $firstElement);
+
+        return $teams;
+    }
+
 
     public function finalAction()
     {
