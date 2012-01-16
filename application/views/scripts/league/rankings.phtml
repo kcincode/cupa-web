@@ -1,8 +1,13 @@
 <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
 <div id="teams">
-  
   <?php if(count($this->teams['final'])): ?>
   <h1>Final Team Rankings</h1>
+    <?php if($this->isLeagueDirector($this->league->id)): ?>
+    <div id="admin-buttons">
+        <a class="button" href="#">Update Final Rankings</a>
+    </div>
+    <?php endif; ?>
+
   <?php foreach($this->teams['final'] as $team): ?>
   <div class="team">
     <?php if($team['color_code']): ?>
@@ -39,6 +44,11 @@
   <div class="clearfix"></div>
   <?php elseif(count($this->teams['current'])): ?>
   <h1>Current Team Rankings</h1>
+    <?php if($this->isLeagueDirector($this->league->id)): ?>
+    <div id="admin-buttons">
+        <a class="button" href="#">Update Final Rankings</a>
+    </div>
+    <?php endif; ?>
   <?php foreach($this->teams['current'] as $team): ?>
   <div class="team">
     <?php if($team['color_code']): ?>

@@ -138,3 +138,8 @@ span.email {
     padding: 0;
     text-align: center;
 }
+
+#admin-buttons {
+    text-align: center;
+    margin: 10px 0;
+}
