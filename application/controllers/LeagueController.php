@@ -1019,6 +1019,8 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/generate.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
         
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/generate.js');
+
         $session = new Zend_Session_Namespace('schedule_generation');
         if($this->getRequest()->isGet()) {
             $session->unsetAll();
