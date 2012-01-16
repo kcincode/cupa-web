@@ -633,7 +633,7 @@ class LeagueController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace('previous');
         $session->previousPage = 'league/' . $leagueId;
 
-            $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
     }
     
@@ -1234,7 +1234,25 @@ class LeagueController extends Zend_Controller_Action
 
     public function rankingsAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankings.js');
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $session = new Zend_Session_Namespace('previous');
+        $session->previousPage = 'league/' . $leagueId;
+
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $this->view->teams = $leagueTeamTable->fetchAllTeamRanks($leagueId);
     }
 
     public function rankingseditAction()

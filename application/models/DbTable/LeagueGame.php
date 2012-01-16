@@ -77,5 +77,38 @@ class Cupa_Model_DbTable_LeagueGame extends Zend_Db_Table
             return $result->id;
         }
     }
+    
+    public function fetchHeadToHead($leagueId, $team1, $team2)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lg' => $this->_name), array())
+                       ->join(array('lgdaway' => 'league_game_data'), 'lgdaway.league_game_id = lg.id', array('league_team_id AS away_team', 'score AS away_score'))
+                       ->join(array('lgdhome' => 'league_game_data'), 'lgdhome.league_game_id = lg.id', array('league_team_id AS home_team', 'score AS home_score'))
+                       ->where('lg.league_id = ?', $leagueId)
+                       ->where('lgdaway.type = ?', 'away')
+                       ->where('lgdhome.type = ?', 'home')
+                       ->where("(lgdaway.league_team_id = '{$team1['id']}' AND lgdhome.league_team_id = '{$team2['id']}') OR (lgdaway.league_team_id = '{$team2['id']}' AND lgdhome.league_team_id = '{$team1['id']}')");
+        
+        $result = $this->getAdapter()->fetchAll($select);
+        
+        $wins = array(
+            $team1['id'] => 0,
+            $team2['id'] => 0,
+        );
+        
+        foreach($result as $row) {
+            if($row['away_score'] > $row['home_score']) {
+                $wins[$row['away_team']]++;
+            } else if($row['home_score'] > $row['away_score']) {
+                $wins[$row['home_team']]++;
+            }
+        }
+        
+        if($wins[$team1['id']] == $wins[$team2['id']]) {
+            return 0;
+        } else {
+            return ($wins[$team1['id']] > $wins[$team2['id']]) ? -1 : 1; 
+        }
+    }
 
 }

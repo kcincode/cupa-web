@@ -1,4 +1,84 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>rankings</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<div id="teams">
+  
+  <?php if(count($this->teams['final'])): ?>
+  <h1>Final Team Rankings</h1>
+  <?php foreach($this->teams['final'] as $team): ?>
+  <div class="team">
+    <?php if($team['color_code']): ?>
+    <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>;">
+    <?php else: ?>
+    <div class="logo">
+    <?php endif; ?>
+  
+      <?php if(file_exists($this->baseUrl() . '/images/team_logos/' . $this->escape($team['id']) . '.png')): ?>
+      <?php   $imgFile = $this->escape($team['id']) . '.png'; ?>
+      <?php else: ?>
+      <?php   $imgFile = 'default.png'; ?>
+      <?php endif; ?>
+         
+        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $imgFile; ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
+    </div>
+    <div class="info">
+        <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>
+        <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team['color']));?></span><br/>
+        <span class="captains"><strong>Captain(s):</strong>
+        <?php foreach($this->getLeagueTeamCaptains($team['league_id'], $team['id']) as $captain): ?>
+            <?php echo $this->fullname($captain->user_id); ?>
+        <?php endforeach; ?>
+        </span><br/>
+        <span class="captains">
+        <strong>Record:</strong> <?php echo $this->escape($team['record']); ?><br/>
+        </span>
+    </div>
+    <div class="clearfix"></div>
+    <div class="player-container team-<?php echo $this->escape($team['id']); ?>">
+    </div>
+  </div>
+  <?php endforeach; ?>
+  <div class="clearfix"></div>
+  <?php elseif(count($this->teams['current'])): ?>
+  <h1>Current Team Rankings</h1>
+  <?php foreach($this->teams['current'] as $team): ?>
+  <div class="team">
+    <?php if($team['color_code']): ?>
+    <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>;">
+    <?php else: ?>
+    <div class="logo">
+    <?php endif; ?>
+  
+      <?php if(file_exists($this->baseUrl() . '/images/team_logos/' . $this->escape($team['id']) . '.png')): ?>
+      <?php   $imgFile = $this->escape($team['id']) . '.png'; ?>
+      <?php else: ?>
+      <?php   $imgFile = 'default.png'; ?>
+      <?php endif; ?>
+         
+        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $imgFile; ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
+    </div>
+    <div class="info">
+        <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>
+        <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team['color']));?></span><br/>
+        <span class="captains"><strong>Captain(s):</strong>
+        <?php foreach($this->getLeagueTeamCaptains($team['league_id'], $team['id']) as $captain): ?>
+            <?php echo $this->fullname($captain->user_id); ?>
+        <?php endforeach; ?>
+        </span><br/>
+        <span class="captains">
+        <strong>Record:</strong> <?php echo $this->escape($team['record']); ?><br/>
+        </span>
+    </div>
+    <div class="clearfix"></div>
+    <div class="player-container team-<?php echo $this->escape($team['id']); ?>">
+    </div>
+  </div>
+  <?php endforeach; ?>
+  <div class="clearfix"></div>
+  
+  <?php else: ?>
+  <p align="center">There are no teams defined yet for this league.  Stay tuned...</p>
+  <?php endif; ?>
+  </div>
 </div>
+<script>
+    var league = '<?php echo $this->league->id; ?>';
+</script>
