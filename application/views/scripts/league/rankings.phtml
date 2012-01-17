@@ -4,7 +4,7 @@
   <h1>Final Team Rankings</h1>
     <?php if($this->isLeagueDirector($this->league->id)): ?>
     <div id="admin-buttons">
-        <a class="button" href="#">Update Final Rankings</a>
+        <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_rankings_edit'); ?>">Update Final Rankings</a>
     </div>
     <?php endif; ?>
 
@@ -33,7 +33,7 @@
         <?php endforeach; ?>
         </span><br/>
         <span class="captains">
-        <strong>Record:</strong> <?php echo $this->escape($team['record']); ?><br/>
+        <strong>League Record:</strong> <?php echo $this->escape($team['record']); ?><br/>
         </span>
     </div>
     <div class="clearfix"></div>
@@ -43,16 +43,16 @@
   <?php endforeach; ?>
   <div class="clearfix"></div>
   <?php elseif(count($this->teams['current'])): ?>
-  <h1>Current Team Rankings</h1>
+  <h1>Current Team Results</h1>
     <?php if($this->isLeagueDirector($this->league->id)): ?>
     <div id="admin-buttons">
-        <a class="button" href="#">Update Final Rankings</a>
+        <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_rankings_edit'); ?>">Update Final Rankings</a>
     </div>
     <?php endif; ?>
   <?php foreach($this->teams['current'] as $team): ?>
   <div class="team">
     <?php if($team['color_code']): ?>
-    <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>;">
+    <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>;">
     <?php else: ?>
     <div class="logo">
     <?php endif; ?>

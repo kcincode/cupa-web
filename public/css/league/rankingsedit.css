@@ -1,0 +1,31 @@
+#sortable {
+    width: 600px;
+    margin: 20px auto;
+}
+
+#sortable {
+    list-style-position: outside;
+}
+
+#sortable li {
+    padding: 5px;
+    font-size: 18pt;
+    margin: 2px 0;
+    cursor: move;
+}
+
+
+#sortable li img {
+    width: 70px;
+    height: 70px;
+}
+
+.ui-state-highlight {
+    height: 65px;
+    margin: 2px 0;
+}
+
+#buttons-container, #buttons-container .button {
+    text-align: center;
+    font-size: 12pt;
+}

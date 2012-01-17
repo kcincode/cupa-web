@@ -1257,7 +1257,52 @@ class LeagueController extends Zend_Controller_Action
 
     public function rankingseditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/rankingsedit.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankingsedit.js');
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId . '/rankings');
+        }
+
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if(isset($post['clear'])) {
+                $leagueTeamTable->clearFinalResults($leagueId);
+                $this->view->message('League final rankings cleared successfully.', 'success');
+                $this->_redirect('league/' . $leagueId . '/rankings');
+            } else {
+                $rank = 1;
+                foreach($post['ranks'] as $item) {
+                    $team = $leagueTeamTable->find($item)->current();
+                    if($team) {
+                        $team->final_rank = $rank;
+                        $team->save();
+                    }
+                    $rank++;
+                }
+            }
+            
+            $this->view->message('League final rankings updates successfully.', 'success');
+            $this->_redirect('league/' . $leagueId . '/rankings');
+        }
+                
+        $session = new Zend_Session_Namespace('previous');
+        $session->previousPage = 'league/' . $leagueId;
+
+        $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId, 'final_rank ASC');
     }
 
     public function playersAction()

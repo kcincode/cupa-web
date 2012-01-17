@@ -45,9 +45,15 @@ class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
             $data['final'] = $result->toArray();
         }
         
+        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $i = 0;
+        foreach($data['final'] as $row) {
+            $data['final'][$i]['record'] = $leagueGameTable->fetchRecord($leagueId, $row['id']);
+            $i++;
+        }
+        
         $result = $this->fetchAllTeams($leagueId);
         if($result) {
-            $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
             $result = $result->toArray();
             $i = 0;
             foreach($result as $team) {
@@ -81,6 +87,17 @@ class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
         } else {
             return ($aWin > $bWin) ? -1 : 1;
             
+        }
+    }
+    
+    public function clearFinalResults($leagueId)
+    {
+        $select = $this->select()
+                       ->where('league_id = ?', $leagueId);
+        
+        foreach($this->fetchAll($select) as $row) {
+            $row->final_rank = null;
+            $row->save();
         }
     }
     

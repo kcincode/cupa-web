@@ -1,4 +1,31 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>rankingsedit</b></p>
+<div id="page-banner">&nbsp;</div>
+
+<h1>Edit Final Rankings</h1>
+<div id="leaguerankings-container">
+    <form method="post">
+        <ol id="sortable">
+            <?php foreach($this->teams as $team): ?>
+            <li data-id="<?php echo $this->escape($team['id']); ?>" style="background-color: <?php echo $this->escape($team['color_code']); ?>;">
+                <?php if(file_exists($this->baseUrl() . '/images/team_logos/' . $this->escape($team['id']) . '.png')): ?>
+                <?php   $imgFile = $this->escape($team['id']) . '.png'; ?>
+                <?php else: ?>
+                <?php   $imgFile = 'default.png'; ?>
+                <?php endif; ?>
+
+                <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $imgFile; ?>" title="<?php echo $this->escape($team['name']); ?> logo"/>
+
+                <span class="text" style="color: <?php echo $this->escape($team['text_code']); ?>;"><?php echo $this->escape($team['name']); ?></span>
+                <input type="hidden" name="ranks[]" value="<?php echo $this->escape($team['id']); ?>"/>
+            </li>
+            <?php endforeach; ?>
+        </ol>
+
+
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <input class="button" type="submit" name="clear" value="Clear Rankings"/>
+            <a class="button button-red" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_rankings'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>
+
