@@ -849,6 +849,11 @@ class LeagueController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
+        
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
         $form = new Cupa_Form_LeagueScheduleEdit(null, $leagueId);
 
         if($this->getRequest()->isPost()) {
@@ -1035,6 +1040,11 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
+        
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId . '/schedule');
+        }
+        
         $this->view->league = $league;
 
         $form = new Cupa_Form_GenerateSchedule($league);
@@ -1214,17 +1224,6 @@ class LeagueController extends Zend_Controller_Action
         array_unshift($teams, $firstElement);
 
         return $teams;
-    }
-
-
-    public function finalAction()
-    {
-        // action body
-    }
-
-    public function finaladminAction()
-    {
-        // action body
     }
 
     public function emailAction()
