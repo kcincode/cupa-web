@@ -1263,6 +1263,8 @@ class LeagueController extends Zend_Controller_Action
                     }
                     $mail->send();
                 }
+                $this->view->message('Email sent successfully.', 'success');
+                $this->_redirect('league/' . $leagueId . '/email');
                 
             } else {
                 $form->populate($post);
