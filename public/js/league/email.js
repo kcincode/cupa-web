@@ -1,7 +1,8 @@
 $(document).ready(function(){
-    $('#send-button').click(function(e){
-        $(this).prop('value', 'Sending Emails');
-        $(this).prop('disabled', 'disabled');
-        $(this).addClass('disabled');
+    $('#email-form').submit(function() {
+        $('#send-button').prop('value', 'Sending Emails');
+        $('#send-button').prop('disabled', 'disabled');
+        $('#send-button').addClass('disabled');
     });
 });
+
