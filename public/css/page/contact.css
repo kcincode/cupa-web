@@ -55,3 +55,10 @@ ul.errors {
     margin-bottom: 20px;
     font-size: 12pt;
 }
+
+.button.disabled, .button.disabled:hover {
+    color: #909090;
+    cursor: default;
+    border: 1px solid #a0a0a0;
+    background: #c0c0c0;
+}

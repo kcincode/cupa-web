@@ -1230,6 +1230,8 @@ class LeagueController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/email.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Cupa_Model_DbTable_League();
@@ -1263,6 +1265,8 @@ class LeagueController extends Zend_Controller_Action
                     }
                     $mail->send();
                 }
+                
+                
                 $this->view->message('Email sent successfully.', 'success');
                 $this->_redirect('league/' . $leagueId . '/email');
                 
