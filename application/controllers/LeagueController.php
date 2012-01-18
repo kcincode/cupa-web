@@ -1228,7 +1228,44 @@ class LeagueController extends Zend_Controller_Action
 
     public function emailAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $form = new Cupa_Form_LeagueContact($leagueId, $this->view->user, $this->view->isLeagueDirector($leagueId));
+        $form->getElement('subject')->setValue('[' . $this->view->leaguename($leagueId, true, true, true, true) . '] Information');
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                $data = $leagueMemberTable->fetchAllEmails($leagueId, $this->view->user, $this->view->isLeagueDirector($leagueId));
+                $mail = new Zend_Mail();
+                $mail->setSubject($post['subject']);
+                $mail->setFrom($post['from']);
+                
+                foreach($data[$post['to']] as $email) {
+                    $mail->setBodyText("TO: $email\r\n\r\n" . $post['content']);
+                    $mail->clearRecipients();
+                    $mail->addTo('kcin1018@gmail.com');
+                    //$mail->addTo($email);
+                    $mail->send();
+                }
+                
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->form = $form;
     }
 
     public function rankingsAction()

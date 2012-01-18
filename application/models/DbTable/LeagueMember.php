@@ -122,5 +122,58 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
         return $this->getAdapter()->fetchAll($select);
     }
 
+    public function fetchAllEmails($leagueId, $user, $isDirector)
+    {
+        $data = array();
+
+        $data['all-directors'] = $this->fetchMemberEmails($leagueId, 'director');
+
+        if($user) {
+            if($isDirector) {
+                $data['all-players'] = $this->fetchMemberEmails($leagueId, 'player');
+                $data['all-captains'] = $this->fetchMemberEmails($leagueId, 'captain');
+            }
+
+
+            $teamId = $this->fetchLeagueTeamFromUser($leagueId, $user);
+            if(is_numeric($teamId)) {
+                $data['my-captain'] = $this->fetchMemberEmails($leagueId, 'captain', $teamId);
+                $data['my-team'] = $this->fetchMemberEmails($leagueId, 'player', $teamId);
+            }
+        }
+        
+        return $data;
+    }
+    
+    public function fetchMemberEmails($leagueId, $type, $teamId = null)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array())
+                       ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->where('lm.position = ?', $type);
+        
+        if($teamId) {
+            $select->where('lm.league_team_id = ?', $teamId);
+        }
+        
+        $data = array();
+        foreach($this->getAdapter()->fetchAll($select) as $email) {
+            $data[] = $email['email'];   
+        }
+        
+        return $data;
+    }
+    
+    public function fetchLeagueTeamFromUser($leagueId, $user)
+    {
+        $select = $this->select()
+                       ->where('league_id = ?', $leagueId)
+                       ->where('user_id = ?', $user->id)
+                       ->where("position = 'player' OR position = 'captain'");
+        
+        $result = $this->fetchRow($select);
+        return $result->league_team_id;
+    }
     
 }

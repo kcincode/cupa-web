@@ -2,6 +2,10 @@
 <div class="admin-menu">
     <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league));?>
 </div>
+<?php else: ?>
+<div class="admin-menu">
+    <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Emails</a>
+</div>
 <?php endif; ?>
 <h1 class="league">
     <?php echo $this->leaguename($this->league, true, true, true, true); ?>
