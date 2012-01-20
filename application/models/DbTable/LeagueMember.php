@@ -176,4 +176,18 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
         return $result->league_team_id;
     }
     
+    public function fetchPlayerStatuses($leagueId, $year)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array('user_id', 'paid', 'release'))
+                       ->joinLeft(array('uw' => 'user_waiver'), 'uw.user_id = lm.user_id', array('year'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
+                       ->joinLeft(array('up' => 'user_profile'), 'up.user_id = lm.user_id', array('birthday'))
+                       ->where('uw.year = ?', $year)
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->order('u.last_name')
+                       ->order('u.first_name');
+        
+        return $this->getAdapter()->fetchAll($select);
+    }
 }

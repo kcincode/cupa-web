@@ -477,11 +477,11 @@ foreach($stmt->fetchAll() as $row) {
     if($leagueMember) {
         echo "            Importing league answers for user #'{$row['user_id']}'...";
         $leagueMember->paid = $row['paid'];
-        $leagueMember->release = $row['release'];
+        $league = $leagueTable->find($row['event_id'])->current();
+        $leagueMember->release = ($userProfileTable->isEighteenOrOver($row['user_id'], $league->registration_end)) ? 1 : $row['release'];
         $leagueMember->save();
 
         foreach(Zend_Json::decode($row['data']) as $question => $answer) {
-            //echo "                Importing league answer for '$question'...";
             $leagueQuestion = $leagueQuestionTable->fetchQuestion($question);
             if($leagueQuestion) {
                 $leagueAnswer = $leagueAnswerTable->createRow();
@@ -490,7 +490,6 @@ foreach($stmt->fetchAll() as $row) {
                 $leagueAnswer->answer = $answer;
                 $leagueAnswer->save();
             }
-            //echo "Done.\n";
         }
 
         echo "Done.\n";
