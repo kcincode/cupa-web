@@ -1,4 +1,33 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>shirts</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<div id="shirts">
+    <h1>League Jersey/T-Shirt Counts</h1>
+    
+    <?php foreach($this->shirts as $color => $shirt): ?>
+    <?php $total = 0; ?>
+    <?php foreach($shirt as $count): ?>
+    <?php if(is_numeric($count)): ?>
+    <?php $total += $count; ?>
+    <?php endif; ?>
+    <?php endforeach; ?>
+    <div class="section">
+        <div class="color" style="color: <?php echo $this->escape($shirt['text_code']); ?>; background-color: <?php echo $this->escape($shirt['color_code']); ?>"><?php echo $this->escape($color); ?></div>
+        <div class="counts">
+            <div class="label">Extra Small:</div>
+            <div class="value"><?php echo (isset($shirt['XS'])) ? $this->escape($shirt['XS']) : 0; ?></div>
+            <div class="label">Small:</div>
+            <div class="value"><?php echo (isset($shirt['S'])) ? $this->escape($shirt['S']) : 0; ?></div>
+            <div class="label">Medium:</div>
+            <div class="value"><?php echo (isset($shirt['M'])) ? $this->escape($shirt['M']) : 0; ?></div>
+            <div class="label">Large:</div>
+            <div class="value"><?php echo (isset($shirt['L'])) ? $this->escape($shirt['L']) : 0; ?></div>
+            <div class="label">Extra Large:</div>
+            <div class="value"><?php echo (isset($shirt['XL'])) ? $this->escape($shirt['XL']) : 0; ?></div>
+            <div class="label">2x Extra Large:</div>
+            <div class="value"><?php echo (isset($shirt['XXL'])) ? $this->escape($shirt['XXL']) : 0; ?></div>
+            <div class="label total">Total:</div>
+            <div class="value total"><?php echo $this->escape($total); ?></div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+    <div class="clearfix">&nbsp;</div>
 </div>
