@@ -1371,7 +1371,7 @@ class LeagueController extends Zend_Controller_Action
         }
         
         if(!$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('league/' . $leagueId . '/rankings');
+            $this->_redirect('league/' . $leagueId);
         }
         
         $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
@@ -1388,6 +1388,8 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/status.css');
         
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
+        
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Cupa_Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1398,12 +1400,39 @@ class LeagueController extends Zend_Controller_Action
         }
         
         if(!$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('league/' . $leagueId . '/teams');
+            $this->_redirect('league/' . $leagueId);
         }
+        
+        if($this->getRequest()->isPost()) {
+            // make sure its an AJAX request
+            if(!$this->getRequest()->isXmlHttpRequest()) {
+                $this->_redirect('league/' . $leagueId . '/status');
+            }
+
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            $post = $this->getRequest()->getPost();
+            
+            list($field, $userId, $checked) = explode('-', $post['data']);
+            
+            $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+            $member = $leagueMemberTable->fetchMember($leagueId, $userId);
+
+            if($field != 'waiver') {
+                $member->$field = ($checked == 'true') ? 1 : 0;
+                $member->save();
+            } else {
+                $userWaiverTable = new Cupa_Model_DbTable_UserWaiver();
+                $userWaiverTable->updateWaiver($userId, $this->view->league->year, $checked, $this->view->user->id);
+            }
+            
+        }
+        
+        $this->view->all = $this->getRequest()->getUserParam('all');
         
         $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
         $this->view->statuses = $leagueMemberTable->fetchPlayerStatuses($leagueId, $this->view->league->year);
-        Zend_Debug::dump($this->view->statuses);
     }
 
     public function statusmarkAction()

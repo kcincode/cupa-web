@@ -1,0 +1,55 @@
+.row {
+    width: 585px;
+    margin: 20px auto;
+    clear: both;
+}
+
+.row .check,
+.row .name,
+.row .waiver,
+.row .release,
+.row .paid {
+    padding: 2px 5px;
+    float: left;
+}
+
+.row .check{
+    width: 25px;
+    text-align: center;
+}
+
+.row .name {
+    width: 275px;
+    line-height: 18px;
+}
+
+.row .waiver,
+.row .release,
+.row .paid {
+    width: 75px;
+    text-align: center;
+}
+
+.row .header {
+    font-weight: bold;
+    font-size: 14pt;
+    border-bottom: 1px solid #444;
+    line-height: 20px;
+}
+
+.row p {
+    text-align: center;
+    padding: 10px;
+}
+
+.odd div {
+    background-color: #fff;
+}
+
+.even div {
+    background-color: #efefef;
+}
+
+#admin-buttons {
+    text-align: center;
+}

@@ -1,4 +1,38 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>status</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<div id="statuses">
+    <h1>Player Statuses</h1>
+    <div id="admin-buttons">
+        <input type="radio" id="need-action" name="selection"<?php echo ($this->all == '') ? ' checked="checked"' : '';?>/> <label for="need-action">Incomplete Players</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="radio" id="all" name="selection"<?php echo ($this->all == 'all') ? ' checked="checked"' : '';?>/> <label for="all">All Players</label>
+        <div id="add-game-container"></div>
+    </div>
+    
+    <div class="row header">
+        <div class="name header">Name</div>
+        <div class="waiver header">Waiver?</div>
+        <div class="release header">Release?</div>
+        <div class="paid header">Paid?</div>
+    </div>
+    <?php $i = 0; ?>
+    <?php $this->cycle(array('odd', 'even')); ?>
+    <?php foreach($this->statuses as $status): ?>
+    <?php if((!$this->completeStatus($status) and $this->all == '') or $this->all == 'all'): ?>
+    <?php $i++; ?>
+    <div class="row <?php echo $this->cycle()->next(); ?>">
+        <div class="name"><?php echo $this->fullname($status['user_id']); ?></div>
+        <div class="waiver"><input class="update" type="checkbox" name="waiver-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($this->hasUserSignedWaiver($status['user_id'], $this->league->year)) ? ' checked="checked"' : ''; ?>/></div>
+        <div class="release"><input class="update" type="checkbox" name="release-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['release'] == 1) ? ' checked="checked"' : ''; ?>/></div>
+        <div class="paid"><input class="update" type="checkbox" name="paid-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['paid'] == 1) ? ' checked="checked"' : ''; ?>/></div>
+    </div>
+    <?php endif; ?>
+    <?php endforeach; ?>
+    <?php if($i == 0): ?>
+    <div class="row">
+        <p>There are no outstanding waivers/paid/release statuses.</p>
+    </div>
+    <?php endif; ?>
 </div>
+<script>
+    var leagueId = '<?php echo $this->escape($this->league->id);?>';
+</script>
