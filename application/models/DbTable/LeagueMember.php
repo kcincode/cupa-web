@@ -173,7 +173,11 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->where("position = 'player' OR position = 'captain'");
         
         $result = $this->fetchRow($select);
-        return $result->league_team_id;
+        if(isset($result->league_team_id)) {
+            return $result->league_team_id;
+        }
+        
+        return null;
     }
     
     public function fetchPlayerStatuses($leagueId, $year)

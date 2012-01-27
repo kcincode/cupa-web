@@ -29,5 +29,8 @@
         </div>
     </div>
     <?php endforeach; ?>
+    <?php if(count($this->shirts) == 0): ?>
+    <p class="blurb">There are no teams defined so there is no shirt sizes to list.</p>
+    <?php endif; ?>
     <div class="clearfix">&nbsp;</div>
 </div>

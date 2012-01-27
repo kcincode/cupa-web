@@ -42,7 +42,7 @@
         
         <div id="buttons-container">
             <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->url(array('type' => $this->season), 'leagues_view'); ?>">Cancel</a>
+            <a class="button button-red" href="<?php echo $this->baseUrl(); ?>/leagues/<?php echo $this->escape($this->season); ?>#leagues-<?php echo $this->escape($this->league['id']); ?>">Cancel</a>
         </div>
         <?php echo $this->partial('tinymce.phtml', array('element' => 'info')); ?>
     </form>

@@ -166,7 +166,7 @@ foreach($stmt->fetchAll() as $row) {
     $league->season = ($row['type'] < 5 and $row['type'] != 0) ? $row['type'] : null;
     $league->day = (empty($row['day'])) ? 'Sunday' : $row['day'];
     $league->name = generateName($row['name'], $seasonsArray);
-    $league->info = null;
+    $league->info = $row['intro'];
     $league->registration_begin = $row['start'] . ' 00:00:00';
     $league->registration_end = $row['end'] . ' 23:59:59';
     $league->visible_from = $row['start'] . ' 00:00:00';
@@ -414,20 +414,21 @@ foreach($stmt->fetchAll() as $row) {
 $stmt = $origDb->prepare('SELECT * FROM event_questions');
 $stmt->execute();
 foreach($stmt->fetchAll() as $row) {
-    echo "            Importing league question '{$row['name']}'...";
+    echo "            Importing league question '{$row['name']}'...\n";
     $leagueQuestion = $leagueQuestionTable->createRow();
     $leagueQuestion->name = $row['name'];
     $leagueQuestion->title = $row['title'];
     $leagueQuestion->type = $row['type'];
-    $leagueQuestion->answers = $row['answers'];
+    $leagueQuestion->answers = (empty($row['answers'])) ? null : $row['answers'];
     $leagueQuestion->save();
-    
+        
     $notEvents = array();
     if($row['event_id'] == 0) {
         $notEvents = explode(',', $row['not_events']);
 
         foreach($leagueTable->fetchAll() as $league) {
             if(!in_array($league->id, $notEvents)) {
+                echo "                Adding question '{$row['name']}' to League #{$league->id}\n";
                 $leagueQuestionList = $leagueQuestionListTable->createRow();
                 $leagueQuestionList->league_id = $league->id;
                 $leagueQuestionList->league_question_id = $leagueQuestion->id;
@@ -437,15 +438,16 @@ foreach($stmt->fetchAll() as $row) {
             }
         }
     } else {
+        echo "                Adding question '{$row['name']}' to League #{$row['event_id']}\n";
         $leagueQuestionList = $leagueQuestionListTable->createRow();
-        $leagueQuestionList->league_id = $league->id;
+        $leagueQuestionList->league_id = $row['event_id'];
         $leagueQuestionList->league_question_id = $leagueQuestion->id;
         $leagueQuestionList->required = $row['required'];
         $leagueQuestionList->weight = $row['order'];
         $leagueQuestionList->save();
     }
     
-    echo "Done.\n";
+    echo "            Done.\n";
 }
 
 // insert the league players

@@ -151,8 +151,56 @@ $(document).ready(function() {
     } else {
             hideGenderLimits();
     }
+    
+    $('#sortable').sortable({
+        placeholder: "ui-state-highlight"
+    });
 
+    $('.questions .question .links img').hover(function(){
+        $(this).parent().parent().addClass('highlight');
+    }, function(){
+        $(this).parent().parent().removeClass('highlight');        
+    });
+    
+    $('#select-new').click(function(){
+        $('#new-question').show();
+        $('#existing-question').hide();
+        $('#question_id').val(0);
+    });
+    
+    $('#select-existing').click(function(){
+        $('#new-question').hide();
+        $('#existing-question').show();
+        $('#name').val('');
+        $('#type').val(0);
+    });
+    
+    $('#add-question').dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            "Add": function() {
+                $.ajax({
+                    type: 'post',
+                    data: 'new_question=1&name=' + $('#name').val() + '&type=' + $('#type').val() + '&id=' + $('#question_id').val(),
+                    success: function(msg) {
+                        window.location = msg;
+                    }
+                });
+            },
+            "Cancel": function() {
+                $(this).dialog("close");
+            }
+        }
+    })
+    
+    $('#add-question-button').click(function(e) {
+        e.preventDefault();
+        $('#add-question').dialog('open');
+    });
 
+    $('#new-question').hide();
+    $('#select-existing').prop('checked', 'checked');
 });
 
 function hideLocation(type)

@@ -1,4 +1,4 @@
-#leagueedit-container {
+2#leagueedit-container {
     width: 800px;
     margin: 50px auto;
     padding: 20px;
@@ -156,4 +156,64 @@ p.description {
 #leagueedit-container #is_hat,
 #leagueedit-container #is_clinic {
     height: 32px;
+}
+
+
+.questions div.question {
+    border: 1px solid #444;
+    width: 750px;
+    margin: 5px auto;
+    padding: 5px;
+    cursor: move;
+}
+
+.questions div.question p.title {
+    font-size: 12pt;
+}
+
+.questions div.question .links {
+    float: right;
+}
+
+.questions div.question .links img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.questions div.question.highlight {
+    background-color: #efefef;
+}
+
+.ui-state-highlight {
+    height: 40px;
+}
+
+.questions div.question p {
+    margin-left: 10px;
+}
+
+.questions div.question p.question {
+    font-weight: bold;
+    margin: 10px 0 0 10px;
+    font-size: 12pt;
+}
+
+.questions div.question input {
+    margin: 0 0 0 10px;
+}
+
+.questions div.question p.description {
+    font-size: 8pt;
+    margin: 0 0 5px 10px
+}
+
+.questions div.question textarea {
+    width: 400px;
+    height: 100px;
+}
+
+#button-bar {
+    width: 300px;
+    float: right;
 }

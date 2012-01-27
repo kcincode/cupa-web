@@ -9,7 +9,7 @@ class Cupa_Model_DbTable_UserProfile extends Zend_Db_Table
     {
         $userProfile = $this->find($userId)->current();
         
-        if(isset($userProfile->birthday)) {
+        if(!empty($userProfile->birthday)) {
             list($year, $month, $day) = explode("-", $userProfile->birthday);
             $age = (date("md", strtotime($date)) < $month.$day) ? date("Y", strtotime($date)) - $year - 1 : date("Y", strtotime($date)) - $year;
             return ($age >= 18) ? true : false;

@@ -35,10 +35,69 @@
         </div>
         <div class="row">
             <?php echo $this->form->teams; ?>
-        </div>        
+        </div>
+        
+        <div class="row">
+            <h2>League Questions</h2>
+            <div id="button-bar"><a class="button" id="add-question-button" href="#">Add a Question</a></div>
+            <div class="clearfix">&nbsp;</div>
+        </div>
+        
+        <div id="add-question">
+            <input type="radio" id="select-new" name="question-select"> <label for="select-new">Add a new</label> &nbsp; &nbsp;
+            <input type="radio" id="select-existing" name="question-select"> <label for="select-existing">Select existing</label>
+            <div id="existing-question">
+                <select id="question_id" name="id">
+                    <option value="0">Select a Question</option>
+                    <?php foreach($this->allQuestions as $question): ?>
+                    <option value="<?php echo $question->id; ?>"><?php echo $question->name; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div id="new-question">
+                <div class="row">
+                    Name: <input id="name" type="text" name="name"/>
+                </div>
+                <div class="row">
+                    Type:
+                    <select id="type" name="type">
+                        <option value="0">Select a Question Type</option>
+                        <option value="multiple">Multiple Choice</option>
+                        <option value="text">Single Answer</option>
+                        <option value="boolean">Yes / No</option>
+                        <option value="textarea">Multiple sentence answer</option>
+                    </select>
+                </div>                
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="questions" id="sortable">
+                <?php $i = 1; ?>
+                <?php foreach($this->leagueQuestions as $question): ?>
+                <div class="question">
+                    <div class="links">
+                        <?php if($question['name'] != 'shirts' and $question['name'] != 'comment' and $question['name'] != 'new_player'): ?>
+                        <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Remove Question"/>
+                        <?php endif; ?>
+                    </div>
+                    <div class="item">
+                        <?php echo $this->displayRegistrationQuestion($question['id'], null, true); ?>
+                        <?php $required = ($question['required'] == 1) ? ' checked="checked"' : ''; ?>
+                        <p>Question Required? <input type="checkbox" name="required[<?php echo $question['name']; ?>]"<?php echo $required; ?>/></p>
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                </div>
+                <?php $i++; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
         <div id="buttons-container">
             <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->url(array('type' => $this->season), 'leagues_view'); ?>">Cancel</a>
+            <a class="button button-red" href="<?php echo $this->baseUrl(); ?>/leagues/<?php echo $this->escape($this->season); ?>#leagues-<?php echo $this->escape($this->league['id']); ?>">Cancel</a>
         </div>
     </form>
 </div>

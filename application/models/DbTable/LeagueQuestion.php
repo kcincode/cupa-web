@@ -25,10 +25,40 @@ class Cupa_Model_DbTable_LeagueQuestion extends Zend_Db_Table
         foreach($leagueQuestionListTable->fetchAll($select) as $row) {
             $question = $this->find($row->league_question_id)->current();
             if($question) {
-                $data[] = $question->toArray();
+                $array = $question->toArray();
+                $array['weight'] = $row->weight;
+                $array['required'] = $row->required;
+                $data[] = $array;
             }
         }
         
         return $data;
+    }
+    
+    public function fetchAllRemainingQuestions($currentQuestions, $order = 'name')
+    {
+        $select = $this->select()
+                       ->order($order);
+        foreach($currentQuestions as $q) {
+            $select->where('name <> ?', $q['name']);
+        }
+
+        return $this->fetchAll($select);
+    }
+    
+    public function createQuestion($name, $title, $type, $answers = null)
+    {
+        $question = $this->fetchQuestion($name);
+        
+        if(!$question) {
+            return $this->insert(array(
+                'name' => $name,
+                'title' => $title,
+                'type' => $type,
+                'answers' => (empty($answers)) ? null : $answers,
+            ));
+        }
+        
+        return null;
     }
 }

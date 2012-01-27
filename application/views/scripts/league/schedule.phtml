@@ -2,13 +2,15 @@
 <div id="schedule">
     <h1>League Schedule</h1>
     <div class="weeks">
+    <?php if(count($this->games)): ?>
         <div class="week">Jump to a week:</div>
         <?php foreach($this->games as $week => $tmp): ?>
         <div class="week"><a class="button" href="#week-<?php echo $this->escape($week); ?>"><?php echo $this->escape($week); ?></a></div>
         <?php endforeach;?>
         <div class="clearfix"></div>
-     </div>
-    <?php if($this->isLeagueDirector($this->league->id)): ?>
+    <?php endif; ?>
+    </div>
+    <?php if($this->isLeagueDirector($this->league->id) and count($this->teams) > 1): ?>
     <div id="admin-buttons">
         <a class="button" id="add-game" href="#">Add a Game</a>
         <a class="button" id="generate-schedule" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_schedule_generate'); ?>">Auto Generate Schedule</a>

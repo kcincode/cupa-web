@@ -227,7 +227,7 @@ class LeagueController extends Zend_Controller_Action
                 $league->save();
                 
                 $this->view->message('League data saved successfully.'. 'success');
-                $this->_redirect('leagues/' . $this->view->season);
+                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
             } else {
                 $form->populate($post);
             }
@@ -416,7 +416,7 @@ class LeagueController extends Zend_Controller_Action
                 }
 
                 $this->view->message('League Information updated successfully.', 'success');
-                $this->_redirect('leagues/' . $this->view->season);
+                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
             } else {
                 $form->populate($post);
             }
@@ -461,6 +461,36 @@ class LeagueController extends Zend_Controller_Action
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             
+            if(isset($post['new_question'])) {
+                if($post['id'] != 0) {
+                    $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+                    $leagueQuestionListTable->addQuestionToLeague($leagueId, $post['id'], 1);
+                    // disable the layout
+                    $this->_helper->layout()->disableLayout();
+                    $this->_helper->viewRenderer->setNoRender(true);
+                    echo $this->view->baseUrl() . '/league/' . $leagueId . '/edit_registration';
+                    return;
+                } else {
+                    $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+                    $questionId = $leagueQuestionTable->createQuestion($post['name'], 'Placeholder title', $post['type'], null);
+                    
+                    $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+                    $leagueQuestionListTable->addQuestionToLeague($leagueId, $questionId, 1);
+
+                    // disable the layout
+                    $this->_helper->layout()->disableLayout();
+                    $this->_helper->viewRenderer->setNoRender(true);
+                    echo $this->view->baseUrl() . '/league_question/' . $leagueId . '/' . $questionId;
+                    return;
+                }
+            }
+            
+            if(isset($post['remove_question'])) {
+                Zend_Debug::dump($post);
+                
+            }
+            
+            
             if($post['limit_select'] == 1) {
                 $form->getElement('total_players')->setRequired(false);
             } else {
@@ -501,8 +531,17 @@ class LeagueController extends Zend_Controller_Action
                 $leagueInformation->paypal_code = (empty($data['paypal_code'])) ? null : $data['paypal_code'];
                 $leagueInformation->save();
                 
+                $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+                $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+
+                foreach($post['question'] as $weight => $questionName) {
+                    $leagueQuestion = $leagueQuestionTable->fetchQuestion($questionName);
+                    $required = (isset($post['required'][$questionName])) ? 1 : 0;
+                    $leagueQuestionListTable->updateQuestionList($leagueId, $leagueQuestion->id, $required, $weight);
+                }
+                
                 $this->view->message('League registration updated successfully.', 'success');
-                $this->_redirect('leagues/' . $this->view->season);
+                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
                 
             } else {
                 $form->populate($post);
@@ -510,6 +549,74 @@ class LeagueController extends Zend_Controller_Action
         }
         
         $this->view->form = $form;
+        
+        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $this->view->leagueQuestions = $leagueQuestionTable->fetchAllQuestionsFromLeague($leagueId);
+        $this->view->allQuestions = $leagueQuestionTable->fetchAllRemainingQuestions($this->view->leagueQuestions);
+    }
+    
+    public function questioneditAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $questionId = $this->getRequest()->getUserParam('question_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $league = $leagueTable->fetchLeagueData($leagueId);
+        
+        if(!$league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $question = $leagueQuestionTable->find($questionId)->current();
+        if(!$question) {
+            $this->_redirect('league/' . $leagueId . '/page_registration');
+        }
+        
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues');
+        }
+        
+        $form = new Cupa_Form_LeagueQuestionEdit($question);
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            if(isset($post['cancel'])) {
+                $this->_redirect('league/' . $leagueId . '/edit_registration');
+            }
+            
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $question->name = $data['name'];
+                $question->title = $data['title'];
+                $question->type = $data['type'];
+                $question->answers = (empty($data['answers'])) ? null : $this->convertQuestionAnswers($data['answers']);
+                $question->save();
+                
+                $this->view->message('Question `' . $question->name . '` updated successfully.', 'success');
+                $this->_redirect('league/' . $leagueId . '/edit_registration');
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
+        
+        $this->view->form = $form;
+    }
+    
+    public function convertQuestionAnswers($answers)
+    {
+        $lines = explode("\n", $answers);
+        
+        $data = array();
+        foreach($lines as $line) {
+            list($key, $value) = explode('::', $line);
+            $data[$key] = $value;
+        }
+
+        return Zend_Json::encode($data);
     }
     
     public function pagedescriptioneditAction()
@@ -553,7 +660,7 @@ class LeagueController extends Zend_Controller_Action
                 $leagueInformationTable->save();
                 
                 $this->view->message('League description updated successfully.', 'success');
-                $this->_redirect('leagues/' . $this->view->season);
+                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
                 
             } else {
                 $form->populate($post);
@@ -836,6 +943,8 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
         $this->view->games = $leagueGameTable->fetchSchedule($leagueId);
+        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
     }
 
     public function scheduleaddAction()

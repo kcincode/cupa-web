@@ -1018,7 +1018,7 @@ try {
           `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
           `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
           `type` enum('multiple','text','boolean','textarea') COLLATE utf8_unicode_ci NOT NULL,
-          `answers` text COLLATE utf8_unicode_ci NOT NULL,
+          `answers` text COLLATE utf8_unicode_ci DEFAULT NULL,
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 
