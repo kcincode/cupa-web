@@ -3,6 +3,6 @@ $(document).ready(function() {
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
         changeMonth: true,
-        changeYear: true,
+        changeYear: true
     });
 });

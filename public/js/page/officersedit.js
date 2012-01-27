@@ -2,13 +2,13 @@ $(document).ready(function() {
    $('#since').datepicker({
        dateFormat: 'yy-mm-dd',
        changeMonth: true,
-       changeYear: true,
+       changeYear: true
    });
    
    $('#to').datepicker({
        dateFormat: 'yy-mm-dd',
        changeMonth: true,
        changeYear: true,
-       minDate: $('#since').val(),
+       minDate: $('#since').val()
    });   
 });

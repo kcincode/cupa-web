@@ -3,7 +3,7 @@ $(document).ready(function() {
         changeMonth: true,
         changeYear: true,
         dateFormat: 'yy-mm-dd',
-        timeFormat: 'hh:mm:ss',
+        timeFormat: 'hh:mm:ss'
     });
 
     $('#directors').chosen();
@@ -16,7 +16,7 @@ $(document).ready(function() {
         onSelect: function ( selectedDateTime ) {
             var start = $(this).datetimepicker('getDate');
             $('#league_end').datetimepicker('option', 'minDate', new Date(start));
-        },
+        }
     });
     
     $('#league_end').datetimepicker({
@@ -24,7 +24,7 @@ $(document).ready(function() {
         changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
-        minDate: $('#league_start').val(),
+        minDate: $('#league_start').val()
     });
     
     $('#tournament_start').datetimepicker({
@@ -35,7 +35,7 @@ $(document).ready(function() {
         onSelect: function ( selectedDateTime ) {
             var start = $(this).datetimepicker('getDate');
             $('#tournament_end').datetimepicker('option', 'minDate', new Date(start));
-        },
+        }
     });
     
     $('#tournament_end').datetimepicker({
@@ -43,7 +43,7 @@ $(document).ready(function() {
         changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
-        minDate: $('#tournament_start').val(),
+        minDate: $('#tournament_start').val()
     });
 
     $('#draft_start').datetimepicker({
@@ -54,7 +54,7 @@ $(document).ready(function() {
         onSelect: function ( selectedDateTime ) {
             var start = $(this).datetimepicker('getDate');
             $('#draft_end').datetimepicker('option', 'minDate', new Date(start));
-        },
+        }
     });
     
     $('#draft_end').datetimepicker({
@@ -62,7 +62,7 @@ $(document).ready(function() {
         changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
-        minDate: $('#draft_start').val(),
+        minDate: $('#draft_start').val()
     });
 
 
@@ -70,7 +70,7 @@ $(document).ready(function() {
         changeMonth: true,
         changeYear: true,
         dateFormat: 'yy-mm-dd',
-        timeFormat: 'hh:mm:ss',
+        timeFormat: 'hh:mm:ss'
     });
     
     $('#registration_end').datetimepicker({
@@ -78,7 +78,7 @@ $(document).ready(function() {
         changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
-        minDate: $('#registration_begin').val(),
+        minDate: $('#registration_begin').val()
     });
     
     $('#tournament_ignore').click(function(){
@@ -126,7 +126,7 @@ $(document).ready(function() {
         onSelect: function ( selectedDateTime ) {
             var start = $(this).datetimepicker('getDate');
             $('#registration_end').datetimepicker('option', 'minDate', new Date(start));
-        },
+        }
     });
     
     $('#registration_end').datetimepicker({
@@ -134,7 +134,7 @@ $(document).ready(function() {
         changeYear: true,
         dateFormat: 'yy-mm-dd',
         timeFormat: 'hh:mm:ss',
-        minDate: $('#league_start').val(),
+        minDate: $('#league_start').val()
     }); 
     
     $('#limit_select').click(function () {
@@ -178,6 +178,7 @@ $(document).ready(function() {
     $('#add-question').dialog({
         autoOpen: false,
         modal: true,
+        title: 'Add a Question',
         buttons: {
             "Add": function() {
                 $.ajax({

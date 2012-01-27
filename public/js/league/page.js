@@ -23,7 +23,7 @@ $(document).ready(function() {
             },
             "Cancel": function() {
                 $(this).dialog("close");
-            },
+            }
         }
     });
 

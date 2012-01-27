@@ -217,3 +217,11 @@ p.description {
     width: 300px;
     float: right;
 }
+
+#add-question .row {
+    padding: 5px 0;
+}
+
+#add-question input {
+    padding: 5px;
+}

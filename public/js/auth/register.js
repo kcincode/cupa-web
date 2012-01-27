@@ -16,7 +16,7 @@ $(document).ready(function (){
                  } else {
                      $('#email-status').html('<span class="error">Unknown error please try again.</span>');
                  }
-              },
+              }
            });
        }
    });
