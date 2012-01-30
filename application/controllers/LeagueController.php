@@ -608,12 +608,12 @@ class LeagueController extends Zend_Controller_Action
     
     public function convertQuestionAnswers($answers)
     {
-        $lines = explode("\n", $answers);
+        $lines = explode("\r\n", $answers);
         
         $data = array();
         foreach($lines as $line) {
             list($key, $value) = explode('::', $line);
-            $data[$key] = $value;
+            $data[trim($key)] = trim($value);
         }
 
         return Zend_Json::encode($data);
