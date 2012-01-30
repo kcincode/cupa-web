@@ -5,7 +5,8 @@
         <input type="radio" id="need-action" name="selection"<?php echo ($this->all == '') ? ' checked="checked"' : '';?>/> <label for="need-action">Incomplete Players</label>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <input type="radio" id="all" name="selection"<?php echo ($this->all == 'all') ? ' checked="checked"' : '';?>/> <label for="all">All Players</label>
-        <div id="add-game-container"></div>
+        <br/>
+        <span class="unpaid">** Players in red have unpaid balances. **</span>
     </div>
     
     <div class="row header">
@@ -13,17 +14,19 @@
         <div class="waiver header">Waiver?</div>
         <div class="release header">Release?</div>
         <div class="paid header">Paid?</div>
+        <div class="paid header">Balance</div>
     </div>
     <?php $i = 0; ?>
     <?php $this->cycle(array('odd', 'even')); ?>
     <?php foreach($this->statuses as $status): ?>
     <?php if((!$this->completeStatus($status) and $this->all == '') or $this->all == 'all'): ?>
     <?php $i++; ?>
-    <div class="row <?php echo $this->cycle()->next(); ?>">
+    <div class="row <?php echo $this->cycle()->next(); ?><?php echo (!empty($status['balance'])) ? ' unpaid' : ''; ?>">
         <div class="name"><?php echo $this->fullname($status['user_id']); ?></div>
-        <div class="waiver"><input class="update" type="checkbox" name="waiver-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($this->hasUserSignedWaiver($status['user_id'], $this->league->year)) ? ' checked="checked"' : ''; ?>/></div>
+        <div class="waiver"><input class="update" type="checkbox" name="waiver-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['waiver'] == $this->league->year) ? ' checked="checked"' : ''; ?>/></div>
         <div class="release"><input class="update" type="checkbox" name="release-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['release'] == 1) ? ' checked="checked"' : ''; ?>/></div>
         <div class="paid"><input class="update" type="checkbox" name="paid-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['paid'] == 1) ? ' checked="checked"' : ''; ?>/></div>
+        <div class="balance"><?php echo ($status['balance'] == NULL) ? 0 : $status['balance']; ?></div>
     </div>
     <?php endif; ?>
     <?php endforeach; ?>

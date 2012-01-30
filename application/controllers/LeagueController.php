@@ -1579,11 +1579,6 @@ class LeagueController extends Zend_Controller_Action
         $this->view->statuses = $leagueMemberTable->fetchPlayerStatuses($leagueId, $this->view->league->year);
     }
 
-    public function statusmarkAction()
-    {
-        // action body
-    }
-
     public function manageAction()
     {
         // action body

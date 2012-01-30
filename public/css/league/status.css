@@ -1,5 +1,5 @@
 .row {
-    width: 585px;
+    width: 660px;
     margin: 20px auto;
     clear: both;
 }
@@ -8,23 +8,26 @@
 .row .name,
 .row .waiver,
 .row .release,
+.row .balance,
 .row .paid {
     padding: 2px 5px;
     float: left;
 }
 
-.row .check{
+.row .check {
     width: 25px;
     text-align: center;
 }
 
-.row .name {
+.row .name,
+.row .balance {
     width: 275px;
     line-height: 18px;
 }
 
 .row .waiver,
 .row .release,
+.row .balance,
 .row .paid {
     width: 75px;
     text-align: center;
@@ -53,3 +56,22 @@
 #admin-buttons {
     text-align: center;
 }
+
+.unpaid {
+    color: #c00;
+}
+
+.row.unpaid div {
+    border-top: 1px solid #c00;
+    border-bottom: 1px solid #c00;
+}
+
+.row.unpaid div.name {
+    border-left: 1px solid #c00;
+}
+
+.row.unpaid div.balance {
+    border-right: 1px solid #c00;
+}
+
+

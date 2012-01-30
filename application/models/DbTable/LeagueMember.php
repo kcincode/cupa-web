@@ -182,14 +182,28 @@ class Cupa_Model_DbTable_LeagueMember extends Zend_Db_Table
     
     public function fetchPlayerStatuses($leagueId, $year)
     {
-        $select = $this->getAdapter()->select()
-                       ->from(array('lm' => $this->_name), array('user_id', 'paid', 'release'))
-                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
-                       ->where('lm.position = ?', 'player')
-                       ->where('lm.league_id = ?', $leagueId)
-                       ->order('u.last_name')
-                       ->order('u.first_name');
+        $sql = "SELECT lm.user_id, 
+                (SELECT uw.year FROM user_waiver uw WHERE uw.user_id = u.id 
+                ORDER BY year DESC LIMIT 1) AS waiver, lm.release, lm.paid, 
+                (SELECT SUM(li.cost)
+                FROM league_member lm2
+                LEFT JOIN user u2 ON u2.id = lm2.user_id
+                LEFT JOIN league l ON l.id = lm2.league_id
+                LEFT JOIN league_season ls ON ls.id = l.season
+                LEFT JOIN league_location ll ON ll.league_id = lm2.league_id
+                LEFT JOIN league_information li ON li.league_id = lm2.league_id
+                WHERE (ll.type = 'league' AND ll.end < now()) 
+                AND l.year >= 2011
+                AND lm2.position = 'player' 
+                AND lm2.paid = 0
+                AND lm2.user_id = lm.user_id) AS balance
+                FROM league_member lm 
+                LEFT JOIN user u ON u.id = lm.user_id
+                WHERE lm.position = 'player' AND lm.league_id = ?
+                ORDER BY u.last_name, u.first_name";
         
-        return $this->getAdapter()->fetchAll($select);
+        $stmt = $this->getAdapter()->prepare($sql);
+        $stmt->execute(array($leagueId));
+        return $stmt->fetchAll();
     }
 }
