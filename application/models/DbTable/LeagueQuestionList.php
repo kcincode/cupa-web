@@ -66,4 +66,16 @@ class Cupa_Model_DbTable_LeagueQuestionList extends Zend_Db_Table
         }
         
     }
+    
+    public function removeQuestionFromLeague($leagueId, $questionId)
+    {
+        $select = $this->select()
+                       ->where('league_id = ?', $leagueId)
+                       ->where('league_question_id = ?', $questionId);
+        
+        $result = $this->fetchRow($select);
+        if($result) {
+            $result->delete();
+        }
+    }
 }

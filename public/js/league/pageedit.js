@@ -193,7 +193,7 @@ $(document).ready(function() {
                 $(this).dialog("close");
             }
         }
-    })
+    });
     
     $('#add-question-button').click(function(e) {
         e.preventDefault();

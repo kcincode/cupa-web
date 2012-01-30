@@ -50,18 +50,8 @@ class Cupa_Form_LeagueQuestionEdit extends Zend_Form
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Answers',
-            'description' => 'A list of the answers with the format <value>:<text> for each line.',
+            'description' => 'A list of the answers with the format <value>::<text> for each line.',
             'value' => (!empty($this->_question->answers)) ? $this->formatAnswers($this->_question->answers) : null,
-        ));
-        
-        $submit = $this->addElement('submit', 'save', array(
-            'label' => 'Save',
-            'required' => false,
-        ));
-        
-        $cancel = $this->addElement('submit', 'cancel', array(
-            'label' => 'Cancel',
-            'required' => false,
         ));
         
     }

@@ -1,4 +1,4 @@
-2#leagueedit-container {
+#leagueedit-container {
     width: 800px;
     margin: 50px auto;
     padding: 20px;
@@ -224,4 +224,8 @@ p.description {
 
 #add-question input {
     padding: 5px;
+}
+
+#add-question select {
+    font-size: 14pt;
 }

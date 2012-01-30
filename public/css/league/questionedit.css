@@ -1,0 +1,36 @@
+#questionedit-container {
+    width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    -webkit-box-shadow: 0 0 7px #444;
+    -moz-box-shadow: 0 0 7px #444;
+    box-shadow: 0 0 7px #444;
+}
+
+#questionedit-container h2 {
+    font-size: 22pt;
+}
+
+#questionedit-container input[type=text] {
+    padding: 5px;
+    font-size: 12pt;
+    width: 500px;
+}
+
+#questionedit-container dt {
+    width: 150px;
+    text-align: right;
+    float: left;
+    font-size: 12pt;
+    padding-top: 7px;
+    margin-right: 10px;
+}
+
+#questionedit-container p.description {
+    margin-left: 120px;
+}
+
+#questionedit-container select {
+    font-size: 18pt;
+}
+

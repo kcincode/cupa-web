@@ -557,6 +557,11 @@ class LeagueController extends Zend_Controller_Action
     
     public function questioneditAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/questionedit.css');
+
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/questionedit.js');
+        
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
         $leagueTable = new Cupa_Model_DbTable_League();
@@ -566,6 +571,7 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
+        $this->view->leagueId = $league['id'];
         
         $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->find($questionId)->current();
@@ -617,6 +623,35 @@ class LeagueController extends Zend_Controller_Action
         }
 
         return Zend_Json::encode($data);
+    }
+    
+    public function questionremoveAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $questionId = $this->getRequest()->getUserParam('question_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $league = $leagueTable->fetchLeagueData($leagueId);
+        
+        if(!$league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $question = $leagueQuestionTable->find($questionId)->current();
+        if(!$question) {
+            $this->_redirect('league/' . $leagueId . '/page_registration');
+        }
+        
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues');
+        }
+
+        $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+        $leagueQuestionListTable->removeQuestionFromLeague($leagueId, $questionId);
+        
+        $this->view->message('Question `' . $question->name . '` removed from the league.', 'success');
+        $this->_redirect('league/' . $leagueId . '/edit_registration');
     }
     
     public function pagedescriptioneditAction()

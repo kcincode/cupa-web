@@ -2,5 +2,23 @@
 
 <h1>Edit Question</h1>
 <div id="questionedit-container">
-<?php echo $this->form; ?>
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->title; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->type; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->answers; ?>
+        </div>
+        <div class="clearfix"></div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->baseUrl(); ?>/league/<?php echo $this->leagueId; ?>/edit_registration">Cancel</a>
+        </div>
+    </form>
 </div>
