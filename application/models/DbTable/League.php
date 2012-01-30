@@ -96,7 +96,7 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
         
         if(is_numeric($leagueId)) {
             $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
-            $leagueInformationId = $leagueInformationTable->insert(array(
+            $leagueInformationTable->insert(array(
                 'league_id' => $leagueId,
                 'is_youth' => 0,
                 'user_teams' => 0,
@@ -145,6 +145,13 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
                 'modified_at' => date('Y-m-d H:i:s'),
                 'modified_by' => $userId,
             ));
+            
+            $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+            $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+            foreach(array('new_player', 'pair', 'shirt', 'captain', 'comments') as $questionName) {
+                $question = $leagueQuestionTable->fetchQuestion($questionName);
+                $leagueQuestionListTable->addQuestionToLeague($leagueId, $question->id, 1);
+            }
         }
         
         return $leagueId;   
