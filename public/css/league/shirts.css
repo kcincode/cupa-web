@@ -48,3 +48,8 @@
 p.blurb {
     text-align: center;
 }
+
+#admin-buttons {
+    margin-top: 10px;
+    text-align: center;
+}

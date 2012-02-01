@@ -5,8 +5,8 @@
         <input type="radio" id="need-action" name="selection"<?php echo ($this->all == '') ? ' checked="checked"' : '';?>/> <label for="need-action">Incomplete Players</label>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <input type="radio" id="all" name="selection"<?php echo ($this->all == 'all') ? ' checked="checked"' : '';?>/> <label for="all">All Players</label>
-        <br/>
-        <span class="unpaid">** Players in red have unpaid balances. **</span>
+        <br/><br/>
+        <span class="unpaid">** Players in red have unpaid balances. **</span> <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
     </div>
     
     <div class="row header">

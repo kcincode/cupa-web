@@ -1615,6 +1615,42 @@ class LeagueController extends Zend_Controller_Action
         
         $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
         $this->view->statuses = $leagueMemberTable->fetchPlayerStatuses($leagueId, $this->view->league->year);
+        
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . str_replace(' ', '-', $this->view->leaguename($this->view->league, true, true, true, true)) . '_status.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+            
+            echo "name,waiver,release,paid,owed\n";
+            
+            foreach($this->view->statuses as $status) {
+                $waiver = ($status['waiver'] == $this->view->league->year) ? 'Yes' : 'No';
+                $release = ($status['release'] == 1) ? 'Yes' : 'No';
+                $paid = ($status['paid'] == 1) ? 'Yes' : 'No';
+                $balance = (empty($status['balance'])) ? 0 : $status['balance'];
+                echo "{$this->view->fullname($status['user_id'])},{$waiver},{$release},{$paid},{$balance}\n";
+            }
+            
+            flush();
+        }
     }
 
     public function manageAction()
