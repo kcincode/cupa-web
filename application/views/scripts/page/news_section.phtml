@@ -15,5 +15,5 @@
 <?php if($item['type'] == 'text'): ?>
     <h3><?php echo $this->escape($item['title']); ?></h3>
 <?php endif; ?>
-    <p><?php echo $this->escape($item['info']); ?></p>
+    <p><?php echo $item['info']; ?></p>
 <?php endforeach; ?>
