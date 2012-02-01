@@ -2,6 +2,14 @@
 <div id="shirts">
     <h1>League Jersey/T-Shirt Counts</h1>
     
+    <?php if($this->isLeagueDirector($this->league->id) and count($this->shirts) > 1): ?>
+    <div id="admin-buttons">
+        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
+    </div>
+    <?php endif; ?>
+
+    <div class="clearfix">&nbsp;<br/>&nbsp;</div>
+    
     <?php foreach($this->shirts as $color => $shirt): ?>
     <?php $total = 0; ?>
     <?php foreach($shirt as $count): ?>

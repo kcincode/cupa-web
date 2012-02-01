@@ -1517,9 +1517,47 @@ class LeagueController extends Zend_Controller_Action
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
+
         
         $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
         $this->view->shirts = $leagueAnswerTable->fetchShirts($leagueId);
+
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . str_replace(' ', '-', $this->view->leaguename($this->view->league, true, true, true, true)) . '_shirts.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+            
+            echo "color,XS,S,M,L,XL,XXL\n";
+            
+            foreach($this->view->shirts as $color => $shirt) {
+                foreach(array('XS', 'S', 'M', 'L', 'XL', 'XXL') as $size) {
+                    $lowSize = strtolower($size);
+                    $$lowSize = (isset($shirt[$size])) ? $shirt[$size] : 0;
+                    
+                }
+                echo "{$color},{$xs},{$s},{$m},{$l},{$xl},{$xxl}\n";
+            }
+            
+            flush();
+        }
     }
 
     public function emergencyAction()
