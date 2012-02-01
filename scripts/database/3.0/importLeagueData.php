@@ -270,11 +270,11 @@ foreach($stmt->fetchAll() as $row) {
 }
 
 
-$stmt = $origDb->prepare('SELECT * FROM event_teams et LEFT JOIN teams t ON et.team_id = t.id');
+$stmt = $origDb->prepare('SELECT et.event_id, t.* FROM event_teams et LEFT JOIN teams t ON et.team_id = t.id ORDER BY t.id');
 $stmt->execute();
 foreach($stmt->fetchAll() as $row) {
     // League Teams
-    echo "            Importing league team  `{$row['name']}`...";
+    echo "            Importing league team #{$row['id']}:`{$row['name']}`...";
     $leagueTeam = $leagueTeamTable->createRow();
     $leagueTeam->league_id = $row['event_id'];
     $leagueTeam->name = $row['name'];
@@ -284,6 +284,7 @@ foreach($stmt->fetchAll() as $row) {
     $leagueTeam->text_code = $codes['text'];
     $leagueTeam->final_rank = null;
     $leagueTeam->save();
+    echo "as #{$leagueTeam->id}...";
 
     while($leagueTeam->id < $row['id']) {
         $leagueTeam->delete();

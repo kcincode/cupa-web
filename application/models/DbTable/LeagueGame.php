@@ -53,7 +53,7 @@ class Cupa_Model_DbTable_LeagueGame extends Zend_Db_Table
                        ->order('lg.week ASC')
                        ->order('lg.day ASC')
                        ->order('lg.field ASC');
-
+        
         $data = array();
         foreach($this->getAdapter()->fetchAll($select) as $row) {
             $data[$row['week']][$row['field']] = $row;
