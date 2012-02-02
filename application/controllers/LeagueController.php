@@ -1497,7 +1497,77 @@ class LeagueController extends Zend_Controller_Action
 
     public function playersAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/players.css');
+        
+        //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
+        }
+        
+        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $this->view->players = $leagueMemberTable->fetchPlayerInformation($leagueId);
+        
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . str_replace(' ', '-', $this->view->leaguename($this->view->league, true, true, true, true)) . '_players.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+            
+            echo "first_name,last_name,email";
+            $i = 1;
+            foreach($this->view->players as $player) {
+                if($i == 1) {
+                    foreach($player['profile'] as $key => $value) {
+                        echo ",$key";
+                    }
+                    foreach($player['answers'] as $key => $value) {
+                        echo ",$key";
+                    }
+                    echo "\n";
+                }
+                
+                echo "{$player['first_name']},{$player['last_name']},{$player['email']}";
+                foreach($player['profile'] as $key => $value) {
+                    echo "," . str_replace(',', ' ', $value);
+                }
+                foreach($player['answers'] as $key => $value) {
+                    echo "," . str_replace("\r\n", '  ', str_replace(',', ' ', $value));
+                }
+                echo "\n";
+
+                $i++;
+            }
+            
+            flush();
+        }
     }
 
     public function shirtsAction()

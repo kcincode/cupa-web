@@ -1,4 +1,35 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>players</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<div id="players-list">
+    <h1>League Players</h1>
+    
+    <?php if($this->isLeagueDirector($this->league->id) and count($this->players) > 1): ?>
+    <div id="admin-buttons">
+        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Complete Data</a>
+    </div>
+    <?php endif; ?>
+
+    <div class="clearfix">&nbsp;<br/>&nbsp;</div>
+
+    <div id="players">
+        <div class="row header">
+            <div class="name padtop">Player</div>
+            <div class="gender padtop">Gender</div>
+            <div class="age padtop">Age</div>
+            <div class="height padtop">Height</div>
+            <div class="experience">Years Played</div>
+            <div class="level padtop">Highest Level</div>
+        </div>
+        
+        <?php $this->cycle(array('even', 'odd')); ?>
+        <?php foreach($this->players as $player): ?>
+        <div class="row <?php echo $this->cycle()->next(); ?>">
+            <div class="name"><?php echo $this->fullname($player['user_id']); ?></div>
+            <div class="gender"><?php echo $this->escape($player['profile']['gender']); ?></div>
+            <div class="age"><?php echo $this->displayAge($player['profile']['birthday']); ?></div>
+            <div class="height"><?php echo $this->displayHeight($player['profile']['height']); ?></div>
+            <div class="experience"><?php echo (empty($player['profile']['experience'])) ? 'Unknown' : date('Y') - $player['profile']['experience'] . ' years'; ?></div>
+            <div class="level"><?php echo (empty($player['profile']['level']))? 'Unknown' : $this->escape($player['profile']['level']); ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
 </div>

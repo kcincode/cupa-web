@@ -87,6 +87,9 @@ foreach($stmt->fetchAll() as $row) {
     
     if(isset($stats[$user->id])) {
         $data = $stats[$user->id];
+        if(is_numeric($data['stats_experience']) and $data['stats_experience'] < 1900) {
+            $data['stats_experience'] = date('Y') - $data['stats_experience'];
+        }
         $userProfile->nickname = (empty($data['stats_nickname'])) ? null : $data['stats_nickname'];
         $userProfile->height = (empty($data['stats_height'])) ? null : $data['stats_height'];
         $userProfile->level = (!is_numeric($level[$data['stats_level']])) ? null : $level[$data['stats_level']];

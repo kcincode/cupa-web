@@ -38,4 +38,22 @@ class Cupa_Model_DbTable_LeagueAnswer extends Zend_Db_Table
         return $data;
     }
     
+    public function fetchAllAnswers($leagueMemberId, $leagueId)
+    {
+        $select = $this->select()
+                       ->where('league_member_id = ?', $leagueMemberId);
+        
+        $data = array();
+        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        foreach($this->fetchAll($select) as $row) {
+            $question = $leagueQuestionTable->find($row['league_question_id'])->current();
+            if($question) {
+                $data[$question->name] = $row['answer'];
+            }
+            
+        }
+        
+        return $data;
+    }
+    
 }
