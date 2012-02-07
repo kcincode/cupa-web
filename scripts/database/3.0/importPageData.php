@@ -4,12 +4,25 @@ require_once realpath(__DIR__ . '/../../') . '/common.php';
 // Database table links
 $pageTable = new Cupa_Model_DbTable_Page();
 
-echo "    Importing `Page` data:\n";
-
 $stmt = $origDb->prepare('SELECT * FROM pages');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
-    echo "        Importing page `{$row['name']}`...";
+$results = $stmt->fetchAll();
+$totalPages = count($results);
+$i = 0;
+
+if(DEBUG) {
+    echo "    Importing `Page` data:\n";
+} else {
+    echo "    Importing $totalPages Pages:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPages);    
+}
+
+foreach($results as $row) {
+    if(DEBUG) {
+        echo "        Importing page `{$row['name']}`...";
+    } else {
+        $progressBar->update($i);
+    }
     $page = $pageTable->createRow();
     $page->parent = ($row['parent'] == 0) ? null : $row['parent'];
     $page->name = $row['name'];
@@ -24,7 +37,16 @@ foreach($stmt->fetchAll() as $row) {
     $page->updated_at = date('Y-m-d H:i:s');
     $page->last_updated_by = 1;
     $page->save();
-    echo "Done\n";
+    if(DEBUG) {
+       echo "Done\n";
+    }
+
+    $i++;
 }
 
-echo "    Done\n";
+if(DEBUG) {
+    echo "    Done\n";
+} else {
+    $progressBar->update($totalPages);
+    echo "\n";
+}

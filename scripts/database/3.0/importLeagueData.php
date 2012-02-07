@@ -62,7 +62,6 @@ $colorLookupTable = array(
     'all' => '#ffffff',
 );
 
-echo "    Importing `League` data:\n";
 $seasons = array(
     array(
         'name' => 'winter',
@@ -139,9 +138,23 @@ $seasons = array(
     
 );
 
+$totalSeasons = count($seasons);
+
+if(DEBUG) {
+    echo "    Importing `League` data:\n";
+} else {
+    echo "    Importing $totalSeasons League Seasons:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalSeasons);    
+}
+
 $seasonsArray = array();
+$i = 0;
 foreach($seasons as $season) {
-    echo "        Importing league season `{$season['name']}`:\n";
+    if(DEBUG) {
+        echo "        Importing league season `{$season['name']}`:\n";    
+    } else {
+        $progressBar->update($i);
+    }
     $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
     $leagueSeason = $leagueSeasonTable->createRow();
     $leagueSeason->name = $season['name'];
@@ -149,18 +162,40 @@ foreach($seasons as $season) {
     $leagueSeason->weight = $season['weight'];
     $leagueSeason->information = $season['information'];
     $leagueSeason->save();
-    echo "Done.\n";    
+
+    if(DEBUG) {
+        echo "Done.\n";
+    }
     
     $seasonsArray[] = $season['name'];
+    $i++;
+}
+
+if(!DEBUG) {
+    $progressBar->update($totalSeasons);
+    echo "\n";
 }
 
 
 
 $stmt = $origDb->prepare('SELECT * FROM events e LEFT JOIN event_data ed ON ed.event_id = e.id');
 $stmt->execute();
+$results = $stmt->fetchAll();
+$totalLeagues = count($results);
 $prevYear = date('Y') - 1;
-foreach($stmt->fetchAll() as $row) {
-    echo "        Importing league `{$row['name']}`:\n";
+
+if(!DEBUG) {
+    echo "    Importing $totalLeagues Leagues:\n";
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalLeagues);    
+}
+
+$i = 0;
+foreach($results as $row) {
+    if(DEBUG) {
+        echo "        Importing league `{$row['name']}`:\n";
+    } else {
+        $progressBar->update($i);
+    }
     $league = $leagueTable->createRow();
     $league->year = $row['year'];
     $league->season = ($row['type'] < 5 and $row['type'] != 0) ? $row['type'] : null;
@@ -256,7 +291,9 @@ foreach($stmt->fetchAll() as $row) {
     $stmt2->execute(array($league->id));
     foreach($stmt2->fetchAll() as $row2) {
         // League Teams
-        echo "            Importing league director  #{$row2['user_id']}...";
+        if(DEBUG) {
+            echo "            Importing league director  #{$row2['user_id']}...";
+        }
         $leagueMember = $leagueMemberTable->createRow();
         $leagueMember->league_id = $league->id;
         $leagueMember->user_id = $row2['user_id'];
@@ -265,16 +302,39 @@ foreach($stmt->fetchAll() as $row) {
         $leagueMember->created_at = $league->registration_begin;
         $leagueMember->modified_at = $league->registration_begin;
         $leagueMember->save();
-        echo "Done\n";
+        if(DEBUG) {
+            echo "Done\n";
+        }
     }
+
+    $i++;
+}
+
+if(!DEBUG) {
+    $progressBar->update($totalLeagues);
+    echo "\n";
 }
 
 
 $stmt = $origDb->prepare('SELECT et.event_id, t.* FROM event_teams et LEFT JOIN teams t ON et.team_id = t.id ORDER BY t.id');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
+$results = $stmt->fetchAll();
+$totalTeams = count($results);
+
+if(!DEBUG) {
+    echo "    Importing $totalTeams League Teams:\n";
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalTeams);    
+}
+
+$i = 0;
+foreach($results as $row) {
     // League Teams
-    echo "            Importing league team #{$row['id']}:`{$row['name']}`...";
+    if(DEBUG) {
+        echo "            Importing league team #{$row['id']}:`{$row['name']}`...";
+    } else {
+        $progressBar->update($i);
+    }
+
     $leagueTeam = $leagueTeamTable->createRow();
     $leagueTeam->league_id = $row['event_id'];
     $leagueTeam->name = $row['name'];
@@ -284,7 +344,10 @@ foreach($stmt->fetchAll() as $row) {
     $leagueTeam->text_code = $codes['text'];
     $leagueTeam->final_rank = null;
     $leagueTeam->save();
-    echo "as #{$leagueTeam->id}...";
+
+    if(DEBUG) {
+        echo "as #{$leagueTeam->id}...";
+    }
 
     while($leagueTeam->id < $row['id']) {
         $leagueTeam->delete();
@@ -298,7 +361,10 @@ foreach($stmt->fetchAll() as $row) {
         $leagueTeam->text_code = $codes['text'];
         $leagueTeam->final_rank = null;
         $leagueTeam->save();
-        echo "RESAVE #{$leagueTeam->id}...";
+
+        if(DEBUG) {
+            echo "RESAVE #{$leagueTeam->id}...";
+        }
     }
 
     // insert the team's captain
@@ -310,13 +376,32 @@ foreach($stmt->fetchAll() as $row) {
     $leagueMember->created_at = date('Y-m-d H:i:s');
     $leagueMember->modified_at = date('Y-m-d H:i:s');
     $leagueMember->save();
-    echo "Done\n";
+
+    if(DEBUG) {
+        echo "Done\n";
+    }
+
+    $i++;
+}
+
+if(!DEBUG) {
+    $progressBar->update($totalTeams);
+    echo "\n";
 }
 
 // insert the league players
 $stmt = $origDb->prepare('SELECT * FROM event_players');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
+$results = $stmt->fetchAll();
+$totalPlayers = count($results);
+
+if(!DEBUG) {
+    echo "    Importing $totalPlayers League Players:\n";
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalPlayers);    
+}
+
+$i = 0;
+foreach($results as $row) {
     
     $league = $leagueTable->find($row['event_id'])->current();
     
@@ -333,7 +418,12 @@ foreach($stmt->fetchAll() as $row) {
 
         if($user) {
             // save data
-            echo "            Importing minor player #{$user->id}...";
+            if(DEBUG) {
+                echo "            Importing minor player #{$user->id}...";
+            } else {
+                $progressBar->update($i);            
+            }
+
             $leagueMember = $leagueMemberTable->createRow();
             $leagueMember->league_id = $row['event_id'];
             $leagueMember->user_id = $user->id;
@@ -350,11 +440,18 @@ foreach($stmt->fetchAll() as $row) {
             $leagueMember->modified_at = $league->registration_end;
 
             $leagueMember->save();
-            echo "Done\n";
+
+            if(DEBUG) {
+                echo "Done\n";
+            }
         }
     } else {
         // League Teams
-        echo "            Importing player #{$row['user_id']}...";
+        if(DEBUG) {
+            echo "            Importing player #{$row['user_id']}...";
+        } else {
+            $progressBar->update($i);
+        }
         $leagueMember = $leagueMemberTable->createRow();
         $leagueMember->league_id = $row['event_id'];
         $leagueMember->user_id = $row['user_id'];
@@ -365,57 +462,102 @@ foreach($stmt->fetchAll() as $row) {
         $leagueMember->modified_at = $league->registration_end;
 
         $leagueMember->save();
-        echo "Done\n";
+
+        if(DEBUG) {
+            echo "Done\n";
+        }
     }
-    
+
+    $i++;
+}
+
+if(!DEBUG) {
+    $progressBar->update($totalPlayers);
+    echo "\n";
 }
 
 
-// insert the league players
 $stmt = $origDb->prepare('SELECT * FROM event_games');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
-        echo "            Importing game #{$row['team2_id']} vs #{$row['team1_id']}...";
-        $leagueLocation = $leagueLocationTable->fetchByType($row['event_id'], 'league');
-        if($leagueLocation) {
-            $row['date'] = $row['date'] . ' ' . date('H:i:s', strtotime($leagueLocation->start));
-        }
+$results = $stmt->fetchAll();
+$totalGames = count($results);
 
-        //create the game
-        $leagueGame = $leagueGameTable->createRow();
-        $leagueGame->league_id = $row['event_id'];
-        $leagueGame->day = $row['date'];
-        $leagueGame->week = $row['week'];
-        $leagueGame->field = $row['field'];
-        $leagueGame->save();
+if(!DEBUG) {
+    echo "    Importing $totalGames League Games:\n";
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalGames);    
+}
 
-        if($leagueTeamTable->find($row['team2_id'])->current()) {
-            // insert the game data for home and away teams
-            $leagueGameData = $leagueGameDataTable->createRow();
-            $leagueGameData->league_game_id = $leagueGame->id;
-            $leagueGameData->type = 'home';
-            $leagueGameData->league_team_id = $row['team2_id'];
-            $leagueGameData->score = $row['team2_score'];
-            $leagueGameData->save();
-        }
+// insert the league players
+$i = 0;
+foreach($results as $row) {
+    if(DEBUG) {
+        echo "            Importing game #{$row['team2_id']} vs #{$row['team1_id']}...";        
+    } else {
+        $progressBar->update($i);
+    }
 
-        if($leagueTeamTable->find($row['team1_id'])->current()) {
-            $leagueGameData = $leagueGameDataTable->createRow();
-            $leagueGameData->league_game_id = $leagueGame->id;
-            $leagueGameData->type = 'away';
-            $leagueGameData->league_team_id = $row['team1_id'];
-            $leagueGameData->score = $row['team1_score'];
-            $leagueGameData->save();
-        }
-        
-        echo "Done\n";    
+    $leagueLocation = $leagueLocationTable->fetchByType($row['event_id'], 'league');
+    if($leagueLocation) {
+        $row['date'] = $row['date'] . ' ' . date('H:i:s', strtotime($leagueLocation->start));
+    }
+
+    //create the game
+    $leagueGame = $leagueGameTable->createRow();
+    $leagueGame->league_id = $row['event_id'];
+    $leagueGame->day = $row['date'];
+    $leagueGame->week = $row['week'];
+    $leagueGame->field = $row['field'];
+    $leagueGame->save();
+
+    if($leagueTeamTable->find($row['team2_id'])->current()) {
+        // insert the game data for home and away teams
+        $leagueGameData = $leagueGameDataTable->createRow();
+        $leagueGameData->league_game_id = $leagueGame->id;
+        $leagueGameData->type = 'home';
+        $leagueGameData->league_team_id = $row['team2_id'];
+        $leagueGameData->score = $row['team2_score'];
+        $leagueGameData->save();
+    }
+
+    if($leagueTeamTable->find($row['team1_id'])->current()) {
+        $leagueGameData = $leagueGameDataTable->createRow();
+        $leagueGameData->league_game_id = $leagueGame->id;
+        $leagueGameData->type = 'away';
+        $leagueGameData->league_team_id = $row['team1_id'];
+        $leagueGameData->score = $row['team1_score'];
+        $leagueGameData->save();
+    }
+    
+    if(DEBUG) {
+        echo "Done\n"; 
+    }
+
+    $i++;   
+}
+
+if(!DEBUG) {
+    $progressBar->update($totalGames);
+    echo "\n";
 }
 
 // insert the league players
 $stmt = $origDb->prepare('SELECT * FROM event_questions');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
-    echo "            Importing league question '{$row['name']}'...\n";
+$results = $stmt->fetchAll();
+$totalQuestions = count($results);
+
+if(!DEBUG) {
+    echo "    Importing $totalQuestions League Questions:\n";
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalQuestions);    
+}
+
+$i = 0;
+foreach($results as $row) {
+    if(DEBUG) {
+        echo "            Importing league question '{$row['name']}'...\n";
+    } else {
+        $progressBar->update($i);
+    }
     $leagueQuestion = $leagueQuestionTable->createRow();
     $leagueQuestion->name = $row['name'];
     $leagueQuestion->title = $row['title'];
@@ -429,7 +571,9 @@ foreach($stmt->fetchAll() as $row) {
 
         foreach($leagueTable->fetchAll() as $league) {
             if(!in_array($league->id, $notEvents)) {
-                echo "                Adding question '{$row['name']}' to League #{$league->id}\n";
+                if(DEBUG) {
+                    echo "                Adding question '{$row['name']}' to League #{$league->id}\n";
+                }
                 $leagueQuestionList = $leagueQuestionListTable->createRow();
                 $leagueQuestionList->league_id = $league->id;
                 $leagueQuestionList->league_question_id = $leagueQuestion->id;
@@ -439,7 +583,9 @@ foreach($stmt->fetchAll() as $row) {
             }
         }
     } else {
-        echo "                Adding question '{$row['name']}' to League #{$row['event_id']}\n";
+        if(DEBUG) {
+            echo "                Adding question '{$row['name']}' to League #{$row['event_id']}\n";
+        }
         $leagueQuestionList = $leagueQuestionListTable->createRow();
         $leagueQuestionList->league_id = $row['event_id'];
         $leagueQuestionList->league_question_id = $leagueQuestion->id;
@@ -448,13 +594,30 @@ foreach($stmt->fetchAll() as $row) {
         $leagueQuestionList->save();
     }
     
-    echo "            Done.\n";
+    if(DEBUG) {
+        echo "            Done.\n";        
+    }
+    $i++;
+}
+
+if(!DEBUG) {
+    $progressBar->update($totalQuestions);
+    echo "\n";
 }
 
 // insert the league players
 $stmt = $origDb->prepare('SELECT * FROM event_info');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
+$results = $stmt->fetchAll();
+$totalAnswers = count($results);
+
+if(!DEBUG) {
+    echo "    Importing $totalAnswers League Answers:\n";
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalAnswers);    
+}
+
+$i = 0;
+foreach($results as $row) {
     
     $user = null;
     
@@ -478,7 +641,12 @@ foreach($stmt->fetchAll() as $row) {
 
 
     if($leagueMember) {
-        echo "            Importing league answers for user #'{$row['user_id']}'...";
+        if(DEBUG) {
+            echo "            Importing league answers for user #'{$row['user_id']}'...";
+        } else {
+            $progressBar->update($i);
+        }
+
         $leagueMember->paid = $row['paid'];
         $league = $leagueTable->find($row['event_id'])->current();
         $leagueMember->release = ($userProfileTable->isEighteenOrOver($row['user_id'], $league->registration_end)) ? 1 : $row['release'];
@@ -495,13 +663,20 @@ foreach($stmt->fetchAll() as $row) {
             }
         }
 
-        echo "Done.\n";
+        if(DEBUG) {
+            echo "Done.\n";
+        }
+
+        $i++;
     }
 }
 
-
-
-echo "        Done\n";
+if(DEBUG) {
+    echo "        Done\n";
+} else {
+    $progressBar->update($totalAnswers);
+    echo "\n";
+}
 
 
 function generateName($name, $seasons)

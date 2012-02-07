@@ -14,6 +14,9 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
+
+define('DEBUG', (isset($argv[1]) and $argv[1] == '--debug') ? true : false);
+
 /** Zend_Application */
 require_once 'Zend/Application.php';
 
@@ -26,3 +29,5 @@ $application->bootstrap('db');
 
 // original db connection string
 $origDb = new PDO('mysql:dbname=cupaweb;host=localhost', 'root', 'password');
+
+require_once('ProgressBar.php');

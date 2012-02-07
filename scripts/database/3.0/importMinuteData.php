@@ -43,12 +43,26 @@ $data = array(
     ),
 );
 
-echo "    Importing `Minutes` data:\n";
+$totalMinutes = count($data);
 
+if(DEBUG) {
+    echo "    Importing `Minutes` data:\n";
+} else {
+    echo "    Importing $totalMinutes Minutes:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalMinutes);    
+}
+
+$i = 0;
 foreach($data as $row) {
     $filesize = filesize(__DIR__ . '/' . $row['pdf']);
     $fp = fopen(__DIR__ . '/' . $row['pdf'], 'r');
-    echo "        Importing minutes `{$row['when']} {$row['location']}`...";
+    
+    if(DEBUG) {
+        echo "        Importing minutes `{$row['when']} {$row['location']}`...";
+    } else {
+        $progressBar->update($i);        
+    }
+
     $minute = $minuteTable->createRow();
     $minute->when = $row['when'];
     $minute->location = $row['location'];
@@ -56,7 +70,17 @@ foreach($data as $row) {
     $minute->is_visible = $row['is_visible'];
     $minute->save();
     fclose($fp);
-    echo "Done\n";
+
+    if(DEBUG) {
+        echo "Done\n";
+    }
+
+    $i++;
 }
 
-echo "    Done\n";
+if(DEBUG) {
+    echo "    Done\n";
+} else {
+    $progressBar->update($totalMinutes);
+    echo "\n";
+}

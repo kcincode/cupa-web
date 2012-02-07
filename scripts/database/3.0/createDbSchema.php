@@ -1,89 +1,99 @@
 <?php
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
-echo "Creating Database Schema:\n";
-
 // Database table links
 $userTable = new Cupa_Model_DbTable_User();
 $userLevelTable = new Cupa_Model_DbTable_UserLevel();
 $newsCategoryTable = new Cupa_Model_DbTable_NewsCategory();
 $contactTable = new Cupa_Model_DbTable_Contact();
+$tournamentDivisionTable = new Cupa_Model_DbTable_TournamentDivision();
 
 $db = $userTable->getAdapter();
 
+$dropTables = array('tournament_member','tournament_update', 'tournament_team', 'tournament_information', 'tournament_division',
+                    'tournament', 'user_password_reset', 'user_role', 'user_level', 'user_profile', 'page',
+                    'news', 'news_category', 'club_captain', 'club', 'officer', 'pickup', 'league_question_list',
+                    'league_answer', 'league_question', 'league_game_data', 'league_game', 'league_member',
+                    'league_team', 'league_information', 'league_limit', 'league_location', 'league', 'league_season',
+                    'user_waiver', 'user_access_log', 'user', 'contact', 'minute');
+
+$createTables = array_reverse($dropTables);
+$totalTables = count($dropTables);
+
 try {
-    echo "    Dropping all tables:\n"; 
-    echo "        UserPasswordReset\n";
-    $db->query("DROP TABLE IF EXISTS `user_password_reset`");
-    echo "        UserRole\n";
-    $db->query("DROP TABLE IF EXISTS `user_role`");
-    echo "        UserLevel\n";
-    $db->query("DROP TABLE IF EXISTS `user_level`");
-    echo "        UserProfile\n";
-    $db->query("DROP TABLE IF EXISTS `user_profile`");
-    echo "        Page\n";
-    $db->query("DROP TABLE IF EXISTS `page`");
-    echo "        News\n";
-    $db->query("DROP TABLE IF EXISTS `news`");
-    echo "        NewsCategory\n";
-    $db->query("DROP TABLE IF EXISTS `news_category`");
-    echo "        ClubCaptain\n";
-    $db->query("DROP TABLE IF EXISTS `club_captain`");
-    echo "        Club\n";
-    $db->query("DROP TABLE IF EXISTS `club`");
-    echo "        Officer\n";
-    $db->query("DROP TABLE IF EXISTS `officer`");
-    echo "        Pickup\n";
-    $db->query("DROP TABLE IF EXISTS `pickup`");
-    echo "        LeagueQuestionList\n";
-    $db->query("DROP TABLE IF EXISTS `league_question_list`");
-    echo "        LeagueAnswer\n";
-    $db->query("DROP TABLE IF EXISTS `league_answer`");
-    echo "        LeagueQuestion\n";
-    $db->query("DROP TABLE IF EXISTS `league_question`");
-    echo "        LeagueGameData\n";
-    $db->query("DROP TABLE IF EXISTS `league_game_data`");
-    echo "        LeagueGame\n";
-    $db->query("DROP TABLE IF EXISTS `league_game`");
-    echo "        LeagueMember\n";
-    $db->query("DROP TABLE IF EXISTS `league_member`");
-    echo "        LeagueTeam\n";
-    $db->query("DROP TABLE IF EXISTS `league_team`");
-    echo "        LeagueInformation\n";
-    $db->query("DROP TABLE IF EXISTS `league_information`");
-    echo "        LeagueLimit\n";
-    $db->query("DROP TABLE IF EXISTS `league_limit`");
-    echo "        LeagueLocation\n";
-    $db->query("DROP TABLE IF EXISTS `league_location`");
-    echo "        League\n";
-    $db->query("DROP TABLE IF EXISTS `league`");
-    echo "        LeagueSeason\n";
-    $db->query("DROP TABLE IF EXISTS `league_season`");
-    echo "        UserWaiver\n";
-    $db->query("DROP TABLE IF EXISTS `user_waiver`");
-    echo "        UserAccessLog\n";
-    $db->query("DROP TABLE IF EXISTS `user_access_log`");
-    echo "        User\n";
-    $db->query("DROP TABLE IF EXISTS `user`");
-    echo "        Contact\n";
-    $db->query("DROP TABLE IF EXISTS `contact`");
-    echo "        Minute\n";
-    $db->query("DROP TABLE IF EXISTS `minute`");
-    echo "Done\n";
+    if(DEBUG) {
+        echo "    Dropping Database Tables:\n";
+    } else {
+        echo "    Dropping $totalTables Tables:\n";        
+        $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTables);
+    }
+
+    $i = 0;
+    foreach($dropTables as $table) {
+        if(DEBUG) {
+          echo "        Dropping " . str_replace(' ', '', ucwords(str_replace('_', ' ', $table))) . "\n";
+        } else {
+          $progressBar->update($i);
+        }
+
+        $db->query("DROP TABLE IF EXISTS `$table`");
+        $i++;
+    }
+
+    if(DEBUG) {
+        echo "    Done\n";
+    } else {
+        $progressBar->update($totalTables);
+        echo "\n";
+    }
 } catch(Exception $e) {
     echo 'Error: ' . $e->getMessage() . "\n";
     endWithError();
 }
 
-/*******************************************************************************
- * 
- * USER TABLE
- * 
- *******************************************************************************/
 try {
-    echo "    Creating `User` Table..."; 
+
+    if(!DEBUG) {
+        echo "    Creating $totalTables Tables:\n";
+        $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTables);
+    }
+
     $db->beginTransaction();
 
+    $i = 0;
+    foreach($createTables as $table) {
+        if(DEBUG) {
+            echo "    Creating `$table` Table...";
+        }
+
+        $func = 'create' . str_replace(' ', '', ucwords(str_replace('_', ' ', $table))) . 'Table';
+        $func($db);
+
+        if(DEBUG) {
+            echo "Done.\n";
+        } else {
+            $progressBar->update($i);
+        }
+
+        $i++;
+    }
+
+    if(!DEBUG) {
+        $progressBar->update($totalTables);
+        echo "\n";
+    }
+
+    $db->commit();
+
+} catch(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . "\n";
+    $db->rollback();
+    endWithError();
+}
+
+
+function createUserTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `user` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -112,35 +122,21 @@ try {
     $db->query("
         ALTER TABLE `user`
           ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * CONTACT TABLE
- * 
- *******************************************************************************/
-$contacts = array(
-    array(
-        'name' => 'CUPA Information',
-        'email' => 'cincinnatiultimate@gmail.com',
-    ),
-    array(
-        'name' => 'Website Issues/Questions',
-        'email' => 'webmaster@cincyultimate.org',
-    ),
-);
+function createContactTable($db)
+{
+    $contacts = array(
+        array(
+            'name' => 'CUPA Information',
+            'email' => 'cincinnatiultimate@gmail.com',
+        ),
+        array(
+            'name' => 'Website Issues/Questions',
+            'email' => 'webmaster@cincyultimate.org',
+        ),
+    );
 
-
-try {
-    echo "    Creating `Contact` Table..."; 
-    $db->beginTransaction();
 
     $db->query("
         CREATE TABLE IF NOT EXISTS `contact` (
@@ -153,68 +149,54 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
     
     foreach($contacts as $contact) {
-        $contactTable->insert($contact);
+        $GLOBALS['contactTable']->insert($contact);
     }
-    
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * USER_LEVEL TABLE
- * 
- *******************************************************************************/
-$levels = array(
-    0 => array(
-        'name' => 'New',
-        'weight' => 0,
-    ),
-    1 => array(
-        'name' => 'Pickup',
-        'weight' => 1,
-    ),
-    2 => array(
-        'name' => 'Leagues',
-        'weight' => 2,
-    ),
-    3 => array(
-        'name' => 'College',
-        'weight' => 3,
-    ),
-    4 => array(
-        'name' => 'Club',
-        'weight' => 4,
-    ),
-    5 => array(
-        'name' => 'College Regionals',
-        'weight' => 5,
-    ),
-    6 => array(
-        'name' => 'Club Regionals',
-        'weight' => 6,
-    ),
-    7 => array(
-        'name' => 'College Nationals',
-        'weight' => 7,
-    ),
-    8 => array(
-        'name' => 'Club Nationals',
-        'weight' => 8,
-    ),
-    9 => array(
-        'name' => 'Worlds',
-        'weight' => 9,
-    ),
-);
-
-try {
-    echo "    Creating `UserLevel` Table..."; 
-    $db->beginTransaction();
+function createUserLevelTable($db)
+{
+    $levels = array(
+        0 => array(
+            'name' => 'New',
+            'weight' => 0,
+        ),
+        1 => array(
+            'name' => 'Pickup',
+            'weight' => 1,
+        ),
+        2 => array(
+            'name' => 'Leagues',
+            'weight' => 2,
+        ),
+        3 => array(
+            'name' => 'College',
+            'weight' => 3,
+        ),
+        4 => array(
+            'name' => 'Club',
+            'weight' => 4,
+        ),
+        5 => array(
+            'name' => 'College Regionals',
+            'weight' => 5,
+        ),
+        6 => array(
+            'name' => 'Club Regionals',
+            'weight' => 6,
+        ),
+        7 => array(
+            'name' => 'College Nationals',
+            'weight' => 7,
+        ),
+        8 => array(
+            'name' => 'Club Nationals',
+            'weight' => 8,
+        ),
+        9 => array(
+            'name' => 'Worlds',
+            'weight' => 9,
+        ),
+    );
 
     $db->query("
         CREATE TABLE IF NOT EXISTS `user_level` (
@@ -225,26 +207,12 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
     
     foreach($levels as $level) {
-        $userLevelTable->insert($level);
+        $GLOBALS['userLevelTable']->insert($level);
     }
-    
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * USER_PROFILE TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `UserProfile` Table..."; 
-    $db->beginTransaction();
-
+function createUserProfileTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `user_profile` (
           `user_id` int(11) NOT NULL,
@@ -257,28 +225,14 @@ try {
           `experience` int(11) DEFAULT NULL,
           PRIMARY KEY (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-    
+     
     $db->query("
         ALTER TABLE `user_profile`
           ADD CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * USER_WAIVER TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `UserWaiver` Table..."; 
-    $db->beginTransaction();
-
+function createUserWaiverTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `user_waiver` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -295,24 +249,10 @@ try {
         ALTER TABLE `user_waiver`
           ADD CONSTRAINT `user_waiver_ibfk_2` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `user_waiver_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- *
- * USER_ACCESS_LOG TABLE
- *
- *******************************************************************************/
-try {
-    echo "    Creating `UserAccessLog` Table...";
-    $db->beginTransaction();
-
+function createUserAccessLogTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `user_access_log` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -323,25 +263,11 @@ try {
           `type` enum('login-success','login-failed','logout') COLLATE utf8_unicode_ci NOT NULL,
           `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");  
 }
 
-/*******************************************************************************
- * 
- * Page TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `Page` Table..."; 
-    $db->beginTransaction();
-
+function createPageTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `page` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -367,25 +293,11 @@ try {
         ALTER TABLE `page`
           ADD CONSTRAINT `page_ibfk_3` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `page_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `page_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `page_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");  
 }
 
-/*******************************************************************************
- * 
- * USER_ROLE TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `UserRole` Table..."; 
-    $db->beginTransaction();
-
+function createUserRoleTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `user_role` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -401,24 +313,10 @@ try {
         ALTER TABLE `user_role`
           ADD CONSTRAINT `user_role_ibfk_2` FOREIGN KEY (`page_id`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
           ADD CONSTRAINT `user_role_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * USER_PASSWORD_RESET TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `UserPasswordReset` Table..."; 
-    $db->beginTransaction();
-
+function createUserPasswordResetTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `user_password_reset` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -435,24 +333,10 @@ try {
     $db->query("
         ALTER TABLE `user_password_reset`
           ADD CONSTRAINT `user_password_reset_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * NEWS_CATEGORY TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `NewsCategory` Table..."; 
-    $db->beginTransaction();
-
+function createNewsCategoryTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `news_category` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -460,25 +344,11 @@ try {
           PRIMARY KEY (`id`),
           UNIQUE KEY `name` (`name`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-    
-    $db->commit();
-    
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+  
 }
 
-/*******************************************************************************
- * 
- * NEWS TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `News` Table..."; 
-    $db->beginTransaction();
-
+function createNewsTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `news` (
           `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -506,24 +376,10 @@ try {
           ADD CONSTRAINT `news_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `news_category` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `news_ibfk_1` FOREIGN KEY (`posted_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `news_ibfk_2` FOREIGN KEY (`last_edited_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * CLUB TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `Club` Table..."; 
-    $db->beginTransaction();
-
+function createClubTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `club` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -545,24 +401,11 @@ try {
     $db->query("
         ALTER TABLE `club`
           ADD CONSTRAINT `club_ibfk_1` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+  
 }
 
-/*******************************************************************************
- * 
- * CLUB_CAPTAIN TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `ClubCaptain` Table..."; 
-    $db->beginTransaction();
-
+function createClubCaptainTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `club_captain` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -576,25 +419,11 @@ try {
     $db->query("
         ALTER TABLE `club_captain`
           ADD CONSTRAINT `club_captain_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `club_captain_ibfk_1` FOREIGN KEY (`club_id`) REFERENCES `club` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `club_captain_ibfk_1` FOREIGN KEY (`club_id`) REFERENCES `club` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
-/*******************************************************************************
- * 
- * OFFICER TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `Officer` Table..."; 
-    $db->beginTransaction();
-
+function createOfficerTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `officer` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -610,24 +439,11 @@ try {
     $db->query("
         ALTER TABLE `officer`
           ADD CONSTRAINT `officer_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+  
 }
 
-/*******************************************************************************
- * 
- * MINUTES TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `Minutes` Table..."; 
-    $db->beginTransaction();
-
+function createMinuteTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `minute` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -636,26 +452,11 @@ try {
           `pdf` longblob,
           `is_visible` tinyint(1) NOT NULL DEFAULT '1',
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");  
 }
 
-
-/*******************************************************************************
- * 
- * PICKUP TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `Pickup` Table..."; 
-    $db->beginTransaction();
-
+function createPickupTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `pickup` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -675,25 +476,11 @@ try {
     
     $db->query("
         ALTER TABLE `pickup`
-          ADD CONSTRAINT `pickup_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `pickup_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
- 
-/*******************************************************************************
- * 
- * LEAGUE_SEASON TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueSeason` Table..."; 
-    $db->beginTransaction();
 
+function createLeagueSeasonTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_season` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -702,26 +489,11 @@ try {
           `information` text COLLATE utf8_unicode_ci NOT NULL,
           `weight` int(11) DEFAULT 0,
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
-    
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");  
 }
 
-
-/*******************************************************************************
- * 
- * LEAGUES TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `League` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -739,25 +511,11 @@ try {
     
     $db->query("
         ALTER TABLE `league`
-          ADD CONSTRAINT `league_ibfk_1` FOREIGN KEY (`season`) REFERENCES `league_season` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `league_ibfk_1` FOREIGN KEY (`season`) REFERENCES `league_season` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");  
 }
 
-/*******************************************************************************
- * 
- * LEAGUE_TEAM TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueTeam` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueTeamTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_team` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -773,25 +531,11 @@ try {
 
     $db->query("
         ALTER TABLE `league_team`
-          ADD CONSTRAINT `league_team_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `league_team_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
-/*******************************************************************************
- * 
- * LEAGUE_GAME TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueGame` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueGameTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_game` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -805,25 +549,11 @@ try {
 
     $db->query("
         ALTER TABLE `league_game`
-          ADD CONSTRAINT `league_game_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `league_game_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
-/*******************************************************************************
- * 
- * LEAGUE_GAME_DATA TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueGameData` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueGameDataTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_game_data` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -839,25 +569,11 @@ try {
     $db->query("
         ALTER TABLE `league_game_data`
           ADD CONSTRAINT `league_game_data_ibfk_2` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-          ADD CONSTRAINT `league_game_data_ibfk_1` FOREIGN KEY (`league_game_id`) REFERENCES `league_game` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `league_game_data_ibfk_1` FOREIGN KEY (`league_game_id`) REFERENCES `league_game` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
-/*******************************************************************************
- * 
- * LEAGUE_INFORMATION TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueInformation` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueInformationTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_information` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -878,24 +594,10 @@ try {
     $db->query("
         ALTER TABLE `league_information`
           ADD CONSTRAINT `league_information_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * LEAGUE_LIMIT TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueLimit` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueLimitTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_limit` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -911,24 +613,10 @@ try {
     $db->query("
         ALTER TABLE `league_limit`
           ADD CONSTRAINT `league_limit_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-/*******************************************************************************
- * 
- * LEAGUE_MEMBER TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueMember` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueMemberTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_member` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -953,25 +641,11 @@ try {
           ADD CONSTRAINT `league_member_ibfk_4` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `league_member_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
           ADD CONSTRAINT `league_member_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `league_member_ibfk_3` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `league_member_ibfk_3` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
-/*******************************************************************************
- * 
- * LEAGUE_LOCATION TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueLocation` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueLocationTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_location` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -992,26 +666,11 @@ try {
 
     $db->query("
         ALTER TABLE `league_location`
-          ADD CONSTRAINT `league_location_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `league_location_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
-
-/*******************************************************************************
- * 
- * LEAGUE_QUESTION TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueQuestion` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueQuestionTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_question` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1021,25 +680,11 @@ try {
           `answers` text COLLATE utf8_unicode_ci DEFAULT NULL,
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
 
-/*******************************************************************************
- * 
- * LEAGUE_QUESTION_LIST TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueQuestionList` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueQuestionListTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_question_list` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1056,25 +701,10 @@ try {
         ALTER TABLE `league_question_list`
           ADD CONSTRAINT `league_question_list_ibfk_2` FOREIGN KEY (`league_question_id`) REFERENCES `league_question` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
           ADD CONSTRAINT `league_question_list_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
 }
 
-
-/*******************************************************************************
- * 
- * LEAGUE_ANSWER TABLE
- * 
- *******************************************************************************/
-try {
-    echo "    Creating `LeagueAnswer` Table..."; 
-    $db->beginTransaction();
-
+function createLeagueAnswerTable($db)
+{
     $db->query("
         CREATE TABLE IF NOT EXISTS `league_answer` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1089,20 +719,136 @@ try {
     $db->query("
         ALTER TABLE `league_answer`
           ADD CONSTRAINT `league_answer_ibfk_2` FOREIGN KEY (`league_question_id`) REFERENCES `league_question` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `league_answer_ibfk_1` FOREIGN KEY (`league_member_id`) REFERENCES `league_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-
-    $db->commit();
-    echo "Done.\n";
-} catch(Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    $db->rollback();
-    endWithError();
+          ADD CONSTRAINT `league_answer_ibfk_1` FOREIGN KEY (`league_member_id`) REFERENCES `league_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
+function createTournamentTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `tournament` (
+        `id` int(11) NOT NULL auto_increment,
+        `name` varchar(15) NOT NULL,
+        `year` int(11) NOT NULL,
+        `display_name` varchar(150) NOT NULL,
+        `email` varchar(255) default NULL,
+        `is_visible` tinyint(1) NOT NULL,
+        PRIMARY KEY  (`id`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+}
 
+function createTournamentDivisionTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `tournament_division` (
+          `id` int(11) NOT NULL auto_increment,
+          `name` varchar(50) NOT NULL,
+          `weight` int(11) NOT NULL,
+          PRIMARY KEY  (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 
+    $i = 0;
+    foreach(array('open', 'mixed', 'womens', 'masters', 'youth open', 'youth womens', 'youth mixed') as $division) {
+        
+        $GLOBALS['tournamentDivisionTable']->insert(array(
+            'name' => $division,
+            'weight' => $i,
+        ));
 
-echo "Finished\n\n";
+        $i++;
+    }
+}
+
+function createTournamentInformationTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `tournament_information` (
+          `tournament_id` int(11) NOT NULL,
+          `start` date NOT NULL,
+          `end` date NOT NULL,
+          `bid_due` datetime NOT NULL,
+          `cost` int(11) NOT NULL,
+          `paypal` varchar(50) DEFAULT NULL,
+          `description` text NOT NULL,
+          `schedule_text` text NOT NULL,
+          `scorereporter_link` text DEFAULT NULL,
+          `location` varchar(255) NOT NULL,
+          `location_map` text NOT NULL,
+          `location_street` varchar(255) NOT NULL,
+          `location_city` varchar(150) NOT NULL,
+          `location_state` varchar(2) NOT NULL,
+          `location_zip` int(11) NOT NULL,
+          `hotel_link` text DEFAULT NULL,
+          `photo_link` text DEFAULT NULL,
+          PRIMARY KEY  (`tournament_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    
+    $db->query("
+        ALTER TABLE `tournament_information`
+          ADD CONSTRAINT `tournament_information_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+}
+
+function createTournamentTeamTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `tournament_team` (
+          `id` int(11) NOT NULL auto_increment,
+          `tournament_id` int(11) NOT NULL,
+          `name` varchar(255) NOT NULL,
+          `city` varchar(150) NOT NULL,
+          `state` varchar(2) NOT NULL,
+          `contact_name` varchar(150) NOT NULL,
+          `contact_phone` varchar(12) NOT NULL,
+          `contact_email` varchar(255) NOT NULL,
+          `division` int(11) NOT NULL,
+          `accepted` tinyint(1) NOT NULL,
+          `paid` tinyint(1) NOT NULL,
+          PRIMARY KEY  (`id`),
+          KEY `tournament_id` (`tournament_id`),
+          KEY `division` (`division`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+    
+    $db->query("
+        ALTER TABLE `tournament_team`
+          ADD CONSTRAINT `tournament_team_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+          ADD CONSTRAINT `tournament_team_ibfk_2` FOREIGN KEY (`division`) REFERENCES `tournament_division` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+}
+
+function createTournamentUpdateTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `tournament_update` (
+          `id` int(11) NOT NULL auto_increment,
+          `tournament_id` int(11) NOT NULL,
+          `posted` datetime NOT NULL,
+          `title` varchar(255) NOT NULL,
+          `content` text NOT NULL,
+          PRIMARY KEY  (`id`),
+          KEY `tournament_id` (`tournament_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+    
+    $db->query("
+        ALTER TABLE `tournament_update`
+          ADD CONSTRAINT `tournament_update_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+}
+
+function createTournamentMemberTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `tournament_member` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `tournament_id` int(11) NOT NULL,
+          `name` varchar(255) NOT NULL,
+          `email` varchar(255) DEFAULT NULL,
+          `type` varchar(100) NOT NULL,
+          `weight` int(11) NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `tournament_id` (`tournament_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+    
+    $db->query("
+        ALTER TABLE `tournament_member`
+          ADD CONSTRAINT `tournament_member_ibfk_2` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+}
 
 function endWithError()
 {

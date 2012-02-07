@@ -5,8 +5,6 @@ require_once realpath(__DIR__ . '/../../') . '/common.php';
 $clubTable = new Cupa_Model_DbTable_Club();
 $clubCaptainTable = new Cupa_Model_DbTable_ClubCaptain();
 
-echo "    Importing `Club` data:\n";
-
 $clubs = array(
     array(
         'name' => 'Steamboat',
@@ -138,8 +136,22 @@ $captains = array(
     ),
 );
 
+$totalClubs = count($clubs);
+
+if(DEBUG) {
+    echo "    Importing `Club` data:\n";
+} else {
+    echo "    Importing $totalClubs Clubs:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalClubs);    
+}
+
+$i = 0;
 foreach($clubs as $club) {
-    echo "        Importing club item `{$club['name']}`...";
+    if(DEBUG) {
+        echo "        Importing club item `{$club['name']}`...";
+    } else {
+        $progressBar->update($i);
+    }
     $clubObject = $clubTable->createRow();
     $clubObject->name = $club['name'];
     $clubObject->type = $club['type'];
@@ -153,16 +165,50 @@ foreach($clubs as $club) {
     $clubObject->updated_at = date('Y-m-d H:i:s');
     $clubObject->last_updated_by = 1;
     $clubObject->save();
-    echo "Done\n";
+    if(DEBUG) {
+        echo "Done\n";
+    }
+    $i++;
 }
 
-echo "        Importing captains...";
+if(!DEBUG) {
+    $progressBar->update($totalClubs);
+    echo "\n";
+}
+
+$totalCaptains = count($captains);
+
+if(DEBUG) {
+    echo "        Importing captains:\n";
+} else {
+    echo "    Importing $totalCaptains Club Captains:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalCaptains);    
+}
+
+$i = 0;
 foreach($captains as $captain) {
+    if(DEBUG) {
+        echo "            Importing captain #{$captain['user_id']}...";
+    } else {
+        $progressBar->update($i);
+    }
+
     $captainObject = $clubCaptainTable->createRow();
     $captainObject->club_id = $captain['club_id'];
     $captainObject->user_id = $captain['user_id'];
     $captainObject->save();
-}
-echo "Done.\n";
 
-echo "    Done\n";
+    if(DEBUG) {
+        echo "Done.\n";
+    }
+
+    $i++;
+}
+
+if(DEBUG) {
+    echo "    Done\n";    
+} else {
+    $progressBar->update($totalCaptains);
+    echo "\n";
+}
+

@@ -5,8 +5,6 @@ require_once realpath(__DIR__ . '/../../') . '/common.php';
 $pickupTable = new Cupa_Model_DbTable_Pickup();
 $userTable = new Cupa_Model_DbTable_User();
 
-echo "    Importing `Pickup` data:\n";
-
 $pickups = array(
     array(
         'title' => 'Winton Woods',
@@ -76,8 +74,23 @@ $pickups = array(
     ),
 );
 
+$totalPickups = count($pickups);
+
+if(DEBUG) {
+    echo "    Importing `Page` data:\n";
+} else {
+    echo "    Importing $totalPickups Pickups:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPickups);    
+}
+
+$i = 0;
 foreach($pickups as $pickup) {
-    echo "        Importing pickup item `{$pickup['title']}`...";
+    if(DEBUG) {
+        echo "        Importing pickup item `{$pickup['title']}`...";
+    } else {
+        $progressBar->update($i);
+    }
+
     $pickupObject = $pickupTable->createRow();
     $pickupObject->title = $pickup['title'];
     $pickupObject->day = $pickup['day'];
@@ -90,7 +103,17 @@ foreach($pickups as $pickup) {
     $pickupObject->weight = $pickupTable->fetchHighestWeight();
     $pickupObject->is_visible = $pickup['is_visible'];
     $pickupObject->save();
-    echo "Done\n";
+
+    if(DEBUG) {
+        echo "Done\n";
+    }
+
+    $i++;
 }
 
-echo "    Done\n";
+if(DEBUG) {
+    echo "    Done\n";
+} else {
+    $progressBar->update($totalPickups);
+    echo "\n";        
+}

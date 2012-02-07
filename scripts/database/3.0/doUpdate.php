@@ -1,7 +1,7 @@
 <?php
 echo "Starting Import:\n";
 try {
-    echo "Importing Data:\n";
+    $begin = microtime(true);
     include('createDbSchema.php');
     include('importUserData.php');
     include('importUserWaiverData.php');
@@ -12,10 +12,10 @@ try {
     include('importMinuteData.php');
     include('importPickupData.php');
     include('importLeagueData.php');
-    echo "Finished\n";
+    include('importTournamentData.php');
+    $end = microtime(true);
 } catch(Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
-    echo "Finished with errors\n";
 }
-echo "Import Finished Successfully.\n";
+echo "Finished Successfully (" . number_format(($end - $begin), 2) . " seconds).\n";
 

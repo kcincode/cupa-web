@@ -7,8 +7,6 @@ $userRoleTable = new Cupa_Model_DbTable_UserRole();
 $userProfileTable = new Cupa_Model_DbTable_UserProfile();
 $userLevelTable = new Cupa_Model_DbTable_UserLevel();
 
-echo "    Importing `User` data:\n";
-
 // get all the user failures
 $failures = array();
 $stmt = $origDb->prepare('SELECT COUNT(*) AS failures, username FROM login_failed GROUP BY username');
@@ -33,12 +31,30 @@ foreach($userLevelTable->fetchAllByWeight() as $row) {
 }
 
 $userTable->getAdapter()->beginTransaction();
+$stmt = $origDb->prepare('SELECT COUNT(id) as num_users FROM users');
+$stmt->execute();
+$numResults = $stmt->fetch();
+
 $stmt = $origDb->prepare('SELECT u.*, us.data FROM users u LEFT JOIN user_stats us ON us.user_id = u.id');
-//$stmt = $origDb->prepare('SELECT * FROM users');
 $stmt->execute();
 
 $email = '';
-foreach($stmt->fetchAll() as $row) {
+$results = $stmt->fetchAll();
+$totalUsers = $numResults['num_users'];
+$i = 0;
+
+if(!DEBUG) {
+    echo "    Importing $totalUsers Users:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalUsers);
+} else {
+    echo "    Importing `User` data:\n";
+}
+
+foreach($results as $row) {
+    if(!DEBUG) {
+        $progressBar->update($i);
+    }
+
     if($email == $row['email']) {
         continue;
     }
@@ -49,7 +65,10 @@ foreach($stmt->fetchAll() as $row) {
     $row['name'] = ucfirst(strtolower($row['name']));
     $row['surname'] = ucfirst(strtolower($row['surname']));
     
-    echo "        Importing user `{$row['name']} {$row['surname']}`...";
+    if(DEBUG) {
+       echo "        Importing user `{$row['name']} {$row['surname']}`...";
+    }
+
     $user = $userTable->createRow();
     $user->id = $row['id'];
     $user->parent = null;
@@ -117,17 +136,41 @@ foreach($stmt->fetchAll() as $row) {
         }
     }
     
-    echo "Done.\n";
+    if(DEBUG) {
+        echo "Done.\n";
+    }
+
+    $i++;
+}
+if(!DEBUG) {
+    $progressBar->update($totalUsers);
 }
 
 $stmt = $origDb->prepare('SELECT * FROM user_minors ORDER BY id');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
+
+$results = $stmt->fetchAll();
+$totalUsers = count($results);
+$i = 0;
+
+if(!DEBUG) {
+    echo "\n    Importing $totalUsers Minors:\n";
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalUsers);
+    
+}
+
+foreach($results as $row) {
+    if(!DEBUG) {
+        $progressBar->update($i);
+    }
+
     // capitalize the first letter
     $row['first_name'] = ucfirst(strtolower($row['first_name']));
     $row['last_name'] = ucfirst(strtolower($row['last_name']));
     
-    echo "        Importing minor user `{$row['first_name']} {$row['last_name']}`...";
+    if(DEBUG) {
+        echo "        Importing minor user `{$row['first_name']} {$row['last_name']}`...";
+    }
     $user = $userTable->createRow();
     $user->parent = $row['parent_id'];
     $user->username = null;
@@ -156,8 +199,17 @@ foreach($stmt->fetchAll() as $row) {
     $userProfile->level = null; 
     $userProfile->experience = null;
     $userProfile->save();
-    echo "Done\n";
+
+    if(DEBUG) {
+        echo "Done\n";
+    }
+    $i++;
 }
 
 $userTable->getAdapter()->commit();
-echo "    Finished Importing Users.\n";
+if(DEBUG) {
+    echo "    Finished Importing Users.\n";
+} else {
+    $progressBar->update($totalUsers);
+    echo "\n";
+}

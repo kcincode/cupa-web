@@ -4,12 +4,25 @@ require_once realpath(__DIR__ . '/../../') . '/common.php';
 // Database table links
 $officerTable = new Cupa_Model_DbTable_Officer();
 
-echo "    Importing `Officer` data:\n";
-
 $stmt = $origDb->prepare('SELECT * FROM officers');
 $stmt->execute();
-foreach($stmt->fetchAll() as $row) {
-    echo "        Importing officer `{$row['position']} #{$row['user_id']}`...";
+$results = $stmt->fetchAll();
+$totalOfficers = count($results);
+
+if(DEBUG) {
+    echo "    Importing `Officer` data:\n";
+} else {
+    echo "    Importing $totalOfficers Officers:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalOfficers);    
+}
+
+$i = 0;
+foreach($results as $row) {
+	if(DEBUG) {
+    	echo "        Importing officer `{$row['position']} #{$row['user_id']}`...";
+	} else {
+		$progressBar->update($i);
+	}
     
     $officer = $officerTable->createRow();
     $officer->user_id = $row['user_id'];
@@ -19,7 +32,16 @@ foreach($stmt->fetchAll() as $row) {
     $officer->weight = $row['order'];
     $officer->save();
     
-    echo "Done\n";
+    if(DEBUG) {
+    	echo "Done\n";
+	}
+
+	$i++;
 }
 
-echo "    Done\n";
+if(DEBUG) {
+	echo "    Done\n";
+} else{
+	$progressBar->update($totalOfficers);
+	echo "\n";
+}
