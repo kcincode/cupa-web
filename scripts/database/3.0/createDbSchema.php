@@ -12,7 +12,7 @@ $db = $userTable->getAdapter();
 
 $dropTables = array('tournament_member','tournament_update', 'tournament_team', 'tournament_information', 'tournament_division',
                     'tournament', 'user_password_reset', 'user_role', 'user_level', 'user_profile', 'page',
-                    'news', 'news_category', 'club_captain', 'club', 'officer', 'pickup', 'league_question_list',
+                    'news', 'news_category', 'club_captain', 'club', 'officer', 'pickup', 'user_emergency', 'league_question_list',
                     'league_answer', 'league_question', 'league_game_data', 'league_game', 'league_member',
                     'league_team', 'league_information', 'league_limit', 'league_location', 'league', 'league_season',
                     'user_waiver', 'user_access_log', 'user', 'contact', 'minute');
@@ -680,6 +680,25 @@ function createLeagueQuestionTable($db)
           `answers` text COLLATE utf8_unicode_ci DEFAULT NULL,
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+}
+
+function createUserEmergencyTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `user_emergency` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `user_id` int(11) NOT NULL,
+          `first_name` varchar(25) NOT NULL,
+          `last_name` varchar(25) NOT NULL,
+          `phone` varchar(12) NOT NULL,
+          `weight` int(11) NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `user_id` (`user_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `user_emergency`
+          ADD CONSTRAINT `user_emergency_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 

@@ -1632,7 +1632,26 @@ class LeagueController extends Zend_Controller_Action
 
     public function emergencyAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/emergency.css');
+
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
+        }
+
+        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $this->view->contacts = $leagueMemberTable->fetchAllEmergencyContacts($leagueId);
+        Zend_Debug::dump($this->view->contacts);
     }
 
     public function statusAction()

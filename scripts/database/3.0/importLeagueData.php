@@ -15,6 +15,7 @@ $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
 $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
 $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
 $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
+$userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
 
 $colorLookupTable = array(
     'sapphire blue' => '#48a0c7',
@@ -652,14 +653,41 @@ foreach($results as $row) {
         $leagueMember->release = ($userProfileTable->isEighteenOrOver($row['user_id'], $league->registration_end)) ? 1 : $row['release'];
         $leagueMember->save();
 
+        $emergencyContacts = array();
         foreach(Zend_Json::decode($row['data']) as $question => $answer) {
-            $leagueQuestion = $leagueQuestionTable->fetchQuestion($question);
-            if($leagueQuestion) {
-                $leagueAnswer = $leagueAnswerTable->createRow();
-                $leagueAnswer->league_member_id = $leagueMember->id;
-                $leagueAnswer->league_question_id = $leagueQuestion->id;
-                $leagueAnswer->answer = $answer;
-                $leagueAnswer->save();
+            if(in_array($question, array('primaryContactName', 'primaryContactPhone', 'secondaryContactName', 'secondaryContactPhone'))) {
+                $num = (substr($question, 0, 3) == 'pri') ? 0 : 1;
+                $key = (substr($question, -4) == 'Name') ? 'name' : 'phone';
+                $emergencyContacts[$leagueMember->user_id][$num][$key] = $answer;
+            } else {
+                $leagueQuestion = $leagueQuestionTable->fetchQuestion($question);
+                if($leagueQuestion) {
+                    $leagueAnswer = $leagueAnswerTable->createRow();
+                    $leagueAnswer->league_member_id = $leagueMember->id;
+                    $leagueAnswer->league_question_id = $leagueQuestion->id;
+                    $leagueAnswer->answer = $answer;
+                    $leagueAnswer->save();
+                }
+            }
+        }
+
+        foreach($emergencyContacts as $userId => $data) {
+            foreach($data as $weight => $info) {
+                $nameData = explode(' ', $info['name']);
+                if(count($nameData) == 1) {
+                    $first = $info['name'];
+                    $last = '';
+                } else if(count($nameData) == 2) {
+                    $first = $nameData[0];
+                    $last = $nameData[1];
+                }
+                $userEmergencyTable->insert(array(
+                    'user_id' => $userId,
+                    'first_name' => ucwords(trim($first)),
+                    'last_name' => ucwords(trim($last)),
+                    'phone' => $info['phone'],
+                    'weight' => $weight,
+                ));
             }
         }
 

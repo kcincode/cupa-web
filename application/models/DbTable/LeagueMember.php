@@ -249,4 +249,9 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
         
         return $data;
     }
+
+    public function fetchAllEmergencyContacts($leagueId)
+    {
+      
+    }
 }
