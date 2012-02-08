@@ -1,0 +1,32 @@
+#emergency {
+	width: 560px;
+	margin: 20px auto;
+}
+
+#emergency .odd div {
+	background-color: #efefef;
+}
+
+#emergency .row .player {
+	width: 300px;
+	float: left;
+	padding: 5px 0 5px 5px;
+}
+
+#emergency .row .data {
+	width: 250px;
+	float: left;
+	padding: 5px 0 5px 5px;
+}
+
+#emergency .header {
+	font-weight: bold;
+	font-size: 14pt;
+	margin-top: 20px;
+	text-decoration: underline;
+}
+
+#admin-buttons {
+	text-align: center;
+	margin: 10px 0;
+}

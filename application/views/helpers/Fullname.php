@@ -19,7 +19,7 @@ class My_View_Helper_Fullname extends Zend_View_Helper_Abstract
             }
             
             return 'Unknown';
-        } else if(get_class($user) == 'Zend_Db_Table') {
+        } else if(is_object($user) and get_class($user) == 'Zend_Db_Table') {
             return $this->view->escape($user->first_name) . ' ' . $this->view->escape($user->last_name);
         } else {
             return 'Unknown';

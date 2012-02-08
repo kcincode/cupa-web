@@ -1,4 +1,29 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>emergency</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<div id="emergency">
+    <h1>Emergency Contacts</h1>
+
+    <div id="admin-buttons">
+        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export List</a>
+    </div>
+
+    <div class="row header">
+    	<div class="player">Player</div>
+    	<div class="data">Name (Phone)</div>
+    </div>
+    <?php $this->cycle(array('even', 'odd')); ?>
+    <?php foreach($this->contacts as $userId => $data): ?>
+        <?php if($userId): ?>
+            <?php $i = 0; ?>
+            <?php $this->cycle()->next(); ?>
+        	<?php foreach($data as $contact): ?>
+
+    	    <div class="row <?php echo $this->cycle(); ?>">
+    	    	<div class="player"><?php echo ($i == 0) ? $this->fullname($userId) : '&nbsp;'; ?></div>
+    	    	<div class="data"><?php echo $this->escape($contact['name']); ?> (<?php echo $this->escape($contact['phone']); ?>)</div>
+    	    </div>
+    	    <?php $i++; ?>
+        	<?php endforeach; ?>
+        <?php endif; ?>
+    <?php endforeach; ?>
+    <div class="clearfix">&nbsp;</div>
 </div>

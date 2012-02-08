@@ -17,6 +17,14 @@ $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
 $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
 $userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
 
+$ignoredPhones = array(
+    '513-555-5555',
+    '555-555-5555',
+    '555-555-1234',
+    '000-000-0000',
+    '111-111-1111',
+);
+
 $colorLookupTable = array(
     'sapphire blue' => '#48a0c7',
     'sapphire' => '#48a0c7',
@@ -673,6 +681,10 @@ foreach($results as $row) {
 
         foreach($emergencyContacts as $userId => $data) {
             foreach($data as $weight => $info) {
+                if(empty($info['phone']) or in_array($info['phone'], $ignoredPhones)) {
+                    continue;
+                }
+
                 $nameData = explode(' ', $info['name']);
                 if(count($nameData) == 1) {
                     $first = $info['name'];
@@ -681,13 +693,22 @@ foreach($results as $row) {
                     $first = $nameData[0];
                     $last = $nameData[1];
                 }
-                $userEmergencyTable->insert(array(
-                    'user_id' => $userId,
-                    'first_name' => ucwords(trim($first)),
-                    'last_name' => ucwords(trim($last)),
-                    'phone' => $info['phone'],
-                    'weight' => $weight,
-                ));
+
+
+                $result = $userEmergencyTable->fetchContact($userId, $info['phone']);
+                if(!$result) {
+                    $userEmergencyTable->insert(array(
+                        'user_id' => $userId,
+                        'first_name' => ucwords(trim($first)),
+                        'last_name' => ucwords(trim($last)),
+                        'phone' => $info['phone'],
+                        'weight' => $weight,
+                    ));
+                } else {
+                    $result->first_name = ucwords(trim($first));
+                    $result->last_name =ucwords(trim($last));
+                    $result->save();
+                }
             }
         }
 

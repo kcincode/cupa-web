@@ -1651,7 +1651,44 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
         $this->view->contacts = $leagueMemberTable->fetchAllEmergencyContacts($leagueId);
-        Zend_Debug::dump($this->view->contacts);
+
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . str_replace(' ', '-', $this->view->leaguename($this->view->league, true, true, true, true)) . '_emergency.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+            
+            echo "player,contacts\n";
+            
+            foreach($this->view->contacts as $userId => $tmp) {
+                if($userId) {
+                    echo $this->view->fullname($userId);
+                    foreach($tmp as $data) {
+                        echo ',' . $data['name'] . ' (' . $data['phone'] . ')';
+                    }
+                    echo "\n";
+                }
+            }
+            
+            flush();
+        }
     }
 
     public function statusAction()

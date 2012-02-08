@@ -252,6 +252,24 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
 
     public function fetchAllEmergencyContacts($leagueId)
     {
-      
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array())
+                       ->joinLeft(array('ue' => 'user_emergency'), 'ue.user_id = lm.user_id')
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array())
+                       ->where('lm.position = ?', 'player')
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->order('u.last_name')
+                       ->order('u.first_name')
+                       ->order('ue.weight ASC');
+
+        $data = array();
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            $data[$row['user_id']][] = array(
+                'name' => $row['first_name'] . ' ' . $row['last_name'],
+                'phone' => $row['phone'],
+            );
+        }
+
+        return $data;
     }
 }
