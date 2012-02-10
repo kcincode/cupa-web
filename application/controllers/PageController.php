@@ -942,4 +942,30 @@ class PageController extends Zend_Controller_Action
         
         $this->view->form = $form;
     }
+
+    public function formsAction()
+    {
+        $type = $this->getRequest()->getUserParam('type');
+        $year = $this->getRequest()->getUserParam('year');
+
+        Zend_Debug::dump($type);
+        Zend_Debug::dump($year);
+
+        //TODO: Display selected form
+
+        //TODO: Display all forms
+
+        //TODO: allow admins/editors to upload/remove forms
+    }
+
+    public function formsaddAction()
+    {
+        // action body
+    }
+
+    public function formseditAction()
+    {
+        // action body
+    }
+
 }

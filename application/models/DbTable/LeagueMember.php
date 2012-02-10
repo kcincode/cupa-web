@@ -272,4 +272,19 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
 
         return $data;
     }
+
+    public function fetchUserRegistrants($leagueId, $userIds)
+    {
+        $select = $this->select()
+                       ->where('position = ?', 'player')
+                       ->where('league_id = ?', $leagueId);
+
+        if(is_array($userIds)) {
+            $select->where('user_id IN (' . implode(',', $userIds) . ')');
+        } else if(is_numeric($userIds)) {
+            $select->where('user_id = ?', $userIds);
+        }
+
+        return $this->fetchAll($select);
+    }
 }

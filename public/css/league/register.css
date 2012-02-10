@@ -1,0 +1,129 @@
+h1 {
+	margin-bottom: 20px;
+}
+
+h2 {
+	margin: 0 0 25px 25px;
+	text-decoration: underline;
+}
+
+#register-user dt,
+#register-personal dt {
+	width: 150px;
+	float: left;
+	text-align: right;
+	padding-top: 7px;
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+#register-user input[type=text],
+#register-personal input[type=text] {
+	padding: 5px;
+}
+
+#register-user select,
+#register-personal select {
+	margin-top: 5px;
+	font-weight: 14pt;
+}
+
+#register-user p.description,
+#register-personal p.description {
+	color: #808080;
+	margin: 0 0 15px 120px;
+	padding: 0;
+	font-size: 8pt;
+}
+
+p.message {
+	text-align: center;
+	font-size: 14pt;
+}
+
+#contacts {
+	width: 400px;
+	margin: 10px 0 10px 100px;
+}
+
+#contacts .row .name {
+	width: 250px;
+	float: left;
+}
+
+#contacts .row .name input {
+	width: 225px;
+}
+
+#contacts .row .phone {
+	width: 90px;
+	float: left;
+}
+
+#contacts .row .phone input {
+	width: 70px;
+}
+
+#contacts .row .action {
+	width: 50px;
+	float: left;
+}
+
+#contacts .row .action img {
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+}
+
+#birthday {
+	width: 70px;
+	text-align: center;
+}
+
+#register-user .form-buttons,
+#register-personal .form-buttons,
+#register-league .form-buttons {
+	width: 800px;
+	text-align: center;
+	margin: 20px auto;
+	border-top: 2px solid #888;
+	padding: 10px;
+}
+
+#email {
+	width: 250px;
+}
+
+#phone {
+	width: 75px;
+}
+
+#height {
+	width: 40px;
+	text-align: center;
+}
+
+ul.errors {
+	color: #c00;
+	font-weight: bold;
+	margin-left: 80px;
+	list-style: none;
+}
+
+#register-league dt {
+	font-weight: bold;
+	font-size: 12pt;
+	margin-left: 50px;	
+}
+
+#register-league dd {
+	margin: 5px 0 15px 55px;
+}
+
+#register-league ul.errors {
+	color: #c00;
+	font-weight: bold;
+	margin: 0 0 30px -40px;
+	list-style: none;
+}
+

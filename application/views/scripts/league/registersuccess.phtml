@@ -1,0 +1,55 @@
+<div id="register-success">
+	<h1>Registration Successful</h1>
+	<h1><?php echo $this->leaguename($this->league->id, true, true, true, true); ?></h1>
+
+	<h2>Players Registered</h2>
+
+	<div class="players">
+		<div class="row header">
+			<div class="name">Player</div>
+			<div class="paid">Paid</div>
+			<div class="release">Release</div>
+			<div class="waiver">Waiver</div>
+		</div>
+	<?php $this->cycle(array('even', 'odd')); ?>
+	<?php foreach($this->players as $player): ?>
+		<div class="row <?php echo $this->cycle()->next(); ?>">
+			<div class="name"><?php echo $this->fullname($player['user_id']); ?></div>
+			<div class="paid"><?php echo ($player['paid'] == 1) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
+			<div class="release"><?php echo ($player['release'] == 1) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
+			<div class="waiver"><?php echo ($this->hasUserSignedWaiver($player['user_id'], $this->league->year)) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
+		</div>
+	<?php endforeach; ?>
+	</div>
+	<div class="clearfix">&nbsp;</div>
+
+	<h2>Payment Information</h2>
+	<p>The cost of this league is: $<?php echo $this->escape($this->cost); ?></p>
+	<?php if(!empty($this->paypal)): ?>
+	<p>If you are not paying online, bring your payment with you on the first night or you risk being removed from the league.</p>
+
+	<p>Use this button to make a payment via paypal: 
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+			<input type="hidden" name="cmd" value="_s-xclick"/>
+			<input type="hidden" name="hosted_button_id" value="<?php echo $this->escape($this->paypal); ?>"/>
+			<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"/>
+			<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"/>
+		</form>
+	</p>
+	<?php else: ?>
+	<p>Please bring your payment with you on the first night or you risk being removed from the league.</p>
+	<?php endif; ?>
+
+	<h2>Liability Forms</h2>
+	<p>Waivers are only required for the first CUPA event you participate in for <?php echo $this->escape($this->league->year); ?>.  If you haven't participated yet this year, please fill out the form below and bring it with you on the first night.</p>
+
+	<p>If you are <span class="highlight">18 or over</span> please click here to download and sign your waiver.</p>
+
+	<p>If you are <span class="highlight">16 and 18</span> please click here to download the waiver form for your parent to sign.  Also you must click here to download the medical release form and have your parents sign that as well.</p>
+
+	<p>If you have trouble downloading these forms you may need Adobe Acrobat Reader.  To get it free <a href="http://get.adobe.com/reader/">click here</a>.</p>
+
+	<p>If you have other trouble please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a></p>
+
+
+</div>

@@ -1,0 +1,51 @@
+<div id="register-<?php echo $this->escape($this->state); ?>">
+    <h1><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h1>
+
+    <?php if(!Zend_Auth::getInstance()->hasIdentity()): ?>
+        <p class="message">Please use the login link in the upper right before registering.</p>
+    <?php else: ?>
+    <h2><?php echo $this->title; ?></h2>
+    <form method="post">
+        <?php foreach($this->form->getElements() as $element): ?>
+        <?php echo $element; ?>
+        <?php endforeach; ?>
+
+        <?php if($this->state == 'personal'): ?>
+        <h2>Emergency Contacts</h2>
+        <div id="contacts">
+            <i>You must have at least 2 emergency contacts</i><br/><br/>
+            <a class="button" id="add-contact" href="#">Add Contact</a><br/><br/>
+            <?php if(count($this->contacts)): ?>
+            <div class="row header">
+                <div class="name">Name</div>
+                <div class="phone">Phone</div>
+                <div class="action">&nbsp;</div>
+            </div>
+            <?php foreach($this->contacts as $contact): ?>
+            <div class="row">
+                <div class="name"><input type="text" name="contactNames[]" value="<?php echo $this->escape($contact['first_name']) . ' ' . $this->escape($contact['last_name']); ?>"/></div>
+                <div class="phone"><input type="text" name="contactPhones[]" value="<?php echo $this->escape($contact['phone']); ?>"/></div>
+                <div class="action"><img class="remove-contact" title="Remove Contact" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></div>
+            </div>
+            <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+        <div class="clearfix">&nbsp;</div>
+        <?php endif; ?>
+        <div class="form-buttons">
+            <?php if($this->state != 'user'): ?>
+            <input class="button" type="submit" name="back" value="Back"/>
+            <?php endif; ?>
+
+            <?php if($this->state != 'league'): ?>
+            <input class="button" type="submit" id="next-<?php echo $this->escape($this->state); ?>" name="next" value="Next"/>
+            <?php endif; ?>
+
+            <?php if($this->state == 'league'): ?>
+            <input class="button" type="submit" name="save" value="Finish Registration"/>
+            <?php endif; ?>
+        </div>
+    </form>
+
+    <?php endif; ?>
+</div>

@@ -15,7 +15,7 @@ $dropTables = array('tournament_member','tournament_update', 'tournament_team', 
                     'news', 'news_category', 'club_captain', 'club', 'officer', 'pickup', 'user_emergency', 'league_question_list',
                     'league_answer', 'league_question', 'league_game_data', 'league_game', 'league_member',
                     'league_team', 'league_information', 'league_limit', 'league_location', 'league', 'league_season',
-                    'user_waiver', 'user_access_log', 'user', 'contact', 'minute');
+                    'user_waiver', 'user_access_log', 'user', 'contact', 'minute', 'form');
 
 $createTables = array_reverse($dropTables);
 $totalTables = count($dropTables);
@@ -117,7 +117,7 @@ function createUserTable($db)
           UNIQUE KEY `email` (`email`),
           UNIQUE KEY `activation_code` (`activation_code`),
           KEY `parent` (`parent`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `user`
@@ -146,7 +146,7 @@ function createContactTable($db)
           PRIMARY KEY (`id`),
           UNIQUE KEY `name` (`name`),
           UNIQUE KEY `email` (`email`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     foreach($contacts as $contact) {
         $GLOBALS['contactTable']->insert($contact);
@@ -204,7 +204,7 @@ function createUserLevelTable($db)
           `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
           `weight` int(11) NOT NULL DEFAULT '0',
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     foreach($levels as $level) {
         $GLOBALS['userLevelTable']->insert($level);
@@ -221,7 +221,7 @@ function createUserProfileTable($db)
           `phone` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
           `nickname` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
           `height` int(11) DEFAULT NULL,
-          `level` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `level` int(11) DEFAULT NULL,
           `experience` int(11) DEFAULT NULL,
           PRIMARY KEY (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -243,7 +243,7 @@ function createUserWaiverTable($db)
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`),
           KEY `modified_by` (`modified_by`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `user_waiver`
@@ -263,7 +263,7 @@ function createUserAccessLogTable($db)
           `type` enum('login-success','login-failed','logout') COLLATE utf8_unicode_ci NOT NULL,
           `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");  
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");  
 }
 
 function createPageTable($db)
@@ -287,7 +287,7 @@ function createPageTable($db)
           KEY `parent` (`parent`),
           KEY `created_by` (`created_by`),
           KEY `last_updated_by` (`last_updated_by`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 
     $db->query("
         ALTER TABLE `page`
@@ -307,7 +307,7 @@ function createUserRoleTable($db)
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`),
           KEY `page_id` (`page_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `user_role`
@@ -328,7 +328,7 @@ function createUserPasswordResetTable($db)
           PRIMARY KEY (`id`),
           UNIQUE KEY `code` (`code`),
           KEY `user_id` (`user_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `user_password_reset`
@@ -343,7 +343,7 @@ function createNewsCategoryTable($db)
           `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
           PRIMARY KEY (`id`),
           UNIQUE KEY `name` (`name`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
   
 }
 
@@ -369,7 +369,7 @@ function createNewsTable($db)
           KEY `last_edited_by` (`last_edited_by`),
           KEY `posted_by` (`posted_by`),
           KEY `category_id` (`category_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `news`
@@ -396,7 +396,7 @@ function createClubTable($db)
           `last_updated_by` int(11) DEFAULT NULL,
           PRIMARY KEY (`id`),
           KEY `last_updated_by` (`last_updated_by`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `club`
@@ -414,7 +414,7 @@ function createClubCaptainTable($db)
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`),
           KEY `club_id` (`club_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `club_captain`
@@ -434,7 +434,7 @@ function createOfficerTable($db)
           `weight` int(11) NOT NULL,
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `officer`
@@ -452,7 +452,7 @@ function createMinuteTable($db)
           `pdf` longblob,
           `is_visible` tinyint(1) NOT NULL DEFAULT '1',
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");  
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");  
 }
 
 function createPickupTable($db)
@@ -862,11 +862,27 @@ function createTournamentMemberTable($db)
           `weight` int(11) NOT NULL,
           PRIMARY KEY (`id`),
           KEY `tournament_id` (`tournament_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
     
     $db->query("
         ALTER TABLE `tournament_member`
           ADD CONSTRAINT `tournament_member_ibfk_2` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+}
+
+fuction createFormTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `forms` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `year` int(11) DEFAULT NULL,
+          `name` varchar(50) NOT NULL,
+          `data` longblob NOT NULL,
+          `type` varchar(50) NOT NULL,
+          `uploaded_at` datetime NOT NULL,
+          `modified_at` datetime NOT NULL,
+          `modified_by` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 }
 
 function endWithError()

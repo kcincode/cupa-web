@@ -740,21 +740,6 @@ class LeagueController extends Zend_Controller_Action
         }
     }
 
-    public function formsAction()
-    {
-        // action body
-    }
-
-    public function formsaddAction()
-    {
-        // action body
-    }
-
-    public function formseditAction()
-    {
-        // action body
-    }
-
     public function teamsAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
@@ -1777,6 +1762,263 @@ class LeagueController extends Zend_Controller_Action
             
             flush();
         }
+    }
+
+    public function registerAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/register.css');
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/register.js');
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        // stop if user not logged in
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            return;
+        }
+
+        $session = new Zend_Session_Namespace('registration' . $leagueId);
+        $state = $this->getRequest()->getUserParam('state');
+        $userTable = new Cupa_Model_DbTable_User();
+
+        $form = new Cupa_Form_LeagueRegister($leagueId, $this->view->user->id, $state);
+        if($state == 'user') {
+            // reset registration data
+            $session->unsetAll();
+
+            if(!$userTable->hasMinors($this->view->user->id)) {
+                $session->registrantId = $this->view->user->id;
+                $this->_redirect('league/' . $leagueId . '/register/personal');
+            }
+
+            // handle post request
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+
+                if(isset($post['back'])) {
+                    $this->_redirect('league/' . $leagueId . '/register/user');
+                }
+
+                if($form->isValid($post)) {
+                    $session->registrantId = $post['user'];
+                    $this->_redirect('league/' . $leagueId . '/register/personal');
+                } else {
+                    $form->populate($post);
+                }
+            }
+
+        } else if($state == 'personal') {
+            $userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
+            $this->view->contacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
+            unset($session->personal);
+            // handle post request
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+
+                if(isset($post['back'])) {
+                    $this->_redirect('league/' . $leagueId . '/register/user');
+                }
+
+                if($form->isValid($post)) {
+                    unset($post['next']);
+                    //store the data in the session
+                    $session->personal = $post;
+
+                    $this->_redirect('league/' . $leagueId . '/register/league');
+                } else {
+                    $this->view->message('There are errors with the infromation you have entered, please correct them.', 'error');
+                    $form->populate($post);
+
+                    $userTable = new Cupa_Model_DbTable_User();
+                    $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+
+                    $user = $userTable->find($session->registrantId)->current();
+                    $userProfile = $userProfileTable->find($session->registrantId)->current();
+                    if(!empty($user->parent)) {
+                        $parent = $userTable->find($user->parent)->current();
+                        $parentProfile = $userProfileTable->find($user->parent)->current();
+
+                        $user->email = $parent->email;
+                        $userProfile->phone = $parentProfile->phone;
+                    }
+
+                    $form->getElement('email')->setValue($user->email);
+                    $form->getElement('phone')->setValue($userProfile->phone);
+                }
+            }
+            
+        } else  if($state == 'league') {
+            unset($session->league);
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+
+                if(isset($post['back'])) {
+                    $this->_redirect('league/' . $leagueId . '/register/personal');
+                }
+
+                if($form->isValid($post)) {
+                    unset($post['save']);
+                    $session->league = $post;
+
+                    // all data entered save the registrant
+                    $userTable = new Cupa_Model_DbTable_User();
+                    $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+
+                    $user = $userTable->find($session->registrantId)->current();
+                    $userProfile = $userProfileTable->find($session->registrantId)->current();
+                    $user->first_name = $session->personal['first_name'];
+                    $user->last_name = $session->personal['last_name'];
+
+                    // only update the user email/phone if they are not a minor
+                    if(!empty($user->parent)) {
+                        $user->email = $session->personal['email'];
+                        $userProfile->phone = $session->personal['phone'];
+                    }
+
+                    $userProfile->gender = $session->personal['gender'];
+                    $userProfile->birthday = $session->personal['birthday'];
+                    $userProfile->nickname = $session->personal['nickname'];
+                    $userProfile->height = $session->personal['height'];
+                    $userProfile->level = $session->personal['level'];
+                    $userProfile->experience = $session->personal['experience'];
+
+                    $userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
+                    $i = 0;
+                    foreach($session->personal['contactNames'] as $contactName) {
+                        $contactPhone = $session->personal['contactPhones'][$i];
+
+                        $allContacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
+
+                        // remove contacts that are no longer in db
+                        foreach($allContacts as $contact) {
+                            if(!in_array($contact->phone, $session->personal['contactPhones'])) {
+                                $contact->delete();
+                            }
+                        }
+
+                        $contact = $userEmergencyTable->fetchContact($session->registrantId, $contactPhone);
+                        if(!$contact) {
+                            $nameData = explode(' ', $contactName);
+                            if(count($nameData) == 1) {
+                                $first = $info['name'];
+                                $last = '';
+                            } else if(count($nameData) == 2) {
+                                $first = $nameData[0];
+                                $last = $nameData[1];
+                            }
+
+                            $userEmergencyTable->insert(array(
+                                'user_id' => $session->registrantId,
+                                'first_name' => ucwords(trim($first)),
+                                'last_name' => ucwords(trim($last)),
+                                'phone' => $contactPhone,
+                                'weight' => $i,
+                            ));
+                        }
+
+                        $i++;
+                    }
+
+                    $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                    $leagueMemberId = $leagueMemberTable->insert(array(
+                        'league_id' => $leagueId,
+                        'user_id' => $session->registrantId,
+                        'position' => 'player',
+                        'league_team_id' => null,
+                        'paid' => 0,
+                        'release' => ($this->view->displayAge($session->personal['birthday']) >= 18) ? 1 :0,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'modified_at' => date('Y-m-d H:i:s'),
+                        'modified_by' => $this->view->user->id,
+                    ));
+
+                    $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+                    $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
+                    foreach($session->league as $questionName => $answer) {
+                        $question = $leagueQuestionTable->fetchQuestion($questionName);
+                        $leagueAnswerTable->insert(array(
+                            'league_member_id' => $leagueMemberId,
+                            'league_question_id' => $question->id,
+                            'answer' => $answer,
+                        ));
+                    }
+
+                    // redirect to success/payment screen
+                    $this->view->message('You have successfully registered for ' . $this->view->leaguename($leagueId, true, true, true, true));
+
+                    $session->unsetAll();
+                    $this->_redirect('league/' . $leagueId . '/register_success');
+
+                } else {
+                    $this->view->message('There are errors with the infromation you have entered, please correct them.', 'error');
+                    $form->populate($post);
+                }
+            }
+        }
+
+        switch($state) {
+            case 'user':
+                $title = 'Select a user to register as';
+                break;
+            case 'personal':
+                $title = 'Enter or check your personal data';
+                break;
+            case 'league':
+                $title = 'Answer the league questions';
+                break;
+        }
+
+        $this->view->title = $title;
+        $this->view->state = $state;
+        $this->view->form = $form;
+        
+    }
+
+    public function registersuccessAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/registersuccess.css');
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Cupa_Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        // stop if user not logged in
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            return;
+        }
+
+        $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+        $information = $leagueInformationTable->fetchInformation($leagueId);
+        $this->view->paypal = $information->paypal_code;
+        $this->view->cost = $information->cost;
+
+        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $userTable = new Cupa_Model_DbTable_User();
+
+        $minors = $userTable->fetchAllMinors($this->view->user->id);
+        $userIds = array();
+        $userIds[] = $this->view->user->id;
+        foreach($minors as $id => $minor) {
+            $userIds[] = $id;
+        }
+
+        $this->view->players = $leagueMemberTable->fetchUserRegistrants($leagueId, $userIds);
     }
 
     public function manageAction()

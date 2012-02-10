@@ -170,4 +170,33 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
 
         return $data;
     }
+
+    public function hasMinors($userId)
+    {
+        $select = $this->select()
+                       ->where('parent = ?', $userId);
+
+        $results = $this->fetchAll($select);
+
+        return (count($results) == 0) ? false : true;
+    }
+
+    public function fetchAllMinors($userId)
+    {
+        $select = $this->select()
+                       ->where('parent = ?', $userId)
+                       ->order('last_name')
+                       ->order('first_name');
+
+        $results = $this->fetchAll($select);
+
+        $data = array();
+        if($results) {
+            foreach($results as $row) {
+                $data[$row['id']] = $row['first_name'] . ' ' . $row['last_name'];
+            }
+        }
+
+        return $data;
+    }
 }
