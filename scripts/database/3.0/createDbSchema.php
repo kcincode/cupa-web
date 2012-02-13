@@ -869,7 +869,7 @@ function createTournamentMemberTable($db)
           ADD CONSTRAINT `tournament_member_ibfk_2` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
 }
 
-fuction createFormTable($db)
+function createFormTable($db)
 {
     $db->query("
         CREATE TABLE IF NOT EXISTS `forms` (

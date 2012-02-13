@@ -19,6 +19,10 @@
     -webkit-box-shadow: 0 -1px 10px #808c21
 }
 
+section {
+    overflow-y: auto;
+}
+
 section .all {
     float: right;
     font-size: 10pt;
@@ -56,7 +60,7 @@ section p {
 
 .lower section {
     width: 310px;
-    height: 215px;
+    height: 335px;
     float: left;
     background: #fff;
     padding: 5px;

@@ -40,7 +40,7 @@ class My_View_Helper_GetLeagueRegistrationMessage extends Zend_View_Helper_Abstr
 
         $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
         $genders = $leagueMemberTable->fetchAllPlayersByGender($leagueId);
-        $totalPlayers = $genders['male_players'] + $gender['female_players'];
+        $totalPlayers = $genders['male_players'] + $genders['female_players'];
         if($totalPlayers >= $leagueLimit->total_players) {
             return 'League registration is full with ' . $leagueLimit->total_players . ' players.';
         }

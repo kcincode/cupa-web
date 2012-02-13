@@ -27,7 +27,8 @@ class Cupa_Model_DbTable_News extends Zend_Db_Table
     {
         $select = $this->getAdapter()->select()
                        ->from(array('n' => 'news'), array('*'))
-                       ->joinLeft(array('nc' => 'news_category'), 'nc.id = n.category_id', array('name AS category'));
+                       ->joinLeft(array('nc' => 'news_category'), 'nc.id = n.category_id', array('name AS category'))
+                       ->order('n.posted_at DESC');
         
         if(!$ignoreVisibility) {
             $select->where('n.is_visible = ?', 1);

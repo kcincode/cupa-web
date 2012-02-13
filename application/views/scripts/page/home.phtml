@@ -2,13 +2,13 @@
         <section class="tourney">
             <h2>Tournaments/Leagues</h2>
             <div class="all">(<a href="<?php echo $this->url(array('category' => 'league'), 'news'); ?>">View All</a>)</div>
-            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['league'])); ?>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['league'], 'numItems' => 3)); ?>
         </section>
   
         <section class="pickup">
             <h2>Pick-Up Around Cincy</h2>
             <div class="all">(<a href="<?php echo $this->url(array('category' => 'pickup'), 'news'); ?>">View All</a>)</div>
-            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['pickup'])); ?>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['pickup'], 'numItems' => 3)); ?>
         </section>
     </div>
   
@@ -16,7 +16,7 @@
         <section class="youth">
             <h2>Youth Ultimate</h2>
             <div class="all">(<a href="<?php echo $this->url(array('category' => 'youth'), 'news'); ?>">View All</a>)</div>
-            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['youth'])); ?>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['youth'], 'numItems' => 6)); ?>
         </section>
   
         <section class="calendar">
@@ -32,6 +32,6 @@
   
         <section class="information">
             <h2>Stay Informed</h2>
-            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['info'])); ?>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['info'], 'numItems' => 5)); ?>
         </section>
     </div>

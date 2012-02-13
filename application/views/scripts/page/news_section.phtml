@@ -1,4 +1,5 @@
-<?php foreach($this->data as $category => $item): ?>
+<?php $i = 0; foreach($this->data as $category => $item): ?>
+<?php if($i < $this->numItems): ?>
 
 <?php if($item['type'] == 'internal'): ?>
     <h3><?php echo $this->escape($item['title']); ?> (<a href="<?php echo $this->baseUrl(); ?>/<?php echo $this->escape($item['url']); ?>">Info</a>)</h3>
@@ -16,4 +17,7 @@
     <h3><?php echo $this->escape($item['title']); ?></h3>
 <?php endif; ?>
     <p><?php echo $item['info']; ?></p>
+
+<?php endif; ?>
+<?php $i++; ?>
 <?php endforeach; ?>
