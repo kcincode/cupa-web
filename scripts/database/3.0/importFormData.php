@@ -18,12 +18,6 @@ $data = array(
         'type' => 'pdf',
     ),
     array(
-        'year' => '2010',
-        'name' => 'release',
-        'location' => 'forms/2010_medical_authorization.pdf',
-        'type' => 'pdf',
-    ),
-    array(
         'year' => '2011',
         'name' => 'waiver',
         'location' => 'forms/2011_waiver.pdf',
@@ -65,46 +59,133 @@ $data = array(
         'location' => 'forms/2011_primary_outreach_1.2.pdf',
         'type' => 'pdf',
     ),
+    array(
+        'year' => '2010',
+        'name' => 'ysl_hs_waiver',
+        'location' => 'forms/2010_ysl_hs_waiver.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2010',
+        'name' => 'ysl_jr_waiver',
+        'location' => 'forms/2010_ysl_jr_waiver.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2010',
+        'name' => 'yuc_tournament_a',
+        'location' => 'forms/2010_yuc_tournament_a.docx',
+        'type' => 'docx',
+    ),
+    array(
+        'year' => '2010',
+        'name' => 'yuc_tournament_b',
+        'location' => 'forms/2010_yuc_tournament_b.docx',
+        'type' => 'docx',
+    ),
+    array(
+        'year' => '2010',
+        'name' => 'yuc_tournament_c',
+        'location' => 'forms/2010_yuc_tournament_c.docx',
+        'type' => 'docx',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'chusl_summer_clinics',
+        'location' => 'forms/2011_chusl_summer_clinics.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'cupa_youth_chaperon_release',
+        'location' => 'forms/2011_cupa_youth_chaperon_release.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'u16_open_flyer',
+        'location' => 'forms/2011_u16_open_flyer.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'u19_girls_flyer',
+        'location' => 'forms/2011_u19_girls_flyer.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'u19_open_flyer',
+        'location' => 'forms/2011_u19_open_flyer.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'yuc_tournament_a',
+        'location' => 'forms/2011_yuc_tournament_a.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'yuc_tournament_b',
+        'location' => 'forms/2011_yuc_tournament_b.pdf',
+        'type' => 'pdf',
+    ),
+    array(
+        'year' => '2011',
+        'name' => 'yuc_tournament_c',
+        'location' => 'forms/2011_yuc_tournament_c.pdf',
+        'type' => 'pdf',
+    ),
 );
 
-$totalMinutes = count($data);
+$totalForms = count($data);
 
 if(DEBUG) {
-    echo "    Importing `Minutes` data:\n";
+    echo "    Importing `Form` data:\n";
 } else {
-    echo "    Importing $totalMinutes Minutes:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalMinutes);    
+    echo "    Importing $totalForms Forms:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalForms);    
 }
 
 $i = 0;
 foreach($data as $row) {
-    $filesize = filesize(__DIR__ . '/' . $row['pdf']);
-    $fp = fopen(__DIR__ . '/' . $row['pdf'], 'r');
+    $filesize = filesize(__DIR__ . '/' . $row['location']);
+    $md5 = md5_file(__DIR__ . '/' . $row['location']);
+    $fp = fopen(__DIR__ . '/' . $row['location'], 'r');
+    if($fp) {
     
-    if(DEBUG) {
-        echo "        Importing minutes `{$row['when']} {$row['location']}`...";
-    } else {
-        $progressBar->update($i);        
+        if(DEBUG) {
+            echo "        Importing form `{$row['year']}_{$row['name']}.{$row['type']}`...";
+        } else {
+            $progressBar->update($i);        
+        }
+
+        $formTable = new Cupa_Model_DbTable_Form();
+        $form = $formTable->createRow();
+        $form->year = $row['year'];
+        $form->name = $row['name'];
+        $form->data = addslashes(fread($fp, $filesize));
+        $form->type = $row['type'];
+        $form->size = $filesize;
+        $form->md5 = $md5;
+        $form->uploaded_at = date('Y-m-d H:i:s');
+        $form->modified_at = date('Y-m-d H:i:s');
+        $form->modified_by = 1;
+        $form->save();
+        fclose($fp);
+
+        if(DEBUG) {
+            echo "Done\n";
+        }
+
+        $i++;
     }
-
-    $minute = $minuteTable->createRow();
-    $minute->when = $row['when'];
-    $minute->location = $row['location'];
-    $minute->pdf = addslashes(fread($fp, $filesize));
-    $minute->is_visible = $row['is_visible'];
-    $minute->save();
-    fclose($fp);
-
-    if(DEBUG) {
-        echo "Done\n";
-    }
-
-    $i++;
 }
 
 if(DEBUG) {
     echo "    Done\n";
 } else {
-    $progressBar->update($totalMinutes);
+    $progressBar->update($totalForms);
     echo "\n";
 }

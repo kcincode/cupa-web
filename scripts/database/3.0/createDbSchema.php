@@ -15,7 +15,7 @@ $dropTables = array('tournament_member','tournament_update', 'tournament_team', 
                     'news', 'news_category', 'club_captain', 'club', 'officer', 'pickup', 'user_emergency', 'league_question_list',
                     'league_answer', 'league_question', 'league_game_data', 'league_game', 'league_member',
                     'league_team', 'league_information', 'league_limit', 'league_location', 'league', 'league_season',
-                    'user_waiver', 'user_access_log', 'user', 'contact', 'minute', 'form');
+                    'user_waiver', 'user_access_log', 'form', 'user', 'contact', 'minute');
 
 $createTables = array_reverse($dropTables);
 $totalTables = count($dropTables);
@@ -866,23 +866,31 @@ function createTournamentMemberTable($db)
     
     $db->query("
         ALTER TABLE `tournament_member`
-          ADD CONSTRAINT `tournament_member_ibfk_2` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `tournament_member_ibfk_2` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createFormTable($db)
 {
     $db->query("
-        CREATE TABLE IF NOT EXISTS `forms` (
+        CREATE TABLE IF NOT EXISTS `form` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `year` int(11) DEFAULT NULL,
           `name` varchar(50) NOT NULL,
           `data` longblob NOT NULL,
           `type` varchar(50) NOT NULL,
+          `size` int(11) NOT NULL,
+          `md5` varchar(32) NOT NULL,
           `uploaded_at` datetime NOT NULL,
           `modified_at` datetime NOT NULL,
           `modified_by` int(11) DEFAULT NULL,
-          PRIMARY KEY (`id`)
+          PRIMARY KEY (`id`),
+          UNIQUE KEY `md5` (`md5`),
+          KEY `modified_by` (`modified_by`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+            ALTER TABLE `form`
+              ADD CONSTRAINT `form_ibfk_1` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
 }
 
 function endWithError()

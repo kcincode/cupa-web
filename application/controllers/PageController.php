@@ -945,17 +945,51 @@ class PageController extends Zend_Controller_Action
 
     public function formsAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/forms.css');
+
         $type = $this->getRequest()->getUserParam('type');
         $year = $this->getRequest()->getUserParam('year');
 
-        Zend_Debug::dump($type);
-        Zend_Debug::dump($year);
+        $formTable = new Cupa_Model_DbTable_Form();
+        $this->view->forms = $formTable->fetchForms($type, $year);
 
-        //TODO: Display selected form
+        if($type != 'all' and $year != 0) {
+            $form = $this->view->forms;
 
-        //TODO: Display all forms
+            if(empty($form)) {
+                $this->_redirect('forms');
+            }
 
-        //TODO: allow admins/editors to upload/remove forms
+            // download the form
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . $form['year'] . '_' . $form['name'] . '.' . $form['type'] . '";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+
+            echo stripslashes($form['data']);
+            flush();
+
+            return;
+        } else {
+            
+        }
     }
 
     public function formsaddAction()
@@ -965,7 +999,60 @@ class PageController extends Zend_Controller_Action
 
     public function formseditAction()
     {
-        // action body
+        $type = $this->getRequest()->getUserParam('type');
+        $year = $this->getRequest()->getUserParam('year');
+
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchByName('name', 'forms');
+
+        if($type == 'all' or $year == 0 or !$page) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
+            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
+            $this->_redirect('/forms');
+        }
+
+        $formTable = new Cupa_Model_DbTable_Form();
+        $form = $formTable->fetchForms($type, $year);
+    }
+
+    public function formsdeleteAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $formTable = new Cupa_Model_DbTable_Form();
+        $formId = $this->getRequest()->getUserParam('form_id');
+        $form = $formTable->find($formId)->current(); 
+
+        $pageTable = new Cupa_Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'forms');
+
+        if(!$form or !$page) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
+            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
+            $this->_redirect('/forms');
+        }
+
+        $this->view->message('Form ' . $form->year . '_' . $form->name . ' deleted successfully.', 'success');
+        $form->delete();
+        $this->_redirect('forms');
     }
 
 }

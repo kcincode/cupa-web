@@ -1,4 +1,40 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>forms</b></p>
+<h1>CUPA Forms</h1>
+
+<div class="admin-buttons">
+	<a class="button" href="#">Add Form</a>
+</div>
+
+<div id="forms">
+	<?php $this->cycle(array('even', 'odd')); ?>
+	<?php foreach($this->forms as $year => $forms): ?>
+	<h2><a href="<?php echo $this->url(array('type' => 'all', 'year' => $year), 'page_forms'); ?>"><?php echo $this->escape($year); ?> Forms</a></h2>
+	<div class="row header">
+		<div class="name">Name</div>
+		<div class="type">Type</div>
+		<div class="size">Size</div>
+		<div class="actions">&nbsp;</div>
+	</div>
+
+	<?php foreach($forms as $form): ?>
+	<div class="row <?php echo $this->cycle()->next(); ?>">
+		<div class="name">
+			<a href="<?php echo $this->url(array('type' => $form->name, 'year' => 0), 'page_forms'); ?>"><?php echo $this->escape($form->name); ?></a>
+		</div>
+		<div class="type"><?php echo $this->escape($form->type); ?></div>
+		<div class="size"><?php echo $this->filesize($form->size); ?></div>
+		<div class="actions">
+			<?php if(file_exists(APPLICATION_PATH . '/../public/images/ico-' . $form->type . '.png')): ?>
+			<a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-<?php echo $this->escape($form->type); ?>.png" title="Download"/></a>
+			<?php else: ?>
+			<img src="<?php echo $this->baseUrl(); ?>/images/ico-download.png" title="Download"/>
+			<?php endif; ?>
+			<img src="<?php echo $this->baseUrl(); ?>/images/ico-uparrow.png" title="Re-Upload"/>
+			<a onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>">
+				<img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Delete"/>
+			</a>
+		</div>
+	</div>
+	<?php endforeach; ?>
+	<div class="clearfix">&nbsp;</div>
+	<?php endforeach; ?>
 </div>

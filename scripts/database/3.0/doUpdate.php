@@ -13,6 +13,7 @@ try {
     include('importPickupData.php');
     include('importLeagueData.php');
     include('importTournamentData.php');
+    include('importFormData.php');
     $end = microtime(true);
 } catch(Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
