@@ -1781,6 +1781,12 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
+        // do registration checks to make sure a user is able to register
+        if($this->view->registrationMessage = $this->view->getLeagueRegistrationMessage($leagueId)) {
+            $this->view->message($this->view->registrationMessage, 'error');
+            return;
+        }
+
         // stop if user not logged in
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             return;
@@ -1817,6 +1823,12 @@ class LeagueController extends Zend_Controller_Action
             }
 
         } else if($state == 'personal') {
+            // user has already registered redirect to success
+            if($this->view->isRegistered($leagueId, $session->registrantId)) {
+                $this->view->message('You have already registered as this user.', 'warning');
+                $this->_redirect('/league/' . $leagueId . '/register_success');
+            }
+
             $userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
             $this->view->contacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
             unset($session->personal);
@@ -1858,6 +1870,10 @@ class LeagueController extends Zend_Controller_Action
             
         } else  if($state == 'league') {
             unset($session->league);
+
+            if(empty($session->personal)) {
+                $this->_redirect('league/' . $leagueId . '/register/personal');
+            }
 
             if($this->getRequest()->isPost()) {
                 $post = $this->getRequest()->getPost();
@@ -2000,7 +2016,7 @@ class LeagueController extends Zend_Controller_Action
 
         // stop if user not logged in
         if(!Zend_Auth::getInstance()->hasIdentity()) {
-            return;
+            $this->_redirect('league/' . $leagueId . '/register');
         }
 
         $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();

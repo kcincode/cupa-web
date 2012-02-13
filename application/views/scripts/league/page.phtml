@@ -48,7 +48,7 @@
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_schedule'); ?>">Schedule</a> -
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Teams</a> -
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_results'); ?>">Results</a>
-                    <?php elseif($this->hasRole('admin') or $this->isLeagueDirector($league['id'])): ?>
+                    <?php elseif($this->isLeagueDirector($league['id'])): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Event Page</a>
                     <?php endif; ?>
                 </p>

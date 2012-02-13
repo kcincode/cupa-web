@@ -285,6 +285,10 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
             $select->where('user_id = ?', $userIds);
         }
 
-        return $this->fetchAll($select);
+        if(is_array($userIds)) {
+            return $this->fetchAll($select);
+        } else if(is_numeric($userIds)) {
+            return $this->fetchRow($select);
+        }
     }
 }

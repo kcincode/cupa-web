@@ -7,6 +7,12 @@ h2 {
 	text-decoration: underline;
 }
 
+h3 {
+	width: 800px;
+	text-align: center;
+	margin: 20px auto;
+}
+
 #register-user dt,
 #register-personal dt {
 	width: 150px;
@@ -36,8 +42,10 @@ h2 {
 	font-size: 8pt;
 }
 
-p.message {
-	text-align: center;
+p.blurb {
+	width: 600px;
+	margin: 15px auto;
+	text-align: justify;
 	font-size: 14pt;
 }
 

@@ -1,8 +1,30 @@
 <div id="register-<?php echo $this->escape($this->state); ?>">
     <h1><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h1>
 
-    <?php if(!Zend_Auth::getInstance()->hasIdentity()): ?>
-        <p class="message">Please use the login link in the upper right before registering.</p>
+    <?php if(!empty($this->registrationMessage)): ?>
+        <h3><?php echo $this->escape($this->registrationMessage); ?></h3>
+        <p class="blurb">
+            <?php if(!Zend_Auth::getInstance()->hasIdentity()): ?>
+            If you would like to get to the payment and/or waivers page you must login.
+            <?php elseif($this->isRegistered($this->league->id, $this->user->id)): ?>
+            You can goto the payment/waivers page <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_registration_success'); ?>">here</a>
+            <?php endif; ?> 
+        </p>
+        <p class="blurb">
+            If you have any other troubles, please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a>
+        </p>
+    <?php elseif(!Zend_Auth::getInstance()->hasIdentity()): ?>
+        <p class="blurb">
+            In order to properly register you for this league you will have to have a user account.  You may login in the upper right
+            of the page.  You may also recover your username and/or reset your password if you have forgotten them.
+        </p>
+        <p class="blurb">
+            You may also register for a new account if you do not already have one with the link in the upper
+            right of this page as well.
+        </p>
+        <p class="blurb">
+            If you have any other troubles, please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a>
+        </p>
     <?php else: ?>
     <h2><?php echo $this->title; ?></h2>
     <form method="post">
