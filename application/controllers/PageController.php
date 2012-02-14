@@ -1022,7 +1022,7 @@ class PageController extends Zend_Controller_Action
 
         $form = new Form_FormEdit($formId, $this->view->user->id);
         $bootstrap = $this->getInvokeArg('bootstrap');
-        $validForms = $this->getOption('validForms');
+        $validForms = $bootstrap->getOption('validForms');
         Zend_Debug::dump($validForms);
 
         $this->view->form = $form;
