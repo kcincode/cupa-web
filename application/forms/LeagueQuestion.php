@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Form_LeagueQuestion extends Zend_Form
+class Form_LeagueQuestion extends Zend_Form
 {
     private $_question;
     private $_answer;
@@ -8,7 +8,7 @@ class Cupa_Form_LeagueQuestion extends Zend_Form
     
     public function __construct($leagueId, $userId = null, $disabled = false)
     {
-        $questionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $questionTable = new Model_DbTable_LeagueQuestion();
         $this->_question = $questionTable->find($questionId)->current();
         $this->_answer = $answer;
         $this->_disabled = ($disabled === true) ? 'disabled' : '';
@@ -18,7 +18,7 @@ class Cupa_Form_LeagueQuestion extends Zend_Form
     public function init()
     {
         
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
         switch($this->_question->type) {
             case 'text':

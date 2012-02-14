@@ -11,7 +11,7 @@ class My_View_Helper_DisplayRegistrationQuestion extends Zend_View_Helper_Abstra
     
     public function DisplayRegistrationQuestion($questionId, $answer = null, $disabled = false)
     {
-        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->find($questionId)->current();
         
         $disabledText = '';

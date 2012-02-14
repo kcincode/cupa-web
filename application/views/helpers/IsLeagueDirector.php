@@ -15,7 +15,7 @@ class My_View_Helper_IsLeagueDirector extends Zend_View_Helper_Abstract
             return true;
         }
         
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         if(Zend_Auth::getInstance()->hasIdentity()) {
             foreach($leagueMemberTable->fetchAllByType($leagueId, 'director') as $member) {
                 if($member->user_id == $this->view->user->id) {

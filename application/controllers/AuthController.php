@@ -22,10 +22,10 @@ class AuthController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/login.css');
         
         // initialize the Login form
-        $form = new Cupa_Form_UserLogin();
+        $form = new Form_UserLogin();
 
         // create link to user_access_logs table
-        $userAccessLogTable = new Cupa_Model_DbTable_UserAccessLog();
+        $userAccessLogTable = new Model_DbTable_UserAccessLog();
 
         // if the form is submitted
         if($this->getRequest()->isPost()) {
@@ -35,7 +35,7 @@ class AuthController extends Zend_Controller_Action
             $data = $this->getRequest()->getPost();
             if(!empty($data['username']) and !empty($data['password'])) {
                 // get the user object
-                $userTable = new Cupa_Model_DbTable_User();
+                $userTable = new Model_DbTable_User();
                 
                 // try to find the user by email
                 $user = $userTable->fetchUserBy('email', $data['username']);
@@ -47,7 +47,7 @@ class AuthController extends Zend_Controller_Action
                 
                 // check to see if the user exists
                 if($user) {
-                    $authentication = new Cupa_Model_Authenticate($user);
+                    $authentication = new Model_Authenticate($user);
                     
                     // try the password for authentication
                     if($authentication->authenticate($data['password'])) {
@@ -136,7 +136,7 @@ class AuthController extends Zend_Controller_Action
         }
 
         // log the logout
-        $userAccessLogTable = new Cupa_Model_DbTable_UserAccessLog();
+        $userAccessLogTable = new Model_DbTable_UserAccessLog();
         $userAccessLogTable->log($this->view->user->username, 'logout');
 
         // clear the authentication identity
@@ -153,15 +153,15 @@ class AuthController extends Zend_Controller_Action
         
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/auth/register.js');
         
-        $form = new Cupa_Form_UserRegister();
+        $form = new Form_UserRegister();
         
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $userTable = new Cupa_Model_DbTable_User();
+            $userTable = new Model_DbTable_User();
             $userId = $userTable->createNewUser($post['first_name'], $post['last_name'], $post['email']);
             
             if(is_numeric($userId)) {
-                Cupa_Model_Email::sendActivationEmail($userTable->find($userId)->current());
+                Model_Email::sendActivationEmail($userTable->find($userId)->current());
                 $this->view->message('Created user in the system, please check your email for activation email.', 'success');
             } else {
                 $this->view->message('Could not create user in the system.', 'error');
@@ -190,7 +190,7 @@ class AuthController extends Zend_Controller_Action
                 return;
             }
             
-            $userTable = new Cupa_Model_DbTable_User();
+            $userTable = new Model_DbTable_User();
             $user = $userTable->fetchUserBy('email', $email);
             if($user) {
                 echo "error";
@@ -210,9 +210,9 @@ class AuthController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/activate.css');
 
         $code = $this->getRequest()->getUserParam('code');
-        $form = new Cupa_Form_UserActivation();
+        $form = new Form_UserActivation();
         if(!empty($code)) {
-            $userTable = new Cupa_Model_DbTable_User();
+            $userTable = new Model_DbTable_User();
 
             if($this->getRequest()->isPost()) {
                 $post = $this->getRequest()->getPost();
@@ -271,10 +271,10 @@ class AuthController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/reset.css');
 
         $code = $this->getRequest()->getUserParam('code');
-        $form = new Cupa_Form_UserActivation();
+        $form = new Form_UserActivation();
 
-        $userPasswordResetTable = new Cupa_Model_DbTable_UserPasswordReset();
-        $userTable = new Cupa_Model_DbTable_User();
+        $userPasswordResetTable = new Model_DbTable_UserPasswordReset();
+        $userTable = new Model_DbTable_User();
         if(!empty($code)) {
             if($this->getRequest()->isPost()) {
                 $post = $this->getRequest()->getPost();
@@ -333,15 +333,15 @@ class AuthController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/forgot.css');
-        $form = new Cupa_Form_UserForgotPassword();
+        $form = new Form_UserForgotPassword();
         
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();            
             if($form->isValid($post)) {
-                $userTable = new Cupa_Model_DbTable_User();
+                $userTable = new Model_DbTable_User();
                 $user = $userTable->fetchUserBy('email', $post['email']);
                 if($user) {
-                    $userPasswordResetTable = new Cupa_Model_DbTable_UserPasswordReset();
+                    $userPasswordResetTable = new Model_DbTable_UserPasswordReset();
                     $passwordReset = $userPasswordResetTable->createRow();
                     $passwordReset->code = $userPasswordResetTable->generateUniqueCode();
                     $passwordReset->user_id = $user->id;
@@ -349,7 +349,7 @@ class AuthController extends Zend_Controller_Action
                     $passwordReset->expires_at = date('Y-m-d H:i:s', time() + 604800);
                     $passwordReset->completed_at = null;
                     $passwordReset->save();
-                    Cupa_Model_Email::sendPasswordResetEmail($user, $passwordReset);
+                    Model_Email::sendPasswordResetEmail($user, $passwordReset);
                     $this->view->message("An email has been sent to `{$post['email']}` with the password reset link.", 'success');
                 } else {
                     $this->view->message("The email `{$post['email']}` does not exist in the system.", 'error');
@@ -364,7 +364,7 @@ class AuthController extends Zend_Controller_Action
 
     public function impersonateAction()
     {
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if(Zend_Auth::getInstance()->hasIdentity() and $userRoleTable->hasRole($this->view->user->id, 'admin')) {
             $user = $this->getRequest()->getUserParam('user');
             if(is_numeric($user)) {

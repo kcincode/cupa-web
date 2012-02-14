@@ -2,10 +2,10 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$userTable = new Cupa_Model_DbTable_User();
-$userRoleTable = new Cupa_Model_DbTable_UserRole();
-$userProfileTable = new Cupa_Model_DbTable_UserProfile();
-$userLevelTable = new Cupa_Model_DbTable_UserLevel();
+$userTable = new Model_DbTable_User();
+$userRoleTable = new Model_DbTable_UserRole();
+$userProfileTable = new Model_DbTable_UserProfile();
+$userLevelTable = new Model_DbTable_UserLevel();
 
 // get all the user failures
 $failures = array();

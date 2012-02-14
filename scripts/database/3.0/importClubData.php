@@ -2,8 +2,8 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$clubTable = new Cupa_Model_DbTable_Club();
-$clubCaptainTable = new Cupa_Model_DbTable_ClubCaptain();
+$clubTable = new Model_DbTable_Club();
+$clubCaptainTable = new Model_DbTable_ClubCaptain();
 
 $clubs = array(
     array(

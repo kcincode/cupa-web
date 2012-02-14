@@ -2,7 +2,7 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$userWaiverTable = new Cupa_Model_DbTable_UserWaiver();
+$userWaiverTable = new Model_DbTable_UserWaiver();
 
 if(DEBUG) {
 	echo "    Importing `UserWaivers` data:\n";

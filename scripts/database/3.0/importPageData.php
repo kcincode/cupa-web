@@ -2,7 +2,7 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$pageTable = new Cupa_Model_DbTable_Page();
+$pageTable = new Model_DbTable_Page();
 
 $stmt = $origDb->prepare('SELECT * FROM pages');
 $stmt->execute();

@@ -1,19 +1,19 @@
 <?php
 
-class Cupa_Form_LeagueEdit extends Zend_Form
+class Form_LeagueEdit extends Zend_Form
 {
     private $_leagueData;
     
 
     public function init()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
-        $this->addPrefixPath('Cupa_Form', APPLICATION_PATH . '/forms/');        
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addPrefixPath('Form', APPLICATION_PATH . '/forms/');        
     }
     
     public function loadSection($leagueId, $section)
     {
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->_leagueData = $leagueTable->fetchLeagueData($leagueId);
         
         if($section && method_exists($this, $section)) {
@@ -31,7 +31,7 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['year'],
         ));
 
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $seasons = array();
         foreach($leagueSeasonTable->fetchAllSeasons() as $season) {
             $seasons[$season->id] = $season->name;
@@ -49,7 +49,7 @@ class Cupa_Form_LeagueEdit extends Zend_Form
         ));
 
         
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         
         $info = $leagueTable->info();
         $tmp = array_values(explode(',', str_replace("'",'', substr($info['metadata']['day']['DATA_TYPE'], 6, -1))));
@@ -165,7 +165,7 @@ class Cupa_Form_LeagueEdit extends Zend_Form
     
     private function information()
     {
-        $userTable = new Cupa_Model_DbTable_User();
+        $userTable = new Model_DbTable_User();
         $users = array();
         foreach($userTable->fetchAllUsers() as $user) {
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;

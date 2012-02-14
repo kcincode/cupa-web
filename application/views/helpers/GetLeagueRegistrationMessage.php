@@ -11,9 +11,9 @@ class My_View_Helper_GetLeagueRegistrationMessage extends Zend_View_Helper_Abstr
     
     public function getLeagueRegistrationMessage($leagueId)
     {
-        $leagueTable = new Cupa_Model_DbTable_League(); 
-        $leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit(); 
-        $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+        $leagueTable = new Model_DbTable_League(); 
+        $leagueLimitTable = new Model_DbTable_LeagueLimit(); 
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
         
         $league = $leagueTable->find($leagueId)->current();
         if(!$league) {
@@ -38,7 +38,7 @@ class My_View_Helper_GetLeagueRegistrationMessage extends Zend_View_Helper_Abstr
             return 'League registration has not yet begun.  It will open at ' . date('l, F dS, Y h:i:s A', strtotime($league->registration_begin));
         }
 
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $genders = $leagueMemberTable->fetchAllPlayersByGender($leagueId);
         $totalPlayers = $genders['male_players'] + $genders['female_players'];
         if($totalPlayers >= $leagueLimit->total_players) {

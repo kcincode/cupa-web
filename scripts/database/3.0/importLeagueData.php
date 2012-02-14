@@ -2,20 +2,20 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$userTable = new Cupa_Model_DbTable_User();
+$userTable = new Model_DbTable_User();
 
-$leagueTable = new Cupa_Model_DbTable_League();
-$leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
-$leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit();
-$leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
-$leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
-$leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
-$leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
-$leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
-$leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
-$leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
-$leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
-$userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
+$leagueTable = new Model_DbTable_League();
+$leagueInformationTable = new Model_DbTable_LeagueInformation();
+$leagueLimitTable = new Model_DbTable_LeagueLimit();
+$leagueLocationTable = new Model_DbTable_LeagueLocation();
+$leagueTeamTable = new Model_DbTable_LeagueTeam();
+$leagueMemberTable = new Model_DbTable_LeagueMember();
+$leagueGameTable = new Model_DbTable_LeagueGame();
+$leagueGameDataTable = new Model_DbTable_LeagueGameData();
+$leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+$leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
+$leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+$userEmergencyTable = new Model_DbTable_UserEmergency();
 
 $ignoredPhones = array(
     '513-555-5555',
@@ -164,7 +164,7 @@ foreach($seasons as $season) {
     } else {
         $progressBar->update($i);
     }
-    $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+    $leagueSeasonTable = new Model_DbTable_LeagueSeason();
     $leagueSeason = $leagueSeasonTable->createRow();
     $leagueSeason->name = $season['name'];
     $leagueSeason->when = $season['when'];

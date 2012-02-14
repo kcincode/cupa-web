@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_League extends Zend_Db_Table
+class Model_DbTable_League extends Zend_Db_Table
 {
     protected $_name = 'league';
     protected $_primary = 'id';
@@ -33,11 +33,11 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
     
     public function fetchLeagueData($leagueId)
     {
-        $leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit();
-        $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
-        $leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueLimitTable = new Model_DbTable_LeagueLimit();
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
+        $leagueLocationTable = new Model_DbTable_LeagueLocation();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         
         $league = $this->find($leagueId)->current();
         if($league) {
@@ -81,7 +81,7 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
     
     public function createBlankLeague($year, $season, $day, $name, $userId)
     {
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $leagueId = $this->insert(array(
             'year' => $year,
             'season' => $leagueSeasonTable->fetchId($season),
@@ -95,7 +95,7 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
         ));
         
         if(is_numeric($leagueId)) {
-            $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+            $leagueInformationTable = new Model_DbTable_LeagueInformation();
             $leagueInformationTable->insert(array(
                 'league_id' => $leagueId,
                 'is_youth' => 0,
@@ -109,7 +109,7 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
                 'description' => 'Enter the description and any other information you want displayed on the webpage here.',
             ));
             
-            $leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit();
+            $leagueLimitTable = new Model_DbTable_LeagueLimit();
             $leagueLimitTable->insert(array(
                 'league_id' => $leagueId,
                 'male_players' => null,
@@ -118,7 +118,7 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
                 'teams' => 4,
             ));
             
-            $leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
+            $leagueLocationTable = new Model_DbTable_LeagueLocation();
             $leagueLocationTable->insert(array(
                 'league_id' => $leagueId,
                 'type' => 'league',
@@ -133,7 +133,7 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
                 'end' => date('Y-m-d H:i:s'),
             ));
             
-            $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
             $leagueMemberTable->insert(array(
                 'league_id' => $leagueId,
                 'user_id' => $userId,
@@ -146,8 +146,8 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
                 'modified_by' => $userId,
             ));
             
-            $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
-            $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+            $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
+            $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
             foreach(array('new_player', 'pair', 'shirt', 'captain', 'comments') as $questionName) {
                 $required = 1;
                 if($questionName == 'pair' or $questionName == 'comments') {

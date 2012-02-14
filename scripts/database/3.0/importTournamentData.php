@@ -2,12 +2,12 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$tournamentTable = new Cupa_Model_DbTable_Tournament();
-$tournamentInformationTable = new Cupa_Model_DbTable_TournamentInformation();
-$tournamentTeamTable = new Cupa_Model_DbTable_TournamentTeam();
-$tournamentDivisionTable = new Cupa_Model_DbTable_TournamentDivision();
-$tournamentUpdateTable = new Cupa_Model_DbTable_TournamentUpdate();
-$tournamentMemberTable = new Cupa_Model_DbTable_TournamentMember();
+$tournamentTable = new Model_DbTable_Tournament();
+$tournamentInformationTable = new Model_DbTable_TournamentInformation();
+$tournamentTeamTable = new Model_DbTable_TournamentTeam();
+$tournamentDivisionTable = new Model_DbTable_TournamentDivision();
+$tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
+$tournamentMemberTable = new Model_DbTable_TournamentMember();
 
 
 

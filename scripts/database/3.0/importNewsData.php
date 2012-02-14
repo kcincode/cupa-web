@@ -2,8 +2,8 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$newsTable = new Cupa_Model_DbTable_News();
-$newsCategoryTable = new Cupa_Model_DbTable_NewsCategory();
+$newsTable = new Model_DbTable_News();
+$newsCategoryTable = new Model_DbTable_NewsCategory();
 
 $stmt = $origDb->prepare('SELECT * FROM news');
 $stmt->execute();

@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Form_LeagueTeamEdit extends Zend_Form
+class Form_LeagueTeamEdit extends Zend_Form
 {
     private $_team;
     
@@ -14,7 +14,7 @@ class Cupa_Form_LeagueTeamEdit extends Zend_Form
     
     public function index()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
         $name = $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
@@ -23,13 +23,13 @@ class Cupa_Form_LeagueTeamEdit extends Zend_Form
             'label' => 'Name:',
         ));
 
-        $userTable = new Cupa_Model_DbTable_User();
+        $userTable = new Model_DbTable_User();
         $users = array();
         foreach($userTable->fetchAllUsers() as $user) {
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;
         }
         
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $captains = array();
         foreach($leagueMemberTable->fetchAllByType($this->_team->league_id, 'captain', $this->_team->id) as $member) {
             $user = $userTable->find($member['user_id'])->current();

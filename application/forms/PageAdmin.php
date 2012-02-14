@@ -1,13 +1,13 @@
 <?php
 
-class Cupa_Form_PageAdmin extends Zend_Form
+class Form_PageAdmin extends Zend_Form
 {
 
     public function init()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $pages = array(0 => 'None');
         foreach($pageTable->fetchAllParentPages() as $page) {
             $pages[$page->id] = $page->name;

@@ -16,7 +16,7 @@ class My_View_Helper_GetLeagueTeamRecord extends Zend_View_Helper_Abstract
      */
     public function getLeagueTeamRecord($leagueId, $teamId)
     {
-        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $leagueGameTable = new Model_DbTable_LeagueGame();
         return $leagueGameTable->fetchRecord($leagueId, $teamId);
     }
 }

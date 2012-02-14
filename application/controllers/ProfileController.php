@@ -46,7 +46,7 @@ class ProfileController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/public.css');
 
         $userId = $this->getRequest()->getUserParam('user_id');
-        $userTable = new Cupa_Model_DbTable_User();
+        $userTable = new Model_DbTable_User();
         $user = $userTable->find($userId)->current();
 
         if(!$user) {

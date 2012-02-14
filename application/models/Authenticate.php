@@ -1,5 +1,5 @@
 <?php
-class Cupa_Model_Authenticate {
+class Model_Authenticate {
     private $_user;
     
     public function __construct($user)

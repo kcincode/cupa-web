@@ -11,7 +11,7 @@ class My_View_Helper_HasUserSignedWaiver extends Zend_View_Helper_Abstract
     
     public function hasUserSignedWaiver($userId, $year)
     {
-        $userWaiverTable = new Cupa_Model_DbTable_UserWaiver();
+        $userWaiverTable = new Model_DbTable_UserWaiver();
         return $userWaiverTable->hasWaiver($userId, $year);
     }
 }

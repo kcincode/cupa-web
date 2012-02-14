@@ -2,7 +2,7 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$userAccessLogTable = new Cupa_Model_DbTable_UserAccessLog();
+$userAccessLogTable = new Model_DbTable_UserAccessLog();
 
 echo "    Importing `UserAccessLog` data:\n";
 $stmt = $origDb->prepare('SELECT * FROM login_failed');

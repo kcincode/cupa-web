@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Form_LeagueRegister extends Zend_Form
+class Form_LeagueRegister extends Zend_Form
 {
     private $_session;
     private $_state;
@@ -24,7 +24,7 @@ class Cupa_Form_LeagueRegister extends Zend_Form
 
     private function user()
     {
-        $usersTable = new Cupa_Model_DbTable_User();
+        $usersTable = new Model_DbTable_User();
         $minors = $usersTable->fetchAllMinors($this->_userId);
         $users[$this->_userId] = 'Myself';
         foreach($minors as $id => $minor) {
@@ -45,8 +45,8 @@ class Cupa_Form_LeagueRegister extends Zend_Form
 
     private function personal()
     {
-        $userTable = new Cupa_Model_DbTable_User();
-        $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+        $userTable = new Model_DbTable_User();
+        $userProfileTable = new Model_DbTable_UserProfile();
 
         $user = $userTable->find($this->_session->registrantId)->current();
         $userProfile = $userProfileTable->find($this->_session->registrantId)->current();
@@ -156,7 +156,7 @@ class Cupa_Form_LeagueRegister extends Zend_Form
             'description' => 'Enter/Check your height in INCHES.',
         ));
 
-        $userLevelTable = new Cupa_Model_DbTable_UserLevel();
+        $userLevelTable = new Model_DbTable_UserLevel();
         $allLevels = $userLevelTable->fetchAllByWeight();
         $levels = array();
         foreach($allLevels as $level) {
@@ -189,15 +189,15 @@ class Cupa_Form_LeagueRegister extends Zend_Form
 
     private function league()
     {
-        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $i = 1;
         foreach($leagueQuestionTable->fetchAllQuestionsFromLeague($this->_leagueId) as $question) {
             if($question['name'] == 'user_teams') {
-                $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+                $leagueInformationTable = new Model_DbTable_LeagueInformation();
                 $leagueInformation = $leagueInformationTable->fetchInformation($this->_leagueId);
 
-                $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
-                $leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit();
+                $leagueTeamTable = new Model_DbTable_LeagueTeam();
+                $leagueLimitTable = new Model_DbTable_LeagueLimit();
                 $limits = $leagueLimitTable->fetchLimits($this->_leagueId);
                 $teams = $leagueTeamTable->fetchAllTeams($this->_leagueId);
                 $currentTeams = array('0' => 'Select a Team');

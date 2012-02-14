@@ -1,11 +1,11 @@
 <?php
 
-class Cupa_Form_UserActivation extends Zend_Form
+class Form_UserActivation extends Zend_Form
 {
 
     public function init()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
         $email = $this->addElement('text', 'email', array(
             'filters' => array('StringTrim'),

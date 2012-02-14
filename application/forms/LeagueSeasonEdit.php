@@ -1,11 +1,11 @@
 <?php
 
-class Cupa_Form_LeagueSeasonEdit extends Zend_Form
+class Form_LeagueSeasonEdit extends Zend_Form
 {
 
     public function init()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
         $name = $this->addElement('text', 'name', array(
             'filters' => array('StringTrim', 'StringToLower'),

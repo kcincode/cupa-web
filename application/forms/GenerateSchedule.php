@@ -1,5 +1,5 @@
 <?php
-class Cupa_Form_GenerateSchedule extends Zend_Form
+class Form_GenerateSchedule extends Zend_Form
 {    
     private $_league;
     private $_teams;
@@ -8,7 +8,7 @@ class Cupa_Form_GenerateSchedule extends Zend_Form
     {
         $this->_league = $league;
         
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->_teams = $leagueTeamTable->fetchAllTeams($this->_league->id);
         
         parent::__construct();

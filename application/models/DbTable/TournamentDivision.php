@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_TournamentDivision extends Zend_Db_Table
+class Model_DbTable_TournamentDivision extends Zend_Db_Table
 {
     protected $_name = 'tournament_division';
     protected $_primary = 'id';

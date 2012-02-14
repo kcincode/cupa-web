@@ -2,11 +2,11 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$userTable = new Cupa_Model_DbTable_User();
-$userLevelTable = new Cupa_Model_DbTable_UserLevel();
-$newsCategoryTable = new Cupa_Model_DbTable_NewsCategory();
-$contactTable = new Cupa_Model_DbTable_Contact();
-$tournamentDivisionTable = new Cupa_Model_DbTable_TournamentDivision();
+$userTable = new Model_DbTable_User();
+$userLevelTable = new Model_DbTable_UserLevel();
+$newsCategoryTable = new Model_DbTable_NewsCategory();
+$contactTable = new Model_DbTable_Contact();
+$tournamentDivisionTable = new Model_DbTable_TournamentDivision();
 
 $db = $userTable->getAdapter();
 

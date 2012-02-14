@@ -1,13 +1,13 @@
 <?php
 
-class Cupa_Model_DbTable_LeagueAnswer extends Zend_Db_Table
+class Model_DbTable_LeagueAnswer extends Zend_Db_Table
 {
     protected $_name = 'league_answer';
     protected $_primary = 'id';
     
     public function fetchShirts($leagueId)
     {
-        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->fetchQuestion('shirt');
         
         $select = $this->getAdapter()->select()
@@ -44,7 +44,7 @@ class Cupa_Model_DbTable_LeagueAnswer extends Zend_Db_Table
                        ->where('league_member_id = ?', $leagueMemberId);
         
         $data = array();
-        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         foreach($this->fetchAll($select) as $row) {
             $question = $leagueQuestionTable->find($row['league_question_id'])->current();
             if($question) {

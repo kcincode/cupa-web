@@ -16,8 +16,8 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/index.js');
 
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
+        $pageTable = new Model_DbTable_Page();
         
         $this->view->page = $pageTable->fetchBy('name', 'leagues');
         $this->view->links = $leagueSeasonTable->generateLinks();
@@ -33,7 +33,7 @@ class LeagueController extends Zend_Controller_Action
         $weight = $this->getRequest()->getUserParam('weight');
         $seasonId = $this->getRequest()->getUserParam('season_id');
         
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $leagueSeasonTable->moveSeason($seasonId, $weight);
         
         $this->_redirect('leagues');
@@ -41,7 +41,7 @@ class LeagueController extends Zend_Controller_Action
     
     public function seasoneditAction()
     {
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
         $this->view->page = $page;
         
@@ -55,12 +55,12 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/index.css');
         
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
 
         $seasonId = $this->getRequest()->getUserParam('season_id');
         $this->view->season = $leagueSeasonTable->find($seasonId)->current();
         
-        $form = new Cupa_Form_LeagueSeasonEdit();
+        $form = new Form_LeagueSeasonEdit();
         $form->loadFromSeason($this->view->season);
         
         if($this->getRequest()->isPost()) {
@@ -90,7 +90,7 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('/');
         }
         
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
         $this->view->page = $page;
         
@@ -107,7 +107,7 @@ class LeagueController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
             
-            $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+            $leagueSeasonTable = new Model_DbTable_LeagueSeason();
             if($leagueSeasonTable->isUnique($post['name'])) {
                 $season = $leagueSeasonTable->createRow();
                 $season->name = $post['name'];
@@ -136,7 +136,7 @@ class LeagueController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
 
         $seasonId = $this->getRequest()->getUserParam('season_id');
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         
         $where = $leagueSeasonTable->getAdapter()->quoteInto('id = ?', $seasonId);
         $leagueSeasonTable->delete($where);
@@ -152,9 +152,9 @@ class LeagueController extends Zend_Controller_Action
         
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/page.js');
         
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $leagueTable = new Cupa_Model_DbTable_League();
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $pageTable = new Model_DbTable_Page();
+        $leagueTable = new Model_DbTable_League();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         
         $season = $this->getRequest()->getUserParam('type');
         $this->view->season = $season;
@@ -168,10 +168,10 @@ class LeagueController extends Zend_Controller_Action
     public function pageeditAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
-        $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+        $leagueTable = new Model_DbTable_League();
+        $pageTable = new Model_DbTable_Page();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
@@ -196,7 +196,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
                 
-        $form = new Cupa_Form_LeagueEdit();
+        $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'league');
         
         if($this->getRequest()->isPost()) {
@@ -221,8 +221,8 @@ class LeagueController extends Zend_Controller_Action
                     $leagueInformation->save();
 
                     if($leagueInformation->user_teams == 1) {
-                        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
-                        $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+                        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+                        $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
 
                         $question = $leagueQuestionTable->fetchQuestion('user_teams');
                         if($question) {
@@ -248,9 +248,9 @@ class LeagueController extends Zend_Controller_Action
     public function pageinformationeditAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueTable = new Model_DbTable_League();
+        $pageTable = new Model_DbTable_Page();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
@@ -277,7 +277,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
 
-        $form = new Cupa_Form_LeagueEdit();
+        $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'information');
         
         if($this->getRequest()->isPost()) {
@@ -302,7 +302,7 @@ class LeagueController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
                 
                 // remove all of the directors that are not in the list
                 $dbDirectors = array();
@@ -335,7 +335,7 @@ class LeagueController extends Zend_Controller_Action
                 $league->info = (empty($data['info'])) ? null : $data['info'];
                 $league->save();
                 
-                $leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
+                $leagueLocationTable = new Model_DbTable_LeagueLocation();
                 $league = $leagueLocationTable->fetchByType($leagueId, 'league');
                 $league->location = $data['league_name'];
                 $league->map_link = $data['league_map_link'];
@@ -437,9 +437,9 @@ class LeagueController extends Zend_Controller_Action
     public function pageregistrationeditAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueTable = new Model_DbTable_League();
+        $pageTable = new Model_DbTable_Page();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
@@ -464,7 +464,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
 
-        $form = new Cupa_Form_LeagueEdit();
+        $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'registration');
         
         if($this->getRequest()->isPost()) {
@@ -472,7 +472,7 @@ class LeagueController extends Zend_Controller_Action
             
             if(isset($post['new_question'])) {
                 if($post['id'] != 0) {
-                    $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+                    $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
                     $leagueQuestionListTable->addQuestionToLeague($leagueId, $post['id'], 1);
                     // disable the layout
                     $this->_helper->layout()->disableLayout();
@@ -480,10 +480,10 @@ class LeagueController extends Zend_Controller_Action
                     echo $this->view->baseUrl() . '/league/' . $leagueId . '/edit_registration';
                     return;
                 } else {
-                    $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+                    $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
                     $questionId = $leagueQuestionTable->createQuestion($post['name'], 'Placeholder title', $post['type'], null);
                     
-                    $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+                    $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
                     $leagueQuestionListTable->addQuestionToLeague($leagueId, $questionId, 1);
 
                     // disable the layout
@@ -514,7 +514,7 @@ class LeagueController extends Zend_Controller_Action
                 $league->registration_end = $data['registration_end'];
                 $league->save();
                                 
-                $leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit();               
+                $leagueLimitTable = new Model_DbTable_LeagueLimit();               
                 $leagueLimit = $leagueLimitTable->fetchLimits($leagueId);
                 
                 if($data['limit_select'] == 1) {
@@ -530,15 +530,15 @@ class LeagueController extends Zend_Controller_Action
                 $leagueLimit->teams = (empty($data['teams'])) ? null : $data['teams'];
                 $leagueLimit->save();
                 
-                $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+                $leagueInformationTable = new Model_DbTable_LeagueInformation();
                 $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
                 $leagueInformation->paypal_code = (empty($data['paypal_code'])) ? null : $data['paypal_code'];
                 $leagueInformation->cost = $data['cost'];
 
                 $leagueInformation->save();
                 
-                $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
-                $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+                $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+                $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
 
                 foreach($post['question'] as $weight => $questionName) {
                     $leagueQuestion = $leagueQuestionTable->fetchQuestion($questionName);
@@ -556,7 +556,7 @@ class LeagueController extends Zend_Controller_Action
         
         $this->view->form = $form;
         
-        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $this->view->leagueQuestions = $leagueQuestionTable->fetchAllQuestionsFromLeague($leagueId);
         $this->view->allQuestions = $leagueQuestionTable->fetchAllRemainingQuestions($this->view->leagueQuestions);
     }
@@ -570,7 +570,7 @@ class LeagueController extends Zend_Controller_Action
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->fetchLeagueData($leagueId);
         
         if(!$league) {
@@ -579,7 +579,7 @@ class LeagueController extends Zend_Controller_Action
         }
         $this->view->leagueId = $league['id'];
         
-        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->find($questionId)->current();
         if(!$question) {
             $this->_redirect('league/' . $leagueId . '/page_registration');
@@ -589,7 +589,7 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('leagues');
         }
         
-        $form = new Cupa_Form_LeagueQuestionEdit($question);
+        $form = new Form_LeagueQuestionEdit($question);
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             
@@ -635,7 +635,7 @@ class LeagueController extends Zend_Controller_Action
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->fetchLeagueData($leagueId);
         
         if(!$league) {
@@ -643,7 +643,7 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
         
-        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->find($questionId)->current();
         if(!$question) {
             $this->_redirect('league/' . $leagueId . '/page_registration');
@@ -653,7 +653,7 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('leagues');
         }
 
-        $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+        $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
         $leagueQuestionListTable->removeQuestionFromLeague($leagueId, $questionId);
         
         $this->view->message('Question `' . $question->name . '` removed from the league.', 'success');
@@ -663,9 +663,9 @@ class LeagueController extends Zend_Controller_Action
     public function pagedescriptioneditAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+        $leagueTable = new Model_DbTable_League();
+        $pageTable = new Model_DbTable_Page();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
@@ -688,7 +688,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         
-        $form = new Cupa_Form_LeagueEdit();
+        $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'description');
         
         if($this->getRequest()->isPost()) {
@@ -696,7 +696,7 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
-                $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+                $leagueInformationTable = new Model_DbTable_LeagueInformation();
                 $leagueInformationTable->description = $data['description'];
                 $leagueInformationTable->save();
                 
@@ -728,7 +728,7 @@ class LeagueController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
             
-            $leagueTable = new Cupa_Model_DbTable_League();
+            $leagueTable = new Model_DbTable_League();
             if($leagueTable->isUnique($post['year'], $post['season'], $post['day'])) {
                 
                 $id = $leagueTable->createBlankLeague($post['year'], $post['season'], $post['day'], null, $this->view->user->id);
@@ -755,7 +755,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/teams.js');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -766,7 +766,7 @@ class LeagueController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace('previous');
         $session->previousPage = 'league/' . $leagueId;
 
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
     }
     
@@ -782,8 +782,8 @@ class LeagueController extends Zend_Controller_Action
         
         $teamId = $this->getRequest()->getUserParam('team_id');
         
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         
         $this->view->team = $leagueTeamTable->find($teamId)->current();
         $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
@@ -809,7 +809,7 @@ class LeagueController extends Zend_Controller_Action
 
             $this->_helper->viewRenderer->setNoRender(true);
 
-            $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+            $leagueTeamTable = new Model_DbTable_LeagueTeam();
             if($leagueTeamTable->isUnique($post['league'], $post['name'])) {
                 $id = $leagueTeamTable->insert(array(
                     'name' => $post['name'],
@@ -853,7 +853,7 @@ class LeagueController extends Zend_Controller_Action
         
         $teamId = $this->getRequest()->getUserParam('team_id');
         
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $team = $leagueTeamTable->find($teamId)->current();
 
         if(!$team) {
@@ -865,14 +865,14 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $team->league_id);
         }
 
-        $form = new Cupa_Form_LeagueTeamEdit($team);
+        $form = new Form_LeagueTeamEdit($team);
         
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 
-                $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
                 
                 // remove all of the directors that are not in the list
                 $dbCaptains = array();
@@ -927,7 +927,7 @@ class LeagueController extends Zend_Controller_Action
 
         $teamId = $this->getRequest()->getUserParam('team_id');
 
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $team = $leagueTeamTable->find($teamId)->current();
 
         if(!$team) {
@@ -959,7 +959,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/schedule.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
 
         if(!$this->view->league) {
@@ -967,9 +967,9 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $leagueGameTable = new Model_DbTable_LeagueGame();
         $this->view->games = $leagueGameTable->fetchSchedule($leagueId);
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
     }
 
@@ -989,14 +989,14 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Cupa_Form_LeagueScheduleEdit(null, $leagueId);
+        $form = new Form_LeagueScheduleEdit(null, $leagueId);
 
         if($this->getRequest()->isPost()) {
             $this->_helper->viewRenderer->setNoRender(true);
             $post = $this->getRequest()->getPost();
 
-            $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
-            $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+            $leagueGameTable = new Model_DbTable_LeagueGame();
+            $leagueGameDataTable = new Model_DbTable_LeagueGameData();
             $game = $leagueGameTable->fetchGame($post['day'], $post['week'], $post['field']);
 
             if($leagueGameDataTable->isUnique($game, $post['home_team'], $post['away_team'])) {
@@ -1057,10 +1057,10 @@ class LeagueController extends Zend_Controller_Action
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $gameId = $this->getRequest()->getUserParam('game_id');
 
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
 
-        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $leagueGameTable = new Model_DbTable_LeagueGame();
         $game = $leagueGameTable->find($gameId)->current();
 
         if(!$this->view->league) {
@@ -1077,13 +1077,13 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $leagueId . '/schedule');
         }
 
-        $form = new Cupa_Form_LeagueScheduleEdit($gameId, $leagueId);
+        $form = new Form_LeagueScheduleEdit($gameId, $leagueId);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid(($post))) {
                 $data = $form->getValues();
-                $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+                $leagueGameDataTable = new Model_DbTable_LeagueGameData();
                 $homeGameData = $leagueGameDataTable->fetchGameData($gameId, 'home');
                 $awayGameData = $leagueGameDataTable->fetchGameData($gameId, 'away');
 
@@ -1117,10 +1117,10 @@ class LeagueController extends Zend_Controller_Action
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $gameId = $this->getRequest()->getUserParam('game_id');
 
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->find($leagueId)->current();
 
-        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $leagueGameTable = new Model_DbTable_LeagueGame();
         $game = $leagueGameTable->find($gameId)->current();
 
         if(!$league) {
@@ -1141,7 +1141,7 @@ class LeagueController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
-        $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+        $leagueGameDataTable = new Model_DbTable_LeagueGameData();
         $leagueGameData = $leagueGameDataTable->fetchGameData($gameId);
 
         if(count($leagueGameData)) {
@@ -1167,10 +1167,10 @@ class LeagueController extends Zend_Controller_Action
         }
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->find($leagueId)->current();
 
-        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $leagueGameTable = new Model_DbTable_LeagueGame();
         if(!$league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -1182,12 +1182,12 @@ class LeagueController extends Zend_Controller_Action
         
         $this->view->league = $league;
 
-        $form = new Cupa_Form_GenerateSchedule($league);
+        $form = new Form_GenerateSchedule($league);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if(isset($post['save'])) {
-                $leagueGameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+                $leagueGameDataTable = new Model_DbTable_LeagueGameData();
                 
                 // remove all of the current games for the league
                 $leagueGameTable->getAdapter()->query('DELETE FROM league_game WHERE league_id = ' . $leagueId);
@@ -1207,7 +1207,7 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 
                 // get start time from the league locations
-                $leagueLocationTable = new Cupa_Model_DbTable_LeagueLocation();
+                $leagueLocationTable = new Model_DbTable_LeagueLocation();
                 $leagueLocation = $leagueLocationTable->fetchByType($leagueId, 'league');
                 
                 $startHour = date('H', strtotime($leagueLocation->start));
@@ -1218,7 +1218,7 @@ class LeagueController extends Zend_Controller_Action
                 
                 $fields = explode(',', $post['number_of_fields']);
                 
-                $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+                $leagueTeamTable = new Model_DbTable_LeagueTeam();
                 $teams = $leagueTeamTable->fetchAllTeams($leagueId)->toArray();
                 $numTeams = count($teams);
                 
@@ -1369,7 +1369,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/email.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1377,13 +1377,13 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
         
-        $form = new Cupa_Form_LeagueContact($leagueId, $this->view->user, $this->view->isLeagueDirector($leagueId));
+        $form = new Form_LeagueContact($leagueId, $this->view->user, $this->view->isLeagueDirector($leagueId));
         $form->getElement('subject')->setValue('[' . $this->view->leaguename($leagueId, true, true, true, true) . '] Information');
         
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
-                $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
                 $data = $leagueMemberTable->fetchAllEmails($leagueId, $this->view->user, $this->view->isLeagueDirector($leagueId));
                 $mail = new Zend_Mail();
                 $mail->setSubject($post['subject']);
@@ -1421,7 +1421,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankings.js');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1432,7 +1432,7 @@ class LeagueController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace('previous');
         $session->previousPage = 'league/' . $leagueId;
 
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeamRanks($leagueId);
     }
 
@@ -1445,7 +1445,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankingsedit.js');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1457,7 +1457,7 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $leagueId . '/rankings');
         }
 
-        $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if(isset($post['clear'])) {
@@ -1494,7 +1494,7 @@ class LeagueController extends Zend_Controller_Action
         //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1506,7 +1506,7 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $leagueId);
         }
         
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->players = $leagueMemberTable->fetchPlayerInformation($leagueId);
         
         if($this->getRequest()->getParam('export')) {
@@ -1567,7 +1567,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/shirts.css');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1580,7 +1580,7 @@ class LeagueController extends Zend_Controller_Action
         }
 
         
-        $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
+        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
         $this->view->shirts = $leagueAnswerTable->fetchShirts($leagueId);
 
         if($this->getRequest()->getParam('export')) {
@@ -1628,7 +1628,7 @@ class LeagueController extends Zend_Controller_Action
 
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1640,7 +1640,7 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $leagueId);
         }
 
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->contacts = $leagueMemberTable->fetchAllEmergencyContacts($leagueId);
 
         if($this->getRequest()->getParam('export')) {
@@ -1690,7 +1690,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1715,14 +1715,14 @@ class LeagueController extends Zend_Controller_Action
             
             list($field, $userId, $checked) = explode('-', $post['data']);
             
-            $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
             $member = $leagueMemberTable->fetchMember($leagueId, $userId);
 
             if($field != 'waiver') {
                 $member->$field = ($checked == 'true') ? 1 : 0;
                 $member->save();
             } else {
-                $userWaiverTable = new Cupa_Model_DbTable_UserWaiver();
+                $userWaiverTable = new Model_DbTable_UserWaiver();
                 $userWaiverTable->updateWaiver($userId, $this->view->league->year, $checked, $this->view->user->id);
             }
             
@@ -1730,7 +1730,7 @@ class LeagueController extends Zend_Controller_Action
         
         $this->view->all = $this->getRequest()->getUserParam('all');
         
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->statuses = $leagueMemberTable->fetchPlayerStatuses($leagueId, $this->view->league->year);
         
         if($this->getRequest()->getParam('export')) {
@@ -1779,7 +1779,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/register.js');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -1800,9 +1800,9 @@ class LeagueController extends Zend_Controller_Action
 
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $state = $this->getRequest()->getUserParam('state');
-        $userTable = new Cupa_Model_DbTable_User();
+        $userTable = new Model_DbTable_User();
 
-        $form = new Cupa_Form_LeagueRegister($leagueId, $this->view->user->id, $state);
+        $form = new Form_LeagueRegister($leagueId, $this->view->user->id, $state);
         if($state == 'user') {
             // reset registration data
             $session->unsetAll();
@@ -1835,7 +1835,7 @@ class LeagueController extends Zend_Controller_Action
                 $this->_redirect('/league/' . $leagueId . '/register_success');
             }
 
-            $userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
+            $userEmergencyTable = new Model_DbTable_UserEmergency();
             $this->view->contacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
             unset($session->personal);
             // handle post request
@@ -1856,8 +1856,8 @@ class LeagueController extends Zend_Controller_Action
                     $this->view->message('There are errors with the infromation you have entered, please correct them.', 'error');
                     $form->populate($post);
 
-                    $userTable = new Cupa_Model_DbTable_User();
-                    $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+                    $userTable = new Model_DbTable_User();
+                    $userProfileTable = new Model_DbTable_UserProfile();
 
                     $user = $userTable->find($session->registrantId)->current();
                     $userProfile = $userProfileTable->find($session->registrantId)->current();
@@ -1900,8 +1900,8 @@ class LeagueController extends Zend_Controller_Action
                     $session->league = $post;
 
                     // all data entered save the registrant
-                    $userTable = new Cupa_Model_DbTable_User();
-                    $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+                    $userTable = new Model_DbTable_User();
+                    $userProfileTable = new Model_DbTable_UserProfile();
 
                     $user = $userTable->find($session->registrantId)->current();
                     $userProfile = $userProfileTable->find($session->registrantId)->current();
@@ -1921,7 +1921,7 @@ class LeagueController extends Zend_Controller_Action
                     $userProfile->level = $session->personal['level'];
                     $userProfile->experience = $session->personal['experience'];
 
-                    $userEmergencyTable = new Cupa_Model_DbTable_UserEmergency();
+                    $userEmergencyTable = new Model_DbTable_UserEmergency();
                     $i = 0;
                     foreach($session->personal['contactNames'] as $contactName) {
                         $contactPhone = $session->personal['contactPhones'][$i];
@@ -1958,7 +1958,7 @@ class LeagueController extends Zend_Controller_Action
                         $i++;
                     }
 
-                    $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+                    $leagueMemberTable = new Model_DbTable_LeagueMember();
                     $leagueMember = $leagueMemberTable->fetchMember($leagueId, $session->registrantId);
                     if(!$leagueMember) {
                         $leagueMemberId = $leagueMemberTable->insert(array(
@@ -1976,8 +1976,8 @@ class LeagueController extends Zend_Controller_Action
                         $leagueMemberId = $leagueMember->id;                        
                     }
 
-                    $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
-                    $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
+                    $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+                    $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
                     foreach($session->league as $questionName => $answer) {
                         $question = $leagueQuestionTable->fetchQuestion($questionName);
                         if($question) {
@@ -2022,7 +2022,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/registersuccess.css');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        $leagueTable = new Cupa_Model_DbTable_League();
+        $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
         if(!$this->view->league) {
@@ -2035,13 +2035,13 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $leagueId . '/register');
         }
 
-        $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
         $information = $leagueInformationTable->fetchInformation($leagueId);
         $this->view->paypal = $information->paypal_code;
         $this->view->cost = $information->cost;
 
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
-        $userTable = new Cupa_Model_DbTable_User();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $userTable = new Model_DbTable_User();
 
         $minors = $userTable->fetchAllMinors($this->view->user->id);
         $userIds = array();

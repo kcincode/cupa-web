@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_Officer extends Zend_Db_Table
+class Model_DbTable_Officer extends Zend_Db_Table
 {
     protected $_name = 'officer';
     protected $_primary = 'id';

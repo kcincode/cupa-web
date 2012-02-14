@@ -2,7 +2,7 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$minuteTable = new Cupa_Model_DbTable_Minute();
+$minuteTable = new Model_DbTable_Minute();
 
 $data = array(
     array(

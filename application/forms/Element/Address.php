@@ -1,7 +1,7 @@
 <?php 
 
 
-class Cupa_Form_Element_Address extends Zend_Form_Element_Xhtml
+class Form_Element_Address extends Zend_Form_Element_Xhtml
 {
     public $helper = 'formAddress';
     

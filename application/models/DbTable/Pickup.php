@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_Pickup extends Zend_Db_Table
+class Model_DbTable_Pickup extends Zend_Db_Table
 {
     protected $_name = 'pickup';
     protected $_primary = 'id';

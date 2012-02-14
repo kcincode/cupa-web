@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Form_LeagueContact extends Zend_Form
+class Form_LeagueContact extends Zend_Form
 {
     private $_leagueId;
     private $_user;
@@ -18,7 +18,7 @@ class Cupa_Form_LeagueContact extends Zend_Form
     public function init()
     {
         
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
         $email = $this->addElement('text', 'from', array(
             'filters' => array('StringTrim'),
@@ -73,7 +73,7 @@ class Cupa_Form_LeagueContact extends Zend_Form
     private function getContacts()
     {
         $data = array();
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         
         foreach($leagueMemberTable->fetchAllEmails($this->_leagueId, $this->_user, $this->_isLeagueDirector) as $key => $emails) {
             $data[$key] = ucwords(str_replace('-', ' ', $key));

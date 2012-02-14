@@ -16,7 +16,7 @@ class My_View_Helper_GetClubCaptains extends Zend_View_Helper_Abstract
      */
     public function getClubCaptains($clubId)
     {
-        $clubCaptainTable = new Cupa_Model_DbTable_ClubCaptain();
+        $clubCaptainTable = new Model_DbTable_ClubCaptain();
         $string = '';
         foreach($clubCaptainTable->fetchAllByClub($clubId) as $captain) {
             $string .= ', ' . $this->view->escape($captain['name']);

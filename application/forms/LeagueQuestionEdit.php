@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Form_LeagueQuestionEdit extends Zend_Form
+class Form_LeagueQuestionEdit extends Zend_Form
 {
     private $_question;
     

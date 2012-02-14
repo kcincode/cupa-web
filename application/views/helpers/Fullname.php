@@ -12,7 +12,7 @@ class My_View_Helper_Fullname extends Zend_View_Helper_Abstract
     public function fullname($user)
     {
         if(is_numeric($user)) {
-            $userTable = new Cupa_Model_DbTable_User();
+            $userTable = new Model_DbTable_User();
             $userObject = $userTable->find($user)->current();
             if($userObject) {
                 return $this->view->escape($userObject->first_name) . ' ' . $this->view->escape($userObject->last_name);

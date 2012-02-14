@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Form_LeagueScheduleEdit extends Zend_Form
+class Form_LeagueScheduleEdit extends Zend_Form
 {
     private $_game;
     private $_gameData;
@@ -11,8 +11,8 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
         $this->_leagueId = $leagueId;
 
         if(is_numeric($gameId)) {
-            $gameTable = new Cupa_Model_DbTable_LeagueGame();
-            $gameDataTable = new Cupa_Model_DbTable_LeagueGameData();
+            $gameTable = new Model_DbTable_LeagueGame();
+            $gameDataTable = new Model_DbTable_LeagueGameData();
 
             $this->_game = $gameTable->find($gameId)->current();
             $this->_gameData = $gameDataTable->fetchGameData($gameId);
@@ -23,7 +23,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
 
     public function init()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
         $day = $this->addElement('text', 'day', array(
             'filters' => array('StringTrim'),
@@ -50,7 +50,7 @@ class Cupa_Form_LeagueScheduleEdit extends Zend_Form
         ));
 
         $leagueTeams = array();
-        $leagueTeamsTable = new Cupa_Model_DbTable_LeagueTeam();
+        $leagueTeamsTable = new Model_DbTable_LeagueTeam();
         if(empty($this->_gameData[0])) {
             $leagueTeams[0] = 'Select a Team';
         }

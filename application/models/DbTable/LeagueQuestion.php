@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_LeagueQuestion extends Zend_Db_Table
+class Model_DbTable_LeagueQuestion extends Zend_Db_Table
 {
     protected $_name = 'league_question';
     protected $_primary = 'id';
@@ -15,7 +15,7 @@ class Cupa_Model_DbTable_LeagueQuestion extends Zend_Db_Table
     
     public function fetchAllQuestionsFromLeague($leagueId)
     {
-        $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+        $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
         
         $select = $leagueQuestionListTable->select()
                                           ->where('league_id = ?', $leagueId)

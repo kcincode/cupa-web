@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_User extends Zend_Db_Table
+class Model_DbTable_User extends Zend_Db_Table
 {
     protected $_name = 'user';
     protected $_primary = 'id';
@@ -75,7 +75,7 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
         $userId = $this->insert($data);
         
         if(is_numeric($userId)) {
-            $userProfileTable = new Cupa_Model_DbTable_UserProfile();
+            $userProfileTable = new Model_DbTable_UserProfile();
             $userProfile = $userProfileTable->createRow();
             $userProfile->user_id = $userId;
             $userProfile->save();
@@ -150,8 +150,8 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
         );
 
         // get the public user profile data
-        $userProfileTable = new Cupa_Model_DbTable_UserProfile();
-        $userLevelTable = new Cupa_Model_DbTable_UserLevel();
+        $userProfileTable = new Model_DbTable_UserProfile();
+        $userLevelTable = new Model_DbTable_UserLevel();
         $userProfile = $userProfileTable->find($user->id)->current();
         $data['profile'] = array(
             'nickname' => $userProfile->nickname,
@@ -164,7 +164,7 @@ class Cupa_Model_DbTable_User extends Zend_Db_Table
 
 
         // get users league data
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $data['leagues'] = $leagueMemberTable->getUserLeagues($user->id);
 
 

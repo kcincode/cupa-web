@@ -13,7 +13,7 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/home.css');
         
         // link to the db table
-        $newsTable = new Cupa_Model_DbTable_News();
+        $newsTable = new Model_DbTable_News();
      
         // get all news and seperate by type
         $allNews = array();
@@ -33,10 +33,10 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         
         $page = $this->getRequest()->getUserParam('page');
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if($page and ($page->is_visible or (Zend_Auth::getInstance()->hasIdentity() and ($userRoleTable->hasRole($this->view->user->id, 'admin') or
            $userRoleTable->hasRole($this->view->user->id, 'editor') or
            $userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))))) {
@@ -51,7 +51,7 @@ class PageController extends Zend_Controller_Action
     public function editAction()
     {
         $page = $this->getRequest()->getUserParam('page');
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
         
         if(!$page) {
@@ -59,10 +59,10 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Cupa_Form_PageEdit();
+        $form = new Form_PageEdit();
         $form->loadFromPage($page);
 
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
@@ -108,7 +108,7 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/admin.css');
 
         $page = $this->getRequest()->getUserParam('page');
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
         
         if(!$page) {
@@ -116,10 +116,10 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Cupa_Form_PageAdmin();
+        $form = new Form_PageAdmin();
         $form->loadFromPage($page);
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$userRoleTable->hasRole($this->view->user->id, 'admin'))) {
@@ -154,7 +154,7 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
         
         // initialize the contact form and add the users email if valid
-        $form = new Cupa_Form_Contact();
+        $form = new Form_Contact();
         
         if(Zend_Auth::getInstance()->hasIdentity()) {
             $form->getElement('from')->setValue($this->view->user->email);
@@ -168,7 +168,7 @@ class PageController extends Zend_Controller_Action
                 // if form is valid get form values
                 $data = $form->getValues();
                 
-                Cupa_Model_Email::sendContactEmail($data);
+                Model_Email::sendContactEmail($data);
                 $this->view->message('Email sent successfully.', 'success');
                 $this->_redirect('/contact');
             } else {
@@ -188,10 +188,10 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officers.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officers.js');
 
-        $officerTable = new Cupa_Model_DbTable_Officer();
+        $officerTable = new Model_DbTable_Officer();
         $this->view->officers = $officerTable->fetchAllOfficers();
         
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
         $this->view->page = $page;
         $this->view->links = $pageTable->fetchChildren($page);
@@ -204,10 +204,10 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officersedit.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officersedit.js');
 
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
 
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'editor') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id) and
@@ -217,7 +217,7 @@ class PageController extends Zend_Controller_Action
         }
 
         $officerId = $this->getRequest()->getUserParam('officer');
-        $officerTable = new Cupa_Model_DbTable_Officer();
+        $officerTable = new Model_DbTable_Officer();
         $officer = $officerTable->find($officerId)->current();
         
         if(!$officer) {
@@ -225,7 +225,7 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
         
-        $form = new Cupa_Form_OfficerEdit();
+        $form = new Form_OfficerEdit();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
@@ -250,10 +250,10 @@ class PageController extends Zend_Controller_Action
 
     public function officersaddAction()
     {
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
 
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'editor') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id) and
@@ -270,7 +270,7 @@ class PageController extends Zend_Controller_Action
         // disable the layout
         $this->_helper->layout()->disableLayout();
         
-        $officerTable = new Cupa_Model_DbTable_Officer();
+        $officerTable = new Model_DbTable_Officer();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
@@ -290,7 +290,7 @@ class PageController extends Zend_Controller_Action
     
     public function officersdeleteAction()
     {
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
              !$userRoleTable->hasRole($this->view->user->id, 'admin'))) {
             // throw a 404 error if the page cannot be found
@@ -302,7 +302,7 @@ class PageController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         
         $officerId = $this->getRequest()->getUserParam('officer');
-        $officerTable = new Cupa_Model_DbTable_Officer();
+        $officerTable = new Model_DbTable_Officer();
         $officer = $officerTable->find($officerId)->current();
         
         if(!$officer) {
@@ -323,20 +323,20 @@ class PageController extends Zend_Controller_Action
         
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutes.js');
         
-        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $minuteTable = new Model_DbTable_Minute();
         $this->view->minutes = $minuteTable->fetchAllMinutes();
         
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'board_meeting_minutes');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
     }
 
     public function minuteseditAction()
     {
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor') and
@@ -352,12 +352,12 @@ class PageController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutesedit.js');
         
         $minuteId = $this->getRequest()->getUserParam('minute');
-        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $minuteTable = new Model_DbTable_Minute();
         $minute = $minuteTable->find($minuteId)->current();
 
         if($minute) {
             $this->view->minute = $minute;
-            $form = new Cupa_Form_MinuteEdit();
+            $form = new Form_MinuteEdit();
             $form->loadFromMinute($minute);
 
             if($this->getRequest()->isPost()) {
@@ -397,10 +397,10 @@ class PageController extends Zend_Controller_Action
 
     public function minutesaddAction()
     {
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor') and
@@ -421,7 +421,7 @@ class PageController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
             
-            $minuteTable = new Cupa_Model_DbTable_Minute();
+            $minuteTable = new Model_DbTable_Minute();
             $minute = $minuteTable->createRow();
             $minute->location = $post['location'];
             $minute->when = date('Y-m-d H:i:s');
@@ -439,10 +439,10 @@ class PageController extends Zend_Controller_Action
     
     public function minutesdeleteAction()
     {
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor') and
@@ -452,7 +452,7 @@ class PageController extends Zend_Controller_Action
         }
         
         $minuteId = $this->getRequest()->getUserParam('minute');
-        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $minuteTable = new Model_DbTable_Minute();
         $minute = $minuteTable->find($minuteId)->current();
 
         if($minute) {
@@ -470,7 +470,7 @@ class PageController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
-        $minuteTable = new Cupa_Model_DbTable_Minute();
+        $minuteTable = new Model_DbTable_Minute();
         $minute = $minuteTable->find($minuteId)->current();
 
         apache_setenv('no-gzip', '1');
@@ -502,10 +502,10 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/directors.css');
 
-        $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->directors = $leagueMemberTable->fetchUniqueDirectors();
         
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'directors');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
     }
@@ -519,20 +519,20 @@ class PageController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/pickup.js');
 
 
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'pickup');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
         
-        $pickupTable = new Cupa_Model_DbTable_Pickup();
+        $pickupTable = new Model_DbTable_Pickup();
         $this->view->pickups = $pickupTable->fetchAllPickups();
     }
 
     public function pickupaddAction()
     {
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor') and
@@ -553,7 +553,7 @@ class PageController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
             
-            $pickupTable = new Cupa_Model_DbTable_Pickup();
+            $pickupTable = new Model_DbTable_Pickup();
             
             if($pickupTable->isUnique($post['pickup'])) {
                 $pickup = $pickupTable->createRow();
@@ -586,10 +586,10 @@ class PageController extends Zend_Controller_Action
         
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
 
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
              !$userRoleTable->hasRole($this->view->user->id, 'editor') and
@@ -598,8 +598,8 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $pickupTable = new Cupa_Model_DbTable_Pickup();
-        $form = new Cupa_Form_PickupEdit();
+        $pickupTable = new Model_DbTable_Pickup();
+        $form = new Form_PickupEdit();
         $pickupId = $this->getRequest()->getUserParam('pickup');
         $pickup = $pickupTable->find($pickupId)->current();
         $form->loadFromPickup($pickup);
@@ -628,14 +628,14 @@ class PageController extends Zend_Controller_Action
     
     public function pickupdeleteAction()
     {
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $pickupTable = new Cupa_Model_DbTable_Pickup();
+        $pickupTable = new Model_DbTable_Pickup();
         $pickupId = $this->getRequest()->getUserParam('pickup');
         $pickup = $pickupTable->find($pickupId)->current();
         
@@ -653,11 +653,11 @@ class PageController extends Zend_Controller_Action
         
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/clubs.js');
 
-        $clubTable = new Cupa_Model_DbTable_Club();
+        $clubTable = new Model_DbTable_Club();
         $this->view->activeClubs = $clubTable->fetchAllByType('current');
         $this->view->pastClubs = $clubTable->fetchAllByType('past');
         
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'clubs');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
         
@@ -677,7 +677,7 @@ class PageController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
             
-            $clubTable = new Cupa_Model_DbTable_Club();
+            $clubTable = new Model_DbTable_Club();
             if($clubTable->isUnique($post['name'])) {
                 $club = $clubTable->createRow();
                 $club->name = $post['name'];
@@ -704,9 +704,9 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubsedit.css');
         
-        $clubTable = new Cupa_Model_DbTable_Club();
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $clubTable = new Model_DbTable_Club();
+        $pageTable = new Model_DbTable_Page();
+        $userRoleTable = new Model_DbTable_UserRole();
 
         $page = $pageTable->fetchBy('name', 'clubs');
         if(!Zend_Auth::getInstance()->hasIdentity() or
@@ -726,7 +726,7 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Cupa_Form_ClubEdit();
+        $form = new Form_ClubEdit();
         $form->loadFromClub($club);
 
         if($this->getRequest()->isPost()) {
@@ -763,9 +763,9 @@ class PageController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
         
-        $clubTable = new Cupa_Model_DbTable_Club();
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $clubTable = new Model_DbTable_Club();
+        $pageTable = new Model_DbTable_Page();
+        $userRoleTable = new Model_DbTable_UserRole();
 
         $page = $pageTable->fetchBy('name', 'clubs');
         if(!Zend_Auth::getInstance()->hasIdentity() or
@@ -779,7 +779,7 @@ class PageController extends Zend_Controller_Action
 
         $clubId = $this->getRequest()->getUserParam('club');
         if(is_numeric($clubId)) {
-            $clubTable = new Cupa_Model_DbTable_Club();
+            $clubTable = new Model_DbTable_Club();
             $club = $clubTable->find($clubId)->current();
             if($club) {
                 $club->delete();
@@ -801,7 +801,7 @@ class PageController extends Zend_Controller_Action
         $category = $this->getRequest()->getUserParam('category');
         $this->view->category = ucwords($category);
         
-        $newsTable = new Cupa_Model_DbTable_News();
+        $newsTable = new Model_DbTable_News();
         $this->view->news = $newsTable->fetchNewsByCategory($category);
         
         if(!count($this->view->news)) {
@@ -831,10 +831,10 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
         
         $slug = $this->getRequest()->getUserParam('slug');
-        $newsTable = new Cupa_Model_DbTable_News();
+        $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
         
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if($news and 
            (Zend_Auth::getInstance()->hasIdentity() and 
             ($userRoleTable->hasRole($this->view->user->id, 'reporter') or
@@ -849,7 +849,7 @@ class PageController extends Zend_Controller_Action
 
     public function newsaddAction()
     {
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
              !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
@@ -868,7 +868,7 @@ class PageController extends Zend_Controller_Action
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
-            $newsTable = new Cupa_Model_DbTable_News();
+            $newsTable = new Model_DbTable_News();
             
             if($newsTable->isUnique($post['title'])) {
                 $news = $newsTable->createRow();
@@ -897,7 +897,7 @@ class PageController extends Zend_Controller_Action
 
     public function newseditAction()
     {
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
             (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
              !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
@@ -906,10 +906,10 @@ class PageController extends Zend_Controller_Action
         }
         
         $slug = $this->getRequest()->getUserParam('slug');
-        $newsTable = new Cupa_Model_DbTable_News();
+        $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
         
-        $form = new Cupa_Form_News();
+        $form = new Form_News();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -950,7 +950,7 @@ class PageController extends Zend_Controller_Action
         $type = $this->getRequest()->getUserParam('type');
         $year = $this->getRequest()->getUserParam('year');
 
-        $formTable = new Cupa_Model_DbTable_Form();
+        $formTable = new Model_DbTable_Form();
         $this->view->forms = $formTable->fetchForms($type, $year);
 
         if($type != 'all' and $year != 0) {
@@ -999,17 +999,18 @@ class PageController extends Zend_Controller_Action
 
     public function formseditAction()
     {
-        $type = $this->getRequest()->getUserParam('type');
+        $formId = $this->getRequest()->getUserParam('form_id');
         $year = $this->getRequest()->getUserParam('year');
 
-        $pageTable = new Cupa_Model_DbTable_Page();
-        $page = $pageTable->fetchByName('name', 'forms');
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'forms');
 
-        if($type == 'all' or $year == 0 or !$page) {
+        if(!$formId or !$page) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
+        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
@@ -1019,8 +1020,13 @@ class PageController extends Zend_Controller_Action
             $this->_redirect('/forms');
         }
 
-        $formTable = new Cupa_Model_DbTable_Form();
-        $form = $formTable->fetchForms($type, $year);
+        $form = new Form_FormEdit($formId, $this->view->user->id);
+        $bootstrap = $this->getInvokeArg('bootstrap');
+        $validForms = $this->getOption('validForms');
+        Zend_Debug::dump($validForms);
+
+        $this->view->form = $form;
+
     }
 
     public function formsdeleteAction()
@@ -1028,11 +1034,11 @@ class PageController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
-        $formTable = new Cupa_Model_DbTable_Form();
+        $formTable = new Model_DbTable_Form();
         $formId = $this->getRequest()->getUserParam('form_id');
         $form = $formTable->find($formId)->current(); 
 
-        $pageTable = new Cupa_Model_DbTable_Page();
+        $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'forms');
 
         if(!$form or !$page) {
@@ -1040,7 +1046,7 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $userRoleTable = new Cupa_Model_DbTable_UserRole();
+        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 

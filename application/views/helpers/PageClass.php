@@ -19,7 +19,7 @@ class My_View_Helper_PageClass extends Zend_View_Helper_Abstract
         if(empty($this->view->page->parent)) {
             return $this->view->escape($this->view->page->name);
         } else {
-            $pageTable = new Cupa_Model_DbTable_Page();
+            $pageTable = new Model_DbTable_Page();
             $parent = $pageTable->find($this->view->page->parent)->current();
             return $this->view->escape($parent->name);
         }

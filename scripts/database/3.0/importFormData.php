@@ -2,7 +2,7 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$minuteTable = new Cupa_Model_DbTable_Minute();
+$minuteTable = new Model_DbTable_Minute();
 
 $data = array(
     array(
@@ -161,7 +161,7 @@ foreach($data as $row) {
             $progressBar->update($i);        
         }
 
-        $formTable = new Cupa_Model_DbTable_Form();
+        $formTable = new Model_DbTable_Form();
         $form = $formTable->createRow();
         $form->year = $row['year'];
         $form->name = $row['name'];

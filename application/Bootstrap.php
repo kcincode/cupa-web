@@ -36,7 +36,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         
         // load the user object from the session storage if a user is logged in
         if(Zend_Auth::getInstance()->hasIdentity()) {
-            $userTable = new Cupa_Model_DbTable_User();
+            $userTable = new Model_DbTable_User();
             $view->user = $userTable->find(Zend_Auth::getInstance()->getIdentity())->current();
             
             $session = new Zend_Session_Namespace('adminuser');

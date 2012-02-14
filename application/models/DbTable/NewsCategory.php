@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_NewsCategory extends Zend_Db_Table
+class Model_DbTable_NewsCategory extends Zend_Db_Table
 {
     protected $_name = 'news_category';
     protected $_primary = 'id';

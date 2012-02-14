@@ -1,13 +1,13 @@
 <?php
 
-class Cupa_Form_OfficerEdit extends Zend_Form
+class Form_OfficerEdit extends Zend_Form
 {
 
     public function init()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
-        $userTable = new Cupa_Model_DbTable_User();
+        $userTable = new Model_DbTable_User();
         $users = array();
         foreach($userTable->fetchAllUsers() as $user) {
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;

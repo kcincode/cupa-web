@@ -2,8 +2,8 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$pickupTable = new Cupa_Model_DbTable_Pickup();
-$userTable = new Cupa_Model_DbTable_User();
+$pickupTable = new Model_DbTable_Pickup();
+$userTable = new Model_DbTable_User();
 
 $pickups = array(
     array(

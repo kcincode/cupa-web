@@ -13,7 +13,7 @@ class My_View_Helper_Leaguename extends Zend_View_Helper_Abstract
     public function leaguename($league, $showYear = false, $showDay = false, $showSeason = false, $showLeague = false)
     {
         if(is_numeric($league)) {
-            $leagueTable = new Cupa_Model_DbTable_League();
+            $leagueTable = new Model_DbTable_League();
             $leagueObject = $leagueTable->find($league)->current();
             
         } else if(get_class($league) == 'Zend_Db_Table_Row') {
@@ -32,7 +32,7 @@ class My_View_Helper_Leaguename extends Zend_View_Helper_Abstract
             }
 
             if($showSeason === true) {
-                $leagueSeasonTable = new Cupa_Model_DbTable_LeagueSeason();
+                $leagueSeasonTable = new Model_DbTable_LeagueSeason();
                 $season = $leagueSeasonTable->find($leagueObject->season)->current();
                 $name .= ' ' . ucwords($season->name);
             }

@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
+class Model_DbTable_LeagueTeam extends Zend_Db_Table
 {
     protected $_name = 'league_team';
     protected $_primary = 'id';
@@ -45,7 +45,7 @@ class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
             $data['final'] = $result->toArray();
         }
         
-        $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+        $leagueGameTable = new Model_DbTable_LeagueGame();
         $i = 0;
         foreach($data['final'] as $row) {
             $data['final'][$i]['record'] = $leagueGameTable->fetchRecord($leagueId, $row['id']);
@@ -60,7 +60,7 @@ class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
                 $result[$i]['record'] = $leagueGameTable->fetchRecord($leagueId, $team['id']);
                 $i++;
             }
-            usort($result, array('Cupa_Model_DbTable_LeagueTeam', 'rankTeams'));
+            usort($result, array('Model_DbTable_LeagueTeam', 'rankTeams'));
             $data['current'] = $result;
         }
         
@@ -76,7 +76,7 @@ class Cupa_Model_DbTable_LeagueTeam extends Zend_Db_Table
             if($aLoss == $bLoss) {
                 if($aTie == $bTie) {
                     // TODO check head to head matchup
-                    $leagueGameTable = new Cupa_Model_DbTable_LeagueGame();
+                    $leagueGameTable = new Model_DbTable_LeagueGame();
                     return $leagueGameTable->fetchHeadToHead($a['league_id'], $a, $b);
                 } else {
                     return ($aTie > $bTie) ? -1 : 1;

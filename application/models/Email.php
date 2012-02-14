@@ -1,6 +1,6 @@
 <?php
 
-class Cupa_Model_Email {
+class Model_Email {
     
     static public function sendActivationEmail($user)
     {

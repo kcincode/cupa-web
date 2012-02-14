@@ -1,11 +1,11 @@
 <?php
 
-class Cupa_Form_PickupEdit extends Zend_Form
+class Form_PickupEdit extends Zend_Form
 {
 
     public function init()
     {
-        $this->addElementPrefixPath('Cupa_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
+        $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
         $title = $this->addElement('text', 'title', array(
             'filters' => array('StringTrim'),
@@ -33,7 +33,7 @@ class Cupa_Form_PickupEdit extends Zend_Form
         ));
 
 
-        $userTable = new Cupa_Model_DbTable_User();
+        $userTable = new Model_DbTable_User();
         $users = array('0' => 'Unknown');
         foreach($userTable->fetchAllUsers() as $user) {
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;

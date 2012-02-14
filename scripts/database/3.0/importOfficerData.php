@@ -2,7 +2,7 @@
 require_once realpath(__DIR__ . '/../../') . '/common.php';
 
 // Database table links
-$officerTable = new Cupa_Model_DbTable_Officer();
+$officerTable = new Model_DbTable_Officer();
 
 $stmt = $origDb->prepare('SELECT * FROM officers');
 $stmt->execute();
