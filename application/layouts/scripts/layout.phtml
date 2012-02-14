@@ -10,13 +10,10 @@
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/style.css" type="text/css" media="all" />
-        <!--[if IE]>
-        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/ie-fix.css" type="text/css" media="all"/>
-        <![endif]-->
         <?php echo $this->headLink() . "\n"; ?>
         <?php $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-ui-1.8.16.min.js') . "\n"; ?>
         <?php $this->headScript()->appendFile($this->baseUrl() . '/js/global.js') . "\n"; ?>
-        <?php echo $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-1.6.4.min.js') . "\n"; ?>
+        <?php echo $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-1.7.1.min.js') . "\n"; ?>
         <script>
             var BASE_URL = '<?php echo $this->baseUrl(); ?>';
         </script>
