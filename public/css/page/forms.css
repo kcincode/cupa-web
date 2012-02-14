@@ -1,0 +1,66 @@
+#forms h2 {
+	font-size: 22pt;
+	text-decoration: underline;
+	margin-top: 20px;
+}
+
+#forms h2 a {
+	color: #222;
+}
+
+#forms {
+	width: 815px;
+	margin: 15px auto;
+	padding: 0;
+}
+
+#forms div {
+	font-size: 12pt;
+	padding: 2px 5px;
+}
+
+#forms .odd div {
+	background-color: #efefef;
+}
+
+#forms .name {
+	width: 300px;
+	float: left;
+}
+
+#forms .name a {
+	text-decoration: none;
+	color: #444;
+}
+
+#forms .type {
+	width: 75px;
+	float: left;
+	text-align: center;
+}
+
+#forms .size {
+	width: 150px;
+	float: left;
+	text-align: center;
+}
+
+#forms .actions {
+	width: 150px;
+	float: left;
+	text-align: center;
+}
+
+#forms .actions img {
+	margin-top: -5px;
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+}
+
+#forms .header {
+	padding-top: 5px;
+	font-size: 14pt;
+	font-weight: bold;
+	text-decoration: underline;
+}

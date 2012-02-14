@@ -2030,11 +2030,20 @@ class LeagueController extends Zend_Controller_Action
         $minors = $userTable->fetchAllMinors($this->view->user->id);
         $userIds = array();
         $userIds[] = $this->view->user->id;
-        foreach($minors as $id => $minor) {
-            $userIds[] = $id;
+        $this->view->hasMinors = false;
+        if(count($minors)) {
+            foreach($minors as $id => $minor) {
+                $userIds[] = $id;
+                $cnt++; 
+            }
+
+            $this->view->hasMinors = true;
         }
 
         $this->view->players = $leagueMemberTable->fetchUserRegistrants($leagueId, $userIds);
+        if(count($this->view->players) == count($userIds)) {
+            $this->view->hasMinors = false;
+        }
     }
 
     public function manageAction()

@@ -5,7 +5,9 @@
 	<h2>Players Registered</h2>
 
 	<div class="players">
+		<?php if($this->hasMinors): ?>
 		<a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_registration'); ?>">Register</a> as another user.<br/><br/>
+		<?php endif; ?>
 		<div class="row header">
 			<div class="name">Player</div>
 			<div class="paid">Paid</div>
