@@ -192,45 +192,101 @@ class Cupa_Form_LeagueRegister extends Zend_Form
         $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
         $i = 1;
         foreach($leagueQuestionTable->fetchAllQuestionsFromLeague($this->_leagueId) as $question) {
-            switch($question['type']) {
-                case 'boolean':
-                    $selection = array('1' => 'Yes', '0' => 'No');
-                                        
-                    $element = $this->addElement('radio', $question['name'], array(
-                        'validators' => array(
-                            array('InArray', false, array(array_keys($selection))),
-                        ),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                        'multiOptions' => $selection,
-                    ));
-                    break;
-                case 'text':
-                    $element = $this->addElement('text', $question['name'], array(
-                        'filters' => array('StringTrim'),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                    ));
-                    break;
-                case 'multiple':
-                    $selection = Zend_Json::decode($question['answers']);
-                                        
-                    $element = $this->addElement('radio', $question['name'], array(
-                        'validators' => array(
-                            array('InArray', false, array(array_keys($selection))),
-                        ),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                        'multiOptions' => $selection,
-                    ));
-                    break;
-                case 'textarea':
-                    $element = $this->addElement('textarea', $question['name'], array(
-                        'filters' => array('StringTrim'),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                    ));
-                    break;
+            if($question['name'] == 'user_teams') {
+                $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
+                $leagueInformation = $leagueInformationTable->fetchInformation($this->_leagueId);
+
+                $leagueTeamTable = new Cupa_Model_DbTable_LeagueTeam();
+                $leagueLimitTable = new Cupa_Model_DbTable_LeagueLimit();
+                $limits = $leagueLimitTable->fetchLimits($this->_leagueId);
+                $teams = $leagueTeamTable->fetchAllTeams($this->_leagueId);
+                $currentTeams = array('0' => 'Select a Team');
+                $validTeams = array();
+                foreach($teams as $team) {
+                    $currentTeams[$team->id] = $team->name;
+                    $validTeams[$team->id] = $team->name;
+                }
+
+
+                $teamSelect = $this->addElement('radio', 'team_select', array(
+                    'required' => true,
+                    'label' => '1.) Do you want to create a team or join a team?',
+                    'multiOptions' => array('0' => 'Create a Team', '1' => 'Join a Team'),
+                    'separator' => '&nbsp;&nbsp;&nbsp;',
+                ));
+
+                $teamSelect = $this->addElement('select', 'user_team_select', array(
+                    'required' => true,
+                    'validators' => array(
+                        array('InArray', false, array(array_keys($validTeams), 'messages' => array('notInArray' => 'Please select a valid team.'))),
+                    ),
+                    'label' => 'a.) Select the team you would like to join:',
+                    'description' => 'Select the team you would like to join, the captain will make a descision to allow you to join.',
+                    'multiOptions' => $currentTeams,
+                    'separator' => '&nbsp;&nbsp;&nbsp;',
+                ));
+
+                $teamSelect = $this->addElement('text', 'user_team_new', array(
+                    'required' => true,
+                    'filters' => array('StringTrim'),
+                    'label' => 'a.) Enter the team name you would like to create:',
+                    'description' => 'Enter the team name you would like to create.  First come first serve.',
+                ));
+
+                if(count($teams) >= $limits['teams']) {
+                    $this->removeElement('team_select');
+                    $this->removeElement('user_team_new');
+                    $this->getElement('user_team_select')->setLabel('1.) Select the team you would like to join:');
+                } else if(count($teams) == 0) {
+                    $this->removeElement('team_select');
+                    $this->removeElement('user_team_select');
+                    $this->getElement('user_team_new')->setLabel('1.) Enter the team name you would like to create:');
+                }
+            } else {
+
+                switch($question['type']) {
+                    case 'boolean':
+                        $selection = array('1' => 'Yes', '0' =>'No');
+                                            
+                        $element = $this->addElement('radio', $question['name'], array(
+                            'validators' => array(
+                                array('InArray', false, array(array_keys($selection))),
+                            ),
+                            'required' => ($question['required'] == 1) ? true : false,
+                            'label' => $i . '.) ' . $question['title'],
+                            'multiOptions' => $selection,
+                        ));
+                        break;
+                    case 'text':
+                        $element = $this->addElement('text', $question['name'], array(
+                            'filters' => array('StringTrim'),
+                            'required' => ($question['required'] == 1) ? true : false,
+                            'label' => $i . '.) ' . $question['title'],
+                            'description' => ($question['required'] == 0) ? '(optional)' : '',
+                        ));
+                        break;
+                    case 'multiple':
+                        $selection = Zend_Json::decode($question['answers']);
+                                            
+                        $element = $this->addElement('radio', $question['name'], array(
+                            'validators' => array(
+                                array('InArray', false, array(array_keys($selection))),
+                            ),
+                            'required' => ($question['required'] == 1) ? true : false,
+                            'label' => $i . '.) ' . $question['title'],
+                            'multiOptions' => $selection,
+                            'description' => ($question['required'] == 0) ? '(optional)' : '',
+                        ));
+                        break;
+                    case 'textarea':
+                        $element = $this->addElement('textarea', $question['name'], array(
+                            'filters' => array('StringTrim'),
+                            'required' => ($question['required'] == 1) ? true : false,
+                            'label' => $i . '.) ' . $question['title'],
+                            'description' => ($question['required'] == 0) ? '(optional)' : '',
+                        ));
+                        break;
+                }
             }
             $i++;
         }

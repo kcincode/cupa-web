@@ -55,5 +55,25 @@ class Cupa_Model_DbTable_LeagueAnswer extends Zend_Db_Table
         
         return $data;
     }
+
+    public function addAnswer($leagueMemberId, $leagueQuestionId, $answer)
+    {
+        $select = $this->select()
+                       ->where('league_member_id = ?', $leagueMemberId)
+                       ->where('league_question_id = ?', $leagueQuestionId);
+
+        $result = $this->fetchRow($select);
+        if(!$result) {
+            $this->insert(array(
+                'league_member_id' => $leagueMemberId,
+                'league_question_id' => $leagueQuestionId,
+                'answer' => $answer,
+            ));
+        } else {
+            $where = $this->getAdapter()->quoteInto('id = ?', $result->id);
+            $this->update(array('answer' => $answer), $where);
+        }
+        
+    }
     
 }

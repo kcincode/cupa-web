@@ -219,7 +219,16 @@ class LeagueController extends Zend_Controller_Action
                     $leagueInformation->user_teams = $data['user_teams'];
                     $leagueInformation->contact_email = $data['contact_email'];
                     $leagueInformation->save();
-                    
+
+                    if($leagueInformation->user_teams == 1) {
+                        $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
+                        $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
+
+                        $question = $leagueQuestionTable->fetchQuestion('user_teams');
+                        if($question) {
+                            $leagueQuestionListTable->addQuestionToLeague($league->id, $question->id, 1, -15);
+                        }
+                    }
                 }
                 
                 $league->visible_from = $data['visible_from'];
@@ -485,11 +494,6 @@ class LeagueController extends Zend_Controller_Action
                 }
             }
             
-            if(isset($post['remove_question'])) {
-                Zend_Debug::dump($post);
-                
-            }
-            
             
             if($post['limit_select'] == 1) {
                 $form->getElement('total_players')->setRequired(false);
@@ -529,6 +533,8 @@ class LeagueController extends Zend_Controller_Action
                 $leagueInformationTable = new Cupa_Model_DbTable_LeagueInformation();
                 $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
                 $leagueInformation->paypal_code = (empty($data['paypal_code'])) ? null : $data['paypal_code'];
+                $leagueInformation->cost = $data['cost'];
+
                 $leagueInformation->save();
                 
                 $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
@@ -1884,6 +1890,13 @@ class LeagueController extends Zend_Controller_Action
 
                 if($form->isValid($post)) {
                     unset($post['save']);
+                    foreach(array('user_team_new', 'user_team_select') as $key) {
+                        if(isset($post[$key])) {
+                            $post['user_teams'] = $post[$key];
+                            unset($post[$key]);
+                        }
+                    }
+
                     $session->league = $post;
 
                     // all data entered save the registrant
@@ -1946,27 +1959,30 @@ class LeagueController extends Zend_Controller_Action
                     }
 
                     $leagueMemberTable = new Cupa_Model_DbTable_LeagueMember();
-                    $leagueMemberId = $leagueMemberTable->insert(array(
-                        'league_id' => $leagueId,
-                        'user_id' => $session->registrantId,
-                        'position' => 'player',
-                        'league_team_id' => null,
-                        'paid' => 0,
-                        'release' => ($this->view->displayAge($session->personal['birthday']) >= 18) ? 1 :0,
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'modified_at' => date('Y-m-d H:i:s'),
-                        'modified_by' => $this->view->user->id,
-                    ));
+                    $leagueMember = $leagueMemberTable->fetchMember($leagueId, $session->registrantId);
+                    if(!$leagueMember) {
+                        $leagueMemberId = $leagueMemberTable->insert(array(
+                            'league_id' => $leagueId,
+                            'user_id' => $session->registrantId,
+                            'position' => 'player',
+                            'league_team_id' => null,
+                            'paid' => 0,
+                            'release' => ($this->view->displayAge($session->personal['birthday']) >= 18) ? 1 :0,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'modified_at' => date('Y-m-d H:i:s'),
+                            'modified_by' => $this->view->user->id,
+                        ));
+                    } else {
+                        $leagueMemberId = $leagueMember->id;                        
+                    }
 
                     $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
                     $leagueAnswerTable = new Cupa_Model_DbTable_LeagueAnswer();
                     foreach($session->league as $questionName => $answer) {
                         $question = $leagueQuestionTable->fetchQuestion($questionName);
-                        $leagueAnswerTable->insert(array(
-                            'league_member_id' => $leagueMemberId,
-                            'league_question_id' => $question->id,
-                            'answer' => $answer,
-                        ));
+                        if($question) {
+                            $leagueAnswerTable->addAnswer($leagueMemberId, $question->id, $answer);
+                        }
                     }
 
                     // redirect to success/payment screen

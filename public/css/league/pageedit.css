@@ -229,3 +229,15 @@ p.description {
 #add-question select {
     font-size: 14pt;
 }
+
+#leagueedit-container #registration_begin,
+#leagueedit-container #registration_end {
+    width: 160px;
+    text-align: center;
+}
+
+
+#leagueedit-container #cost {
+    width: 50px;
+    text-align: center;
+}

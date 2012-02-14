@@ -28,8 +28,11 @@
     <?php else: ?>
     <h2><?php echo $this->title; ?></h2>
     <form method="post">
+
         <?php foreach($this->form->getElements() as $element): ?>
-        <?php echo $element; ?>
+        <div id="<?php echo $element->getName(); ?>-div">
+            <?php echo $element; ?>
+        </div>
         <?php endforeach; ?>
 
         <?php if($this->state == 'personal'): ?>

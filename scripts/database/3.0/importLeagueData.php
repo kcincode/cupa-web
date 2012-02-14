@@ -561,12 +561,34 @@ if(!DEBUG) {
 }
 
 $i = 0;
+
+$leagueQuestion = $leagueQuestionTable->fetchQuestion('user_teams');
+if(!$leagueQuestion) {
+    $leagueQuestion = $leagueQuestionTable->createRow();
+    $leagueQuestion->name = 'user_teams';
+    $leagueQuestion->title = 'Requested team';
+    $leagueQuestion->type = 'text';
+    $leagueQuestion->answers = null;
+    $leagueQuestion->save();
+}
+
+//$leagueInformation = $leagueInformationTable->fetchInformation($league->id);
+if($leagueInformation->user_teams == 1) {
+    $leagueQuestionList = $leagueQuestionListTable->createRow();
+    $leagueQuestionList->league_id = $league->id;
+    $leagueQuestionList->league_question_id = $leagueQuestion->id;
+    $leagueQuestionList->required = 1;
+    $leagueQuestionList->weight = -10;
+    $leagueQuestionList->save();
+}
+
 foreach($results as $row) {
     if(DEBUG) {
         echo "            Importing league question '{$row['name']}'...\n";
     } else {
         $progressBar->update($i);
     }
+
     $leagueQuestion = $leagueQuestionTable->createRow();
     $leagueQuestion->name = $row['name'];
     $leagueQuestion->title = $row['title'];
@@ -669,7 +691,7 @@ foreach($results as $row) {
                 $emergencyContacts[$leagueMember->user_id][$num][$key] = $answer;
             } else {
                 $leagueQuestion = $leagueQuestionTable->fetchQuestion($question);
-                if($leagueQuestion) {
+                if($leagueQuestion and !empty($answer)) {
                     $leagueAnswer = $leagueAnswerTable->createRow();
                     $leagueAnswer->league_member_id = $leagueMember->id;
                     $leagueAnswer->league_question_id = $leagueQuestion->id;

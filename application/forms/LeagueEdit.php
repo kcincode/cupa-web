@@ -417,6 +417,14 @@ class Cupa_Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['registration_end'],
         ));
         
+        $cost = $this->addElement('text', 'cost', array(
+            'filters' => array('digits'),
+            'required' => true,
+            'label' => 'Cost:',
+            'description' => 'Enter the amount the league costs to register.',
+            'value' => $this->_leagueData['information']['cost'],
+        ));
+
         $limitGenders = 0;
         if(!empty($this->_leagueData['limits']['male_players']) and 
            !empty($this->_leagueData['limits']['female_players']) and

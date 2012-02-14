@@ -22,6 +22,19 @@ $(document).ready(function() {
 		dateFormat: 'yy-mm-dd',
 		maxDate: '-4Y'
 	});
+
+	$('#team_select-0').click(function(e){
+		$('#user_team_new-div').show();
+		$('#user_team_select-div').hide();
+	});
+
+	$('#team_select-1').click(function(e){
+		$('#user_team_new-div').hide();
+		$('#user_team_select-div').show();		
+	});
+
+	$('#team_select-1').click();
+
 });
 
 function validValues(e)

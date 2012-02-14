@@ -149,8 +149,12 @@ class Cupa_Model_DbTable_League extends Zend_Db_Table
             $leagueQuestionListTable = new Cupa_Model_DbTable_LeagueQuestionList();
             $leagueQuestionTable = new Cupa_Model_DbTable_LeagueQuestion();
             foreach(array('new_player', 'pair', 'shirt', 'captain', 'comments') as $questionName) {
+                $required = 1;
+                if($questionName == 'pair' or $questionName == 'comments') {
+                    $required = 0;
+                }
                 $question = $leagueQuestionTable->fetchQuestion($questionName);
-                $leagueQuestionListTable->addQuestionToLeague($leagueId, $question->id, 1);
+                $leagueQuestionListTable->addQuestionToLeague($leagueId, $question->id, $required);
             }
         }
         

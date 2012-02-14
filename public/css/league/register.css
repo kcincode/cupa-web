@@ -65,11 +65,13 @@ p.blurb {
 
 #contacts .row .phone {
 	width: 90px;
+	margin-right: 10px;
 	float: left;
 }
 
 #contacts .row .phone input {
-	width: 70px;
+	width: 80px;
+	text-align: center;
 }
 
 #contacts .row .action {
@@ -122,6 +124,10 @@ ul.errors {
 	font-weight: bold;
 	font-size: 12pt;
 	margin-left: 50px;	
+}
+
+#register-league input[type=radio] {
+	margin-right: 5px;
 }
 
 #register-league dd {
