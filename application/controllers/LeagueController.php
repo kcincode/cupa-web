@@ -2034,9 +2034,7 @@ class LeagueController extends Zend_Controller_Action
         if(count($minors)) {
             foreach($minors as $id => $minor) {
                 $userIds[] = $id;
-                $cnt++; 
             }
-
             $this->view->hasMinors = true;
         }
 
