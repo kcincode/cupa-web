@@ -1,4 +1,15 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Page</b> and script/action name <b>formsadd</b></p>
-</div>
+<form method="post">
+    <div class="row">
+        <dt>Form Name:</dt>
+        <dd>
+            <input id="form-name" type="text" name="name" />
+        </dd>
+    </div>
+    <div class="row">
+        <dt>Form Year:</dt>
+        <dd>
+            <input id="form-year" type="text" name="name" value="<?php echo date('Y'); ?>"/>
+        </dd>
+    </div>
+    <div id="error-string"></div>
+</form>

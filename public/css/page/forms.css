@@ -64,3 +64,18 @@
 	font-weight: bold;
 	text-decoration: underline;
 }
+
+#add-form-container dt {
+	margin-left: 40px;
+	font-weight: bold;
+}
+
+#add-form-container #error-string {
+	color: #c00;
+	text-align: center;
+}
+
+.admin-buttons {
+	margin: 10px 0;
+	text-align: center;
+}

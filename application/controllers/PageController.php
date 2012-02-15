@@ -945,7 +945,9 @@ class PageController extends Zend_Controller_Action
 
     public function formsAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/forms.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/forms.js');
 
         $type = $this->getRequest()->getUserParam('type');
         $year = $this->getRequest()->getUserParam('year');
@@ -994,11 +996,62 @@ class PageController extends Zend_Controller_Action
 
     public function formsaddAction()
     {
-        // action body
+        // make sure its an AJAX request
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+            $this->_redirect('forms');
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'forms');
+
+        $userRoleTable = new Model_DbTable_UserRole();
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
+            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
+            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+            $this->view->message('You either are not logged in or you do not have permission to add a form.');
+            $this->_redirect('forms');
+        }
+
+        if($this->getRequest()->isPost()) {
+            $this->_helper->viewRenderer->setNoRender(true);
+            $name = str_replace(' ', '_', $this->getRequest()->getPost('name'));
+            $year = $this->getRequest()->getPost('year');
+
+            if((empty($name) or empty($year)) and ($name == 'all' or $year == '0')) {
+                // throw a 404 error if the page cannot be found
+                throw new Zend_Controller_Dispatcher_Exception('Page not found');
+            }
+
+            $formTable = new Model_DbTable_Form();
+            $form = $formTable->fetchForms($name, $year);
+
+            if($form) {
+                echo Zend_Json::encode(array('message' => 'error'));
+            } else {
+                $form = $formTable->createRow();
+                $form->year = $year;
+                $form->name = $name;
+                $form->type = '';
+                $form->data = '';
+                $form->md5 = md5($year . $name);
+                $form->uploaded_at = date('Y-m-d H:i:s');
+                $form->modified_at = date('Y-m-d H:i:s');
+                $form->modified_by = $this->view->user->id;
+                $form->save();
+                echo Zend_Json::encode(array('message' => 'success', 'formId' => $form->id));
+            }
+        }
     }
 
     public function formseditAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/formsedit.css');
+
         $formId = $this->getRequest()->getUserParam('form_id');
         $year = $this->getRequest()->getUserParam('year');
 
@@ -1016,17 +1069,78 @@ class PageController extends Zend_Controller_Action
            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
+            $this->view->message('You either are not logged in or you do not have permission to edit forms.');
             $this->_redirect('/forms');
         }
 
+        $this->view->page = $page;
+
         $form = new Form_FormEdit($formId, $this->view->user->id);
         $bootstrap = $this->getInvokeArg('bootstrap');
-        $validForms = $bootstrap->getOption('validForms');
-        Zend_Debug::dump($validForms);
+        $validForms = explode(',', $bootstrap->getOption('validForms'));
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('forms');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $formTable = new Model_DbTable_Form();
+                $formData = $formTable->find($formId)->current();
+                $update = 0;
+
+                if(!empty($data['file'])) {
+                    if(APPLICATION_ENV == 'development') {
+                        $fp = fopen('/usr/local/zend/tmp/' . $data['file'], 'r');
+                        $filesize = filesize('/usr/local/zend/tmp/' . $data['file']);
+                        $md5 = md5_file('/usr/local/zend/tmp/' . $data['file']);
+                    } else {
+                        $fp = fopen($_FILES['file']['tmp_name'], 'r');
+                        $filesize = $_FILES['file']['size'];
+                        $md5 = md5_file($_FILES['file']['tmp_name']);
+                    }
+
+                    if(!$formTable->isUnique($md5, $formId)) {
+                        $this->view->message('The uploaded file is a duplicate of another file already uploaded.', 'warning');
+                    } else {
+                        if($fp) {
+                            $extension = end(explode('.', $data['file']));
+                            if(in_array($extension, $validForms)) {
+                                $formData->md5 = $md5;
+                                $formData->size = $filesize;
+                                $formData->data = addslashes(fread($fp, $filesize));
+                                $formData->type = $extension;
+                                $formData->save();
+                                $update = 1;
+                            } else {
+                                $this->view->message('The uploaded file is not a valid type.', 'warning');
+                            }
+                            fclose($fp);
+                        }
+                    }
+                }
+
+                if($data['name'] != $formData->name or $data['year'] != $formData->year) {
+                    $formTable->udpateForm($year, $name);
+                    $update = 1;
+                }
+
+                if($update == 1) {
+                    $formData->modified_at = date('Y-m-d H:i:s');
+                    $formData->modified_by = $this->view->user->id;
+                    $formData->save();
+                    $this->view->message('Form ' . $formData->year . ' ' . $formData->name . ' updated successfully.', 'success');
+                    $this->_redirect('forms');
+                }
+            } else {
+                $form->populate($post);
+            }
+        }
 
         $this->view->form = $form;
-
     }
 
     public function formsdeleteAction()

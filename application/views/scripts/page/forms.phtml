@@ -1,7 +1,14 @@
 <h1>CUPA Forms</h1>
 
+
 <div class="admin-buttons">
-	<a class="button" href="#">Add Form</a>
+<?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
+	<a class="button" id="add-form" href="#">Add Form</a>
+	<div id="add-form-container"></div>
+<?php endif; ?>
+<p>
+	To download a form, click on the file icon.
+</p>
 </div>
 
 <div id="forms">
@@ -26,12 +33,14 @@
 			<?php if(file_exists(APPLICATION_PATH . '/../public/images/ico-' . $form->type . '.png')): ?>
 			<a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-<?php echo $this->escape($form->type); ?>.png" title="Download"/></a>
 			<?php else: ?>
-			<img src="<?php echo $this->baseUrl(); ?>/images/ico-download.png" title="Download"/>
+			<a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-download.png" title="Download"/></a>
 			<?php endif; ?>
-			<img src="<?php echo $this->baseUrl(); ?>/images/ico-uparrow.png" title="Re-Upload"/>
+			<?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
+			<a href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-uparrow.png" title="Re-Upload"/></a>
 			<a onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>">
 				<img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Delete"/>
 			</a>
+			<?php endif; ?>
 		</div>
 	</div>
 	<?php endforeach; ?>
