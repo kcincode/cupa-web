@@ -1,0 +1,31 @@
+#available select,
+#players select { 
+	width: 400px;
+	height: 300px;
+	overflow-y: auto;
+	border: 1px solid #444;
+	font-size: 12pt;
+}
+
+#available {
+	float: left;
+	margin-left: 30px;
+}
+
+#players {
+	float: left;
+	margin-right; 30px;
+}
+
+#buttons {
+	width: 60px;
+	height: 300px;
+	float: left;
+	padding: 20px;
+}
+
+#team-select-div {
+	text-align: center;
+	width: 200px;
+	margin: 15px auto;	
+}

@@ -2062,7 +2062,36 @@ class LeagueController extends Zend_Controller_Action
 
     public function manageAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/manage.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/manage.js');
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $teamId = $this->getRequest()->getUserParam('team_id');
+        if(!$teamId) {
+            $teamId = 0;
+        }
+        $this->view->teamId = $teamId;
+
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league or !$this->view->isLeagueDirector($leagueId)) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            Zend_Debug::dump($post);
+        }
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
+        $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
+        $this->view->available = $leagueMemberTable->fetchPlayersByTeam($leagueId, null);
+        $this->view->teamPlayers = $leagueMemberTable->fetchPlayersByTeam($leagueId, $teamId);
+
     }
 
     public function manageaddAction()

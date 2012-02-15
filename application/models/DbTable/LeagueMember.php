@@ -291,4 +291,27 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
             return $this->fetchRow($select);
         }
     }
+
+    public function fetchPlayersByTeam($leagueId, $teamId = null)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array('id', 'user_id'))
+                       ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('id AS team_id', 'name AS team', 'color_code', 'text_code'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
+                       ->where('lm.position = ?', 'player')
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->order('lt.name')
+                       ->order('u.last_name')
+                       ->order('u.first_name');
+
+        if($teamId === 0) {
+            return array();
+        } else if(empty($teamId)) { 
+            $select->where('lm.league_team_id IS NULL');
+        } else {
+            $select->where('lm.league_team_id = ?', $teamId);
+        }
+      
+        return $this->getAdapter()->fetchAll($select);
+    }
 }

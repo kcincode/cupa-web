@@ -35,10 +35,16 @@ $data = array(
         'location' => 'forms/2011_medical_authorization.pdf',
         'type' => 'pdf',
     ),
-    array(
+/*    array(
         'year' => '2012',
         'name' => 'waiver',
         'location' => 'forms/2012_waiver.pdf',
+        'type' => 'pdf',
+    ),*/
+    array(
+        'year' => '2012',
+        'name' => 'youth_waiver',
+        'location' => 'forms/2012_youth_waiver.pdf',
         'type' => 'pdf',
     ),
     array(

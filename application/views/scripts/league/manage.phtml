@@ -1,4 +1,45 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>League</b> and script/action name <b>manage</b></p>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<div id="manage">
+    <h1>Manage League Players</h1>
+
+    <form method="post">
+	    <div id="team-select-div">
+	    	<select id="teams-select" name="teams-select">
+	    		<?php if($this->teamId == 0) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>
+	    	    <option value="0"<?php echo $this->escape($selected); ?>>Select a team</option>
+	    	<?php foreach($this->teams as $team): ?>
+	    		<?php if($this->teamId == $team->id) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>
+	    		<option value="<?php echo $this->escape($team->id); ?>"<?php echo $this->escape($selected); ?>><?php echo $this->escape($team->name); ?></option>
+	    	<?php endforeach; ?>
+	    	</select>
+	    </div>
+	    <div id="available">
+
+		    <h3>Available Players</h3>
+		    <select id="available-select" name="available-select[]" multiple>
+		    	<?php foreach($this->available as $data): ?>
+		    		<option value="<?php echo $this->escape($data['user_id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+		    	<?php endforeach; ?>
+		   	</select>
+		</div>
+		    
+	    <div id="buttons">
+	    	<input type="submit" name="add" value="=>"/>
+	    	<input type="submit" name="remove" value="<="/>
+	    	<input type="submit" name="clear" value="X"/>
+	    </div>
+
+	    <div id="players">
+	    	<h3>Team Players</h3>
+	    	<select id="players-select" name="players-select[]" multiple>
+	    	<?php foreach($this->teamPlayers as $data): ?>
+	    		<option value="<?php echo $this->escape($data['user_id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+	    	<?php endforeach; ?>
+	    	</select>
+	    </div>
+    </form>
 </div>
+
+<script>
+	var leagueId = '<?php echo $this->league->id; ?>';
+</script>
