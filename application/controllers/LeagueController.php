@@ -2083,7 +2083,45 @@ class LeagueController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            Zend_Debug::dump($post);
+            if(empty($post['teams-select'])) {
+                $this->view->message('You must select a team before adding/removing players', 'warning');
+            } else {
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                if(isset($post['clear'])) {
+                    $teamMembers = $leagueMemberTable->fetchAllByType($leagueId, 'player', $teamId);
+                    foreach($teamMembers as $member) {
+                        $leagueMember = $leagueMemberTable->find($member->id)->current();
+                        $leagueMember->league_team_id = null;
+                        $leagueMember->modified_at = date('Y-m-d H:i:s');
+                        $leagueMember->modified_by = $this->view->user->id;
+                        $leagueMember->save();
+                    } 
+                } else if(isset($post['add'])) {
+                    if(isset($post['available-select']) and count($post['available-select'])) {
+                        foreach($post['available-select'] as $leagueMemberId) {
+                            $leagueMember = $leagueMemberTable->find($leagueMemberId)->current();
+                            $leagueMember->league_team_id = $post['teams-select'];
+                            $leagueMember->modified_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_by = $this->view->user->id;
+                            $leagueMember->save();
+                        } 
+                    } else {
+                        $this->view->message('You must select at least one available player before adding.', 'warning');
+                    }
+                } else if(isset($post['remove'])) {
+                    if(isset($post['players-select']) and count($post['players-select'])) {
+                        foreach($post['players-select'] as $leagueMemberId) {
+                            $leagueMember = $leagueMemberTable->find($leagueMemberId)->current();
+                            $leagueMember->league_team_id = null;
+                            $leagueMember->modified_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_by = $this->view->user->id;
+                            $leagueMember->save();
+                        } 
+                    } else {
+                        $this->view->message('You must select at least one team player before removing.', 'warning');
+                    }
+                }
+            }
         }
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
@@ -2091,18 +2129,12 @@ class LeagueController extends Zend_Controller_Action
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
         $this->view->available = $leagueMemberTable->fetchPlayersByTeam($leagueId, null);
         $this->view->teamPlayers = $leagueMemberTable->fetchPlayersByTeam($leagueId, $teamId);
-
     }
 
-    public function manageaddAction()
+
+    public function moveAction()
     {
-        // action body
+        
+
     }
-
-    public function manageremoveAction()
-    {
-        // action body
-    }
-
-
 }

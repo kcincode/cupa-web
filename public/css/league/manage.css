@@ -1,10 +1,11 @@
 #available select,
 #players select { 
-	width: 400px;
-	height: 300px;
+	width: 370px;
+	height: 400px;
 	overflow-y: auto;
 	border: 1px solid #444;
 	font-size: 12pt;
+	padding: 5px;
 }
 
 #available {
@@ -18,14 +19,15 @@
 }
 
 #buttons {
-	width: 60px;
+	width: 100px;
 	height: 300px;
 	float: left;
-	padding: 20px;
+	padding: 150px 20px 20px;
+	text-align: center;
 }
 
 #team-select-div {
 	text-align: center;
-	width: 200px;
+	width: 600px;
 	margin: 15px auto;	
 }

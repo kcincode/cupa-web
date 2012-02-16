@@ -4,6 +4,10 @@
 
     <form method="post">
 	    <div id="team-select-div">
+			<p>
+				<a class="button" href="<?php echo $this->url(array(), 'league_move'); ?>">Move Players to Another League</a>
+			</p>
+	    	Select a team:
 	    	<select id="teams-select" name="teams-select">
 	    		<?php if($this->teamId == 0) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>
 	    	    <option value="0"<?php echo $this->escape($selected); ?>>Select a team</option>
@@ -18,22 +22,22 @@
 		    <h3>Available Players</h3>
 		    <select id="available-select" name="available-select[]" multiple>
 		    	<?php foreach($this->available as $data): ?>
-		    		<option value="<?php echo $this->escape($data['user_id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+		    		<option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
 		    	<?php endforeach; ?>
 		   	</select>
 		</div>
 		    
 	    <div id="buttons">
-	    	<input type="submit" name="add" value="=>"/>
-	    	<input type="submit" name="remove" value="<="/>
-	    	<input type="submit" name="clear" value="X"/>
+	    	<p><input class="button" type="submit" name="add" value="Add =>"/></p>
+	    	<p><input class="button" type="submit" name="remove" value="<= Remove"/></p>
+	    	<p><input class="button" type="submit" name="clear" value="Clear Team"/></p>
 	    </div>
 
 	    <div id="players">
 	    	<h3>Team Players</h3>
 	    	<select id="players-select" name="players-select[]" multiple>
 	    	<?php foreach($this->teamPlayers as $data): ?>
-	    		<option value="<?php echo $this->escape($data['user_id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+	    		<option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
 	    	<?php endforeach; ?>
 	    	</select>
 	    </div>
