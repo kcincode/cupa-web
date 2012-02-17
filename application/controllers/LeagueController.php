@@ -2134,7 +2134,50 @@ class LeagueController extends Zend_Controller_Action
 
     public function moveAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/move.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/move.js');
         
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        if(!$this->view->league or !$this->view->isLeagueDirector($leagueId)) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        $session = new Zend_Session_Namespace('move_players');
+
+        $leagueTable = new Model_DbTable_League();
+//        $leagues = $this->fetchAll
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $this->view->players = $leagueMemberTable->fetchPlayersByLeague($leagueId);
+
+        if($this->view->state == 'players') {
+            unset($session->players);
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+
+                if(!isset($post['players'])) {
+                    $this->view->message('You must select at least one player to move.', 'warning');
+                } else {
+                    $session->players = $post['players'];
+                }
+            }
+        }
+
+        if(!isset($session->players)) {
+            $this->view->state = 'players';
+        } else if(!isset($session->target)) {
+            $this->view->state = 'target';
+        } else if(isset($session->players) and isset($session->target)) {
+            $this->view->state = 'confirm';
+        }
+
 
     }
 }

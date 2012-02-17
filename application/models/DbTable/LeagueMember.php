@@ -62,6 +62,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         $select = $this->select()
                        ->where('league_id = ?', $leagueId)
                        ->where('position = ?', $position);
+
         
         if($teamId) {
            $select->where('league_team_id = ?', $teamId); 
@@ -311,6 +312,19 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
         } else {
             $select->where('lm.league_team_id = ?', $teamId);
         }
+      
+        return $this->getAdapter()->fetchAll($select);
+    }
+
+    public function fetchPlayersByLeague($leagueId)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array('id', 'user_id'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
+                       ->where('lm.position = ?', 'player')
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->order('u.last_name')
+                       ->order('u.first_name');
       
         return $this->getAdapter()->fetchAll($select);
     }

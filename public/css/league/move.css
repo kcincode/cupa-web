@@ -1,0 +1,37 @@
+#breadcrumbs {
+	width: 425px;
+	list-style: none;
+	margin: 20px auto 60px auto;
+	padding: 0;
+}
+
+#breadcrumbs li {
+	float: left;
+	padding: 5px 0px;
+	margin: 0;
+	background-color: #efefef;
+	border: 1px solid #444;
+}
+
+#breadcrumbs li.active {
+	font-weight: bold;
+	background-color: #ababab;
+}
+
+#breadcrumbs span.text {
+	padding: 0 10px
+}
+
+
+#move {
+	text-align: center;
+}
+
+span.label {
+	font-weight: bold;
+	font-size: 14pt;
+}
+
+#players-select {
+	width: 600px;
+}

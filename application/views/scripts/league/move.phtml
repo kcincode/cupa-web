@@ -1,4 +1,21 @@
 <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
 <div id="move">
     <h1>Move League Players</h1>
+
+    <?php echo $this->partial('league/move_steps.phtml', array('state' => $this->state));?>
+
+    <?php if($this->state == 'players'): ?>
+    <form method="post">
+    <p><span class="label">Select the players you would like to move:</span></p>
+    <p>
+	    <select id="players-select" name="players[]" multiple>
+	    	<?php foreach($this->players as $player): ?>
+	    	<option value="<?php echo $this->escape($player['id']); ?>"><?php echo $this->escape($player['first_name'] . ' ' . $player['last_name']); ?></option>
+		    <?php endforeach; ?>
+		</select>
+	</p>
+	<p><input class="button" type="submit" name="next" value="Use These Players"/></p>
+	</form>
+	<?php endif; ?>
+
 </div>

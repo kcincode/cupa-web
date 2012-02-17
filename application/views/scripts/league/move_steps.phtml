@@ -1,0 +1,11 @@
+<ul id="breadcrumbs">
+<?php foreach(array('players' => '1. Select Players to Move', 'target' => '2. Select Target League') as $state => $title): ?>
+<?php if($this->state == $state): ?>
+	<li class="active"><span class="text"><?php echo $this->escape($title); ?></span></li>
+<?php else: ?>
+	<li><span class="text"><?php echo $this->escape($title); ?></span></li>
+<?php endif; ?>
+<?php endforeach; ?>
+	<li><span class="text">3. Confirm</span></li>
+</ul>
+<div class="clearfix">&nbsp;</div>

@@ -5,7 +5,7 @@
     <form method="post">
 	    <div id="team-select-div">
 			<p>
-				<a class="button" href="<?php echo $this->url(array(), 'league_move'); ?>">Move Players to Another League</a>
+				<a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_move'); ?>">Move Players to Another League</a>
 			</p>
 	    	Select a team:
 	    	<select id="teams-select" name="teams-select">
