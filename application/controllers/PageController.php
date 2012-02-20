@@ -37,9 +37,9 @@ class PageController extends Zend_Controller_Action
         $page = $pageTable->fetchBy('name', $page);
         
         $userRoleTable = new Model_DbTable_UserRole();
-        if($page and ($page->is_visible or (Zend_Auth::getInstance()->hasIdentity() and ($userRoleTable->hasRole($this->view->user->id, 'admin') or
-           $userRoleTable->hasRole($this->view->user->id, 'editor') or
-           $userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))))) {
+        if($page and ($page->is_visible or (Zend_Auth::getInstance()->hasIdentity() and ($this->view->hasRole('admin') or
+           $this->view->hasRole('editor') or
+           $this->view->hasRole('editor', $page->id))))) {
             $this->view->page = $page;
             $this->view->links = $pageTable->fetchChildren($page);
         } else {
@@ -65,9 +65,9 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
-           !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-           !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+           (!$this->view->hasRole('admin') and
+           !$this->view->hasRole('editor') and
+           !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this page.');
             $this->_redirect('/' . $page->name);
         }
@@ -122,7 +122,7 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$userRoleTable->hasRole($this->view->user->id, 'admin'))) {
+           (!$this->view->hasRole('admin'))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this page.');
             $this->_redirect('/' . $page->name);
         }
@@ -209,9 +209,9 @@ class PageController extends Zend_Controller_Action
 
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'editor') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id) and
-             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            (!$this->view->hasRole('editor') and
+             !$this->view->hasRole('editor', $page->id) and
+             !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -255,9 +255,9 @@ class PageController extends Zend_Controller_Action
 
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'editor') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id) and
-             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            (!$this->view->hasRole('editor') and
+             !$this->view->hasRole('editor', $page->id) and
+             !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -292,7 +292,7 @@ class PageController extends Zend_Controller_Action
     {
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-             !$userRoleTable->hasRole($this->view->user->id, 'admin'))) {
+             !$this->view->hasRole('admin'))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -338,9 +338,9 @@ class PageController extends Zend_Controller_Action
         
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-             !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
+            (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('editor') and
+             !$this->view->hasRole('edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -402,9 +402,9 @@ class PageController extends Zend_Controller_Action
         
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-             !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
+            (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('editor') and
+             !$this->view->hasRole('edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -444,9 +444,9 @@ class PageController extends Zend_Controller_Action
         
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-             !$userRoleTable->hasRole($this->view->user->id, 'edior', $page->id)))) {
+            (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('editor') and
+             !$this->view->hasRole('edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -534,9 +534,9 @@ class PageController extends Zend_Controller_Action
         
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id)))) {
+            (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('editor') and
+             !$this->view->hasRole('editor', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -591,9 +591,9 @@ class PageController extends Zend_Controller_Action
         
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'admin') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-             !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id)))) {
+            (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('editor') and
+             !$this->view->hasRole('editor', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -630,7 +630,7 @@ class PageController extends Zend_Controller_Action
     {
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            (!$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -701,24 +701,27 @@ class PageController extends Zend_Controller_Action
     public function clubseditAction()
     {
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/clubsedit.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubsedit.css');
         
         $clubTable = new Model_DbTable_Club();
         $pageTable = new Model_DbTable_Page();
-        $userRoleTable = new Model_DbTable_UserRole();
 
         $page = $pageTable->fetchBy('name', 'clubs');
+        $clubId = $this->getRequest()->getUserParam('club');
+
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
-            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+           (!$this->view->hasRole('editor') and
+            !$this->view->hasRole('editor', $page->id) and
+            !$this->view->isClubCaptain($clubId))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this team.');
             $this->_redirect('/clubs');
         }
 
-        $clubId = $this->getRequest()->getUserParam('club');
         $club = $clubTable->find($clubId)->current();
         
         if(!$club) {
@@ -744,6 +747,9 @@ class PageController extends Zend_Controller_Action
                 $club->website = (empty($data['website'])) ? null : $data['website'];
                 $club->content = $data['content'];
                 $club->save();
+
+                $clubCaptainTable = new Model_DbTable_ClubCaptain();
+                $clubCaptainTable->updateCaptains($data['captains'], $club->id);
                 
                 $this->view->message('Team ' . $club->name . ' updated successfully.', 'success');
                 $this->_redirect('/clubs');
@@ -751,7 +757,6 @@ class PageController extends Zend_Controller_Action
                 $form->populate($post);
             }
         }
-        
         
         $this->view->club = $club;
         $this->view->form = $form;
@@ -770,9 +775,9 @@ class PageController extends Zend_Controller_Action
         $page = $pageTable->fetchBy('name', 'clubs');
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
-            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+           (!$this->view->hasRole('admin') and 
+            !$this->view->hasRole('editor') and
+            !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this team.');
             $this->_redirect('/clubs');
         }
@@ -837,8 +842,8 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if($news and 
            (Zend_Auth::getInstance()->hasIdentity() and 
-            ($userRoleTable->hasRole($this->view->user->id, 'reporter') or
-             $userRoleTable->hasRole($this->view->user->id, 'admin')) or 
+            ($this->view->hasRole('reporter') or
+             $this->view->hasRole('admin')) or 
            $news->is_visible)) {            
                 $this->view->news = $news;
         } else {
@@ -851,8 +856,8 @@ class PageController extends Zend_Controller_Action
     {
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
-             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            (!$this->view->hasRole('reporter') and
+             !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('News item not found');
         }
@@ -899,8 +904,8 @@ class PageController extends Zend_Controller_Action
     {
         $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or 
-            (!$userRoleTable->hasRole($this->view->user->id, 'reporter') and
-             !$userRoleTable->hasRole($this->view->user->id, 'admin')))) {
+            (!$this->view->hasRole('reporter') and
+             !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('News item not found');
         }
@@ -1010,9 +1015,9 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
-            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+           (!$this->view->hasRole('admin') and 
+            !$this->view->hasRole('editor') and
+            !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to add a form.');
             $this->_redirect('forms');
         }
@@ -1066,9 +1071,9 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
-            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+           (!$this->view->hasRole('admin') and 
+            !$this->view->hasRole('editor') and
+            !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit forms.');
             $this->_redirect('/forms');
         }
@@ -1163,9 +1168,9 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$userRoleTable->hasRole($this->view->user->id, 'admin') and 
-            !$userRoleTable->hasRole($this->view->user->id, 'editor') and
-            !$userRoleTable->hasRole($this->view->user->id, 'editor', $page->id))) {
+           (!$this->view->hasRole('admin') and 
+            !$this->view->hasRole('editor') and
+            !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this team.');
             $this->_redirect('/forms');
         }

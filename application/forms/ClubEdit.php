@@ -30,6 +30,21 @@ class Form_ClubEdit extends Zend_Form
             'multiOptions' => $typeArray,
         ));
 
+        $userTable = new Model_DbTable_User();
+        $users = array();
+        foreach($userTable->fetchAllUsers(true) as $user) {
+            $users[$user->id] = $user->first_name . ' ' . $user->last_name;
+        }
+        $captains = $this->addElement('multiselect', 'captains', array(
+            'validators' => array(
+                array('InArray', false, array(array_keys($users))),
+            ),
+            'required' => true,
+            'label' => 'Captains:',
+            'multiOptions' => $users,
+            'data-placeholder' => 'Select Captains',
+        ));
+
         $facebook = $this->addElement('text', 'facebook', array(
             'filters' => array('StringTrim'),
             'required' => false,
@@ -94,6 +109,14 @@ class Form_ClubEdit extends Zend_Form
         $this->getElement('email')->setValue($club->email);
         $this->getElement('website')->setValue($club->website);
         $this->getElement('content')->setValue($club->content);
+
+        $clubCaptainTable = new Model_DbTable_ClubCaptain();
+        $captains = array();
+        foreach($clubCaptainTable->fetchAllByClub($club->id) as $person) {
+            $captains[] = $person['user_id'];
+        }
+
+        $this->getElement('captains')->setValue($captains);
         
     }
 

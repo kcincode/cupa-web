@@ -365,7 +365,7 @@ class AuthController extends Zend_Controller_Action
     public function impersonateAction()
     {
         $userRoleTable = new Model_DbTable_UserRole();
-        if(Zend_Auth::getInstance()->hasIdentity() and $userRoleTable->hasRole($this->view->user->id, 'admin')) {
+        if(Zend_Auth::getInstance()->hasIdentity() and $this->view->hasRole('admin')) {
             $user = $this->getRequest()->getUserParam('user');
             if(is_numeric($user)) {
                 $oldUserId = $this->view->user->id;
