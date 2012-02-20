@@ -6,3 +6,4 @@ application/logs/*.log
 scripts/database/3.0/update.txt
 public/error_log
 .idea
+public/images/team_logos/*.jpg
