@@ -16,6 +16,41 @@
 	</p>
 	<p><input class="button" type="submit" name="next" value="Use These Players"/></p>
 	</form>
+	<?php elseif($this->state == 'target'): ?>
+    <form method="post">
+    <p><span class="label">Select the league you would like to move the players to:</span></p>
+    <p>
+	    <select id="target" name="target">
+	    	<option value="0">Select a League</option>
+	    	<?php foreach($this->leagues as $league): ?>
+	    	<?php if($league->id != $this->league->id): ?>
+	    	<option value="<?php echo $this->escape($league->id); ?>"><?php echo $this->leaguename($league, true, true, true, true); ?></option>
+	    	<?php endif; ?>
+		    <?php endforeach; ?>
+		</select>
+	</p>
+	<p><input class="button" type="submit" name="next" value="Move to This League"/></p>
+	</form>
+
+	<?php elseif($this->state == 'confirm'): ?>
+    <form method="post">
+	    <p><span class="label">Please make sure that the following values are correct:</span></p>
+	    <p>
+	    	<h2 class="confirm">Players to move:</h2>
+	    	<ul class="confirm">
+	    		<?php foreach($this->players as $player): ?>
+	    		<li><?php echo $this->fullname($player, true); ?></li>
+		    	<?php endforeach; ?>
+	    	</ul>
+		</p>
+		<p>
+			<h2 class="confirm">Moving to League:</h2>
+			<?php echo $this->leaguename($this->target, true, true, true, true); ?>
+		</p>
+		<p class="confirm"><input class="button" type="submit" name="confirm" value="Confirm the move"/></p>
+	</form>
+
+
 	<?php endif; ?>
 
 </div>

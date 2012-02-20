@@ -9,20 +9,39 @@ class My_View_Helper_Fullname extends Zend_View_Helper_Abstract
         $this->view = $view;
     }    
     
-    public function fullname($user)
+    public function fullname($user, $leagueId = false)
     {
-        if(is_numeric($user)) {
-            $userTable = new Model_DbTable_User();
-            $userObject = $userTable->find($user)->current();
-            if($userObject) {
-                return $this->view->escape($userObject->first_name) . ' ' . $this->view->escape($userObject->last_name);
+        if(!$leagueId) {
+            if(is_numeric($user)) {
+                $userTable = new Model_DbTable_User();
+                $userObject = $userTable->find($user)->current();
+                if($userObject) {
+                    return $this->view->escape($userObject->first_name) . ' ' . $this->view->escape($userObject->last_name);
+                }
+                
+                return 'Unknown';
+            } else if(is_object($user) and get_class($user) == 'Zend_Db_Table') {
+                return $this->view->escape($user->first_name) . ' ' . $this->view->escape($user->last_name);
+            } else {
+                return 'Unknown';
             }
-            
-            return 'Unknown';
-        } else if(is_object($user) and get_class($user) == 'Zend_Db_Table') {
-            return $this->view->escape($user->first_name) . ' ' . $this->view->escape($user->last_name);
         } else {
-            return 'Unknown';
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            $userTable = new Model_DbTable_User();
+            if(is_numeric($user)) {
+                $member = $leagueMemberTable->find($user)->current();
+                if($member) {
+                    $userObject = $userTable->find($member->user_id)->current();
+                    return $this->view->escape($userObject->first_name) . ' ' . $this->view->escape($userObject->last_name);
+                }
+                
+                return 'Unknown';
+            } else if(is_object($user) and get_class($user) == 'Zend_Db_Table') {
+                $user = $userTable->find($user->user_id)->current();
+                return $this->view->escape($user->first_name) . ' ' . $this->view->escape($user->last_name);
+            } else {
+                return 'Unknown';
+            }
         }
     }
 }

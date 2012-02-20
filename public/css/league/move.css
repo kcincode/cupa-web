@@ -1,5 +1,5 @@
 #breadcrumbs {
-	width: 425px;
+	width: 460px;
 	list-style: none;
 	margin: 20px auto 60px auto;
 	padding: 0;
@@ -34,4 +34,22 @@ span.label {
 
 #players-select {
 	width: 600px;
+}
+
+#target {
+	font-size: 18pt;
+}
+
+h2.confirm {
+	text-align: left;
+	margin-left: 230px;
+}
+
+#move ul.confirm {
+	list-style: none;
+	margin-left: -30px;
+}
+
+p.confirm {
+	margin: 40px 0;
 }

@@ -2140,6 +2140,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/move.js');
         
         $leagueId = $this->getRequest()->getUserParam('league_id');
+        $this->view->state = $this->getRequest()->getUserParam('state');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
@@ -2154,10 +2155,10 @@ class LeagueController extends Zend_Controller_Action
 //        $leagues = $this->fetchAll
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $this->view->players = $leagueMemberTable->fetchPlayersByLeague($leagueId);
 
         if($this->view->state == 'players') {
             unset($session->players);
+            $this->view->players = $leagueMemberTable->fetchPlayersByLeague($leagueId);
 
             if($this->getRequest()->isPost()) {
                 $post = $this->getRequest()->getPost();
@@ -2166,18 +2167,52 @@ class LeagueController extends Zend_Controller_Action
                     $this->view->message('You must select at least one player to move.', 'warning');
                 } else {
                     $session->players = $post['players'];
+                    $this->_redirect('league/' . $leagueId . '/move/target');
                 }
             }
+        } else if($this->view->state == 'target') {
+            if(!isset($session->players)) {
+                $this->_redirect('league/' . $leagueId . '/move/players');
+            }
+
+            unset($session->target);
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+                if(!isset($post['target']) or $post['target'] == 0) {
+                    $this->view->message('You must select a league to move the players to.', 'warning');
+                } else {
+                    $session->target = $post['target'];
+                    $this->_redirect('league/' . $leagueId . '/move/confirm');
+                }
+            }
+
+            $this->view->leagues = $leagueTable->fetchAllCurrentLeagues();
+
+        } else if($this->view->state == 'confirm') {
+            if(!isset($session->target)) {
+                $this->_redirect('league/' . $leagueId . '/move/target');
+            }
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+                if(isset($post['confirm'])) {
+                    foreach($session->players as $player) {
+                        $member = $leagueMemberTable->find($player)->current();
+                        $member->league_team_id = null;
+                        $member->league_id = $session->target;
+                        $member->modified_at = date('Y-m-d H:i:s');
+                        $member->modified_by = $this->view->user->id;
+                        $member->save();
+                    }
+                    $this->view->message('Players moved successfully.', 'success');
+                    $session->unsetAll();
+                    $this->_redirect('league/' . $leagueId . '/move');
+                }
+            }
+
+            $this->view->players = $session->players;
+            $this->view->target = $session->target;
         }
-
-        if(!isset($session->players)) {
-            $this->view->state = 'players';
-        } else if(!isset($session->target)) {
-            $this->view->state = 'target';
-        } else if(isset($session->players) and isset($session->target)) {
-            $this->view->state = 'confirm';
-        }
-
-
     }
 }

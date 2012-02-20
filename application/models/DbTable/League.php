@@ -160,4 +160,16 @@ class Model_DbTable_League extends Zend_Db_Table
         
         return $leagueId;   
     }
+
+    public function fetchAllCurrentLeagues()
+    {
+        $select = $this->select()
+                       ->where('is_archived = ?', 0)
+                       ->where('season IS NOT NULL')
+                       ->order('year DESC')
+                       ->order('season ASC')
+                       ->order('name');
+
+        return $this->fetchAll($select);
+    }
 }
