@@ -2235,6 +2235,10 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
+        if(!$this->view->isLeagueCaptain($leagueId, $teamId)) {
+            $this->_redirect('league/' . $leagueId);
+        }
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if(!empty($_FILES['file']['tmp_name'])) {
