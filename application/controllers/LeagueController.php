@@ -6,6 +6,18 @@ class LeagueController extends Zend_Controller_Action
     public function init()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/common.css');
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        if($leagueId) {
+            $leagueInformationTable = new Model_DbTable_LeagueInformation();
+            $leagueTable = new Model_DbTable_League();
+            $this->view->league = $leagueTable->find($leagueId)->current();
+            $information = $leagueInformationTable->fetchInformation($leagueId);
+            $this->view->userTeams = ($information->user_teams == 1) ? true : false;
+
+            if(!$this->view->userTeams and $this->getRequest()->getActionName() == 'userteams') {
+                $this->_redirect('league/' . $leagueId);
+            }
+        }
     }
 
     public function indexAction()
@@ -2254,5 +2266,59 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->league = $league;
         $this->view->team = $team;
+    }
+
+    public function userteamsAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/userteams.css');
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
+        }
+
+        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+        $this->view->players = $leagueAnswerTable->fetchUserTeamRequests($leagueId);
+
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . str_replace(' ', '-', $this->view->leaguename($this->view->league, true, true, true, true)) . '_userteams.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+            
+            echo "first_name,last_name,requested_team\n";
+            
+            foreach($this->view->players as $player) {
+                echo "{$player['first_name']},{$player['last_name']},{$player['team']}\n";
+            }
+            
+            flush();
+        }
     }
 }

@@ -1,0 +1,42 @@
+#admin-buttons {
+    text-align: center;
+    margin: 10px 0;
+}
+
+#userteams {
+    width: 550px;
+    margin: 10px auto;
+}
+
+#userteams .name,
+#userteams .request {
+    float: left;
+    padding: 2px 5px;
+}
+
+#userteams .name {
+    width: 300px;
+}
+
+#userteams .request {
+    width: 200px;
+}
+
+#userteams .header div {
+    font-weight: bold;
+    font-size: 14pt;
+    vertical-align: bottom;
+    text-decoration: underline;
+}
+
+#userteams .padtop {
+    margin-top: 19px;
+}
+
+#userteams .odd div {
+    background-color: #efefef;
+}
+
+#userteams .even div {
+    background-color: #fff;    
+}

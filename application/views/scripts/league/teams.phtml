@@ -1,4 +1,4 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
 <div id="teams">
   <h1>League Teams</h1>
     <?php if($this->isLeagueDirector($this->league->id)): ?>

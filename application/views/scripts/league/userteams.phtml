@@ -1,0 +1,23 @@
+<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
+<div id="userteams">
+    <h1>User Team Requests</h1>
+
+    <?php if($this->isLeagueDirector($this->league->id) and count($this->players) > 1): ?>
+    <div id="admin-buttons">
+        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
+    </div>
+    <?php endif; ?>
+
+    <?php if(count($this->players)) ?>
+    <div class="row header">
+    	<div class="name">Player</div>
+    	<div class="request">Requested Team</div>
+	</div>
+	<?php $this->cycle(array('even', 'odd')); ?>
+    <?php foreach($this->players as $player): ?>
+    <div class="row <?php echo $this->cycle()->next(); ?>">
+    	<div class="name"><?php echo $this->escape($player['first_name'] . ' ' . $player['last_name']); ?></div>
+    	<div class="request"><?php echo $this->escape($player['team']); ?></div>
+	</div>
+	<?php endforeach; ?>
+</div>

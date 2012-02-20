@@ -1,6 +1,6 @@
 <?php if($this->isLeagueDirector($this->league->id)): ?>
 <div class="admin-menu">
-    <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league));?>
+    <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league, 'userTeams' => $this->userTeams));?>
 </div>
 <?php else: ?>
 <div class="admin-menu">
