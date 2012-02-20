@@ -143,3 +143,17 @@ span.email {
     text-align: center;
     margin: 10px 0;
 }
+
+.logo .overlay {
+    position: absolute;
+    width: 85px;
+    height: 70px;
+    background-color: none;
+    border: 1px solid #0c0;
+    text-align: center;
+    padding-top: 15px;
+    font-weight: bold;
+    font-size: 16pt;
+    cursor: pointer;
+}
+

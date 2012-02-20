@@ -17,14 +17,8 @@
     <?php else: ?>
     <div class="logo">
     <?php endif; ?>
-  
-      <?php if(file_exists($this->baseUrl() . '/images/team_logos/' . $this->escape($team->id) . '.png')): ?>
-      <?php   $imgFile = $this->escape($team->id) . '.png'; ?>
-      <?php else: ?>
-      <?php   $imgFile = 'default.png'; ?>
-      <?php endif; ?>
-         
-        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $imgFile; ?>" alt="<?php echo $this->escape($team->name); ?>"/>
+        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team->id); ?>" alt="<?php echo $this->escape($team->name); ?>"/>
+        <div class="overlay" data-link="<?php echo $this->url(array('league_id' => $this->league->id, 'team_id' => $team->id), 'league_logo'); ?>">Upload<br/>Logo</div>
     </div>
     <div class="info" onclick="loadPlayers('<?php echo $this->escape($team->id); ?>')">
         <div class="links">

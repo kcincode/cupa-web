@@ -2218,4 +2218,37 @@ class LeagueController extends Zend_Controller_Action
             $this->view->target = $session->target;
         }
     }
+
+    public function logoAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/logo.css');
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $teamId = $this->getRequest()->getUserParam('team_id');
+
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
+        $team = $leagueTeamTable->find($teamId)->current();
+
+        $leagueTable = new Model_DbTable_League();
+        $league = $leagueTable->find($leagueId)->current();
+        if(!$team or !$league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if(!empty($_FILES['file']['tmp_name'])) {
+                $image = new Model_SimpleImage();
+                $image->load($_FILES['file']['tmp_name']);
+                $image->resize(85,85);
+                $image->save(APPLICATION_PATH . '/../public/images/team_logos/' . $teamId . '.jpg'); 
+                
+                $this->view->message('Logo successfully updated.', 'success');
+                $this->_redirect('league/' . $leagueId);
+            }    
+        }
+
+        $this->view->league = $league;
+        $this->view->team = $team;
+    }
 }

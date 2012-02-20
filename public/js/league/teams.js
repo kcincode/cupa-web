@@ -1,6 +1,8 @@
 $(document).ready(function () {
     $('.player-container').hide();
 
+    $('.overlay').hide();
+
     $('.info').hover(function() {
         $(this).addClass('selected');
     }, function() {
@@ -44,6 +46,16 @@ $(document).ready(function () {
     $('#add-team').click(function(e) {
         e.preventDefault();
         $('#add-team-container').load(BASE_URL + '/league/team_add').dialog('open');
+    });
+
+    $('.logo').hover(function (){
+        $(this).children('.overlay').show(); 
+    }, function() {
+        $(this).children('.overlay').hide(); 
+    });
+
+    $('.overlay').click(function(e){
+        window.location = $(this).data('link');
     });
 
 });
