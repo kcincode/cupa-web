@@ -1578,7 +1578,6 @@ class LeagueController extends Zend_Controller_Action
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
-
         
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
         $this->view->shirts = $leagueAnswerTable->fetchShirts($leagueId);
@@ -2144,9 +2143,13 @@ class LeagueController extends Zend_Controller_Action
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
         
-        if(!$this->view->league or !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
         }
 
         $session = new Zend_Session_Namespace('move_players');
