@@ -302,7 +302,7 @@ function createUserRoleTable($db)
         CREATE TABLE IF NOT EXISTS `user_role` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `user_id` int(11) NOT NULL,
-          `role` enum('admin','editor','reporter') COLLATE utf8_unicode_ci NOT NULL,
+          `role` enum('admin','editor','reporter','manager') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
           `page_id` int(11) DEFAULT NULL,
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`),

@@ -133,6 +133,11 @@ foreach($results as $row) {
             $userRole->user_id = $user->id;
             $userRole->role = 'reporter';
             $userRole->save();
+
+            $userRole = $userRoleTable->createRow();
+            $userRole->user_id = $user->id;
+            $userRole->role = 'manager';
+            $userRole->save();
         }
     }
     

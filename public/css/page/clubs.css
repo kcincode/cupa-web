@@ -66,3 +66,12 @@ span.club-type {
 .links a img {
     width: 20px;
 }
+
+a.website-link {
+    font-weight: bold;
+}
+
+.social img {
+    width: 25px;
+    height: 25px;
+}

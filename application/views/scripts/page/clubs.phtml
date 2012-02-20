@@ -29,9 +29,19 @@
         <?php endif; ?>
         <div class="name"><?php echo $this->escape($club->name); ?> <span class="club-type">(<?php echo $this->escape($club->type); ?>)</span></div>
         <div class="date"><?php echo $this->escape($club->begin); ?> - Current</div>
-        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $this->escape($club->website) . '">Website</a>)'; ?></div>
+        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '( <a class="website-link" href="' . $this->escape($club->website) . '">Website</a> )'; ?></div>
         <div class="captains"><strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?></div>
         <?php if($club->email != null): ?><div class="contact"><strong>Contact Email:</strong> <?php echo $this->displayEmail($club->email); ?></div><?php endif; ?>
+        <?php if($club->twitter or $club->facebook): ?>
+        <div class="social"><strong>Follow <?php echo $this->escape($club->name); ?>:</strong>
+            <?php if($club->twitter): ?>
+                <a href="http://twitter.com/<?php echo $club->twitter; ?>"><img src="<?php echo $this->baseUrl();?>/images/twitter-icon.png"/></a>
+            <?php endif; ?>
+            <?php if($club->facebook): ?>
+                <a href="http://facebook.com/<?php echo $club->facebook; ?>"><img src="<?php echo $this->baseUrl();?>/images/facebook-icon.png"/></a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
         <div class="info"><?php echo $club->content; ?></div>
     </div>
     <?php endforeach; ?>
