@@ -108,11 +108,12 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         return $this->getAdapter()->fetchAll($select);        
     }
 
-    public function getUserLeagues($userId)
+    public function fetchUserLeagues($userId)
     {
         $select = $this->getAdapter()->select()
-                       ->from(array('lm' => $this->_name), array())
-                       ->join(array('l' => 'league'), 'l.id = lm.league_id', array('id AS league_id', 'year'))
+                       ->from(array('lm' => $this->_name), array('paid', 'release'))
+                       ->joinLeft(array('l' => 'league'), 'l.id = lm.league_id', array('id AS league_id', 'year'))
+                       ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array('cost'))
                        ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('id AS team_id', 'name AS team'))
                        ->where('l.season IS NOT NULL')
                        ->where('lm.league_team_id IS NOT NULL')

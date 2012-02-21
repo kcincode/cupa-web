@@ -1,0 +1,10 @@
+ <ul>
+      <?php if($this->state == 'personal'): $class = ' active'; else: $class = ''; endif; ?>
+      <li><a class="personal<?php echo $class;?>" href="<?php echo $this->url(array('state' => 'personal'), 'profile'); ?>">Personal Info</a></li>
+      <?php if($this->state == 'minors'): $class = ' active'; else: $class = ''; endif; ?>
+      <li><a class="minor<?php echo $class;?>" href="<?php echo $this->url(array('state' => 'minors'), 'profile'); ?>">Minors</a></li>
+      <?php if($this->state == 'leagues'): $class = ' active'; else: $class = ''; endif; ?>
+      <li><a class="event<?php echo $class;?>" href="<?php echo $this->url(array('state' => 'leagues'), 'profile'); ?>">League Info</a></li>
+      <?php if($this->state == 'contacts'): $class = ' active'; else: $class = ''; endif; ?>
+      <li><a class="event<?php echo $class;?>" href="<?php echo $this->url(array('state' => 'contacts'), 'profile'); ?>">Emergency Contacts</a></li>
+    </ul>

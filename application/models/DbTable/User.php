@@ -142,12 +142,15 @@ class Model_DbTable_User extends Zend_Db_Table
         return $this->fetchRow($select);
     }
 
-    public function getPublicProfile($user)
+    public function fetchProfile($user)
     {
-        $data = array(
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-        );
+        $data = array();
+        $exclude = array('salt', 'password', 'activation_code', 'activated_at', 'expires_at', 'login_errors');
+        foreach($user as $key => $value) {
+            if(!in_array($key, $exclude)) {
+                $data[$key] = $value;
+            }
+        }
 
         // get the public user profile data
         $userProfileTable = new Model_DbTable_UserProfile();
@@ -159,16 +162,23 @@ class Model_DbTable_User extends Zend_Db_Table
             'age' => $userProfile->birthday,
             'height' => $userProfile->height,
             'highest level' => (empty($userProfile->level)) ? null : $userLevelTable->find($userProfile->level)->current()->name,
+            'experience' => $userProfile->experience,
         );
-        $data['experience'] = $userProfile->experience;
-
 
         // get users league data
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $data['leagues'] = $leagueMemberTable->getUserLeagues($user->id);
+        $data['leagues'] = $leagueMemberTable->fetchUserLeagues($user->id);
 
+        $data['minors'] = $this->fetchAllMinors($user->id, true);
+
+        $userEmergencyTable = new Model_DbTable_UserEmergency();
+        $data['contacts'] = $userEmergencyTable->fetchAllContacts($user->id);
+        if(count($data['contacts'])) {
+            $data['contacts'] = $data['contacts']->toArray();
+        }
 
         return $data;
+
     }
 
     public function hasMinors($userId)
@@ -181,8 +191,21 @@ class Model_DbTable_User extends Zend_Db_Table
         return (count($results) == 0) ? false : true;
     }
 
-    public function fetchAllMinors($userId)
+    public function fetchAllMinors($userId, $all = false)
     {
+        if($all) {
+            $select = $this->getAdapter()->select()
+                           ->from(array('u' => $this->_name), array('first_name', 'last_name'))
+                           ->joinLeft(array('up' => 'user_profile'), 'up.user_id = u.id', array('gender', 'birthday', 'nickname', 'height', 'experience'))
+                           ->joinLeft(array('ul' => 'user_level'), 'ul.id = up.level', array('name AS level'))
+                           ->where('parent = ?', $userId)
+                           ->order('last_name')
+                           ->order('first_name');
+
+            $result = $this->getAdapter()->fetchAll($select);
+            return $result;
+        }
+
         $select = $this->select()
                        ->where('parent = ?', $userId)
                        ->order('last_name')

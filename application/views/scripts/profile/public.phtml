@@ -9,8 +9,8 @@
     </div>
     <div class="experience">
         Playing Ultimate Since:
-        <?php if(!empty($this->data['experience'])): ?>
-        <?php echo $this->escape($this->data['experience']); ?> ( <?php echo $this->escape(date('Y') - $this->data['experience']);?> years )
+        <?php if(!empty($this->data['profile']['experience'])): ?>
+        <?php echo $this->escape($this->data['profile']['experience']); ?> ( <?php echo $this->escape(date('Y') - $this->data['profile']['experience']);?> years )
         <?php else: ?>
         Unkown
         <?php endif; ?>
@@ -51,3 +51,4 @@
     </div>
     <div class="clearfix">&nbsp;</div>
 </div>
+<div class="clearfix">&nbsp;</div>

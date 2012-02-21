@@ -17,71 +17,71 @@ h1 {
     padding: 10px;
 }
 
-.name, .experience {
+#player-card .name, #player-card .experience {
     background-color: #e0e0e0;
     border: 1px solid #aaa;
 }
 
-.name {
+#player-card .name {
     font-weight: bold;
     font-size: 20pt;
     border-bottom: none;
     padding: 10px 10px 0 10px;
 }
 
-.experience {
+#player-card .experience {
     padding: 0 10px 10px 10px;
     font-size: 12pt;
     border-top: none;
 }
 
-.profile {
+#player-card .profile {
     padding: 10px 0;
 }
 
-.profile .key, .profile .value {
+#player-card .profile .key, #player-card .profile .value {
     float: left;
     width: 100px;
     padding: 5px;
 }
 
-.profile .key {
+#player-card .profile .key {
     font-weight: bold;
     text-align: right;
 }
 
-.leagues h3 {
+#player-card .leagues h3 {
     margin: 10px 0;
     background-color: #e0e0e0;
     border: 1px solid #aaa;
     padding: 5px;
 }
-.leagues .year,
-.leagues .league,
-.leagues .team,
-.leagues .record {
+#player-card .leagues .year,
+#player-card .leagues .league,
+#player-card .leagues .team,
+#player-card .leagues .record {
     padding: 0;
     margin: 0;
     float: left;
 }
-.leagues .year {
+#player-card .leagues .year {
     width: 40px;
 }
 
-.leagues .league {
+#player-card .leagues .league {
     width: 205px;
 }
 
-.leagues .team {
+#player-card .leagues .team {
     width: 200px;
 }
 
-.leagues .record {
+#player-card .leagues .record {
     width: 55px;
     text-align: center;
 }
 
-.leagues .header {
+#player-card .leagues .header {
     font-weight: bold;
     text-decoration: underline;
 }

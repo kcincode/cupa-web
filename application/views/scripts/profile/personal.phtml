@@ -1,4 +1,9 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Profile</b> and script/action name <b>personal</b></p>
+<h1 class="profile"><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
+<div class="edit">
+	<a class="button" href="#">Edit</a>
 </div>
+
+<div class="menu">
+	<?php echo $this->partial('profile/menu.phtml', array('state' => $this->state));?>
+</div>
+

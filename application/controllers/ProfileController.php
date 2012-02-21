@@ -5,37 +5,42 @@ class ProfileController extends Zend_Controller_Action
 
     public function init()
     {
-        /* Initialize action controller here */
     }
 
     public function indexAction()
     {
-        // action body
+        $state = $this->getRequest()->getUserParam('state');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/' . $state . '.css');
+
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            return;
+        }
+
+        $userTable = new Model_DbTable_User();
+        $this->view->data = $userTable->fetchProfile($this->view->user);
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            Zend_Debug::dump($post);
+        }
+        Zend_Debug::dump($this->view->data);
+
+        $this->renderScript('profile/' . $state . '.phtml');
     }
 
-    public function personalAction()
+    public function personaleditAction()
     {
-        // action body
-    }
-
-    public function minrorsAction()
-    {
-        // action body
+        
     }
 
     public function minorsaddAction()
     {
-        // action body
+
     }
 
     public function minorseditAction()
     {
-        // action body
-    }
 
-    public function leagueAction()
-    {
-        // action body
     }
 
     public function publicAction()
@@ -43,6 +48,7 @@ class ProfileController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace('previous');
         $this->view->previousPage = $session->previousPage;
 
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/public.css');
 
         $userId = $this->getRequest()->getUserParam('user_id');
@@ -54,7 +60,7 @@ class ProfileController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $this->view->data = $userTable->getPublicProfile($user);
+        $this->view->data = $userTable->fetchProfile($user);
     }
 
     public function passwordAction()
@@ -64,18 +70,3 @@ class ProfileController extends Zend_Controller_Action
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
