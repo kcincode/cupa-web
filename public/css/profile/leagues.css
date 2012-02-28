@@ -1,0 +1,70 @@
+.leagues-container {
+    width: 830px;
+    margin: 20px auto;
+}
+
+.row .league,
+.row .team,
+.row .paid,
+.row .release,
+.row .waiver,
+.row .action {
+    float: left;
+    padding: 2px;
+}
+
+.row .league {
+    width: 300px;
+}
+
+.row .team {
+    width: 200px;
+}
+
+.row .paid {
+    width: 95px;
+    text-align: center;
+}
+
+.row .release,
+.row .waiver {
+    width: 75px;
+    text-align: center;
+}
+
+.row .action {
+    width: 30px;
+    text-align: center;
+    padding: 0;
+}
+
+.row .action img {
+    width: 20px;
+    height: 20px;
+}
+
+.header div {
+    text-decoration: underline;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.header div.action {
+    text-decoration: none;
+}
+
+.leagues-container .odd div {
+    background-color: #efefef;
+}
+
+span.yes {
+    color: #080;
+}
+
+span.no {
+    color: #c00;
+}
+
+.leagues-container .row.odd {
+    background-color: #efefef;
+}

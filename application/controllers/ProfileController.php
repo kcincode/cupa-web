@@ -21,7 +21,6 @@ class ProfileController extends Zend_Controller_Action
 
         $userTable = new Model_DbTable_User();
         $this->view->data = $userTable->fetchProfile($this->view->user);
-        //Zend_Debug::dump($this->view->data);
         $form = new Form_Profile($this->view->user, $state);
 
         if($this->getRequest()->isPost()) {
@@ -139,7 +138,6 @@ class ProfileController extends Zend_Controller_Action
         }
 
         $this->view->form = $form;
-
     }
 
     public function publicAction()
@@ -161,4 +159,59 @@ class ProfileController extends Zend_Controller_Action
 
         $this->view->data = $userTable->fetchProfile($user);
     }
+
+    public function leagueeditAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/register.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/register.js');
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $league = $leagueTable->find($leagueId)->current();
+
+
+        if(!$league or !Zend_Auth::getInstance()->hasIdentity()) {
+            $this->_redirect('profile/leagues');
+        }
+
+        $form = new Form_Profile($this->view->user, 'league_edit', $leagueId);
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('profile/leagues');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+
+                $leagueMember = $leagueMemberTable->fetchMember($leagueId, $this->view->user->id);
+                if($leagueMember) {
+                    foreach($data as $key => $value) {
+                        $leagueQuestion = $leagueQuestionTable->fetchQuestion($key);
+
+                        if($leagueQuestion) {
+                            $leagueAnswerTable->addAnswer($leagueMember->id, $leagueQuestion->id, $value);
+                        }
+                    }
+
+                    $this->view->message('Updated league answers.', 'success');
+                    $this->_redirect('profile/leagues');
+                }
+            } else {
+                $this->view->message('There are errors with your submission.', 'error');
+                $form->populate($post);
+            }
+        }
+
+        $this->view->league = $league;
+        $this->view->form = $form;
+    }
+
 }

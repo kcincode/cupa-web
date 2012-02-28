@@ -1,0 +1,39 @@
+<h1 class="profile"><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
+
+<div class="profile-menu">
+    <?php echo $this->partial('profile/menu.phtml', array('state' => $this->state));?>
+</div>
+
+<div class="leagues-container">
+    <?php if(count($this->data['leagues'])): ?>
+    <div class="row header">
+        <div class="league">League</div>
+        <div class="team">Team</div>
+        <div class="paid">Paid</div>
+        <div class="release">Release</div>
+        <div class="waiver">Waiver</div>
+        <div class="action">&nbsp;</div>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <?php $this->cycle(array('even', 'odd')); ?>
+    <?php foreach($this->data['leagues'] as $league): ?>
+    <div class="row <?php echo $this->cycle()->next(); ?>">
+        <div class="league"><?php echo $this->leaguename($league['league_id'], true, true, true, true); ?></div>
+        <div class="team"><?php if(!empty($league['team'])): ?><a href="<?php echo $this->url(array('league_id' => $league['league_id']), 'league_view'); ?>"><?php echo $this->escape($league['team']); ?></a> <?php else: ?>No Team<?php endif; ?></div>
+        <div class="paid"><?php echo ($league['paid'] == 1) ? '<span class="yes">Paid</span>' : '<span class="no">Owe $' . $league['cost'] . '</span>'; ?></div>
+        <div class="release"><?php echo ($league['release'] == 1) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
+        <div class="waiver"><?php echo ($this->hasUserSignedWaiver($this->user->id, $league['year'])) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
+        <div class="action">&nbsp;</div>
+        <div class="action">
+            <?php if($this->isLeagueRegistrationOpen($league['league_id'])): ?>
+            <a href="<?php echo $this->url(array('league_id' => $league['league_id']), 'profile_edit_league'); ?>"><img title="Edit League Answers" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
+            <?php else: ?>
+            &nbsp;
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endforeach; ?>
+    <?php else: ?>
+    <p>You have no minors associated to you.  Use the 'Add Minor' link to add one.</p>
+    <?php endif; ?>
+</div>

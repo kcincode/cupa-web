@@ -11,14 +11,14 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->where('league_id = ?', $leagueId)
                        ->where('user_id = ?', $userId)
                        ->where('position = ?', $position);
-        
+
         if($teamId) {
             $select->where('team_id = ?', $teamId);
         }
-        
+
         return $this->fetchRow($select);
     }
-    
+
     public function fetchUniqueDirectors()
     {
         $data = array();
@@ -43,34 +43,34 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                         'user_id' => $row['user_id'],
                         'league_id' => $row['id'],
                     );
-                    
+
                     $prevYear = $row['year'];
                 }
             }
         }
-        
+
         $data['youth'] = array();
         $data['clinic'] = array();
         $data['tournament'] = array();
         $data['other'] = array();
-        
+
         return $data;
     }
-    
+
     public function fetchAllByType($leagueId, $position, $teamId = null)
     {
         $select = $this->select()
                        ->where('league_id = ?', $leagueId)
                        ->where('position = ?', $position);
 
-        
+
         if($teamId) {
-           $select->where('league_team_id = ?', $teamId); 
+           $select->where('league_team_id = ?', $teamId);
         }
-        
+
         return $this->fetchAll($select);
     }
-    
+
     public function fetchAllPlayersByGender($leagueId)
     {
         $select = $this->getAdapter()->select()
@@ -78,10 +78,10 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->joinLeft(array('up' => 'user_profile'), 'up.user_id = lm.user_id', array('gender'))
                        ->where('lm.league_id = ?', $leagueId)
                        ->where('lm.position = ?', 'player');
-        
+
         $stmt = $this->getAdapter()->query($select);
         $data = array('male_players' => 0, 'female_players' => 0);
-        
+
         foreach($stmt->fetchAll() as $row) {
             if($row['gender'] == 'Male') {
                 $data['male_players']++;
@@ -89,10 +89,10 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                 $data['female_players']++;
             }
         }
-        
+
         return $data;
     }
-    
+
     public function fetchAllPlayerData($leagueId, $teamId)
     {
         $select = $this->getAdapter()->select()
@@ -105,7 +105,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->order('u.last_name')
                        ->order('u.first_name');
 
-        return $this->getAdapter()->fetchAll($select);        
+        return $this->getAdapter()->fetchAll($select);
     }
 
     public function fetchUserLeagues($userId)
@@ -116,7 +116,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array('cost'))
                        ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('id AS team_id', 'name AS team'))
                        ->where('l.season IS NOT NULL')
-                       ->where('lm.league_team_id IS NOT NULL')
+                       //->where('lm.league_team_id IS NOT NULL')
                        ->where('lm.user_id = ?', $userId)
                        ->where('lm.position = ?', 'player')
                        ->order('l.registration_end DESC');
@@ -143,10 +143,10 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                 $data['my-team'] = $this->fetchMemberEmails($leagueId, 'player', $teamId);
             }
         }
-        
+
         return $data;
     }
-    
+
     public function fetchMemberEmails($leagueId, $type, $teamId = null)
     {
         $select = $this->getAdapter()->select()
@@ -154,39 +154,39 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
                        ->where('lm.league_id = ?', $leagueId)
                        ->where('lm.position = ?', $type);
-        
+
         if($teamId) {
             $select->where('lm.league_team_id = ?', $teamId);
         }
-        
+
         $data = array();
         foreach($this->getAdapter()->fetchAll($select) as $email) {
-            $data[] = $email['email'];   
+            $data[] = $email['email'];
         }
-        
+
         return $data;
     }
-    
+
     public function fetchLeagueTeamFromUser($leagueId, $user)
     {
         $select = $this->select()
                        ->where('league_id = ?', $leagueId)
                        ->where('user_id = ?', $user->id)
                        ->where("position = 'player' OR position = 'captain'");
-        
+
         $result = $this->fetchRow($select);
         if(isset($result->league_team_id)) {
             return $result->league_team_id;
         }
-        
+
         return null;
     }
-    
+
     public function fetchPlayerStatuses($leagueId, $year)
     {
-        $sql = "SELECT lm.user_id, 
-                (SELECT uw.year FROM user_waiver uw WHERE uw.user_id = u.id 
-                ORDER BY year DESC LIMIT 1) AS waiver, lm.release, lm.paid, 
+        $sql = "SELECT lm.user_id,
+                (SELECT uw.year FROM user_waiver uw WHERE uw.user_id = u.id
+                ORDER BY year DESC LIMIT 1) AS waiver, lm.release, lm.paid,
                 (SELECT SUM(li.cost)
                 FROM league_member lm2
                 LEFT JOIN user u2 ON u2.id = lm2.user_id
@@ -194,21 +194,21 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                 LEFT JOIN league_season ls ON ls.id = l.season
                 LEFT JOIN league_location ll ON ll.league_id = lm2.league_id
                 LEFT JOIN league_information li ON li.league_id = lm2.league_id
-                WHERE (ll.type = 'league' AND ll.end < now()) 
+                WHERE (ll.type = 'league' AND ll.end < now())
                 AND l.year >= 2011
-                AND lm2.position = 'player' 
+                AND lm2.position = 'player'
                 AND lm2.paid = 0
                 AND lm2.user_id = lm.user_id) AS balance
-                FROM league_member lm 
+                FROM league_member lm
                 LEFT JOIN user u ON u.id = lm.user_id
                 WHERE lm.position = 'player' AND lm.league_id = ?
                 ORDER BY u.last_name, u.first_name";
-        
+
         $stmt = $this->getAdapter()->prepare($sql);
         $stmt->execute(array($leagueId));
         return $stmt->fetchAll();
     }
-    
+
     public function fetchPlayerInformation($leagueId)
     {
         $sql = "SELECT lm.id, lm.user_id, u.first_name, u.last_name, u.email, up.gender, up.birthday, up.phone, up.nickname, up.height, ul.name AS user_level, up.experience, lq.name, la.answer
@@ -221,10 +221,10 @@ LEFT JOIN user_profile up ON up.user_id = lm.user_id
 LEFT JOIN user_level ul ON ul.id = up.level
 WHERE lm.league_id = ?
 ORDER BY u.last_name, u.first_name, lql.weight ASC";
-        
+
         $stmt = $this->getAdapter()->prepare($sql);
-        $stmt->execute(array($leagueId));  
-        
+        $stmt->execute(array($leagueId));
+
         $data = array();
         foreach($stmt->fetchAll() as $row) {
             if(isset($data[$row['user_id']])) {
@@ -248,7 +248,7 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
                 );
             }
         }
-        
+
         return $data;
     }
 
@@ -308,12 +308,12 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
 
         if($teamId === 0) {
             return array();
-        } else if(empty($teamId)) { 
+        } else if(empty($teamId)) {
             $select->where('lm.league_team_id IS NULL');
         } else {
             $select->where('lm.league_team_id = ?', $teamId);
         }
-      
+
         return $this->getAdapter()->fetchAll($select);
     }
 
@@ -326,7 +326,7 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
                        ->where('lm.league_id = ?', $leagueId)
                        ->order('u.last_name')
                        ->order('u.first_name');
-      
+
         return $this->getAdapter()->fetchAll($select);
     }
 }

@@ -4,13 +4,21 @@ class Form_Profile extends Zend_Form
 {
     private $_data;
     private $_state;
+    private $_leagueId;
+    private $_userId;
 
-    public function __construct($user, $state)
+    public function __construct($user, $state, $leagueId = null)
     {
         $userTable = new Model_DbTable_User();
         $this->_data = $userTable->fetchProfile($user);
         //Zend_Debug::dump($this->_data);
         $this->_state = $state;
+
+        if(!empty($leagueId)) {
+            $this->_leagueId = $leagueId;
+            $this->_userId = $user->id;
+        }
+
 
         parent::__construct();
     }
@@ -233,6 +241,72 @@ class Form_Profile extends Zend_Form
             'description' => 'Enter the YEAR you started playing ultimate.',
         ));
 
+    }
+
+    private function league_edit()
+    {
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
+        $leagueLimitTable = new Model_DbTable_LeagueLimit();
+
+        $i = 1;
+        foreach($leagueQuestionTable->fetchAllQuestionsFromLeague($this->_leagueId) as $question) {
+            $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
+            $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
+
+            switch($question['type']) {
+                case 'boolean':
+                    $selection = array('1' => 'Yes', '0' =>'No');
+
+                    $this->addElement('radio', $question['name'], array(
+                        'validators' => array(
+                            array('InArray', false, array(array_keys($selection))),
+                        ),
+                        'required' => ($question['required'] == 1) ? true : false,
+                        'label' => $i . '.) ' . $question['title'],
+                        'multiOptions' => $selection,
+                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : 0,
+                    ));
+                    break;
+                case 'text':
+                    $this->addElement('text', $question['name'], array(
+                        'filters' => array('StringTrim'),
+                        'required' => ($question['required'] == 1) ? true : false,
+                        'label' => $i . '.) ' . $question['title'],
+                        'description' => ($question['required'] == 0) ? '(optional)' : '',
+                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
+                    ));
+                    break;
+                case 'multiple':
+                    $selection = Zend_Json::decode($question['answers']);
+
+                    $this->addElement('radio', $question['name'], array(
+                        'validators' => array(
+                            array('InArray', false, array(array_keys($selection))),
+                        ),
+                        'required' => ($question['required'] == 1) ? true : false,
+                        'label' => $i . '.) ' . $question['title'],
+                        'multiOptions' => $selection,
+                        'description' => ($question['required'] == 0) ? '(optional)' : '',
+                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
+                    ));
+                    break;
+                case 'textarea':
+                    $this->addElement('textarea', $question['name'], array(
+                        'filters' => array('StringTrim'),
+                        'required' => ($question['required'] == 1) ? true : false,
+                        'label' => $i . '.) ' . $question['title'],
+                        'description' => ($question['required'] == 0) ? '(optional)' : '',
+                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
+                    ));
+                    break;
+            }
+
+            $i++;
+        }
     }
 
 }

@@ -16,7 +16,7 @@
         <div id="add-league-container"></div>
         <?php endif; ?>
     </span>
-  
+
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
@@ -26,7 +26,7 @@
           <li><a href="#leagues-<?php echo $this->escape($league['id']);?>"><?php echo $this->leaguename($league['id'], true, false, false, true); ?></a></li>
           <?php endforeach; ?>
         </ul>
-   
+
         <?php foreach($this->leagues as $league): ?>
         <div id="leagues-<?php echo $this->escape($league['id']);?>" class="<?php echo $this->pageClass(); ?>">
             <div class="section">
@@ -82,7 +82,7 @@
 
                 <p>
                     <strong>When:</strong>
-                    <?php echo $this->escape($league['day']); ?>s, 
+                    <?php echo $this->escape($league['day']); ?>s,
                     <?php echo date('F jS Y', strtotime($league['locations']['league']['start']));?> -
                     <?php echo date('F jS Y', strtotime($league['locations']['league']['end']));?>
                     <?php echo date('h:i A', strtotime($league['locations']['league']['start']));?> -
@@ -108,7 +108,7 @@
                 </p>
                 <?php endif; ?>
             </div>
-  
+
             <hr/>
             <div class="section">
                 <div class="edit-links">
@@ -126,13 +126,13 @@
                     <strong>Cost:</strong> $<?php echo ($league['information']['cost'] > 0) ? $league['information']['cost'] : 'Free'; ?>
                 <p>
                     <strong>Waiver:</strong>
-                    All players must have a waiver on file with CUPA from a previous 
+                    All players must have a waiver on file with CUPA from a previous
                     <?php echo $this->escape($league['year']); ?> league or present a printed
                     and signed copy before play begins.  You may check your status
                     <a href="<?php echo $this->url(array(), 'profile'); ?>">here</a>.
                 </p>
 
-                <?php if($this->isLeagueRegistrationOpen($league['registration_begin'], $league['registration_end'])): ?>
+                <?php if($this->isLeagueRegistrationOpen($league['id'])): ?>
                 <?php if($league['limits']['male_players'] !== null and $league['limits']['female_players'] !== null): ?>
                 <?php echo $this->leagueBar('Male players', $league['male_players'], $league['limits']['male_players']); ?>
                 <?php echo $this->leagueBar('Female players', $league['female_players'], $league['limits']['female_players']); ?>
@@ -166,8 +166,8 @@
 
         </div>
         <?php endforeach; ?>
-     
+
     </div>
 </div>
-  
+
 <?php echo $this->partial('league-page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

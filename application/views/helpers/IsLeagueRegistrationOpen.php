@@ -3,19 +3,24 @@
 class My_View_Helper_IsLeagueRegistrationOpen extends Zend_View_Helper_Abstract
 {
     public $view;
- 
+
     public function setView(Zend_View_Interface $view)
     {
         $this->view = $view;
-    }    
-    
-    public function isLeagueRegistrationOpen($start, $end)
+    }
+
+    public function isLeagueRegistrationOpen($leagueId)
     {
-        $date = date('Y-m-d H:i:s');
+        $leagueTable = new Model_DbTable_League();
+        $league = $leagueTable->find($leagueId)->current();
+
+        $start = strtotime($league->registration_begin);
+        $end = strtotime($league->registration_end);
+        $date = time();
         if($date >= $start and $date < $end) {
             return true;
         }
-        
+
         return false;
     }
 }

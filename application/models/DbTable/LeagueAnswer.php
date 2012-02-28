@@ -4,25 +4,25 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
 {
     protected $_name = 'league_answer';
     protected $_primary = 'id';
-    
+
     public function fetchShirts($leagueId)
     {
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->fetchQuestion('shirt');
-        
+
         $select = $this->getAdapter()->select()
                        ->from(array('la' => $this->_name), array('answer'))
                        ->joinLeft(array('lm' => 'league_member'), 'lm.id = la.league_member_id', array())
                        ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('color', 'text_code', 'color_code'))
                        ->where('lm.league_id = ?', $leagueId)
                        ->where('la.league_question_id = ?', $question->id);
-        
+
         $data = array();
         foreach($this->getAdapter()->fetchAll($select) as $row) {
             if(!empty($row['color'])) {
                 if(isset($data[$row['color']][$row['answer']])) {
                     $data[$row['color']][$row['answer']]++;
-                } else { 
+                } else {
                     $data[$row['color']][$row['answer']] = 1;
                 }
 
@@ -34,15 +34,15 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
                 }
             }
         }
-        
+
         return $data;
     }
-    
-    public function fetchAllAnswers($leagueMemberId, $leagueId)
+
+    public function fetchAllAnswers($leagueMemberId)
     {
         $select = $this->select()
                        ->where('league_member_id = ?', $leagueMemberId);
-        
+
         $data = array();
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         foreach($this->fetchAll($select) as $row) {
@@ -50,9 +50,9 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
             if($question) {
                 $data[$question->name] = $row['answer'];
             }
-            
+
         }
-        
+
         return $data;
     }
 
@@ -73,7 +73,7 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
             $where = $this->getAdapter()->quoteInto('id = ?', $result->id);
             $this->update(array('answer' => $answer), $where);
         }
-        
+
     }
 
     public function fetchUserTeamRequests($leagueId)
@@ -90,7 +90,7 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
                        ->order('u.last_name')
                        ->order('u.first_name');
 
-        return $this->getAdapter()->fetchAll($select);   
+        return $this->getAdapter()->fetchAll($select);
     }
-    
+
 }
