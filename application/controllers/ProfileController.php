@@ -19,18 +19,15 @@ class ProfileController extends Zend_Controller_Action
             return;
         }
 
-        // TODO: get the userId and make sure that the user is an admin or == their user id.
-        $user = $this->view->user;
-
         $userTable = new Model_DbTable_User();
-        $this->view->data = $userTable->fetchProfile($user);
-        $form = new Form_Profile($user, $state);
+        $this->view->data = $userTable->fetchProfile($this->view->user);
+        $form = new Form_Profile($this->view->user, $state);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                $this->$state($user, $data);
+                $this->$state($this->view->user, $data);
             } else {
                 $this->view->message('There are errors with your submission.', 'error');
                 $form->populate($post);
