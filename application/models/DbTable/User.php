@@ -10,18 +10,18 @@ class Model_DbTable_User extends Zend_Db_Table
         if(empty($code)) {
             return false;
         }
-        
+
         $select = $this->select()
                        ->where($column . ' = ?', $code);
-        
+
         $result = $this->fetchRow($select);
         if(isset($result->$column)) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     public function generateUniqueCodeFor($column, $length = 15)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -32,10 +32,10 @@ class Model_DbTable_User extends Zend_Db_Table
                 $code .= $characters[mt_rand(0, strlen($characters) - 1)];
             }
         }
-        
+
         return $code;
     }
-    
+
     public function fetchUserBy($column, $value)
     {
         if($column == 'id') {
@@ -43,18 +43,18 @@ class Model_DbTable_User extends Zend_Db_Table
         } else {
             $select = $this->select()
                            ->where($column . ' = ?', $value);
-            
+
             return $this->fetchRow($select);
         }
     }
-    
+
     public function createNewUser($firstName, $lastName, $email)
     {
         $expire = date('Y-m-d H:i:s', time() + 604800);
         $date = date('Y-m-d H:i:s');
-        
+
         $username = substr($email, 0, strpos($email, '@'));
-        
+
         $data = array(
             'username' => $username,
             'salt' => null,
@@ -71,19 +71,19 @@ class Model_DbTable_User extends Zend_Db_Table
             'login_errors' => 0,
             'is_active' => 0,
         );
-        
+
         $userId = $this->insert($data);
-        
+
         if(is_numeric($userId)) {
             $userProfileTable = new Model_DbTable_UserProfile();
             $userProfile = $userProfileTable->createRow();
             $userProfile->user_id = $userId;
             $userProfile->save();
         }
-        
+
         return $userId;
     }
-    
+
     public function updateUserPasswordFromCode($code, $password)
     {
         $user = $this->fetchUserBy('activation_code', $code);
@@ -96,10 +96,10 @@ class Model_DbTable_User extends Zend_Db_Table
                 return $user->id;
             }
         }
-        
+
         return false;
     }
-    
+
     public function updateUserPasswordFromId($id, $password)
     {
         $user = $this->find($id)->current();
@@ -110,35 +110,35 @@ class Model_DbTable_User extends Zend_Db_Table
             } else {
                 $user->password = sha1($user->salt . $password);
             }
-            
+
             $user->updated_at = date('Y-m-d H:i:s');
             $user->save();
             return $user->id;
         }
-        
+
         return false;
     }
-    
+
     public function fetchAllUsers($showDisabled = false)
     {
         $select = $this->select()
                        ->order('last_name')
                        ->order('first_name');
-        
+
         if(!$showDisabled) {
             $select->where('is_active = ?', 1);
         }
-        
+
         return $this->fetchAll($select);
     }
-    
+
     public function fetchMinor($parentId, $first, $last)
     {
         $select = $this->select()
                        ->where('parent = ?', $parentId)
                        ->where('first_name = ?', $first)
                        ->where('last_name = ?', $last);
-        
+
         return $this->fetchRow($select);
     }
 
@@ -160,8 +160,9 @@ class Model_DbTable_User extends Zend_Db_Table
             'nickname' => $userProfile->nickname,
             'gender' => $userProfile->gender,
             'age' => $userProfile->birthday,
+            'phone' => $userProfile->phone,
             'height' => $userProfile->height,
-            'highest level' => (empty($userProfile->level)) ? null : $userLevelTable->find($userProfile->level)->current()->name,
+            'level' => (empty($userProfile->level)) ? null : $userProfile->level,
             'experience' => $userProfile->experience,
         );
 

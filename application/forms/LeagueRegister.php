@@ -15,7 +15,7 @@ class Form_LeagueRegister extends Zend_Form
         $this->_leagueId = $leagueId;
         parent::__construct();
     }
-    
+
     public function init()
     {
         $section = $this->_state;
@@ -65,7 +65,7 @@ class Form_LeagueRegister extends Zend_Form
             'value' => $user->first_name,
             'description' => 'Enter/Check your first name.',
         ));
-        
+
         $last_name = $this->addElement('text', 'last_name', array(
             'filters' => array('StringTrim'),
             'required' => true,
@@ -136,7 +136,7 @@ class Form_LeagueRegister extends Zend_Form
             'errorMessage' => 'Invalid date.',
             'value' => $userProfile->birthday,
         ));
- 
+
         $nickname = $this->addElement('text', 'nickname', array(
             'filters' => array('StringTrim'),
             'required' => false,
@@ -183,7 +183,7 @@ class Form_LeagueRegister extends Zend_Form
             'label' => 'Ultimate Experience:',
             'value' => $userProfile->experience,
             'description' => 'Enter the YEAR you started playing ultimate.',
-        ));        
+        ));
 
     }
 
@@ -247,7 +247,7 @@ class Form_LeagueRegister extends Zend_Form
                 switch($question['type']) {
                     case 'boolean':
                         $selection = array('1' => 'Yes', '0' =>'No');
-                                            
+
                         $element = $this->addElement('radio', $question['name'], array(
                             'validators' => array(
                                 array('InArray', false, array(array_keys($selection))),
@@ -267,7 +267,7 @@ class Form_LeagueRegister extends Zend_Form
                         break;
                     case 'multiple':
                         $selection = Zend_Json::decode($question['answers']);
-                                            
+
                         $element = $this->addElement('radio', $question['name'], array(
                             'validators' => array(
                                 array('InArray', false, array(array_keys($selection))),

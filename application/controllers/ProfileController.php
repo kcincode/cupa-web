@@ -5,32 +5,65 @@ class ProfileController extends Zend_Controller_Action
 
     public function init()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/common.css');
     }
 
     public function indexAction()
     {
         $state = $this->getRequest()->getUserParam('state');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/' . $state . '.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/profile/' . $state . '.js');
 
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             return;
         }
 
+        // TODO: get the userId and make sure that the user is an admin or == their user id.
+        $user = $this->view->user;
+
         $userTable = new Model_DbTable_User();
-        $this->view->data = $userTable->fetchProfile($this->view->user);
+        $this->view->data = $userTable->fetchProfile($user);
+        $form = new Form_Profile($user, $state);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            Zend_Debug::dump($post);
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $this->$state($user, $data);
+            } else {
+                $this->view->message('There are errors with your submission.', 'error');
+                $form->populate($post);
+            }
         }
-        Zend_Debug::dump($this->view->data);
 
+        $this->view->form = $form;
+        $this->view->state = $state;
         $this->renderScript('profile/' . $state . '.phtml');
     }
 
-    public function personaleditAction()
+    public function personal($user, $data)
     {
-        
+        foreach($data as $key => $value) {
+            $user->username = $data['username'];
+            $user->first_name = $data['first_name'];
+            $user->last_name = $data['last_name'];
+            $user->updated_at = date('Y-m-d H:i:s');
+            $user->save();
+
+            $userProfileTable = new Model_DbTable_UserProfile();
+            $userProfile = $userProfileTable->find($user->id)->current();
+            $userProfile->gender = $data['gender'];
+            $userProfile->birthday = $data['birthday'];
+            $userProfile->phone = $data['phone'];
+            $userProfile->nickname = (empty($data['nickname'])) ? null : $data['nickname'];
+            $userProfile->height = $data['height'];
+            $userProfile->level = $data['level'];
+            $userProfile->experience = $data['experience'];
+            $userProfile->save();
+
+        }
+        $this->view->message('Personal profile updated.', 'success');
     }
 
     public function minorsaddAction()

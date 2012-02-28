@@ -1,9 +1,70 @@
 <h1 class="profile"><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
-<div class="edit">
-	<a class="button" href="#">Edit</a>
-</div>
 
-<div class="menu">
+<div class="profile-menu">
 	<?php echo $this->partial('profile/menu.phtml', array('state' => $this->state));?>
 </div>
 
+<div class="personal">
+    <form method="post">
+    <div class="row">
+        <?php echo $this->form->username; ?>
+    </div>
+    <div class="row">
+        <dt id="email-label"><label for="email">Email:</label></dt>
+        <dd id="email-element">
+            <?php echo $this->data['email']; ?>
+        </dd>
+    </div>
+    <div class="row">
+        <?php echo $this->form->first_name; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->last_name; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->nickname; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->gender; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->phone; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->birthday; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->height; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->level; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->experience; ?>
+    </div>
+    <div class="row">
+        <dt id="created_at-label"><label for="created_at">Created:</label></dt>
+        <dd id="created_at-element">
+            <?php echo date('l, F jS Y @ h:i:s A', strtotime($this->data['requested_at'])); ?>
+        </dd>
+    </div>
+    <div class="row">
+        <dt id="updated_at-label"><label for="updated_at">Last Modified:</label></dt>
+        <dd id="updated_at-element">
+            <?php echo date('l, F jS Y @ h:i:s A', strtotime($this->data['updated_at'])); ?>
+        </dd>
+    </div>
+	<div class="row">
+        <dt id="active-label"><label for="active">Active:</label></dt>
+        <dd id="active-element" class="<?php echo ($this->data['is_active'] == 1) ? 'yes' : 'no'; ?>">
+            <?php echo ($this->data['is_active'] == 1) ? 'Yes' : 'No'; ?>
+        </dd>
+	</div>
+    <div class="row">
+        <dt id="update-label"><label for="update">&nbsp;</label></dt>
+        <dd id="update-element">
+            <input class="button" type="submit" value="Update Values"/>
+        </dd>
+    </div>
+    </form>
+</div>
