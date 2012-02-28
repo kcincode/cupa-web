@@ -6,7 +6,7 @@
     <?php if($this->user): ?>
     <li><a href="<?php echo $this->url(array(), 'profile'); ?>">MY PROFILE</a> |</li>
     <?php if($this->isImpersonated): ?>
-    <li><a id="logout-link" href="#">STOP IMPERSONATING</a></li>
+    <li><a id="logout-link" href="#">STOP IMPERSONATING <?php echo strtoupper($this->user->username); ?></a></li>
     <?php else: ?>
     <li><a id="logout-link" href="#">LOGOUT</a></li>
     <?php endif; ?>

@@ -11,19 +11,19 @@ class PageController extends Zend_Controller_Action
     public function homeAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/home.css');
-        
+
         // link to the db table
         $newsTable = new Model_DbTable_News();
-     
+
         // get all news and seperate by type
         $allNews = array();
         foreach($newsTable->fetchAllNews() as $news) {
             $allNews[$news['category']][] = $news;
         }
-        
+
         // set the view variable
         $this->view->news = $allNews;
-        
+
         $session = new Zend_Session_Namespace('newsbackbutton');
         $session->unsetAll();
     }
@@ -31,11 +31,11 @@ class PageController extends Zend_Controller_Action
     public function viewAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        
+
         $page = $this->getRequest()->getUserParam('page');
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
         if($page and ($page->is_visible or (Zend_Auth::getInstance()->hasIdentity() and ($this->view->hasRole('admin') or
            $this->view->hasRole('editor') or
@@ -53,7 +53,7 @@ class PageController extends Zend_Controller_Action
         $page = $this->getRequest()->getUserParam('page');
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
-        
+
         if(!$page) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -74,10 +74,10 @@ class PageController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $page->title = $data['title'];
                 $page->url = (empty($data['url'])) ? null : $data['url'];
                 $page->target = $data['target'];
@@ -86,18 +86,18 @@ class PageController extends Zend_Controller_Action
                 $page->updated_at = date('Y-m-d H:i:s');
                 $page->last_updated_by = $this->view->user->id;
                 $page->save();
-                
+
                 $this->view->message('Page updated successfully.', 'success');
                 $this->_redirect('/' . $page->name);
             } else {
                 $form->populate($post);
             }
        }
-        
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-        
+
         $this->view->page = $page;
         $this->view->form = $form;
     }
@@ -110,7 +110,7 @@ class PageController extends Zend_Controller_Action
         $page = $this->getRequest()->getUserParam('page');
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
-        
+
         if(!$page) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -118,7 +118,7 @@ class PageController extends Zend_Controller_Action
 
         $form = new Form_PageAdmin();
         $form->loadFromPage($page);
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
@@ -136,14 +136,14 @@ class PageController extends Zend_Controller_Action
                 $page->updated_at = date('Y-m-d H:i:s');
                 $page->last_updated_by = $this->view->user->id;
                 $page->save();
-                
+
                 $this->view->message('Page updated successfully.', 'success');
-                $this->_redirect('/' . $page->name);                
+                $this->_redirect('/' . $page->name);
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $this->view->page = $page;
         $this->view->form = $form;
     }
@@ -152,14 +152,14 @@ class PageController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
-        
+
         // initialize the contact form and add the users email if valid
         $form = new Form_Contact();
-        
+
         if(Zend_Auth::getInstance()->hasIdentity()) {
             $form->getElement('from')->setValue($this->view->user->email);
         }
-        
+
         // handle the form post
         if($this->getRequest()->isPost()) {
             // get the posted data
@@ -167,7 +167,7 @@ class PageController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 // if form is valid get form values
                 $data = $form->getValues();
-                
+
                 Model_Email::sendContactEmail($data);
                 $this->view->message('Email sent successfully.', 'success');
                 $this->_redirect('/contact');
@@ -176,7 +176,7 @@ class PageController extends Zend_Controller_Action
                 $form->populate($post);
             }
         }
-        
+
         // add the form variable to the view
         $this->view->form = $form;
     }
@@ -190,7 +190,7 @@ class PageController extends Zend_Controller_Action
 
         $officerTable = new Model_DbTable_Officer();
         $this->view->officers = $officerTable->fetchAllOfficers();
-        
+
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
         $this->view->page = $page;
@@ -208,7 +208,7 @@ class PageController extends Zend_Controller_Action
         $page = $pageTable->fetchBy('name', 'officers');
 
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id) and
              !$this->view->hasRole('admin')))) {
@@ -219,12 +219,12 @@ class PageController extends Zend_Controller_Action
         $officerId = $this->getRequest()->getUserParam('officer');
         $officerTable = new Model_DbTable_Officer();
         $officer = $officerTable->find($officerId)->current();
-        
+
         if(!$officer) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         $form = new Form_OfficerEdit();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -236,14 +236,14 @@ class PageController extends Zend_Controller_Action
                 $officer->to = (empty($data['to'])) ? null : $data['to'];
                 $officer->weight = $data['weight'];
                 $officer->save();
-                
+
                 $this->view->message('Officer updated successfully.', 'success');
                 $this->_redirect('/officers');
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $form->loadFromOfficer($officer);
         $this->view->form = $form;
     }
@@ -254,27 +254,27 @@ class PageController extends Zend_Controller_Action
         $page = $pageTable->fetchBy('name', 'officers');
 
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id) and
              !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/officers');
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         $officerTable = new Model_DbTable_Officer();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             $officer = $officerTable->createRow();
             $officer->user_id = null;
             $officer->position = $post['position'];
@@ -282,16 +282,16 @@ class PageController extends Zend_Controller_Action
             $officer->to = null;
             $officer->weight = $officerTable->getNextWeight($post['position']);
             $officer->save();
-            
+
             $this->view->message('Officer created successfully.');
             echo Zend_Json::encode(array('result' => 'success', 'data' => $officer->id));
         }
     }
-    
+
     public function officersdeleteAction()
     {
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
              !$this->view->hasRole('admin'))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -300,16 +300,16 @@ class PageController extends Zend_Controller_Action
         // disable the layout
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
-        
+
         $officerId = $this->getRequest()->getUserParam('officer');
         $officerTable = new Model_DbTable_Officer();
         $officer = $officerTable->find($officerId)->current();
-        
+
         if(!$officer) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         $officer->delete();
         $this->view->message('Officer deleted successfully.', 'success');
         $this->_redirect('/officers');
@@ -320,12 +320,12 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutes.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutes.js');
-        
+
         $minuteTable = new Model_DbTable_Minute();
         $this->view->minutes = $minuteTable->fetchAllMinutes();
-        
+
         $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'board_meeting_minutes');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
@@ -335,22 +335,22 @@ class PageController extends Zend_Controller_Action
     {
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutesedit.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutesedit.js');
-        
+
         $minuteId = $this->getRequest()->getUserParam('minute');
         $minuteTable = new Model_DbTable_Minute();
         $minute = $minuteTable->find($minuteId)->current();
@@ -368,7 +368,7 @@ class PageController extends Zend_Controller_Action
                     $minute->when = $data['when'];
                     $minute->location = $data['location'];
                     $minute->is_visible = $data['is_visible'];
-                    
+
                     if(!empty($data['pdf'])) {
                         if(file_exists($_FILES['pdf']['tmp_name'])) {
                             $fp = fopen($_FILES['pdf']['tmp_name'], 'r');
@@ -399,28 +399,28 @@ class PageController extends Zend_Controller_Action
     {
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             $minuteTable = new Model_DbTable_Minute();
             $minute = $minuteTable->createRow();
             $minute->location = $post['location'];
@@ -436,21 +436,21 @@ class PageController extends Zend_Controller_Action
         // disable the layout
         $this->_helper->layout()->disableLayout();
     }
-    
+
     public function minutesdeleteAction()
     {
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         $minuteId = $this->getRequest()->getUserParam('minute');
         $minuteTable = new Model_DbTable_Minute();
         $minute = $minuteTable->find($minuteId)->current();
@@ -458,15 +458,15 @@ class PageController extends Zend_Controller_Action
         if($minute) {
             $minute->delete();
         }
-        
+
         $this->view->message('Minutes deleted successful.', 'success');
         $this->_redirect('/board_meeting_minutes');
     }
-    
+
     public function minutesdownloadAction()
     {
         $minuteId = $this->getRequest()->getUserParam('minute');
-        
+
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
@@ -504,7 +504,7 @@ class PageController extends Zend_Controller_Action
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->directors = $leagueMemberTable->fetchUniqueDirectors();
-        
+
         $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'directors');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
@@ -515,14 +515,14 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickup.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/pickup.js');
 
 
         $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'pickup');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
-        
+
         $pickupTable = new Model_DbTable_Pickup();
         $this->view->pickups = $pickupTable->fetchAllPickups();
     }
@@ -531,30 +531,30 @@ class PageController extends Zend_Controller_Action
     {
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             $pickupTable = new Model_DbTable_Pickup();
-            
+
             if($pickupTable->isUnique($post['pickup'])) {
                 $pickup = $pickupTable->createRow();
                 $pickup->title = $post['pickup'];
@@ -583,14 +583,14 @@ class PageController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickupedit.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id)))) {
@@ -603,10 +603,10 @@ class PageController extends Zend_Controller_Action
         $pickupId = $this->getRequest()->getUserParam('pickup');
         $pickup = $pickupTable->find($pickupId)->current();
         $form->loadFromPickup($pickup);
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             $pickup->title = $post['title'];
             $pickup->day = $post['day'];
             $pickup->time = $post['time'];
@@ -621,15 +621,15 @@ class PageController extends Zend_Controller_Action
             $this->view->message('Pickup updated successfully.', 'success');
             $this->_redirect('/pickup');
         }
-        
+
         $this->view->pickup = $pickup;
         $this->view->form = $form;
     }
-    
+
     public function pickupdeleteAction()
     {
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -638,9 +638,9 @@ class PageController extends Zend_Controller_Action
         $pickupTable = new Model_DbTable_Pickup();
         $pickupId = $this->getRequest()->getUserParam('pickup');
         $pickup = $pickupTable->find($pickupId)->current();
-        
+
         $pickup->delete();
-        
+
         $this->view->message('Pickup deleted successfully.', 'success');
         $this->_redirect('/pickup');
     }
@@ -650,17 +650,17 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubs.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/clubs.js');
 
         $clubTable = new Model_DbTable_Club();
         $this->view->activeClubs = $clubTable->fetchAllByType('current');
         $this->view->pastClubs = $clubTable->fetchAllByType('past');
-        
+
         $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'clubs');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
-        
+
     }
 
     public function clubsaddAction()
@@ -669,14 +669,14 @@ class PageController extends Zend_Controller_Action
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             $clubTable = new Model_DbTable_Club();
             if($clubTable->isUnique($post['name'])) {
                 $club = $clubTable->createRow();
@@ -687,7 +687,7 @@ class PageController extends Zend_Controller_Action
                 $club->updated_at = date('Y-m-d H:i:s');
                 $club->last_updated_by = $this->view->user->id;
                 $club->save();
-                
+
                 $this->view->message('Club Team created successfully.');
                 echo Zend_Json::encode(array('result' => 'success', 'data' => $club->id));
             } else {
@@ -706,7 +706,7 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubsedit.css');
-        
+
         $clubTable = new Model_DbTable_Club();
         $pageTable = new Model_DbTable_Page();
 
@@ -723,7 +723,7 @@ class PageController extends Zend_Controller_Action
         }
 
         $club = $clubTable->find($clubId)->current();
-        
+
         if(!$club) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -736,7 +736,7 @@ class PageController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $club->name = $data['name'];
                 $club->type = $data['type'];
                 $club->facebook = (empty($data['facebook'])) ? null : $data['facebook'];
@@ -750,14 +750,14 @@ class PageController extends Zend_Controller_Action
 
                 $clubCaptainTable = new Model_DbTable_ClubCaptain();
                 $clubCaptainTable->updateCaptains($data['captains'], $club->id);
-                
+
                 $this->view->message('Team ' . $club->name . ' updated successfully.', 'success');
                 $this->_redirect('/clubs');
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $this->view->club = $club;
         $this->view->form = $form;
     }
@@ -767,7 +767,7 @@ class PageController extends Zend_Controller_Action
         // disable the layout
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
-        
+
         $clubTable = new Model_DbTable_Club();
         $pageTable = new Model_DbTable_Page();
         $userRoleTable = new Model_DbTable_UserRole();
@@ -775,7 +775,7 @@ class PageController extends Zend_Controller_Action
         $page = $pageTable->fetchBy('name', 'clubs');
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and 
+           (!$this->view->hasRole('admin') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this team.');
@@ -788,11 +788,11 @@ class PageController extends Zend_Controller_Action
             $club = $clubTable->find($clubId)->current();
             if($club) {
                 $club->delete();
-                
+
                 $this->view->message('The ' . $club->name . ' club has been removed.', 'success');
             }
         }
-        
+
         $this->_redirect('/clubs');
     }
 
@@ -805,15 +805,15 @@ class PageController extends Zend_Controller_Action
 
         $category = $this->getRequest()->getUserParam('category');
         $this->view->category = ucwords($category);
-        
+
         $newsTable = new Model_DbTable_News();
         $this->view->news = $newsTable->fetchNewsByCategory($category);
-        
+
         if(!count($this->view->news)) {
             // throw a 404 error there is no news returned
             throw new Zend_Controller_Dispatcher_Exception('Category does not exist');
         }
-        
+
         $session = new Zend_Session_Namespace('newsbackbutton');
         $session->unsetAll();
     }
@@ -821,30 +821,30 @@ class PageController extends Zend_Controller_Action
     public function newsAction()
     {
         $session = new Zend_Session_Namespace('newsbackbutton');
-        if($_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/' or 
-           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/youth' or 
-           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/leagues' or 
-           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/pickup' or 
-           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/info' or 
+        if($_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/' or
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/youth' or
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/leagues' or
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/pickup' or
+           $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews/info' or
            $_SERVER['HTTP_REFERER'] == 'http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/allnews') {
             $session->url = $_SERVER['HTTP_REFERER'];
         }
-        
+
         $this->view->backUrl = $session->url;
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
-        
+
         $slug = $this->getRequest()->getUserParam('slug');
         $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
-        
+
         $userRoleTable = new Model_DbTable_UserRole();
-        if($news and 
-           (Zend_Auth::getInstance()->hasIdentity() and 
+        if($news and
+           (Zend_Auth::getInstance()->hasIdentity() and
             ($this->view->hasRole('reporter') or
-             $this->view->hasRole('admin')) or 
-           $news->is_visible)) {            
+             $this->view->hasRole('admin')) or
+           $news->is_visible)) {
                 $this->view->news = $news;
         } else {
             // throw a 404 error if the page cannot be found
@@ -855,26 +855,26 @@ class PageController extends Zend_Controller_Action
     public function newsaddAction()
     {
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('reporter') and
              !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('News item not found');
         }
-        
+
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/allnews');
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
             $newsTable = new Model_DbTable_News();
-            
+
             if($newsTable->isUnique($post['title'])) {
                 $news = $newsTable->createRow();
                 $news->title = $post['title'];
@@ -887,33 +887,33 @@ class PageController extends Zend_Controller_Action
                 $news->last_edited_by = $this->view->user->id;
                 $news->edited_at = date('Y-m-d H:i:s');
                 $news->save();
-            
+
                 $this->view->message('News item created successfully.');
                 echo Zend_Json::encode(array('result' => 'success', 'data' => $news->id));
             } else {
                 $this->_helper->viewRenderer->setNoRender(true);
                 echo Zend_Json::encode(array('result' => 'error', 'message' => 'News Title Already Exists'));
                 return;
-            }                    
+            }
         }
-        
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
     }
 
     public function newseditAction()
     {
         $userRoleTable = new Model_DbTable_UserRole();
-        if((!Zend_Auth::getInstance()->hasIdentity() or 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('reporter') and
              !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('News item not found');
         }
-        
+
         $slug = $this->getRequest()->getUserParam('slug');
         $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
-        
+
         $form = new Form_News();
 
         if($this->getRequest()->isPost()) {
@@ -932,7 +932,7 @@ class PageController extends Zend_Controller_Action
             $this->view->message('News item updated successfully.', 'success');
             $this->_redirect('/news/' . $news->slug);
         }
-        
+
         if($news) {
             $form->loadFromNews($news);
             $this->view->news = $news;
@@ -940,11 +940,11 @@ class PageController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/newsedit.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-        
+
         $this->view->form = $form;
     }
 
@@ -995,7 +995,7 @@ class PageController extends Zend_Controller_Action
 
             return;
         } else {
-            
+
         }
     }
 
@@ -1015,7 +1015,7 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and 
+           (!$this->view->hasRole('admin') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to add a form.');
@@ -1071,7 +1071,7 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and 
+           (!$this->view->hasRole('admin') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit forms.');
@@ -1155,7 +1155,7 @@ class PageController extends Zend_Controller_Action
 
         $formTable = new Model_DbTable_Form();
         $formId = $this->getRequest()->getUserParam('form_id');
-        $form = $formTable->find($formId)->current(); 
+        $form = $formTable->find($formId)->current();
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'forms');
@@ -1168,7 +1168,7 @@ class PageController extends Zend_Controller_Action
         $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and 
+           (!$this->view->hasRole('admin') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this team.');

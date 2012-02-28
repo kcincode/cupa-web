@@ -4,9 +4,9 @@ class AuthController extends Zend_Controller_Action
 {
     /**
      * Handles the login action where a user can login to the system
-     * It will redirect after successful login depeding on the saved 
+     * It will redirect after successful login depeding on the saved
      * request ojbect.
-     * 
+     *
      */
     public function loginAction()
     {
@@ -14,13 +14,13 @@ class AuthController extends Zend_Controller_Action
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         // load the css for the login page
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/login.css');
-        
+
         // initialize the Login form
         $form = new Form_UserLogin();
 
@@ -30,25 +30,25 @@ class AuthController extends Zend_Controller_Action
         // if the form is submitted
         if($this->getRequest()->isPost()) {
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             // get the post data
             $data = $this->getRequest()->getPost();
             if(!empty($data['username']) and !empty($data['password'])) {
                 // get the user object
                 $userTable = new Model_DbTable_User();
-                
+
                 // try to find the user by email
                 $user = $userTable->fetchUserBy('email', $data['username']);
-                
+
                 // if they don't exist try by username
                 if(empty($user)) {
                     $user = $userTable->fetchUserBy('username', $data['username']);
                 }
-                
+
                 // check to see if the user exists
                 if($user) {
                     $authentication = new Model_Authenticate($user);
-                    
+
                     // try the password for authentication
                     if($authentication->authenticate($data['password'])) {
                         // successfull login
@@ -64,38 +64,38 @@ class AuthController extends Zend_Controller_Action
 
                             return;
                         }
-                        
+
                         // update the salt if doesn't exist
                         if(empty($user->salt)) {
                             $user->salt = $userTable->generateUniqueCodeFor('salt');
                             $user->password = sha1($user->salt . $data['password']);
                             $user->save();
                         }
-                        
+
                         // set the user id in the session storage
                         Zend_Auth::getInstance()->getStorage()->write($user->id);
 
                         // log the success
                         $userAccessLogTable->log($user->username, 'login-success');
-                        
+
                         // build the data to be sent
                         $data = array('result' => 'Success');
                         echo Zend_Json::encode($data);
                     } else {
                         // failed login
-                        
+
                         // log the message
                         $userAccessLogTable->log($user->username, 'login-failed', "Invalid Credentials.");
 
                         // increment the login errors count
                         $user->login_errors++;
                         $user->save();
-                        
+
                         // build the data to be sent
                         $data = array('result' => 'Error', 'msg' => 'Invalid Credentials');
                         echo Zend_Json::encode($data);
                     }
-                    
+
                 } else {
                     // log the message
                     $userAccessLogTable->log($user->username, 'login-failed', "Username does not exist.");
@@ -104,15 +104,15 @@ class AuthController extends Zend_Controller_Action
                     $data = array('result' => 'Error', 'msg' => 'Invalid Credentials');
                     echo Zend_Json::encode($data);
                 }
-                
+
             } else {
                 // build the data to be sent
                 $data = array('result' => 'Error', 'msg' => 'Please enter all information');
                 echo Zend_Json::encode($data);
             }
-            
+
         }
-        
+
         // set the form to the view
         $this->view->form = $form;
     }
@@ -123,7 +123,7 @@ class AuthController extends Zend_Controller_Action
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
         // disable the layout and view
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
@@ -141,7 +141,7 @@ class AuthController extends Zend_Controller_Action
 
         // clear the authentication identity
         $auth = Zend_Auth::getInstance()->clearIdentity();
-        
+
         // destroy session data
         Zend_Session::destroy();
     }
@@ -150,16 +150,16 @@ class AuthController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/register.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/auth/register.js');
-        
+
         $form = new Form_UserRegister();
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $userTable = new Model_DbTable_User();
             $userId = $userTable->createNewUser($post['first_name'], $post['last_name'], $post['email']);
-            
+
             if(is_numeric($userId)) {
                 Model_Email::sendActivationEmail($userTable->find($userId)->current());
                 $this->view->message('Created user in the system, please check your email for activation email.', 'success');
@@ -167,10 +167,10 @@ class AuthController extends Zend_Controller_Action
                 $this->view->message('Could not create user in the system.', 'error');
             }
         }
-         
+
         $this->view->form = $form;
     }
-    
+
     public function checkemailAction()
     {
         // make sure its an AJAX request
@@ -189,7 +189,7 @@ class AuthController extends Zend_Controller_Action
                 echo "invalid";
                 return;
             }
-            
+
             $userTable = new Model_DbTable_User();
             $user = $userTable->fetchUserBy('email', $email);
             if($user) {
@@ -199,7 +199,7 @@ class AuthController extends Zend_Controller_Action
                 echo "ok";
                 return;
             }
-            
+
             echo "unknown";
         }
     }
@@ -237,7 +237,7 @@ class AuthController extends Zend_Controller_Action
                     $form->populate($post);
                 }
             }
-        
+
             $user = $userTable->fetchUserBy('activation_code', $code);
             if(!$user) {
                 $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
@@ -255,14 +255,14 @@ class AuthController extends Zend_Controller_Action
             $this->view->form = $form;
         } else {
             $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
-            
+
         }
-        
+
         if(isset($error)) {
             $this->view->message($error, 'error');
             $this->_redirect('/contact');
         }
-        
+
     }
 
     public function resetAction()
@@ -302,7 +302,7 @@ class AuthController extends Zend_Controller_Action
                     $form->populate();
                 }
             }
-            
+
             $passwordReset = $userPasswordResetTable->fetchByCode($code);
             if(!$passwordReset) {
                 $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
@@ -316,27 +316,27 @@ class AuthController extends Zend_Controller_Action
                     $error = null;
                 }
             }
-            
+
             $this->view->form = $form;
-            
+
         } else {
             $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
         }
-        
+
         if(isset($error)) {
             $this->view->message($error, 'error');
             $this->_redirect('/contact');
         }
     }
-    
+
     public function forgotAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/forgot.css');
         $form = new Form_UserForgotPassword();
-        
+
         if($this->getRequest()->isPost()) {
-            $post = $this->getRequest()->getPost();            
+            $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $userTable = new Model_DbTable_User();
                 $user = $userTable->fetchUserBy('email', $post['email']);
@@ -358,26 +358,44 @@ class AuthController extends Zend_Controller_Action
                 $form->populate($post);
             }
         }
-        
+
         $this->view->form = $form;
     }
 
     public function impersonateAction()
     {
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
         $userRoleTable = new Model_DbTable_UserRole();
         if(Zend_Auth::getInstance()->hasIdentity() and $this->view->hasRole('admin')) {
             $user = $this->getRequest()->getUserParam('user');
-            if(is_numeric($user)) {
-                $oldUserId = $this->view->user->id;
-                $session = new Zend_Session_Namespace('adminuser');
-                $session->oldUser = $oldUserId;
+            $oldUserId = $this->view->user->id;
+            $session = new Zend_Session_Namespace('adminuser');
 
-                Zend_Auth::getInstance()->getStorage()->write($user);
+            $userTable = new Model_DbTable_User();
+            if(is_numeric($user)) {
+                $userObj = $userTable->find($user)->current();
+            } else {
+                $userObj = $userTable->fetchUserBy('username', $user);
+            }
+
+            if(isset($userObj->id)) {
+                Zend_Debug::dump($userObj->toArray());
+                Zend_Auth::getInstance()->getStorage()->write($userObj->id);
+                $this->view->message("Impersonating user `{$userObj->first_name} {$userObj->last_name}` successful.", 'succes');
+                $session->oldUser = $oldUserId;
+                $this->_redirect('/');
+            } else {
+                $this->view->message('Invalid user specified.', 'error');
                 $this->_redirect('/');
             }
         } else {
             $this->view->message('You do not have access to impersonate a user.', 'error');
         }
+
+        $this->_redirect('/');
     }
 
 

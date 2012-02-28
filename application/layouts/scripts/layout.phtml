@@ -25,7 +25,7 @@
             <div class="menu">
                 <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
                 <div id="login-container">Login Container</div>
-            </div>            
+            </div>
         </header>
         <nav>
             <?php echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
@@ -36,9 +36,9 @@
             <div class="clearfix"></div>
         </div>
         <footer>
-            <!--Hosted by: InMotion Hosting<br/> --> 
-            &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/> 
-            If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> 
+            <!--Hosted by: InMotion Hosting<br/> -->
+            &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/>
+            If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a>
         </footer>
     </body>
 </html>
