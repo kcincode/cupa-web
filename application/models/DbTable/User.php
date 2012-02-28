@@ -196,7 +196,7 @@ class Model_DbTable_User extends Zend_Db_Table
     {
         if($all) {
             $select = $this->getAdapter()->select()
-                           ->from(array('u' => $this->_name), array('first_name', 'last_name'))
+                           ->from(array('u' => $this->_name), array('id', 'first_name', 'last_name'))
                            ->joinLeft(array('up' => 'user_profile'), 'up.user_id = u.id', array('gender', 'birthday', 'nickname', 'height', 'experience'))
                            ->joinLeft(array('ul' => 'user_level'), 'ul.id = up.level', array('name AS level'))
                            ->where('parent = ?', $userId)
@@ -222,5 +222,33 @@ class Model_DbTable_User extends Zend_Db_Table
         }
 
         return $data;
+    }
+
+    public function createBlankMinor($parentId)
+    {
+        $select = $this->select()
+                       ->where('parent = ?', $parentId)
+                       ->where('first_name = ?', 'First')
+                       ->where('last_name = ?', 'Last');
+
+        $result = $this->fetchRow($select);
+        if(!$result) {
+            $id = $this->insert(array(
+                'parent' => $parentId,
+                'first_name' => 'First',
+                'last_name' => 'Last',
+                'is_active' => 1,
+            ));
+
+            if(is_numeric($id)) {
+                $userProfileTable = new Model_DbTable_UserProfile();
+                $userProfileTable->insert(array(
+                    'user_id' => $id,
+                ));
+
+                return $this->find($id)->current();
+            }
+        }
+
     }
 }

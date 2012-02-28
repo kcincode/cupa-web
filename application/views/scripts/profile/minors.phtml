@@ -1,0 +1,43 @@
+<h1 class="profile"><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
+
+<div class="profile-menu">
+    <?php echo $this->partial('profile/menu.phtml', array('state' => $this->state));?>
+</div>
+
+<div class="minors-links">
+    <a class="button" href="<?php echo $this->url(array(), 'profile_add_minor'); ?>">Add Minor</a>
+</div>
+
+
+<div class="minors">
+    <?php if(count($this->data['minors'])): ?>
+    <div class="row header">
+        <div class="name">Minor</div>
+        <div class="gender">Gender</div>
+        <div class="birthday">Birthday</div>
+        <div class="nickname">Nickname</div>
+        <div class="height">Height</div>
+        <div class="level">Level</div>
+        <div class="experience">Experience</div>
+        <div class="action">&nbsp;</div>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <?php $this->cycle(array('even', 'odd')); ?>
+    <?php foreach($this->data['minors'] as $minor): ?>
+    <div class="row <?php echo $this->cycle()->next(); ?>">
+        <div class="name"><?php echo $this->escape($minor['first_name'] . ' ' . $minor['last_name']); ?></div>
+        <div class="gender"><?php echo (empty($minor['gender'])) ? '&nbsp;' : $this->escape($minor['gender']); ?></div>
+        <div class="birthday"><?php echo (empty($minor['birthday'])) ? '&nbsp;' : $this->escape($minor['birthday']); ?> (<?php echo $this->displayAge($minor['birthday']); ?>)</div>
+        <div class="nickname"><?php echo (empty($minor['nickname'])) ? '&nbsp;' : $this->escape($minor['nickname']); ?></div>
+        <div class="height"><?php echo (empty($minor['height'])) ? '&nbsp;' : $this->displayHeight($minor['height']); ?></div>
+        <div class="level"><?php echo (empty($minor['level'])) ? '&nbsp;' : $this->escape($minor['level']); ?></div>
+        <div class="experience"><?php echo (empty($minor['experience'])) ? '&nbsp;' : $this->escape($minor['experience']); ?></div>
+        <div class="action">
+            <a href="<?php echo $this->url(array('minor_id' => $minor['id']), 'profile_edit_minor'); ?>"><img title="Edit Minor" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
+        </div>
+    </div>
+    <?php endforeach; ?>
+    <?php else: ?>
+    <p>You have no minors associated to you.  Use the 'Add Minor' link to add one.</p>
+    <?php endif; ?>
+</div>
