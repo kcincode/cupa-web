@@ -1,0 +1,25 @@
+<h1 class="profile">Edit Contact</h1>
+
+<div class="contacts">
+    <form method="post">
+    <div class="row">
+        <?php echo $this->form->first_name; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->last_name; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->phone; ?>
+    </div>
+    <div class="row">
+        <?php echo $this->form->weight; ?>
+    </div>
+    <div class="row">
+        <dt id="update-label"><label for="update">&nbsp;</label></dt>
+        <dd id="update-element">
+            <input class="button" type="submit" value="Update Values"/>
+            <input class="button button-red" type="submit" name="cancel" value="Cancel"/>
+        </dd>
+    </div>
+    </form>
+</div>

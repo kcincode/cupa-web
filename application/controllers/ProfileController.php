@@ -25,12 +25,16 @@ class ProfileController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            if($form->isValid($post)) {
-                $data = $form->getValues();
-                $this->$state($this->view->user, $data);
+            if($state == 'contacts') {
+                $this->$state($this->view->user, $post);
             } else {
-                $this->view->message('There are errors with your submission.', 'error');
-                $form->populate($post);
+                if($form->isValid($post)) {
+                    $data = $form->getValues();
+                    $this->$state($this->view->user, $data);
+                } else {
+                    $this->view->message('There are errors with your submission.', 'error');
+                    $form->populate($post);
+                }
             }
         }
 
@@ -213,5 +217,84 @@ class ProfileController extends Zend_Controller_Action
         $this->view->league = $league;
         $this->view->form = $form;
     }
+
+    public function contactsaddAction()
+    {
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            return;
+        }
+
+        $userEmergencyTable = new Model_DbTable_UserEmergency();
+        $contact = $userEmergencyTable->createBlankContact($this->view->user->id);
+        if(!$contact) {
+            $this->view->message('Could not create contact, please edit the previously created minor before trying to add another.', 'error');
+        }
+
+        $this->_redirect('profile/contacts');
+    }
+
+    public function contacts($user, $data)
+    {
+        $userEmergencyTable = new Model_DbTable_UserEmergency();
+        $results = array();
+        $weight = 0;
+        foreach($data['name'] as $name) {
+            $nameParts = explode(' ', $name);
+
+
+            if($this->isValidContact($name, $data['phone'][$weight])) {
+                $results[] = array(
+                    'first_name' => $nameParts[0],
+                    'last_name' => $nameParts[1],
+                    'phone' => $data['phone'][$weight],
+                    'weight' => $weight,
+                );
+                $weight++;
+            } else {
+                break;
+            }
+        }
+
+        if($weight == count($data['name'])) {
+            $userEmergencyTable->updateContacts($this->view->user->id, $data['name'], $data['phone']);
+            $this->view->message('Emergency contacts updated successfully.', 'success');
+            $this->_redirect('profile/contacts');
+        }
+    }
+
+    private function isValidContact($name, $phone)
+    {
+        $ignoredPhones = array(
+            '513-555-5555',
+            '555-555-5555',
+            '555-555-1234',
+            '000-000-0000',
+            '111-111-1111',
+        );
+
+
+        $nameParts = explode(' ', $name);
+        if(count($nameParts) != 2) {
+            $this->view->message('You must enter a first AND last name for each contact', 'error');
+            return false;
+        }
+
+        if($nameParts[0] == 'Contact' or $nameParts[1] == 'Name' or empty($name)) {
+            $this->view->message('You must enter a valid contact names.', 'error');
+            return false;
+        }
+
+        if(in_array($phone, $ignoredPhones) or empty($phone) or $phone == 'phone') {
+            $this->view->message('You must enter a valid phone numbers.', 'error');
+            return false;
+        }
+
+        return true;
+    }
+
 
 }

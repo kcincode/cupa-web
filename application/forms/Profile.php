@@ -11,7 +11,6 @@ class Form_Profile extends Zend_Form
     {
         $userTable = new Model_DbTable_User();
         $this->_data = $userTable->fetchProfile($user);
-        //Zend_Debug::dump($this->_data);
         $this->_state = $state;
 
         if(!empty($leagueId)) {

@@ -1,0 +1,35 @@
+<h1 class="profile"><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
+
+<div class="profile-menu">
+    <?php echo $this->partial('profile/menu.phtml', array('state' => $this->state));?>
+</div>
+
+<div class="contacts-links">
+    You may order the contacts by clicking on the number and dragging them. <a class="button" href="<?php echo $this->url(array(), 'profile_add_contact'); ?>">Add Contact</a>
+</div>
+
+
+<div class="contacts">
+    <form method="post">
+    <?php if(count($this->data['contacts'])): ?>
+    <ol id="sortable">
+    <?php foreach($this->data['contacts'] as $contact): ?>
+        <li>
+            Name: <input type="text" name="name[]" value="<?php echo $this->escape($contact['first_name']); ?> <?php echo $this->escape($contact['last_name']); ?>"/> &nbsp; &nbsp;
+            Phone: <input type="text" name="phone[]" value="<?php echo $this->escape($contact['phone']); ?>"/>
+            <a onclick="return confirm('Are you sure you would like to remove this contact?');" href="<?php echo $this->url(array('contact_id' => $contact['id']), 'profile_remove_contact'); ?>">
+                <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
+            </a>
+        </li>
+    <?php endforeach; ?>
+    </ol>
+    <div class="row">
+        <dt id="update-label"><label for="update">&nbsp;</label></dt>
+        <dd id="update-element">
+            <input class="button" type="submit" value="Update Values"/>
+        </dd>
+    </div>    </form>
+    <?php else: ?>
+    <p>You have no contacts associated to you.  Use the 'Add Contact' link to add one.</p>
+    <?php endif; ?>
+</div>

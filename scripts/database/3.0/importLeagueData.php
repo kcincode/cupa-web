@@ -75,60 +75,60 @@ $seasons = array(
     array(
         'name' => 'winter',
         'when' => 'January - March',
-        'information' => "<p>What could be better than playing ultimate in the 
+        'information' => "<p>What could be better than playing ultimate in the
             dead of winter?  Playing on two twin full-sized indoor fields.</p>
-            <p>The indoor facility is called 
-            <a href=\"http://www.wall2wallsoccer.com/\">Wall 2 Wall Soccer</a> 
+            <p>The indoor facility is called
+            <a href=\"http://www.wall2wallsoccer.com/\">Wall 2 Wall Soccer</a>
             and it is located on Route 42 (Reading Rd) 3-4 miles north of I-275.
-            Or if your coming from the north, about 1 mile south of Tylersville. 
-            It's about 10 minutes from the summer league location. Click 
-            <a href=\"http://www.wall2wallsoccer.com/directions.htm\">here</a> 
-            for a map.</p><div 
+            Or if your coming from the north, about 1 mile south of Tylersville.
+            It's about 10 minutes from the summer league location. Click
+            <a href=\"http://www.wall2wallsoccer.com/directions.htm\">here</a>
+            for a map.</p><div
             class=\"img-right\" style=\"float: right;\">
-            <img src=\"http://cincyultimate.org/upload/turf.gif\" 
-            alt=\"Indoor Turf\"/></div><p>The turf at the indoor facility is the 
-            latest in technical innovation for synthetic turf. SportsTurf is 
-            made up of a rubber base with a 2 inch pile of Thiolon Flex. This 
-            surface closely mimics outdoor conditions such that you can wear 
-            cleats or turf shoes without any problem. Typical problems with 
+            <img src=\"http://cincyultimate.org/upload/turf.gif\"
+            alt=\"Indoor Turf\"/></div><p>The turf at the indoor facility is the
+            latest in technical innovation for synthetic turf. SportsTurf is
+            made up of a rubber base with a 2 inch pile of Thiolon Flex. This
+            surface closely mimics outdoor conditions such that you can wear
+            cleats or turf shoes without any problem. Typical problems with
             artificial turf such as shin splints DO NOT apply with this surface.
-            </p><p>It is a bit expensive to play. Why?!?, Field rental makes up 
-            over 95% of the league fees. We are working very hard to get you the 
+            </p><p>It is a bit expensive to play. Why?!?, Field rental makes up
+            over 95% of the league fees. We are working very hard to get you the
             most playing time for the least amount of money.</p>",
         'weight' => 0,
     ),
     array(
         'name' => 'spring',
         'when' => "March - April",
-        'information' => "<p>Get ready for the summer season with our spring 
-            session on stable artificial turf.</p><p>The weather is getting 
-            warmer and is a great time to start getting ready for the CUPA 
-            summer league.  We are trying to make it a co-ed league so females 
-            are more than welcome.</p><p>The fields have lights so when it get 
-            late and dark we are still able to play just fine.  Who doesn't like 
-            playing under the lights and on some turf fields?</p><p>Space might 
-            be limited depending upon the location so get registered as soon 
-            as you can.</p><p>There is also a Mens League and a Women's Clinic 
+        'information' => "<p>Get ready for the summer season with our spring
+            session on stable artificial turf.</p><p>The weather is getting
+            warmer and is a great time to start getting ready for the CUPA
+            summer league.  We are trying to make it a co-ed league so females
+            are more than welcome.</p><p>The fields have lights so when it get
+            late and dark we are still able to play just fine.  Who doesn't like
+            playing under the lights and on some turf fields?</p><p>Space might
+            be limited depending upon the location so get registered as soon
+            as you can.</p><p>There is also a Mens League and a Women's Clinic
             & League so there are plenty of oppourtunities to learn and play.</p>",
         'weight' => 1,
     ),
     array(
         'name' => 'summer',
         'when' => "June - August",
-        'information' => "<p>The original and still the best.  Summer league is 
-            our most popular set of leagues with several levels of experience to 
+        'information' => "<p>The original and still the best.  Summer league is
+            our most popular set of leagues with several levels of experience to
             fit everyones needs.</p><p>For those new to the game or not quite
             ready to play for real we have a Beginners league that usually has
             an experienced player coaching/leading the team.  This will help you
             understand the rules, how to play, and answer any questions you may
             have.</p><p>The next level is an intermediate league.  This league
-            is one step up and has player just above beginners all the way to 
+            is one step up and has player just above beginners all the way to
             some elite players.  The elite players are limited per team so that
-            one team is not all elite players.</p><p>The elite league has been 
-            re-developed recently to try to bring the most elite players from 
-            around Cincinnati to come and play against all the other elite 
-            players while still maintaining the fun of a league.  If you think 
-            you are one of the best around, this is the the league for you.  
+            one team is not all elite players.</p><p>The elite league has been
+            re-developed recently to try to bring the most elite players from
+            around Cincinnati to come and play against all the other elite
+            players while still maintaining the fun of a league.  If you think
+            you are one of the best around, this is the the league for you.
             It will challenge you and hopefully make you a better player.</p>",
         'weight' => 2,
     ),
@@ -137,14 +137,14 @@ $seasons = array(
         'when' => "September - November",
         'information' => "<p>This is for those that just didn't get enough
             ultimate in the summer and are still looking to get the last little
-            bit of ultimate in before the winter cold sets in.</p><p>It is 
-            usually after the club season or near the end so the club level 
+            bit of ultimate in before the winter cold sets in.</p><p>It is
+            usually after the club season or near the end so the club level
             players that would like a few last games to play can do so.  It also
             gets people out to play more ultimate which is always good.  Come
             on out and join for the Fall.</p>",
         'weight' => 3,
     ),
-    
+
 );
 
 $totalSeasons = count($seasons);
@@ -153,14 +153,14 @@ if(DEBUG) {
     echo "    Importing `League` data:\n";
 } else {
     echo "    Importing $totalSeasons League Seasons:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalSeasons);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalSeasons);
 }
 
 $seasonsArray = array();
 $i = 0;
 foreach($seasons as $season) {
     if(DEBUG) {
-        echo "        Importing league season `{$season['name']}`:\n";    
+        echo "        Importing league season `{$season['name']}`:\n";
     } else {
         $progressBar->update($i);
     }
@@ -175,7 +175,7 @@ foreach($seasons as $season) {
     if(DEBUG) {
         echo "Done.\n";
     }
-    
+
     $seasonsArray[] = $season['name'];
     $i++;
 }
@@ -195,7 +195,7 @@ $prevYear = date('Y') - 1;
 
 if(!DEBUG) {
     echo "    Importing $totalLeagues Leagues:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalLeagues);    
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalLeagues);
 }
 
 $i = 0;
@@ -220,7 +220,7 @@ foreach($results as $row) {
     }
     $league->is_archived = $archived;
     $league->save();
-    
+
     $leagueInformation = $leagueInformationTable->createRow();
     $leagueInformation->league_id = $league->id;
     $leagueInformation->is_youth = $row['youth'];
@@ -232,7 +232,7 @@ foreach($results as $row) {
     $leagueInformation->paypal_code = getPaypalId($row['confirm']);
     $leagueInformation->description = $row['description'];
     $leagueInformation->save();
-    
+
     $leagueLimit = $leagueLimitTable->createRow();
     $leagueLimit->league_id = $league->id;
     $leagueLimit->male_players = null;
@@ -258,7 +258,7 @@ foreach($results as $row) {
         $leagueLocation->end = $row['day_end'];
         $leagueLocation->save();
     }
-    
+
     // do draft location
     if(!empty($row['draft_location_link_text'])) {
         $leagueLocation = $leagueLocationTable->createRow();
@@ -332,7 +332,7 @@ $totalTeams = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalTeams League Teams:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalTeams);    
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalTeams);
 }
 
 $i = 0;
@@ -406,22 +406,22 @@ $totalPlayers = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalPlayers League Players:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalPlayers);    
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalPlayers);
 }
 
 $i = 0;
 foreach($results as $row) {
-    
+
     $league = $leagueTable->find($row['event_id'])->current();
-    
+
     if(strstr($row['user_id'], '-')) {
         list($parentId, $minorId) = explode('-', $row['user_id']);
-        
+
         // get minor data
         $stmt = $origDb->prepare('SELECT * FROM user_minors WHERE id = ?');
         $stmt->execute(array($minorId));
         $minor = $stmt->fetch();
-        
+
         // get new user id
         $user = $userTable->fetchMinor($parentId, $minor['first_name'], $minor['last_name']);
 
@@ -430,7 +430,7 @@ foreach($results as $row) {
             if(DEBUG) {
                 echo "            Importing minor player #{$user->id}...";
             } else {
-                $progressBar->update($i);            
+                $progressBar->update($i);
             }
 
             $leagueMember = $leagueMemberTable->createRow();
@@ -444,7 +444,7 @@ foreach($results as $row) {
                 $leagueMember->league_team_id = null;
 
             }
-            
+
             $leagueMember->created_at = $league->registration_end;
             $leagueMember->modified_at = $league->registration_end;
 
@@ -466,7 +466,7 @@ foreach($results as $row) {
         $leagueMember->user_id = $row['user_id'];
         $leagueMember->position = 'player';
         $leagueMember->league_team_id = ($row['team_id'] == 0) ? null : $row['team_id'];
-        
+
         $leagueMember->created_at = $league->registration_end;
         $leagueMember->modified_at = $league->registration_end;
 
@@ -493,14 +493,14 @@ $totalGames = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalGames League Games:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalGames);    
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalGames);
 }
 
 // insert the league players
 $i = 0;
 foreach($results as $row) {
     if(DEBUG) {
-        echo "            Importing game #{$row['team2_id']} vs #{$row['team1_id']}...";        
+        echo "            Importing game #{$row['team2_id']} vs #{$row['team1_id']}...";
     } else {
         $progressBar->update($i);
     }
@@ -536,12 +536,12 @@ foreach($results as $row) {
         $leagueGameData->score = $row['team1_score'];
         $leagueGameData->save();
     }
-    
+
     if(DEBUG) {
-        echo "Done\n"; 
+        echo "Done\n";
     }
 
-    $i++;   
+    $i++;
 }
 
 if(!DEBUG) {
@@ -557,7 +557,7 @@ $totalQuestions = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalQuestions League Questions:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalQuestions);    
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalQuestions);
 }
 
 $i = 0;
@@ -595,7 +595,7 @@ foreach($results as $row) {
     $leagueQuestion->type = $row['type'];
     $leagueQuestion->answers = (empty($row['answers'])) ? null : $row['answers'];
     $leagueQuestion->save();
-        
+
     $notEvents = array();
     if($row['event_id'] == 0) {
         $notEvents = explode(',', $row['not_events']);
@@ -624,9 +624,9 @@ foreach($results as $row) {
         $leagueQuestionList->weight = $row['order'];
         $leagueQuestionList->save();
     }
-    
+
     if(DEBUG) {
-        echo "            Done.\n";        
+        echo "            Done.\n";
     }
     $i++;
 }
@@ -644,14 +644,14 @@ $totalAnswers = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalAnswers League Answers:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalAnswers);    
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalAnswers);
 }
 
 $i = 0;
 foreach($results as $row) {
-    
+
     $user = null;
-    
+
     if(strstr($row['user_id'], '-')) {
         list($parentId, $minorId) = explode('-', $row['user_id']);
 
@@ -667,7 +667,7 @@ foreach($results as $row) {
     if($user) {
         $row['user_id'] =  $user->id;
     }
-    
+
     $leagueMember = $leagueMemberTable->fetchMember($row['event_id'], $row['user_id']);
 
 
@@ -724,7 +724,7 @@ foreach($results as $row) {
                         'first_name' => ucwords(trim($first)),
                         'last_name' => ucwords(trim($last)),
                         'phone' => $info['phone'],
-                        'weight' => $weight,
+                        'weight' => count($userEmergencyTable->fetchAllContacts($userId) + 1,
                     ));
                 } else {
                     $result->first_name = ucwords(trim($first));
@@ -753,22 +753,22 @@ if(DEBUG) {
 function generateName($name, $seasons)
 {
     $name = strtolower($name);
-    
+
     // remove the 'league'
     $name = str_replace('league', '', $name);
-    
+
     // remove the seasons texts
     foreach($seasons as $season) {
         $name = str_replace(strtolower($season), '', $name);
     }
-    
+
     // rename roman numerals to 3
     $name = str_replace('ii', 'II', $name);
     $name = str_replace('iii', 'III', $name);
-    
+
     // remove slashes
     $name = str_replace('/', '', $name);
-    
+
     $name = ucwords(trim($name));
     return (empty($name)) ? null : $name;
 }
@@ -780,14 +780,14 @@ function getPaypalId($text)
     if(isset($matches[1])) {
         return $matches[1];
     }
-    
+
     return null;
 }
 
 function generateAddress($data)
 {
     $matches = array();
-    
+
     preg_match('/(.*), (.*), ([A-Z][A-Z]) ([0-9][0-9][0-9][0-9][0-9])/', $data, $matches);
 
     return array(
@@ -802,7 +802,7 @@ function generateColorCodes($color, $colorLookupTable)
 {
     $colorCode = $colorLookupTable[$color];
     $textCode = calculateTextColor($colorCode);
-    
+
     return array(
         'color' => $colorCode,
         'text' => $textCode,

@@ -1,0 +1,69 @@
+.contacts {
+    width: 600px;
+    margin: 20px auto;
+}
+
+.row .first,
+.row .last,
+.row .phone,
+.row .action {
+    float: left;
+    padding: 2px;
+}
+
+.row .first,
+.row .last {
+    width: 200px;
+}
+
+.row .phone {
+    width: 150px;
+    text-align: center;
+}
+
+.row .action {
+    width: 30px;
+    text-align: center;
+    padding: 0;
+}
+
+.row .action img {
+    width: 20px;
+    height: 20px;
+}
+
+.header div {
+    text-decoration: underline;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.header div.action {
+    text-decoration: none;
+}
+
+.contacts .odd div {
+    background-color: #efefef;
+}
+
+.contacts-links {
+    text-align: right;
+    margin-right: 100px;
+}
+
+#sortable {
+    cursor: move;
+}
+
+#sortable input {
+    padding: 5px;
+}
+
+#sortable img {
+    width: 25px;
+    height: 25px;
+}
+
+.ui-state-highlight {
+    height: 40px;
+}

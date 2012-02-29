@@ -122,7 +122,7 @@ p.description {
 #leagueedit-container #tournament_end,
 #leagueedit-container #draft_end {
     width: 150px;
-    
+
 }
 
 #leagueedit-container .exists {
@@ -235,7 +235,6 @@ p.description {
     width: 160px;
     text-align: center;
 }
-
 
 #leagueedit-container #cost {
     width: 50px;
