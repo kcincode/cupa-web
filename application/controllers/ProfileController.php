@@ -45,25 +45,23 @@ class ProfileController extends Zend_Controller_Action
 
     private function personal($user, $data)
     {
-        foreach($data as $key => $value) {
-            $user->username = $data['username'];
-            $user->first_name = $data['first_name'];
-            $user->last_name = $data['last_name'];
-            $user->updated_at = date('Y-m-d H:i:s');
-            $user->save();
+        $user->username = $data['username'];
+        $user->first_name = $data['first_name'];
+        $user->last_name = $data['last_name'];
+        $user->updated_at = date('Y-m-d H:i:s');
+        $user->save();
 
-            $userProfileTable = new Model_DbTable_UserProfile();
-            $userProfile = $userProfileTable->find($user->id)->current();
-            $userProfile->gender = $data['gender'];
-            $userProfile->birthday = $data['birthday'];
-            $userProfile->phone = $data['phone'];
-            $userProfile->nickname = (empty($data['nickname'])) ? null : $data['nickname'];
-            $userProfile->height = $data['height'];
-            $userProfile->level = $data['level'];
-            $userProfile->experience = $data['experience'];
-            $userProfile->save();
+        $userProfileTable = new Model_DbTable_UserProfile();
+        $userProfile = $userProfileTable->find($user->id)->current();
+        $userProfile->gender = $data['gender'];
+        $userProfile->birthday = $data['birthday'];
+        $userProfile->phone = $data['phone'];
+        $userProfile->nickname = (empty($data['nickname'])) ? null : $data['nickname'];
+        $userProfile->height = $data['height'];
+        $userProfile->level = $data['level'];
+        $userProfile->experience = $data['experience'];
+        $userProfile->save();
 
-        }
         $this->view->message('Personal profile updated.', 'success');
     }
 
@@ -115,23 +113,21 @@ class ProfileController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
-                foreach($data as $key => $value) {
-                    $minor->first_name = $data['first_name'];
-                    $minor->last_name = $data['last_name'];
-                    $minor->updated_at = date('Y-m-d H:i:s');
-                    $minor->save();
+                $minor->first_name = $data['first_name'];
+                $minor->last_name = $data['last_name'];
+                $minor->updated_at = date('Y-m-d H:i:s');
+                $minor->save();
 
-                    $userProfileTable = new Model_DbTable_UserProfile();
-                    $userProfile = $userProfileTable->find($minor->id)->current();
-                    $userProfile->gender = $data['gender'];
-                    $userProfile->birthday = $data['birthday'];
-                    $userProfile->nickname = (empty($data['nickname'])) ? null : $data['nickname'];
-                    $userProfile->height = $data['height'];
-                    $userProfile->level = $data['level'];
-                    $userProfile->experience = $data['experience'];
-                    $userProfile->save();
+                $userProfileTable = new Model_DbTable_UserProfile();
+                $userProfile = $userProfileTable->find($minor->id)->current();
+                $userProfile->gender = $data['gender'];
+                $userProfile->birthday = $data['birthday'];
+                $userProfile->nickname = (empty($data['nickname'])) ? null : $data['nickname'];
+                $userProfile->height = $data['height'];
+                $userProfile->level = $data['level'];
+                $userProfile->experience = $data['experience'];
+                $userProfile->save();
 
-                }
                 $this->view->message('Minor information updated.', 'success');
                 $this->_redirect('profile/minors');
 
@@ -260,7 +256,7 @@ class ProfileController extends Zend_Controller_Action
         }
 
         if($weight == count($data['name'])) {
-            $userEmergencyTable->updateContacts($this->view->user->id, $data['name'], $data['phone']);
+            $userEmergencyTable->updateContacts($user->id, $data['name'], $data['phone']);
             $this->view->message('Emergency contacts updated successfully.', 'success');
             $this->_redirect('profile/contacts');
         }

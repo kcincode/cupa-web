@@ -24,7 +24,7 @@ try {
     if(DEBUG) {
         echo "    Dropping Database Tables:\n";
     } else {
-        echo "    Dropping $totalTables Tables:\n";        
+        echo "    Dropping $totalTables Tables:\n";
         $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTables);
     }
 
@@ -118,7 +118,7 @@ function createUserTable($db)
           UNIQUE KEY `activation_code` (`activation_code`),
           KEY `parent` (`parent`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `user`
           ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
@@ -147,7 +147,7 @@ function createContactTable($db)
           UNIQUE KEY `name` (`name`),
           UNIQUE KEY `email` (`email`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     foreach($contacts as $contact) {
         $GLOBALS['contactTable']->insert($contact);
     }
@@ -205,7 +205,7 @@ function createUserLevelTable($db)
           `weight` int(11) NOT NULL DEFAULT '0',
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     foreach($levels as $level) {
         $GLOBALS['userLevelTable']->insert($level);
     }
@@ -225,7 +225,7 @@ function createUserProfileTable($db)
           `experience` int(11) DEFAULT NULL,
           PRIMARY KEY (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-     
+
     $db->query("
         ALTER TABLE `user_profile`
           ADD CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
@@ -244,7 +244,7 @@ function createUserWaiverTable($db)
           KEY `user_id` (`user_id`),
           KEY `modified_by` (`modified_by`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `user_waiver`
           ADD CONSTRAINT `user_waiver_ibfk_2` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
@@ -263,7 +263,7 @@ function createUserAccessLogTable($db)
           `type` enum('login-success','login-failed','logout') COLLATE utf8_unicode_ci NOT NULL,
           `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");  
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 }
 
 function createPageTable($db)
@@ -293,7 +293,7 @@ function createPageTable($db)
         ALTER TABLE `page`
           ADD CONSTRAINT `page_ibfk_3` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `page_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `page_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");  
+          ADD CONSTRAINT `page_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
 }
 
 function createUserRoleTable($db)
@@ -308,7 +308,7 @@ function createUserRoleTable($db)
           KEY `user_id` (`user_id`),
           KEY `page_id` (`page_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `user_role`
           ADD CONSTRAINT `user_role_ibfk_2` FOREIGN KEY (`page_id`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -329,7 +329,7 @@ function createUserPasswordResetTable($db)
           UNIQUE KEY `code` (`code`),
           KEY `user_id` (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `user_password_reset`
           ADD CONSTRAINT `user_password_reset_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
@@ -344,7 +344,7 @@ function createNewsCategoryTable($db)
           PRIMARY KEY (`id`),
           UNIQUE KEY `name` (`name`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-  
+
 }
 
 function createNewsTable($db)
@@ -370,7 +370,7 @@ function createNewsTable($db)
           KEY `posted_by` (`posted_by`),
           KEY `category_id` (`category_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `news`
           ADD CONSTRAINT `news_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `news_category` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
@@ -397,11 +397,11 @@ function createClubTable($db)
           PRIMARY KEY (`id`),
           KEY `last_updated_by` (`last_updated_by`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `club`
           ADD CONSTRAINT `club_ibfk_1` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
-  
+
 }
 
 function createClubCaptainTable($db)
@@ -415,11 +415,11 @@ function createClubCaptainTable($db)
           KEY `user_id` (`user_id`),
           KEY `club_id` (`club_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `club_captain`
           ADD CONSTRAINT `club_captain_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `club_captain_ibfk_1` FOREIGN KEY (`club_id`) REFERENCES `club` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `club_captain_ibfk_1` FOREIGN KEY (`club_id`) REFERENCES `club` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createOfficerTable($db)
@@ -435,11 +435,11 @@ function createOfficerTable($db)
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `officer`
           ADD CONSTRAINT `officer_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
-  
+
 }
 
 function createMinuteTable($db)
@@ -452,7 +452,7 @@ function createMinuteTable($db)
           `pdf` longblob,
           `is_visible` tinyint(1) NOT NULL DEFAULT '1',
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");  
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 }
 
 function createPickupTable($db)
@@ -473,10 +473,10 @@ function createPickupTable($db)
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `pickup`
-          ADD CONSTRAINT `pickup_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `pickup_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createLeagueSeasonTable($db)
@@ -489,7 +489,7 @@ function createLeagueSeasonTable($db)
           `information` text COLLATE utf8_unicode_ci NOT NULL,
           `weight` int(11) DEFAULT 0,
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");  
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
 }
 
 function createLeagueTable($db)
@@ -508,10 +508,10 @@ function createLeagueTable($db)
           `is_archived` TINYINT(1) DEFAULT 0 NOT NULL,
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
-    
+
     $db->query("
         ALTER TABLE `league`
-          ADD CONSTRAINT `league_ibfk_1` FOREIGN KEY (`season`) REFERENCES `league_season` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");  
+          ADD CONSTRAINT `league_ibfk_1` FOREIGN KEY (`season`) REFERENCES `league_season` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;");
 }
 
 function createLeagueTeamTable($db)
@@ -531,7 +531,7 @@ function createLeagueTeamTable($db)
 
     $db->query("
         ALTER TABLE `league_team`
-          ADD CONSTRAINT `league_team_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `league_team_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createLeagueGameTable($db)
@@ -549,7 +549,7 @@ function createLeagueGameTable($db)
 
     $db->query("
         ALTER TABLE `league_game`
-          ADD CONSTRAINT `league_game_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `league_game_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createLeagueGameDataTable($db)
@@ -569,7 +569,7 @@ function createLeagueGameDataTable($db)
     $db->query("
         ALTER TABLE `league_game_data`
           ADD CONSTRAINT `league_game_data_ibfk_2` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-          ADD CONSTRAINT `league_game_data_ibfk_1` FOREIGN KEY (`league_game_id`) REFERENCES `league_game` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `league_game_data_ibfk_1` FOREIGN KEY (`league_game_id`) REFERENCES `league_game` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createLeagueInformationTable($db)
@@ -641,7 +641,7 @@ function createLeagueMemberTable($db)
           ADD CONSTRAINT `league_member_ibfk_4` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
           ADD CONSTRAINT `league_member_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
           ADD CONSTRAINT `league_member_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `league_member_ibfk_3` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `league_member_ibfk_3` FOREIGN KEY (`league_team_id`) REFERENCES `league_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createLeagueLocationTable($db)
@@ -666,7 +666,7 @@ function createLeagueLocationTable($db)
 
     $db->query("
         ALTER TABLE `league_location`
-          ADD CONSTRAINT `league_location_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `league_location_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createLeagueQuestionTable($db)
@@ -715,7 +715,7 @@ function createLeagueQuestionListTable($db)
           KEY `league_id` (`league_id`),
           KEY `league_question_id` (`league_question_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `league_question_list`
           ADD CONSTRAINT `league_question_list_ibfk_2` FOREIGN KEY (`league_question_id`) REFERENCES `league_question` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -734,11 +734,11 @@ function createLeagueAnswerTable($db)
           KEY `league_member_id` (`league_member_id`),
           KEY `league_question_id` (`league_question_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `league_answer`
           ADD CONSTRAINT `league_answer_ibfk_2` FOREIGN KEY (`league_question_id`) REFERENCES `league_question` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-          ADD CONSTRAINT `league_answer_ibfk_1` FOREIGN KEY (`league_member_id`) REFERENCES `league_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `league_answer_ibfk_1` FOREIGN KEY (`league_member_id`) REFERENCES `league_member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createTournamentTable($db)
@@ -767,7 +767,7 @@ function createTournamentDivisionTable($db)
 
     $i = 0;
     foreach(array('open', 'mixed', 'womens', 'masters', 'youth open', 'youth womens', 'youth mixed') as $division) {
-        
+
         $GLOBALS['tournamentDivisionTable']->insert(array(
             'name' => $division,
             'weight' => $i,
@@ -800,7 +800,7 @@ function createTournamentInformationTable($db)
           `photo_link` text DEFAULT NULL,
           PRIMARY KEY  (`tournament_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-    
+
     $db->query("
         ALTER TABLE `tournament_information`
           ADD CONSTRAINT `tournament_information_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
@@ -825,7 +825,7 @@ function createTournamentTeamTable($db)
           KEY `tournament_id` (`tournament_id`),
           KEY `division` (`division`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `tournament_team`
           ADD CONSTRAINT `tournament_team_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -844,10 +844,10 @@ function createTournamentUpdateTable($db)
           PRIMARY KEY  (`id`),
           KEY `tournament_id` (`tournament_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `tournament_update`
-          ADD CONSTRAINT `tournament_update_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");  
+          ADD CONSTRAINT `tournament_update_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createTournamentMemberTable($db)
@@ -863,7 +863,7 @@ function createTournamentMemberTable($db)
           PRIMARY KEY (`id`),
           KEY `tournament_id` (`tournament_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-    
+
     $db->query("
         ALTER TABLE `tournament_member`
           ADD CONSTRAINT `tournament_member_ibfk_2` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
@@ -884,7 +884,6 @@ function createFormTable($db)
           `modified_at` datetime NOT NULL,
           `modified_by` int(11) DEFAULT NULL,
           PRIMARY KEY (`id`),
-          UNIQUE KEY `md5` (`md5`),
           KEY `modified_by` (`modified_by`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 

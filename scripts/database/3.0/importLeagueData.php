@@ -26,6 +26,9 @@ $ignoredPhones = array(
 );
 
 $colorLookupTable = array(
+    'tan' => 'ffe89e',
+    'maize' => 'cc9900',
+    'brown' => '#523d00',
     'sapphire blue' => '#48a0c7',
     'sapphire' => '#48a0c7',
     'oceana blue' => '#737ca1',
@@ -724,7 +727,7 @@ foreach($results as $row) {
                         'first_name' => ucwords(trim($first)),
                         'last_name' => ucwords(trim($last)),
                         'phone' => $info['phone'],
-                        'weight' => count($userEmergencyTable->fetchAllContacts($userId) + 1,
+                        'weight' => count($userEmergencyTable->fetchAllContacts($userId)) + 1,
                     ));
                 } else {
                     $result->first_name = ucwords(trim($first));

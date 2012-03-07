@@ -30,12 +30,12 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $pageTable = new Model_DbTable_Page();
-        
+
         $this->view->page = $pageTable->fetchBy('name', 'leagues');
         $this->view->links = $leagueSeasonTable->generateLinks();
         $this->view->leagues = $leagueSeasonTable->fetchAllSeasons();
     }
-    
+
     public function seasonmoveAction()
     {
         // disable the layout and view
@@ -44,54 +44,54 @@ class LeagueController extends Zend_Controller_Action
 
         $weight = $this->getRequest()->getUserParam('weight');
         $seasonId = $this->getRequest()->getUserParam('season_id');
-        
+
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $leagueSeasonTable->moveSeason($seasonId, $weight);
-        
+
         $this->_redirect('leagues');
     }
-    
+
     public function seasoneditAction()
     {
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
         $this->view->page = $page;
-        
-        if(!$this->view->hasRole('admin') and 
-           !$this->view->hasRole('editor') and 
+
+        if(!$this->view->hasRole('admin') and
+           !$this->view->hasRole('editor') and
            !$this->view->hasRole('editor', $page->id) ) {
             $this->_redirect('leagues');
         }
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/index.css');
-        
+
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
 
         $seasonId = $this->getRequest()->getUserParam('season_id');
         $this->view->season = $leagueSeasonTable->find($seasonId)->current();
-        
+
         $form = new Form_LeagueSeasonEdit();
         $form->loadFromSeason($this->view->season);
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $this->view->season->name = $data['name'];
                 $this->view->season->when = $data['when'];
                 $this->view->season->information = $data['information'];
                 $this->view->season->save();
-                
+
                 $this->view->message("Season `{$data['name']}` updated successfully.", 'success');
                 $this->_redirect('leagues');
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $this->view->form = $form;
     }
 
@@ -101,24 +101,24 @@ class LeagueController extends Zend_Controller_Action
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
         $this->view->page = $page;
-        
-        if(!$this->view->hasRole('admin') and 
-           !$this->view->hasRole('editor') and 
+
+        if(!$this->view->hasRole('admin') and
+           !$this->view->hasRole('editor') and
            !$this->view->hasRole('editor', $page->id) ) {
             return;
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             $leagueSeasonTable = new Model_DbTable_LeagueSeason();
             if($leagueSeasonTable->isUnique($post['name'])) {
                 $season = $leagueSeasonTable->createRow();
@@ -127,7 +127,7 @@ class LeagueController extends Zend_Controller_Action
                 $season->information = '';
                 $season->weight = $leagueSeasonTable->fetchNextWeight();
                 $season->save();
-                
+
                 $this->view->message('Season created successfully.');
                 echo Zend_Json::encode(array('result' => 'success', 'data' => $season->id));
             } else {
@@ -135,67 +135,68 @@ class LeagueController extends Zend_Controller_Action
                 return;
             }
         }
-    } 
-    
+    }
+
     public function seasondeleteAction()
     {
         if(!$this->view->hasRole('admin')) {
             $this->_redirect('leagues');
         }
-        
+
         // disable the layout and view
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
         $seasonId = $this->getRequest()->getUserParam('season_id');
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
-        
+
         $where = $leagueSeasonTable->getAdapter()->quoteInto('id = ?', $seasonId);
         $leagueSeasonTable->delete($where);
 
         $this->_redirect('leagues');
     }
-    
+
     public function pageAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/page.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/page.js');
-        
+
         $pageTable = new Model_DbTable_Page();
         $leagueTable = new Model_DbTable_League();
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
-        
+
         $season = $this->getRequest()->getUserParam('type');
         $this->view->season = $season;
-        
+
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
         $this->view->links = $leagueSeasonTable->generateLinks();
         $admin = $this->view->hasRole('admin') or $this->view->hasRole('editor') or $this->view->hasRole('editor', $this->view->page->id);
         $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $admin);
     }
-    
+
     public function pageeditAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $leagueInformationTable = new Model_DbTable_LeagueInformation();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
         $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and 
-           !$this->view->hasRole('editor') and 
+        if(!$this->view->hasRole('admin') and
+           !$this->view->hasRole('editor') and
            !$this->view->hasRole('editor', $page->id) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
@@ -207,10 +208,10 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
-                
+
         $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'league');
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
@@ -223,7 +224,7 @@ class LeagueController extends Zend_Controller_Action
                     $league->season = $data['season'];
                     $league->day = $data['day'];
                     $league->is_archived = $data['is_archived'];
-                    
+
                     $leagueInformation->is_youth = $data['is_youth'];
                     $leagueInformation->is_pods = $data['is_pods'];
                     $leagueInformation->is_hat = $data['is_hat'];
@@ -242,11 +243,11 @@ class LeagueController extends Zend_Controller_Action
                         }
                     }
                 }
-                
+
                 $league->visible_from = $data['visible_from'];
                 $league->name = $data['name'];
                 $league->save();
-                
+
                 $this->view->message('League data saved successfully.'. 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
             } else {
@@ -262,19 +263,20 @@ class LeagueController extends Zend_Controller_Action
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
         $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and 
-           !$this->view->hasRole('editor') and 
+        if(!$this->view->hasRole('admin') and
+           !$this->view->hasRole('editor') and
            !$this->view->hasRole('editor', $page->id) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
@@ -283,7 +285,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
@@ -291,10 +293,10 @@ class LeagueController extends Zend_Controller_Action
 
         $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'information');
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             // disable the fields if hidden
             if($post['tournament_ignore']) {
                 $form->getElement('tournament_name')->setRequired(false);
@@ -303,7 +305,7 @@ class LeagueController extends Zend_Controller_Action
                 $form->getElement('tournament_start')->setRequired(false);
                 $form->getElement('tournament_end')->setRequired(false);
             }
-            
+
             if($post['draft_ignore']) {
                     $form->getElement('draft_name')->setRequired(false);
                     $form->getElement('draft_map_link')->setRequired(false);
@@ -315,7 +317,7 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
-                
+
                 // remove all of the directors that are not in the list
                 $dbDirectors = array();
                 foreach($leagueMemberTable->fetchAllByType($leagueId, 'director') as $director) {
@@ -325,7 +327,7 @@ class LeagueController extends Zend_Controller_Action
                         $dbDirectors[] = $director->user_id;
                     }
                 }
-                
+
                 // add the directors that are not in the DB
                 foreach($data['directors'] as $directorId) {
                     if(!in_array($directorId, $dbDirectors)) {
@@ -342,11 +344,11 @@ class LeagueController extends Zend_Controller_Action
                         $leagueMember->save();
                     }
                 }
-                
+
                 $league = $leagueTable->find($leagueId)->current();
                 $league->info = (empty($data['info'])) ? null : $data['info'];
                 $league->save();
-                
+
                 $leagueLocationTable = new Model_DbTable_LeagueLocation();
                 $league = $leagueLocationTable->fetchByType($leagueId, 'league');
                 $league->location = $data['league_name'];
@@ -361,8 +363,8 @@ class LeagueController extends Zend_Controller_Action
                 $league->start = $data['league_start'];
                 $league->end = $data['league_end'];
                 $league->save();
-                
-                
+
+
                 if(!$data['tournament_ignore']) {
                     $tournament = $leagueLocationTable->fetchByType($leagueId, 'tournament');
                     if($tournament) {
@@ -398,8 +400,8 @@ class LeagueController extends Zend_Controller_Action
                         $tournament->save();
                     }
                 }
-                
-                
+
+
                 if(!$data['draft_ignore']) {
                     $draft = $leagueLocationTable->fetchByType($leagueId, 'draft');
                     if($draft) {
@@ -445,25 +447,27 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->form = $form;
     }
-    
+
     public function pageregistrationeditAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
         $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and 
-           !$this->view->hasRole('editor') and 
+        if(!$this->view->hasRole('admin') and
+           !$this->view->hasRole('editor') and
            !$this->view->hasRole('editor', $page->id) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
@@ -471,17 +475,17 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
 
         $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'registration');
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             if(isset($post['new_question'])) {
                 if($post['id'] != 0) {
                     $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
@@ -494,7 +498,7 @@ class LeagueController extends Zend_Controller_Action
                 } else {
                     $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
                     $questionId = $leagueQuestionTable->createQuestion($post['name'], 'Placeholder title', $post['type'], null);
-                    
+
                     $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
                     $leagueQuestionListTable->addQuestionToLeague($leagueId, $questionId, 1);
 
@@ -505,30 +509,30 @@ class LeagueController extends Zend_Controller_Action
                     return;
                 }
             }
-            
-            
+
+
             if($post['limit_select'] == 1) {
                 $form->getElement('total_players')->setRequired(false);
             } else {
                 $form->getElement('male_players')->setRequired(false);
                 $form->getElement('female_players')->setRequired(false);
             }
-            
+
             if($this->view->league['information']['user_teams'] == 0) {
                 $form->getElement('teams')->setRequired(false);
             }
-            
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $league = $leagueTable->find($leagueId)->current();
                 $league->registration_begin = $data['registration_begin'];
                 $league->registration_end = $data['registration_end'];
                 $league->save();
-                                
-                $leagueLimitTable = new Model_DbTable_LeagueLimit();               
+
+                $leagueLimitTable = new Model_DbTable_LeagueLimit();
                 $leagueLimit = $leagueLimitTable->fetchLimits($leagueId);
-                
+
                 if($data['limit_select'] == 1) {
                     $leagueLimit->male_players = $data['male_players'];
                     $leagueLimit->female_players = $data['female_players'];
@@ -538,17 +542,17 @@ class LeagueController extends Zend_Controller_Action
                     $leagueLimit->female_players = null;
                     $leagueLimit->total_players = $data['total_players'];
                 }
-                
+
                 $leagueLimit->teams = (empty($data['teams'])) ? null : $data['teams'];
                 $leagueLimit->save();
-                
+
                 $leagueInformationTable = new Model_DbTable_LeagueInformation();
                 $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
                 $leagueInformation->paypal_code = (empty($data['paypal_code'])) ? null : $data['paypal_code'];
                 $leagueInformation->cost = $data['cost'];
 
                 $leagueInformation->save();
-                
+
                 $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
                 $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
 
@@ -557,58 +561,58 @@ class LeagueController extends Zend_Controller_Action
                     $required = (isset($post['required'][$questionName])) ? 1 : 0;
                     $leagueQuestionListTable->updateQuestionList($leagueId, $leagueQuestion->id, $required, $weight);
                 }
-                
+
                 $this->view->message('League registration updated successfully.', 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
-                
+
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $this->view->form = $form;
-        
+
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $this->view->leagueQuestions = $leagueQuestionTable->fetchAllQuestionsFromLeague($leagueId);
         $this->view->allQuestions = $leagueQuestionTable->fetchAllRemainingQuestions($this->view->leagueQuestions);
     }
-    
+
     public function questioneditAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/questionedit.css');
 
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/questionedit.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
         $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->fetchLeagueData($leagueId);
-        
+
         if(!$league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
         $this->view->leagueId = $league['id'];
-        
+
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->find($questionId)->current();
         if(!$question) {
             $this->_redirect('league/' . $leagueId . '/page_registration');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues');
         }
-        
+
         $form = new Form_LeagueQuestionEdit($question);
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             if(isset($post['cancel'])) {
                 $this->_redirect('league/' . $leagueId . '/edit_registration');
             }
-            
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $question->name = $data['name'];
@@ -616,24 +620,24 @@ class LeagueController extends Zend_Controller_Action
                 $question->type = $data['type'];
                 $question->answers = (empty($data['answers'])) ? null : $this->convertQuestionAnswers($data['answers']);
                 $question->save();
-                
+
                 $this->view->message('Question `' . $question->name . '` updated successfully.', 'success');
                 $this->_redirect('league/' . $leagueId . '/edit_registration');
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-        
+
         $this->view->form = $form;
     }
-    
+
     public function convertQuestionAnswers($answers)
     {
         $lines = explode("\r\n", $answers);
-        
+
         $data = array();
         foreach($lines as $line) {
             list($key, $value) = explode('::', $line);
@@ -642,67 +646,68 @@ class LeagueController extends Zend_Controller_Action
 
         return Zend_Json::encode($data);
     }
-    
+
     public function questionremoveAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
         $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->fetchLeagueData($leagueId);
-        
+
         if(!$league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->find($questionId)->current();
         if(!$question) {
             $this->_redirect('league/' . $leagueId . '/page_registration');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues');
         }
 
         $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
         $leagueQuestionListTable->removeQuestionFromLeague($leagueId, $questionId);
-        
+
         $this->view->message('Question `' . $question->name . '` removed from the league.', 'success');
         $this->_redirect('league/' . $leagueId . '/edit_registration');
     }
-    
+
     public function pagedescriptioneditAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
         $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and 
-           !$this->view->hasRole('editor') and 
+        if(!$this->view->hasRole('admin') and
+           !$this->view->hasRole('editor') and
            !$this->view->hasRole('editor', $page->id) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
-        
+
         $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'description');
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
@@ -711,19 +716,19 @@ class LeagueController extends Zend_Controller_Action
                 $leagueInformationTable = new Model_DbTable_LeagueInformation();
                 $leagueInformationTable->description = $data['description'];
                 $leagueInformationTable->save();
-                
+
                 $this->view->message('League description updated successfully.', 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
-                
+
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $this->view->form = $form;
 
     }
-    
+
     public function pageaddAction()
     {
         // make sure its an AJAX request
@@ -735,14 +740,14 @@ class LeagueController extends Zend_Controller_Action
 
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             $leagueTable = new Model_DbTable_League();
             if($leagueTable->isUnique($post['year'], $post['season'], $post['day'])) {
-                
+
                 $id = $leagueTable->createBlankLeague($post['year'], $post['season'], $post['day'], null, $this->view->user->id);
                 if(is_numeric($id)) {
                     $this->view->message('League created successfully.');
@@ -763,13 +768,13 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/teams.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -781,22 +786,22 @@ class LeagueController extends Zend_Controller_Action
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
     }
-    
+
     public function loadplayersAction()
     {
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
             $this->_redirect('/');
         }
-        
+
         // disable the layout
         $this->_helper->layout()->disableLayout();
-        
+
         $teamId = $this->getRequest()->getUserParam('team_id');
-        
+
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        
+
         $this->view->team = $leagueTeamTable->find($teamId)->current();
         $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
     }
@@ -855,16 +860,16 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/colorpicker/css/layout.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/colorpicker/css/colorpicker.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teamsedit.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/teamsedit.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/colorpicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/eye.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/utils.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/layout.js');
-        
+
         $teamId = $this->getRequest()->getUserParam('team_id');
-        
+
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $team = $leagueTeamTable->find($teamId)->current();
 
@@ -878,14 +883,14 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $form = new Form_LeagueTeamEdit($team);
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
-                
+
                 // remove all of the directors that are not in the list
                 $dbCaptains = array();
                 foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
@@ -895,7 +900,7 @@ class LeagueController extends Zend_Controller_Action
                         $dbCaptains[] = $captain->user_id;
                     }
                 }
-                
+
                 // add the directors that are not in the DB
                 foreach($data['captains'] as $captainId) {
                     if(!in_array($captainId, $dbCaptains)) {
@@ -911,22 +916,22 @@ class LeagueController extends Zend_Controller_Action
                         $leagueMember->modified_by = $this->view->user->id;
                         $leagueMember->save();
                     }
-                }                
-                
+                }
+
                 $team->name = $data['name'];
                 $team->color = $data['color'];
                 $team->color_code = $data['color_code'];
                 $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
                 $team->save();
-                
+
                 $this->view->message("Team `{$team->name}` updated successfully.", 'success');
                 $this->_redirect('league/' . $team->league_id);
             } else {
                 $form->populate($post);
             }
         }
-        
-        
+
+
         $this->view->form = $form;
         $this->view->team = $team;
     }
@@ -996,7 +1001,7 @@ class LeagueController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
@@ -1170,14 +1175,14 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/generate.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/generate.js');
 
         $session = new Zend_Session_Namespace('schedule_generation');
         if($this->getRequest()->isGet()) {
             $session->unsetAll();
         }
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->find($leagueId)->current();
@@ -1187,11 +1192,11 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId . '/schedule');
         }
-        
+
         $this->view->league = $league;
 
         $form = new Form_GenerateSchedule($league);
@@ -1200,11 +1205,11 @@ class LeagueController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             if(isset($post['save'])) {
                 $leagueGameDataTable = new Model_DbTable_LeagueGameData();
-                
+
                 // remove all of the current games for the league
                 $leagueGameTable->getAdapter()->query('DELETE FROM league_game WHERE league_id = ' . $leagueId);
-                
-                // save the new schedule                
+
+                // save the new schedule
                 foreach($session->schedule as $week => $tmp) {
                     foreach($tmp as $data) {
                         $gameId = $leagueGameTable->createGame($leagueId, $data['date'], $week, $data['field']);
@@ -1212,28 +1217,28 @@ class LeagueController extends Zend_Controller_Action
                         $leagueGameDataTable->addGameData($gameId, 'away', $data['away_team']);
                     }
                 }
-                
+
                 $this->view->message('League Schedule generated successfully.', 'success');
                 $this->_redirect('league/' . $leagueId . '/schedule');
             }
             if($form->isValid($post)) {
-                
+
                 // get start time from the league locations
                 $leagueLocationTable = new Model_DbTable_LeagueLocation();
                 $leagueLocation = $leagueLocationTable->fetchByType($leagueId, 'league');
-                
+
                 $startHour = date('H', strtotime($leagueLocation->start));
                 $endHour = date('H', strtotime($leagueLocation->end));
                 $dayHours = 24 - ($endHour - $startHour);
                 $weekSeconds = 7 * $dayHours * 60 * 60;
                 $weeks = ceil((strtotime($leagueLocation->end) - strtotime($leagueLocation->start)) / $weekSeconds);
-                
+
                 $fields = explode(',', $post['number_of_fields']);
-                
+
                 $leagueTeamTable = new Model_DbTable_LeagueTeam();
                 $teams = $leagueTeamTable->fetchAllTeams($leagueId)->toArray();
                 $numTeams = count($teams);
-                
+
                 $numFields = count($fields);
                 if($numFields < floor($numTeams / 2)) {
                     $this->view->message('Not enough fields to play games. You need at least ' . floor($numTeams / 2) . ' fields.', 'warning');
@@ -1245,7 +1250,7 @@ class LeagueController extends Zend_Controller_Action
 
                 // shuffle team array so that the generation will be different
                 shuffle($teams);
-                
+
                 if($post['home_advantage'] != 0) {
                     // reset the fields array with home field as the first item
                     $newFields = array();
@@ -1257,7 +1262,7 @@ class LeagueController extends Zend_Controller_Action
                     }
                     $fields = $newFields;
                     unset($newFields);
-                    
+
                     $newTeams = array();
                     $newTeams[0] = array();
                     foreach($teams as $team) {
@@ -1275,7 +1280,7 @@ class LeagueController extends Zend_Controller_Action
                 for($week = 1; $week <= $weeks; $week++) {
                     $str = $leagueLocation->start . ' +' . $week . ' Weeks';
                     $date = date('Y-m-d H:i:s', strtotime($str));
-                    
+
                     if($post['home_advantage'] != 0) {
                         foreach($fields as $idx => $field) {
                             if($teams[$idx]['id'] == $post['home_advantage']) {
@@ -1297,11 +1302,11 @@ class LeagueController extends Zend_Controller_Action
                                     'home_name' => $teams[$numTeams - $idx - 1]['name'],
                                 );
                             }
-                            
+
                             if($field == $post['home_field']) {
                                 continue;
                             }
-                            
+
                             if($idx <= floor($numTeams / 2)) {
                                 $results[$week][] = array(
                                     'date' => $date,
@@ -1347,10 +1352,10 @@ class LeagueController extends Zend_Controller_Action
                                 );
                             }
                         }
-                        $teams = $this->rotateTeams($teams);                        
+                        $teams = $this->rotateTeams($teams);
                     }
                 }
-                
+
                 $session->schedule = $results;
                 $this->view->schedule = $results;
 
@@ -1358,10 +1363,10 @@ class LeagueController extends Zend_Controller_Action
                 $form->populate($post);
             }
         }
-        
+
         $this->view->form = $form;
     }
-    
+
     private function rotateTeams($teams)
     {
         $lastElement = array_pop($teams);
@@ -1377,21 +1382,21 @@ class LeagueController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/email.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         $form = new Form_LeagueContact($leagueId, $this->view->user, $this->view->isLeagueDirector($leagueId));
         $form->getElement('subject')->setValue('[' . $this->view->leaguename($leagueId, true, true, true, true) . '] Information');
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
@@ -1400,7 +1405,7 @@ class LeagueController extends Zend_Controller_Action
                 $mail = new Zend_Mail();
                 $mail->setSubject($post['subject']);
                 $mail->setFrom($post['from']);
-                
+
                 foreach($data[$post['to']] as $email) {
                     $mail->clearRecipients();
                     if(APPLICATION_ENV == 'production') {
@@ -1412,16 +1417,16 @@ class LeagueController extends Zend_Controller_Action
                     }
                     $mail->send();
                 }
-                
-                
+
+
                 $this->view->message('Email sent successfully.', 'success');
                 $this->_redirect('league/' . $leagueId . '/email');
-                
+
             } else {
                 $form->populate($post);
             }
         }
-        
+
         $this->view->form = $form;
     }
 
@@ -1429,13 +1434,13 @@ class LeagueController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankings.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -1453,18 +1458,18 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/rankingsedit.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankingsedit.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId . '/rankings');
         }
@@ -1487,11 +1492,11 @@ class LeagueController extends Zend_Controller_Action
                     $rank++;
                 }
             }
-            
+
             $this->view->message('League final rankings updates successfully.', 'success');
             $this->_redirect('league/' . $leagueId . '/rankings');
         }
-                
+
         $session = new Zend_Session_Namespace('previous');
         $session->previousPage = 'league/' . $leagueId;
 
@@ -1502,25 +1507,25 @@ class LeagueController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/players.css');
-        
+
         //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
-        
+
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->players = $leagueMemberTable->fetchPlayerInformation($leagueId);
-        
+
         if($this->getRequest()->getParam('export')) {
             // disable the layout
             $this->_helper->layout()->disableLayout();
@@ -1543,7 +1548,7 @@ class LeagueController extends Zend_Controller_Action
             header('Content-Transfer-Encoding: binary');
 
             set_time_limit(0);
-            
+
             echo "first_name,last_name,email";
             $i = 1;
             foreach($this->view->players as $player) {
@@ -1556,7 +1561,7 @@ class LeagueController extends Zend_Controller_Action
                     }
                     echo "\n";
                 }
-                
+
                 echo "{$player['first_name']},{$player['last_name']},{$player['email']}";
                 foreach($player['profile'] as $key => $value) {
                     echo "," . str_replace(',', ' ', $value);
@@ -1568,7 +1573,7 @@ class LeagueController extends Zend_Controller_Action
 
                 $i++;
             }
-            
+
             flush();
         }
     }
@@ -1577,20 +1582,20 @@ class LeagueController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/shirts.css');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
-        
+
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
         $this->view->shirts = $leagueAnswerTable->fetchShirts($leagueId);
 
@@ -1598,7 +1603,7 @@ class LeagueController extends Zend_Controller_Action
             // disable the layout
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             apache_setenv('no-gzip', '1');
             ob_end_clean();
 
@@ -1616,18 +1621,18 @@ class LeagueController extends Zend_Controller_Action
             header('Content-Transfer-Encoding: binary');
 
             set_time_limit(0);
-            
+
             echo "color,XS,S,M,L,XL,XXL\n";
-            
+
             foreach($this->view->shirts as $color => $shirt) {
                 foreach(array('XS', 'S', 'M', 'L', 'XL', 'XXL') as $size) {
                     $lowSize = strtolower($size);
                     $$lowSize = (isset($shirt[$size])) ? $shirt[$size] : 0;
-                    
+
                 }
                 echo "{$color},{$xs},{$s},{$m},{$l},{$xl},{$xxl}\n";
             }
-            
+
             flush();
         }
     }
@@ -1641,12 +1646,12 @@ class LeagueController extends Zend_Controller_Action
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
@@ -1658,7 +1663,7 @@ class LeagueController extends Zend_Controller_Action
             // disable the layout
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             apache_setenv('no-gzip', '1');
             ob_end_clean();
 
@@ -1676,9 +1681,9 @@ class LeagueController extends Zend_Controller_Action
             header('Content-Transfer-Encoding: binary');
 
             set_time_limit(0);
-            
+
             echo "player,contacts\n";
-            
+
             foreach($this->view->contacts as $userId => $tmp) {
                 if($userId) {
                     echo $this->view->fullname($userId);
@@ -1688,7 +1693,7 @@ class LeagueController extends Zend_Controller_Action
                     echo "\n";
                 }
             }
-            
+
             flush();
         }
     }
@@ -1697,22 +1702,22 @@ class LeagueController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/status.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         if(!$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
-        
+
         if($this->getRequest()->isPost()) {
             // make sure its an AJAX request
             if(!$this->getRequest()->isXmlHttpRequest()) {
@@ -1723,9 +1728,9 @@ class LeagueController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
             $post = $this->getRequest()->getPost();
-            
+
             list($field, $userId, $checked) = explode('-', $post['data']);
-            
+
             $leagueMemberTable = new Model_DbTable_LeagueMember();
             $member = $leagueMemberTable->fetchMember($leagueId, $userId);
 
@@ -1736,14 +1741,14 @@ class LeagueController extends Zend_Controller_Action
                 $userWaiverTable = new Model_DbTable_UserWaiver();
                 $userWaiverTable->updateWaiver($userId, $this->view->league->year, $checked, $this->view->user->id);
             }
-            
+
         }
-        
+
         $this->view->all = $this->getRequest()->getUserParam('all');
-        
+
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->statuses = $leagueMemberTable->fetchPlayerStatuses($leagueId, $this->view->league->year);
-        
+
         if($this->getRequest()->getParam('export')) {
             // disable the layout
             $this->_helper->layout()->disableLayout();
@@ -1766,9 +1771,9 @@ class LeagueController extends Zend_Controller_Action
             header('Content-Transfer-Encoding: binary');
 
             set_time_limit(0);
-            
+
             echo "name,waiver,release,paid,owed\n";
-            
+
             foreach($this->view->statuses as $status) {
                 $waiver = ($status['waiver'] == $this->view->league->year) ? 'Yes' : 'No';
                 $release = ($status['release'] == 1) ? 'Yes' : 'No';
@@ -1776,7 +1781,7 @@ class LeagueController extends Zend_Controller_Action
                 $balance = (empty($status['balance'])) ? 0 : $status['balance'];
                 echo "{$this->view->fullname($status['user_id'])},{$waiver},{$release},{$paid},{$balance}\n";
             }
-            
+
             flush();
         }
     }
@@ -1786,20 +1791,21 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/register.css');
-        
+
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/register.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
         // do registration checks to make sure a user is able to register
-        if($this->view->registrationMessage = $this->view->getLeagueRegistrationMessage($leagueId)) {
+        $this->view->registrationMessage = $this->view->getLeagueRegistrationMessage($leagueId);
+        if($this->view->registrationMessage) {
             $this->view->message($this->view->registrationMessage, 'error');
             return;
         }
@@ -1884,7 +1890,7 @@ class LeagueController extends Zend_Controller_Action
                     $form->getElement('phone')->setValue($userProfile->phone);
                 }
             }
-            
+
         } else  if($state == 'league') {
             unset($session->league);
 
@@ -1984,7 +1990,7 @@ class LeagueController extends Zend_Controller_Action
                             'modified_by' => $this->view->user->id,
                         ));
                     } else {
-                        $leagueMemberId = $leagueMember->id;                        
+                        $leagueMemberId = $leagueMember->id;
                     }
 
                     $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
@@ -2024,18 +2030,18 @@ class LeagueController extends Zend_Controller_Action
         $this->view->title = $title;
         $this->view->state = $state;
         $this->view->form = $form;
-        
+
     }
 
     public function registersuccessAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/registersuccess.css');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -2076,7 +2082,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/manage.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/manage.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $teamId = $this->getRequest()->getUserParam('team_id');
         if(!$teamId) {
@@ -2086,7 +2092,7 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league or !$this->view->isLeagueDirector($leagueId)) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -2106,7 +2112,7 @@ class LeagueController extends Zend_Controller_Action
                         $leagueMember->modified_at = date('Y-m-d H:i:s');
                         $leagueMember->modified_by = $this->view->user->id;
                         $leagueMember->save();
-                    } 
+                    }
                 } else if(isset($post['add'])) {
                     if(isset($post['available-select']) and count($post['available-select'])) {
                         foreach($post['available-select'] as $leagueMemberId) {
@@ -2115,7 +2121,7 @@ class LeagueController extends Zend_Controller_Action
                             $leagueMember->modified_at = date('Y-m-d H:i:s');
                             $leagueMember->modified_by = $this->view->user->id;
                             $leagueMember->save();
-                        } 
+                        }
                     } else {
                         $this->view->message('You must select at least one available player before adding.', 'warning');
                     }
@@ -2127,7 +2133,7 @@ class LeagueController extends Zend_Controller_Action
                             $leagueMember->modified_at = date('Y-m-d H:i:s');
                             $leagueMember->modified_by = $this->view->user->id;
                             $leagueMember->save();
-                        } 
+                        }
                     } else {
                         $this->view->message('You must select at least one team player before removing.', 'warning');
                     }
@@ -2149,12 +2155,12 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/move.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/move.js');
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $this->view->state = $this->getRequest()->getUserParam('state');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -2252,16 +2258,15 @@ class LeagueController extends Zend_Controller_Action
         }
 
         if($this->getRequest()->isPost()) {
-            $post = $this->getRequest()->getPost();
             if(!empty($_FILES['file']['tmp_name'])) {
                 $image = new Model_SimpleImage();
                 $image->load($_FILES['file']['tmp_name']);
                 $image->resize(85,85);
-                $image->save(APPLICATION_PATH . '/../public/images/team_logos/' . $teamId . '.jpg'); 
-                
+                $image->save(APPLICATION_PATH . '/../public/images/team_logos/' . $teamId . '.jpg');
+
                 $this->view->message('Logo successfully updated.', 'success');
                 $this->_redirect('league/' . $leagueId);
-            }    
+            }
         }
 
         $this->view->league = $league;
@@ -2293,7 +2298,7 @@ class LeagueController extends Zend_Controller_Action
             // disable the layout
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
-            
+
             apache_setenv('no-gzip', '1');
             ob_end_clean();
 
@@ -2311,13 +2316,13 @@ class LeagueController extends Zend_Controller_Action
             header('Content-Transfer-Encoding: binary');
 
             set_time_limit(0);
-            
+
             echo "first_name,last_name,requested_team\n";
-            
+
             foreach($this->view->players as $player) {
                 echo "{$player['first_name']},{$player['last_name']},{$player['team']}\n";
             }
-            
+
             flush();
         }
     }

@@ -35,12 +35,12 @@ $data = array(
         'location' => 'forms/2011_medical_authorization.pdf',
         'type' => 'pdf',
     ),
-/*    array(
+    array(
         'year' => '2012',
         'name' => 'waiver',
         'location' => 'forms/2012_waiver.pdf',
         'type' => 'pdf',
-    ),*/
+    ),
     array(
         'year' => '2012',
         'name' => 'youth_waiver',
@@ -151,7 +151,7 @@ if(DEBUG) {
     echo "    Importing `Form` data:\n";
 } else {
     echo "    Importing $totalForms Forms:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalForms);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalForms);
 }
 
 $i = 0;
@@ -160,11 +160,11 @@ foreach($data as $row) {
     $md5 = md5_file(__DIR__ . '/' . $row['location']);
     $fp = fopen(__DIR__ . '/' . $row['location'], 'r');
     if($fp) {
-    
+
         if(DEBUG) {
             echo "        Importing form `{$row['year']}_{$row['name']}.{$row['type']}`...";
         } else {
-            $progressBar->update($i);        
+            $progressBar->update($i);
         }
 
         $formTable = new Model_DbTable_Form();

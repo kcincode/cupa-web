@@ -36,7 +36,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if($page and ($page->is_visible or (Zend_Auth::getInstance()->hasIdentity() and ($this->view->hasRole('admin') or
            $this->view->hasRole('editor') or
            $this->view->hasRole('editor', $page->id))))) {
@@ -62,7 +61,6 @@ class PageController extends Zend_Controller_Action
         $form = new Form_PageEdit();
         $form->loadFromPage($page);
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
@@ -119,7 +117,6 @@ class PageController extends Zend_Controller_Action
         $form = new Form_PageAdmin();
         $form->loadFromPage($page);
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin'))) {
@@ -207,7 +204,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id) and
@@ -253,7 +249,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id) and
@@ -290,7 +285,6 @@ class PageController extends Zend_Controller_Action
 
     public function officersdeleteAction()
     {
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
              !$this->view->hasRole('admin'))) {
             // throw a 404 error if the page cannot be found
@@ -336,7 +330,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
@@ -400,7 +393,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
@@ -442,7 +434,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
@@ -532,7 +523,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
@@ -589,7 +579,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
@@ -628,7 +617,6 @@ class PageController extends Zend_Controller_Action
 
     public function pickupdeleteAction()
     {
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
@@ -770,7 +758,6 @@ class PageController extends Zend_Controller_Action
 
         $clubTable = new Model_DbTable_Club();
         $pageTable = new Model_DbTable_Page();
-        $userRoleTable = new Model_DbTable_UserRole();
 
         $page = $pageTable->fetchBy('name', 'clubs');
         if(!Zend_Auth::getInstance()->hasIdentity() or
@@ -839,7 +826,6 @@ class PageController extends Zend_Controller_Action
         $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if($news and
            (Zend_Auth::getInstance()->hasIdentity() and
             ($this->view->hasRole('reporter') or
@@ -854,7 +840,6 @@ class PageController extends Zend_Controller_Action
 
     public function newsaddAction()
     {
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('reporter') and
              !$this->view->hasRole('admin')))) {
@@ -902,7 +887,6 @@ class PageController extends Zend_Controller_Action
 
     public function newseditAction()
     {
-        $userRoleTable = new Model_DbTable_UserRole();
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('reporter') and
              !$this->view->hasRole('admin')))) {
@@ -1012,7 +996,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'forms');
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
@@ -1068,7 +1051,6 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
@@ -1098,15 +1080,9 @@ class PageController extends Zend_Controller_Action
                 $update = 0;
 
                 if(!empty($data['file'])) {
-                    if(APPLICATION_ENV == 'development') {
-                        $fp = fopen('/usr/local/zend/tmp/' . $data['file'], 'r');
-                        $filesize = filesize('/usr/local/zend/tmp/' . $data['file']);
-                        $md5 = md5_file('/usr/local/zend/tmp/' . $data['file']);
-                    } else {
-                        $fp = fopen($_FILES['file']['tmp_name'], 'r');
-                        $filesize = $_FILES['file']['size'];
-                        $md5 = md5_file($_FILES['file']['tmp_name']);
-                    }
+                    $fp = fopen($_FILES['file']['tmp_name'], 'r');
+                    $filesize = $_FILES['file']['size'];
+                    $md5 = md5_file($_FILES['file']['tmp_name']);
 
                     if(!$formTable->isUnique($md5, $formId)) {
                         $this->view->message('The uploaded file is a duplicate of another file already uploaded.', 'warning');
@@ -1129,7 +1105,7 @@ class PageController extends Zend_Controller_Action
                 }
 
                 if($data['name'] != $formData->name or $data['year'] != $formData->year) {
-                    $formTable->udpateForm($year, $name);
+                    $formTable->udpateForm($data['year'], $data['name']);
                     $update = 1;
                 }
 
@@ -1165,7 +1141,6 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
