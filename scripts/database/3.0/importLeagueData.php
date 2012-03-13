@@ -194,7 +194,6 @@ $stmt = $origDb->prepare('SELECT * FROM events e LEFT JOIN event_data ed ON ed.e
 $stmt->execute();
 $results = $stmt->fetchAll();
 $totalLeagues = count($results);
-$prevYear = date('Y') - 1;
 
 if(!DEBUG) {
     echo "    Importing $totalLeagues Leagues:\n";
@@ -218,9 +217,12 @@ foreach($results as $row) {
     $league->registration_end = $row['end'] . ' 23:59:59';
     $league->visible_from = $row['start'] . ' 00:00:00';
     $archived = 1;
-    if($row['year'] == date('Y') or (date('m') <= 8 and $row['year'] == $prevYear)) {
+
+    $year = $leagueTable->fetchMostCurrentYear($league->season);
+    if(!empty($year) and $row['year'] >= $year) {
         $archived = 0;
     }
+
     $league->is_archived = $archived;
     $league->save();
 

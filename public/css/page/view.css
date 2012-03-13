@@ -25,15 +25,15 @@ nav ul li a {
     margin: 10px 0 0 30px;
     text-shadow: 0 2px 2px #000;
     text-decoration: none;
-    width: 720px;
+    width: 670px;
 }
-  
+
 #page-header span.actions {
     margin-top: -80px;
     float: right;
     padding-right: 20px;
     line-height: 85px;
-    width: 210px;
+    width: 260px;
     text-align: right;
 }
 

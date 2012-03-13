@@ -4,8 +4,8 @@ class Model_DbTable_League extends Zend_Db_Table
 {
     protected $_name = 'league';
     protected $_primary = 'id';
-    
-    
+
+
     public function fetchCurrentLeaguesBySeason($season, $all = false)
     {
         $select = $this->getAdapter()->select()
@@ -16,21 +16,21 @@ class Model_DbTable_League extends Zend_Db_Table
                        ->where('li.is_youth = ?', 0)
                        ->where('is_archived = ?', 0)
                        ->order('l.year DESC');
-        
+
         if(!$all) {
             $select->where('l.visible_from <= ?', date('Y-m-d H:i:s'));
         }
-        
+
         $stmt = $this->getAdapter()->query($select);
-        
+
         $data = array();
         foreach($stmt->fetchAll() as $row) {
             $data[] = $this->fetchLeagueData($row['id']);
         }
-        
+
         return $data;
     }
-    
+
     public function fetchLeagueData($leagueId)
     {
         $leagueLimitTable = new Model_DbTable_LeagueLimit();
@@ -38,7 +38,7 @@ class Model_DbTable_League extends Zend_Db_Table
         $leagueLocationTable = new Model_DbTable_LeagueLocation();
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
-        
+
         $league = $this->find($leagueId)->current();
         if($league) {
             $row = array();
@@ -54,31 +54,31 @@ class Model_DbTable_League extends Zend_Db_Table
             $row['female_players'] = $playerGenders['female_players'];
             return $row;
         }
-        
+
     }
-    
+
     public function isUnique($year, $season, $day, $name = null)
     {
         $select = $this->select()
                        ->where('year = ?', $year)
                        ->where('season = ?', strtolower($season))
                        ->where('day = ?', $day);
-        
+
         if($name) {
             $select->where('name = ?', $name);
         } else {
             $select->where('name IS NULL');
         }
-        
+
         $result = $this->fetchRow($select);
-        
+
         if(isset($result->id)) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     public function createBlankLeague($year, $season, $day, $name, $userId)
     {
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
@@ -93,7 +93,7 @@ class Model_DbTable_League extends Zend_Db_Table
             'visible_from' => '2100-01-01 00:00:00',
             'is_archived' => 0,
         ));
-        
+
         if(is_numeric($leagueId)) {
             $leagueInformationTable = new Model_DbTable_LeagueInformation();
             $leagueInformationTable->insert(array(
@@ -108,7 +108,7 @@ class Model_DbTable_League extends Zend_Db_Table
                 'paypal_code' => null,
                 'description' => 'Enter the description and any other information you want displayed on the webpage here.',
             ));
-            
+
             $leagueLimitTable = new Model_DbTable_LeagueLimit();
             $leagueLimitTable->insert(array(
                 'league_id' => $leagueId,
@@ -117,12 +117,12 @@ class Model_DbTable_League extends Zend_Db_Table
                 'total_players' => 60,
                 'teams' => 4,
             ));
-            
+
             $leagueLocationTable = new Model_DbTable_LeagueLocation();
             $leagueLocationTable->insert(array(
                 'league_id' => $leagueId,
                 'type' => 'league',
-                'location' => 'TBD', 
+                'location' => 'TBD',
                 'map_link' => 'http://cincyultimate.org',
                 'photo_link' => null,
                 'address_street' => 'TBD',
@@ -132,7 +132,7 @@ class Model_DbTable_League extends Zend_Db_Table
                 'start' => date('Y-m-d H:i:s'),
                 'end' => date('Y-m-d H:i:s'),
             ));
-            
+
             $leagueMemberTable = new Model_DbTable_LeagueMember();
             $leagueMemberTable->insert(array(
                 'league_id' => $leagueId,
@@ -145,7 +145,7 @@ class Model_DbTable_League extends Zend_Db_Table
                 'modified_at' => date('Y-m-d H:i:s'),
                 'modified_by' => $userId,
             ));
-            
+
             $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
             $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
             foreach(array('new_player', 'pair', 'shirt', 'captain', 'comments') as $questionName) {
@@ -157,8 +157,8 @@ class Model_DbTable_League extends Zend_Db_Table
                 $leagueQuestionListTable->addQuestionToLeague($leagueId, $question->id, $required);
             }
         }
-        
-        return $leagueId;   
+
+        return $leagueId;
     }
 
     public function fetchAllCurrentLeagues()
@@ -171,5 +171,23 @@ class Model_DbTable_League extends Zend_Db_Table
                        ->order('name');
 
         return $this->fetchAll($select);
+    }
+
+    public function fetchMostCurrentYear($seasonId)
+    {
+        if(empty($seasonId)) {
+            return null;
+        }
+
+        $select = $this->select()
+                       ->where('season = ?', $seasonId)
+                       ->order('year DESC');
+
+        $result = $this->fetchRow($select);
+        if($result) {
+            return $result->year;
+        }
+
+        return null;
     }
 }

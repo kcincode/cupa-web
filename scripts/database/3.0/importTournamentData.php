@@ -30,19 +30,21 @@ foreach($results as $row) {
     } else {
         $progressBar->update($i);
     }
-    $tournament = $tournamentTable->createRow();
+    
+    $tournament = $tournamentTable->createBlankTournament($row['year'], $row['link']);
     $tournament->name = $row['link'];
     $tournament->year = $row['year'];
     $tournament->display_name = $row['name'];
     $tournament->email = $row['coordinator_email'];
     $tournament->is_visible = $row['visible'];
     $tournament->save();
-    $tournamentInfo = $tournamentInformationTable->createRow();
+    
+    $tournamentInfo = $tournamentInformationTable->find($tournament->id)->current();
     $tournamentInfo->tournament_id = $tournament->id;
 
     $matches = array();
     preg_match('/(\w*) (\d\d)(-\d\d)?/', $row['dates'], $matches);
-    if(sizeof($matches) == 3) {
+    if(!isset($matches[3])) {
         $start = date('Y-m-d', strtotime($matches[1] . ' ' . $matches[2] . ', ' . $row['year']));
         $end = date('Y-m-d', strtotime($matches[1] . ' ' . $matches[2] . ', ' . $row['year']));
     } else {

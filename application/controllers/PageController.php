@@ -1154,5 +1154,47 @@ class PageController extends Zend_Controller_Action
         $form->delete();
         $this->_redirect('forms');
     }
+    
+    public function tournamentaddAction()
+    {
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'pickup');
 
+        if((!Zend_Auth::getInstance()->hasIdentity() or
+            (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('editor') and
+             !$this->view->hasRole('editor', $page->id)))) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+
+        if($this->getRequest()->isPost()) {
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            // make sure its an AJAX request
+            if(!$this->getRequest()->isXmlHttpRequest()) {
+                $this->_redirect('/pickup');
+            }
+
+            $post = $this->getRequest()->getPost();
+            
+            $tournamentTable = new Model_DbTable_Tournament();
+
+            if($tournamentTable->isUnique($post['year'], $post['tournament'])) {            
+                $tournament = $tournamentTable->createBlankTournament($post['year'], $post['tournament']);
+                if($tournament) {
+                    
+                    $this->view->message('Tournament created successfully.', 'success');
+                    echo Zend_Json::encode(array('result' => 'success', 'data' => '/tournament/' . $tournament->name . '/' . $tournament->year));
+                    return;
+                }
+            } else {
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Tournament Already Exists'));
+                return;
+            }
+        }
+    }
 }

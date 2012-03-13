@@ -10,8 +10,10 @@
     <?php endif; ?>
     <span class="actions">
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+        <a class="button" id="add-tournament" href="#">Add Tournament</a>
         <a class="button" id="add-pickup" href="#">Add Pickup</a>
         <div id="add-pickup-container"></div>
+        <div id="add-tournament-container"></div>
         <?php endif; ?>
     </span>
   

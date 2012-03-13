@@ -39,18 +39,26 @@ h3 {
     margin-left: 20px;
 }
 
-#add-pickup-container .row dd input[type=text] {
+#add-pickup-container .row dd input[type=text],
+#add-tournament-container .row dd input[type=text] {
     font-size: 12pt;
     padding: 5px;
 }
 
-#add-pickup-container .row dt {
+#add-pickup-container .row dt,
+#add-tournament-container .row dt {
     float: left;
     width: 100px;
     text-align: right;
     margin-right: 10px;
     font-size: 12pt;
     padding-top: 6px;
+}
+
+#tournament-year {
+    width: 75px;
+    text-align: center;
+    margin-bottom: 5px;
 }
 
 #error-string {
