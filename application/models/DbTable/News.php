@@ -23,30 +23,24 @@ class Model_DbTable_News extends Zend_Db_Table
         }
     }
     
-    public function fetchAllNews($ignoreVisibility = false)
+    public function fetchNewsByCategory($category, $ignoreOld = false, $ignoreVisibility = false)
     {
         $select = $this->getAdapter()->select()
                        ->from(array('n' => 'news'), array('*'))
                        ->joinLeft(array('nc' => 'news_category'), 'nc.id = n.category_id', array('name AS category'))
                        ->order('n.posted_at DESC');
+                       
+        
+        if($category != 'all') {
+            $select->where('nc.name = ?', $category);
+        }
         
         if(!$ignoreVisibility) {
             $select->where('n.is_visible = ?', 1);
         }
         
-        $stmt = $this->getAdapter()->query($select);
-        return $stmt->fetchAll();
-    }
-    
-    public function fetchNewsByCategory($category)
-    {
-        $select = $this->getAdapter()->select()
-                       ->from(array('n' => 'news'), array('*'))
-                       ->joinLeft(array('nc' => 'news_category'), 'nc.id = n.category_id', array('name AS category'));
-                       
-        
-        if($category != 'all') {
-            $select->where('nc.name = ?', $category);
+        if(!$ignoreOld) {
+            $select->where('remove_at IS NULL OR remove_at > NOW()');
         }
         
         $stmt = $this->getAdapter()->query($select);

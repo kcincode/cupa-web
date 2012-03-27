@@ -364,6 +364,7 @@ function createNewsTable($db)
           `posted_by` int(11) DEFAULT NULL,
           `edited_at` datetime NOT NULL,
           `last_edited_by` int(11) DEFAULT NULL,
+          `remove_at` datetime DEFAULT NULL,
           PRIMARY KEY (`id`),
           UNIQUE KEY `slug` (`slug`),
           KEY `last_edited_by` (`last_edited_by`),

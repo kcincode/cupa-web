@@ -6,9 +6,9 @@
         </section>
   
         <section class="pickup">
-            <h2>Pick-Up Around Cincy</h2>
-            <div class="all">(<a href="<?php echo $this->url(array('category' => 'pickup'), 'news'); ?>">View All</a>)</div>
-            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['pickup'], 'numItems' => 3)); ?>
+            <h2>Around Cincinnati</h2>
+            <div class="all">(<a href="<?php echo $this->url(array('category' => 'around'), 'news'); ?>">View All</a>)</div>
+            <?php echo $this->partial('page/news_section.phtml', array('data' => $this->news['around'], 'numItems' => 3)); ?>
         </section>
     </div>
   

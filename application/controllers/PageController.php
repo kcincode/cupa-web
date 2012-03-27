@@ -17,7 +17,7 @@ class PageController extends Zend_Controller_Action
 
         // get all news and seperate by type
         $allNews = array();
-        foreach($newsTable->fetchAllNews() as $news) {
+        foreach($newsTable->fetchNewsByCategory('all') as $news) {
             $allNews[$news['category']][] = $news;
         }
 
@@ -794,7 +794,7 @@ class PageController extends Zend_Controller_Action
         $this->view->category = ucwords($category);
 
         $newsTable = new Model_DbTable_News();
-        $this->view->news = $newsTable->fetchNewsByCategory($category);
+        $this->view->news = $newsTable->fetchNewsByCategory($category, true);
 
         if(!count($this->view->news)) {
             // throw a 404 error there is no news returned

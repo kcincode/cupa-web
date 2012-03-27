@@ -19,6 +19,10 @@ if(DEBUG) {
 }
 
 foreach($results as $row) {
+    if($row['type'] == 'pickup') {
+        $row['type'] = 'around';
+    }
+        
     $categoryId = $newsCategoryTable->fetchCategoryIdFromName($row['type']);
     if(!is_numeric($categoryId)) {
         $categoryId = $newsCategoryTable->insert(array('name' => $row['type']));
@@ -43,6 +47,7 @@ foreach($results as $row) {
     $news->type = getNewsType($row);
     $news->edited_at = $row['updated_at'];
     $news->last_edited_by = 1;
+    $news->remove_at = (empty($row['remove_at'])) ? null : $row['remove_at'];
     $news->save();
 
     if(DEBUG) {
