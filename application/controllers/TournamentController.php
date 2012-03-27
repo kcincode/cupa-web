@@ -72,8 +72,11 @@ class TournamentController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 
-                Zend_Debug::dump($data);
-                
+                $this->view->tournamentInfo->description = $data['description'];
+                $this->view->tournamentInfo->save();
+
+                $this->view->message('Description updated successfully.', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
             } else {
                 $form->populate($post);
             }
