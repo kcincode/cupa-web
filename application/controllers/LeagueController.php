@@ -2006,6 +2006,12 @@ class LeagueController extends Zend_Controller_Action
                     $this->view->message('You have successfully registered for ' . $this->view->leaguename($leagueId, true, true, true, true));
 
                     $session->unsetAll();
+                    
+                    // if the user has not signed a waiver redirect to online waiver
+                    if($userProfileTable->isEighteenOrOver($userProfile->birthday) and !$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
+                        $this->_redirect('league/' . $leagueId . '/waiver');
+                    }
+                    
                     $this->_redirect('league/' . $leagueId . '/register_success');
 
                 } else {
@@ -2074,6 +2080,10 @@ class LeagueController extends Zend_Controller_Action
         $this->view->players = $leagueMemberTable->fetchUserRegistrants($leagueId, $userIds);
         if(count($this->view->players) == count($userIds)) {
             $this->view->hasMinors = false;
+        }
+        
+        if(count($this->view->players) == 0) {
+            $this->_redirect('league/' . $leagueId . '/register');
         }
     }
 
@@ -2324,6 +2334,57 @@ class LeagueController extends Zend_Controller_Action
             }
 
             flush();
+        }
+    }
+    
+    public function waiverAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/waiver.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/waiver.js');
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+        
+        // redirect to the login page if the user is not logged in
+        if(!isset($this->view->user)) {
+            $this->_redirect('league/' . $leagueId . '/register_success');
+        }
+
+        // make sure user is over 18
+        $userProfileTable = new Model_DbTable_UserProfile();
+        if(!$userProfileTable->isEighteenOrOver($this->view->user->id)) {
+            $this->_redirect('league/' . $leagueId . '/register_success');
+        }
+        
+        $userWaiverTable = new Model_DbTable_UserWaiver();
+        if($userWaiverTable->hasWaiver($this->view->user->id, $this->view->league->year)) {
+           $this->view->message('You have already signed a waiver for this year.', 'info');
+           $this->_redirect('league/' . $leagueId . '/register_success');
+        }
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            if(isset($post['cancel'])) {
+                $this->view->message('You disagreed with the waiver, before you may play in this league you must sign a waiver for the year.', 'error');
+                $this->_redirect('league/' . $leagueId . '/register_success');
+            }
+            
+            if(strstr($post['name'], $this->view->user->first_name) === false or strstr($post['name'], $this->view->user->last_name) === false or empty($post['name'])) {
+                $this->view->message('You must type your name into the name box to confirm that you read the waiver.', 'error');
+            } else {
+                $userWaiverTable->updateWaiver($this->view->user->id, $this->view->league->year, 1, $this->view->user->id);
+                $this->view->message('User waiver signed successfully', 'success');
+                $this->_redirect('league/' . $leagueId . '/register_success');
+            }
+            
         }
     }
 }

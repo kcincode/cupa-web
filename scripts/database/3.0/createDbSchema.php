@@ -585,7 +585,7 @@ function createLeagueInformationTable($db)
           `is_clinic` tinyint(1) DEFAULT 0,
           `contact_email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
           `cost` int(11) DEFAULT 0,
-          `paypal_code` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+          `paypal_code` text COLLATE utf8_unicode_ci DEFAULT NULL,
           `description` text COLLATE utf8_unicode_ci,
           PRIMARY KEY (`id`),
           KEY `league_id` (`league_id`)
@@ -675,7 +675,7 @@ function createLeagueQuestionTable($db)
         CREATE TABLE IF NOT EXISTS `league_question` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-          `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+          `title` text COLLATE utf8_unicode_ci NOT NULL,
           `type` enum('multiple','text','boolean','textarea') COLLATE utf8_unicode_ci NOT NULL,
           `answers` text COLLATE utf8_unicode_ci DEFAULT NULL,
           PRIMARY KEY (`id`)

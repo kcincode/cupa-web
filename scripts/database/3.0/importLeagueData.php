@@ -72,6 +72,7 @@ $colorLookupTable = array(
     'clear' => '#ffffff',
     'white or dark' => '#ffffff',
     'all' => '#ffffff',
+    'navy' => '#000090',
 );
 
 $seasons = array(
@@ -234,7 +235,7 @@ foreach($results as $row) {
     $leagueInformation->is_clinic = (strstr(strtolower($league->name), 'clinic')) ? 1 : 0;
     $leagueInformation->contact_email = (empty($row['contact_email'])) ? null : $row['contact_email'];
     $leagueInformation->cost = $row['cost'];
-    $leagueInformation->paypal_code = getPaypalId($row['confirm']);
+    $leagueInformation->paypal_code = (empty($row['confirm'])) ? null : $row['confirm'];
     $leagueInformation->description = $row['description'];
     $leagueInformation->save();
 
@@ -778,17 +779,6 @@ function generateName($name, $seasons)
     return (empty($name)) ? null : $name;
 }
 
-function getPaypalId($text)
-{
-    $matches = array();
-    preg_match('/button_id\" value=\"(.*)\">/', $text, $matches);
-    if(isset($matches[1])) {
-        return $matches[1];
-    }
-
-    return null;
-}
-
 function generateAddress($data)
 {
     $matches = array();
@@ -805,7 +795,12 @@ function generateAddress($data)
 
 function generateColorCodes($color, $colorLookupTable)
 {
-    $colorCode = $colorLookupTable[$color];
+    if(isset($colorLookupTable[$color])) {
+        $colorCode = $colorLookupTable[$color];
+    } else {
+        $colorCode = '#ffffff';
+    }
+    
     $textCode = calculateTextColor($colorCode);
 
     return array(

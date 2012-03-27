@@ -219,11 +219,12 @@ LEFT JOIN league_question lq ON lq.id = lql.league_question_id
 LEFT JOIN league_answer la ON la.league_member_id = lm.id AND la.league_question_id = lq.id
 LEFT JOIN user_profile up ON up.user_id = lm.user_id
 LEFT JOIN user_level ul ON ul.id = up.level
-WHERE lm.league_id = ?
+WHERE lm.league_id = ? AND
+lm.position = ?
 ORDER BY u.last_name, u.first_name, lql.weight ASC";
 
         $stmt = $this->getAdapter()->prepare($sql);
-        $stmt->execute(array($leagueId));
+        $stmt->execute(array($leagueId, 'player'));
 
         $data = array();
         foreach($stmt->fetchAll() as $row) {

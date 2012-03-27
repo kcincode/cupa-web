@@ -141,11 +141,23 @@ ul.errors {
 	list-style: none;
 }
 
+#register-league p.description {
+    color: #a0a0a0;
+    font-size: 10pt;
+    font-style: italic;
+    margin: 0 0 10px 0;
+}
+
 #breadcrumbs {
 	width: 485px;
 	list-style: none;
 	margin: 20px auto 60px auto;
 	padding: 0;
+}
+
+textarea {
+    width: 500px;
+    height: 100px;
 }
 
 #breadcrumbs li {

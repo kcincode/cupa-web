@@ -34,7 +34,9 @@ class My_View_Helper_Leaguename extends Zend_View_Helper_Abstract
             if($showSeason === true) {
                 $leagueSeasonTable = new Model_DbTable_LeagueSeason();
                 $season = $leagueSeasonTable->find($leagueObject->season)->current();
-                $name .= ' ' . ucwords($season->name);
+                if(!empty($season->name)) {
+                    $name .= ' ' . ucwords($season->name);
+                }
             }
 
             if(!empty($leagueObject->name)) {
