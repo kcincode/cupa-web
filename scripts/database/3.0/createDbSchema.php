@@ -857,7 +857,8 @@ function createTournamentMemberTable($db)
         CREATE TABLE IF NOT EXISTS `tournament_member` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
           `tournament_id` int(11) NOT NULL,
-          `name` varchar(255) NOT NULL,
+          `user_id` int(11) DEFAULT NULL,
+          `name` varchar(255) DEFAULT NULL,
           `email` varchar(255) DEFAULT NULL,
           `type` varchar(100) NOT NULL,
           `weight` int(11) NOT NULL,

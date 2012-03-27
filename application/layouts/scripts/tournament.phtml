@@ -23,8 +23,14 @@
         <header>
             <img src="<?php echo $this->getTournamentHeaderImage(); ?>"/>
             <div class="title">
-                <?php echo $this->tournament->display_name; ?><br/>
+                <?php echo $this->tournament->display_name; ?>
+            </div>
+            <div class="when">
+                <?php if(isset($this->tournamentInfo->start)): ?>
                 <?php echo date('l F jS Y', strtotime($this->tournamentInfo->start)); ?>
+                <?php else: ?>
+                <?php echo 'TBD'; ?>
+                <?php endif; ?>
             </div>
             <div class="menu">
                 <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated, 'tournament' => $this->tournament)); ?>
@@ -32,7 +38,7 @@
             </div>
         </header>
         <nav>
-            <?php echo $this->partial('tournament/menu.phtml', array('user' => $this->user, 'tournament' => $this->tournament)); ?>
+            <?php echo $this->partial('tournament/menu.phtml', array('user' => $this->user, 'tournament' => $this->tournament, 'section' => $this->section)); ?>
         </nav>
         <?php echo $this->message(); ?>
         <div id="main-content">

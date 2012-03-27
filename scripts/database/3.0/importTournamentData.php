@@ -35,7 +35,7 @@ foreach($results as $row) {
     $tournament->name = $row['link'];
     $tournament->year = $row['year'];
     $tournament->display_name = $row['name'];
-    $tournament->email = $row['coordinator_email'];
+    $tournament->email = (empty($row['coordinator_email'])) ? null : $row['coordinator_email'];
     $tournament->is_visible = $row['visible'];
     $tournament->save();
     
@@ -203,6 +203,7 @@ foreach($results as $row) {
 
     $tournamentMember = $tournamentMemberTable->createRow();
     $tournamentMember->tournament_id = $row['tournament_id'];
+    $tournamentMember->user_id = null;
     $tournamentMember->name = $row['name'];
     $tournamentMember->type = $row['type'];
     $tournamentMember->email = $row['email'];

@@ -10,21 +10,13 @@
 #edit-container dt {
     font-size: 12pt;
     font-weight: bold;
-    width: 80px;
-    text-align: right;
-    float: left;
-    margin-right: 10px;
+    margin-left: 40px;
     padding-top: 7px;
 }
 
 #edit-container textarea {
     width: 710px;
     height: 400px;
-}
-
-#edit-container input[type=text], #edit-container select {
-    padding: 5px;
-    font-size: 12pt;
 }
 
 #buttons-container {
@@ -42,3 +34,13 @@ p.description {
     margin: 0 0 10px 55px;
     padding: 0;
 }
+
+ul.errors {
+    color: #c00;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+

@@ -64,6 +64,10 @@ class Model_DbTable_Tournament extends Zend_Db_Table
     
     public function fetchTournament($year, $name)
     {
+        if(empty($year)) {
+            return null;
+        }
+        
         $select = $this->select()
                        ->where('year = ?', $year)
                        ->where('name = ?', $name);

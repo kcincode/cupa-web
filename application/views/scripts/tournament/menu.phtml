@@ -1,8 +1,14 @@
 <ul>
-    <li><a href="<?php echo $this->url(array('tournament_name' => $this->tournament->name, 'tournament_year' => $this->tournament->year), 'tournament_home'); ?>">Home</a></li>
-    <li><a href="">Bid Information</a></li>
-    <li><a href="">Teams</a></li>
-    <li><a href="">Schedule</a></li>
-    <li><a href="">Location</a></li>
-    <li><a href="">Contact</a></li>
+    <?php $active = ($this->section == 'home') ? ' class="active"' : ''; ?>
+    <li><a <?php echo $active; ?>href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_home'); ?>">Home</a></li>
+    <?php $active = ($this->section == 'bid') ? ' class="active"' : ''; ?>
+    <li><a <?php echo $active; ?>href="">Bid Information</a></li>
+    <?php $active = ($this->section == 'teams') ? ' class="active"' : ''; ?>
+    <li><a <?php echo $active; ?>href="">Teams</a></li>
+    <?php $active = ($this->section == 'schedule') ? ' class="active"' : ''; ?>
+    <li><a <?php echo $active; ?>href="">Schedule</a></li>
+    <?php $active = ($this->section == 'location') ? ' class="active"' : ''; ?>
+    <li><a <?php echo $active; ?>href="">Location</a></li>
+    <?php $active = ($this->section == 'contact') ? ' class="active"' : ''; ?>
+    <li><a <?php echo $active; ?>href="">Contact</a></li>
 </ul>
