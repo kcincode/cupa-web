@@ -45,3 +45,8 @@
     width: 25px;
     height: 25px;
 }
+
+#error-string {
+    color: #c00;
+    text-align: center;
+}

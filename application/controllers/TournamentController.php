@@ -47,8 +47,35 @@ class TournamentController extends Zend_Controller_Action
     public function homeAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/home.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/home.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        if($this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/home.js');
+        }
         $this->view->section = 'home';
+        
+        if($this->getRequest()->isPost()) {
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            $post = $this->getRequest()->getPost();
+            $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
+            
+            if($tournamentUpdateTable->isUnique($this->view->tournament->id, $post['title'])) {
+                
+                $updateId = $tournamentUpdateTable->insert(array(
+                    'tournament_id' => $this->view->tournament->id,
+                    'title' => $post['title'],
+                    'content' => 'Update text here',
+                    'posted' => date('Y-m-d H:i:s'),
+                ));
+                
+                $this->view->message('Tournament update created successfully.');
+                echo Zend_Json::encode(array('result' => 'success', 'url' => $this->view->baseUrl() . '/tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/updateedit/' . $updateId));
+            } else {
+                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Name Already Exists'));
+                return;
+            }
+        }
         
         $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
         $this->view->updates = $tournamentUpdateTable->fetchUpdates($this->view->tournament->id);
@@ -76,6 +103,41 @@ class TournamentController extends Zend_Controller_Action
                 $this->view->tournamentInfo->save();
 
                 $this->view->message('Description updated successfully.', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+            } else {
+                $form->populate($post);
+            }
+        }
+        
+        $this->view->form = $form;
+    }
+    
+    public function updateeditAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/updateedit.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->section = 'home';
+        
+        $updateId = $this->getRequest()->getUserParam('update_id');
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'update', $updateId);
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+            }
+            
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
+                $update = $tournamentUpdateTable->find($updateId)->current();
+                $update->title = $data['title'];
+                $update->content = $data['content'];
+                $update->save();
+
+                $this->view->message('Tournament update successfully updated.', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
             } else {
                 $form->populate($post);
