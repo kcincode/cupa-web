@@ -21,6 +21,7 @@ $createTables = array_reverse($dropTables);
 $totalTables = count($dropTables);
 
 try {
+    $userTable->getAdapter()->beginTransaction();
     if(DEBUG) {
         echo "    Dropping Database Tables:\n";
     } else {
@@ -39,6 +40,7 @@ try {
         $db->query("DROP TABLE IF EXISTS `$table`");
         $i++;
     }
+    $userTable->getAdapter()->commit();
 
     if(DEBUG) {
         echo "    Done\n";
@@ -63,6 +65,7 @@ try {
     $i = 0;
     foreach($createTables as $table) {
         if(DEBUG) {
+            $start = microtime();
             echo "    Creating `$table` Table...";
         }
 
@@ -70,7 +73,9 @@ try {
         $func($db);
 
         if(DEBUG) {
-            echo "Done.\n";
+            $end = microtime();
+            $diff = $end - $start;
+            echo "Done. ({$diff})\n";
         } else {
             $progressBar->update($i);
         }
@@ -787,7 +792,8 @@ function createTournamentInformationTable($db)
           `end` date NOT NULL,
           `bid_due` datetime NOT NULL,
           `cost` int(11) NOT NULL,
-          `paypal` varchar(50) DEFAULT NULL,
+          `paypal` text DEFAULT NULL,
+          `mail_payment` text DEFAULT NULL,
           `description` text NOT NULL,
           `schedule_text` text NOT NULL,
           `scorereporter_link` text DEFAULT NULL,

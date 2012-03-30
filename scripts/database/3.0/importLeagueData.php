@@ -162,6 +162,7 @@ if(DEBUG) {
 
 $seasonsArray = array();
 $i = 0;
+$leagueTable->getAdapter()->beginTransaction();
 foreach($seasons as $season) {
     if(DEBUG) {
         echo "        Importing league season `{$season['name']}`:\n";
@@ -183,6 +184,7 @@ foreach($seasons as $season) {
     $seasonsArray[] = $season['name'];
     $i++;
 }
+$leagueTable->getAdapter()->commit();
 
 if(!DEBUG) {
     $progressBar->update($totalSeasons);
@@ -202,6 +204,7 @@ if(!DEBUG) {
 }
 
 $i = 0;
+$leagueTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "        Importing league `{$row['name']}`:\n";
@@ -345,6 +348,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$leagueTable->getAdapter()->commit();
 
 if(!DEBUG) {
     $progressBar->update($totalLeagues);
@@ -363,6 +367,7 @@ if(!DEBUG) {
 }
 
 $i = 0;
+$leagueTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     // League Teams
     if(DEBUG) {
@@ -419,6 +424,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$leagueTable->getAdapter()->commit();
 
 if(!DEBUG) {
     $progressBar->update($totalTeams);
@@ -437,6 +443,7 @@ if(!DEBUG) {
 }
 
 $i = 0;
+$leagueTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
 
     $league = $leagueTable->find($row['event_id'])->current();
@@ -506,6 +513,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$leagueTable->getAdapter()->commit();
 
 if(!DEBUG) {
     $progressBar->update($totalPlayers);
@@ -525,6 +533,7 @@ if(!DEBUG) {
 
 // insert the league players
 $i = 0;
+$leagueTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "            Importing game #{$row['team2_id']} vs #{$row['team1_id']}...";
@@ -570,6 +579,8 @@ foreach($results as $row) {
 
     $i++;
 }
+$leagueTable->getAdapter()->commit();
+
 
 if(!DEBUG) {
     $progressBar->update($totalGames);
@@ -609,6 +620,7 @@ if($leagueInformation->user_teams == 1) {
     $leagueQuestionList->save();
 }
 
+$leagueTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "            Importing league question '{$row['name']}'...\n";
@@ -657,6 +669,8 @@ foreach($results as $row) {
     }
     $i++;
 }
+$leagueTable->getAdapter()->commit();
+
 
 if(!DEBUG) {
     $progressBar->update($totalQuestions);
@@ -675,6 +689,7 @@ if(!DEBUG) {
 }
 
 $i = 0;
+$leagueTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
 
     $user = null;
@@ -768,6 +783,8 @@ foreach($results as $row) {
         $i++;
     }
 }
+$leagueTable->getAdapter()->commit();
+
 
 if(DEBUG) {
     echo "        Done\n";

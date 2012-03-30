@@ -15,12 +15,12 @@ $clubs = array(
         'end' => null,
         'email' => 'cincymixedultimate@gmail.com',
         'website' => 'https://sites.google.com/site/steamboatultimate/',
-        'content' => "<p>Steamboat is a mixed team that was started in 2008 and 
-            has continued to be the Cincinnati Mixed team since.  It is going on 
-            for the 3rd year in a row.  Steamboat practices at least once a week 
-            and goes to 4-6 tournaments during the summer/fall months.  The team 
+        'content' => "<p>Steamboat is a mixed team that was started in 2008 and
+            has continued to be the Cincinnati Mixed team since.  It is going on
+            for the 3rd year in a row.  Steamboat practices at least once a week
+            and goes to 4-6 tournaments during the summer/fall months.  The team
             is selected after a tryout for both the women and men.</p>
-            <p>To view past tournaments or more information on which tournaments 
+            <p>To view past tournaments or more information on which tournaments
             Steamboat has attended take a look at their website.</p>",
     ),
     array(
@@ -32,13 +32,13 @@ $clubs = array(
         'end' => null,
         'email' => 'neil.narayan@gmail.com',
         'website' => null,
-        'content' => '<p><a href="mailto:bsageccp@gmail.com">Ben Sage</a> and 
-            <a href="mailto:neil.narayan@gmail.com">Neil Narayan</a> would like 
-            to officially announce that we are starting a new open ultimate team 
-            for this 2011 season. Although we have not yet finalized our schedule, 
-            we are planning on holding practice once or twice per week, and 
-            competing in 4-5 tournaments over the summer. We are not planning on 
-            making cuts, so anybody who is interested in playing ultimate at a 
+        'content' => '<p><a href="mailto:bsageccp@gmail.com">Ben Sage</a> and
+            <a href="mailto:neil.narayan@gmail.com">Neil Narayan</a> would like
+            to officially announce that we are starting a new open ultimate team
+            for this 2011 season. Although we have not yet finalized our schedule,
+            we are planning on holding practice once or twice per week, and
+            competing in 4-5 tournaments over the summer. We are not planning on
+            making cuts, so anybody who is interested in playing ultimate at a
             competitive level is welcome to participate.</p>',
     ),
     array(
@@ -50,15 +50,15 @@ $clubs = array(
         'end' => '2010',
         'email' => null,
         'website' => null,
-        'content' => "<p>Since rising from the ashes of their youth in the late 
-            1990's, Age Against the Machine has led the struggle for spirited 
-            Old Man Ultimate. With appearances at the 2001 and 2004 Masters 
-            Nationals, and 2009 and 2010 Grand Masters Nationals, this collection 
-            of crafty, crusty and creaky men continue to encourage their 
-            fellow aged to wake up, know your enemy, and settle for nothing. 
-            Like bulls on parade, these men, formerly perky and even approaching 
-            athletic, but now armed only with their wisdom and perseverance, and 
-            lacking in skill what they also lack in speed, will rise up one final 
+        'content' => "<p>Since rising from the ashes of their youth in the late
+            1990's, Age Against the Machine has led the struggle for spirited
+            Old Man Ultimate. With appearances at the 2001 and 2004 Masters
+            Nationals, and 2009 and 2010 Grand Masters Nationals, this collection
+            of crafty, crusty and creaky men continue to encourage their
+            fellow aged to wake up, know your enemy, and settle for nothing.
+            Like bulls on parade, these men, formerly perky and even approaching
+            athletic, but now armed only with their wisdom and perseverance, and
+            lacking in skill what they also lack in speed, will rise up one final
             time against the unrelenting Machine.</p>",
     ),
     array(
@@ -70,8 +70,8 @@ $clubs = array(
         'end' => null,
         'email' => null,
         'website' => null,
-        'content' => "<p>Starting up for the 2011 season, Fine Young Callahans 
-            intends to build up to Nationals-level caliber in the masters division.  
+        'content' => "<p>Starting up for the 2011 season, Fine Young Callahans
+            intends to build up to Nationals-level caliber in the masters division.
             See Michael Rimler or Russ Johnson for more information.</p>",
     ),
     array(
@@ -83,7 +83,7 @@ $clubs = array(
         'end' => 'Unknown',
         'email' => null,
         'website' => null,
-        'content' => "<p>Cincinnati's co-ed team, perennial favorites at the Annual 
+        'content' => "<p>Cincinnati's co-ed team, perennial favorites at the Annual
             Co-ed Tournament Gender Blender.</p>",
     ),/*
     array(
@@ -142,10 +142,11 @@ if(DEBUG) {
     echo "    Importing `Club` data:\n";
 } else {
     echo "    Importing $totalClubs Clubs:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalClubs);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalClubs);
 }
 
 $i = 0;
+$clubTable->getAdapter()->beginTransaction();
 foreach($clubs as $club) {
     if(DEBUG) {
         echo "        Importing club item `{$club['name']}`...";
@@ -170,6 +171,7 @@ foreach($clubs as $club) {
     }
     $i++;
 }
+$clubTable->getAdapter()->commit();
 
 if(!DEBUG) {
     $progressBar->update($totalClubs);
@@ -182,10 +184,11 @@ if(DEBUG) {
     echo "        Importing captains:\n";
 } else {
     echo "    Importing $totalCaptains Club Captains:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalCaptains);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalCaptains);
 }
 
 $i = 0;
+$clubTable->getAdapter()->beginTransaction();
 foreach($captains as $captain) {
     if(DEBUG) {
         echo "            Importing captain #{$captain['user_id']}...";
@@ -204,9 +207,10 @@ foreach($captains as $captain) {
 
     $i++;
 }
+$clubTable->getAdapter()->commit();
 
 if(DEBUG) {
-    echo "    Done\n";    
+    echo "    Done\n";
 } else {
     $progressBar->update($totalCaptains);
     echo "\n";

@@ -58,13 +58,13 @@ foreach($results as $row) {
     if($email == $row['email']) {
         continue;
     }
-    
+
     $email = $row['email'];
-    
+
     // capitalize the first letter
     $row['name'] = ucfirst(strtolower($row['name']));
     $row['surname'] = ucfirst(strtolower($row['surname']));
-    
+
     if(DEBUG) {
        echo "        Importing user `{$row['name']} {$row['surname']}`...";
     }
@@ -86,7 +86,7 @@ foreach($results as $row) {
     } else {
         $user->activated_at = null;
     }
-    
+
     $user->expires_at = date('Y-m-d H:i:s', strtotime($row['created']) + 604800);
     $user->updated_at = $row['modified'];
     $user->last_login = $row['last'];
@@ -97,13 +97,13 @@ foreach($results as $row) {
     }
     $user->is_active = $row['active'];
     $user->save();
-    
+
     $userProfile = $userProfileTable->createRow();
     $userProfile->user_id = $user->id;
     $userProfile->gender = (empty($row['gender'])) ? null : $row['gender'];
     $userProfile->birthday = (empty($row['birthday'])) ? null : $row['birthday'];
     $userProfile->phone = (empty($row['phone'])) ? null : $row['phone'];
-    
+
     if(isset($stats[$user->id])) {
         $data = $stats[$user->id];
         if(is_numeric($data['stats_experience']) and $data['stats_experience'] < 1900) {
@@ -116,7 +116,7 @@ foreach($results as $row) {
     }
     $userProfile->save();
 
-    
+
     if($row['is_admin']) {
         if($row['id'] == 1) {
             $userRole = $userRoleTable->createRow();
@@ -128,7 +128,7 @@ foreach($results as $row) {
             $userRole->user_id = $user->id;
             $userRole->role = 'editor';
             $userRole->save();
-            
+
             $userRole = $userRoleTable->createRow();
             $userRole->user_id = $user->id;
             $userRole->role = 'reporter';
@@ -140,13 +140,15 @@ foreach($results as $row) {
             $userRole->save();
         }
     }
-    
+
     if(DEBUG) {
         echo "Done.\n";
     }
 
     $i++;
 }
+$userTable->getAdapter()->commit();
+
 if(!DEBUG) {
     $progressBar->update($totalUsers);
 }
@@ -161,9 +163,10 @@ $i = 0;
 if(!DEBUG) {
     echo "\n    Importing $totalUsers Minors:\n";
     $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalUsers);
-    
+
 }
 
+$userTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(!DEBUG) {
         $progressBar->update($i);
@@ -172,7 +175,7 @@ foreach($results as $row) {
     // capitalize the first letter
     $row['first_name'] = ucfirst(strtolower($row['first_name']));
     $row['last_name'] = ucfirst(strtolower($row['last_name']));
-    
+
     if(DEBUG) {
         echo "        Importing minor user `{$row['first_name']} {$row['last_name']}`...";
     }
@@ -193,15 +196,15 @@ foreach($results as $row) {
     $user->login_errors = 0;
     $user->is_active = 1;
     $user->save();
-    
+
     $userProfile = $userProfileTable->createRow();
     $userProfile->user_id = $user->id;
     $userProfile->gender = (empty($row['gender'])) ? null : $row['gender'];
     $userProfile->birthday = (empty($row['birthday'])) ? null : $row['birthday'];
-    $userProfile->phone = null;    
-    $userProfile->nickname = null; 
-    $userProfile->height = null; 
-    $userProfile->level = null; 
+    $userProfile->phone = null;
+    $userProfile->nickname = null;
+    $userProfile->height = null;
+    $userProfile->level = null;
     $userProfile->experience = null;
     $userProfile->save();
 

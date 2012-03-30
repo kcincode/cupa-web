@@ -15,14 +15,15 @@ if(DEBUG) {
     echo "    Importing `News` data:\n";
 } else {
     echo "    Importing $totalNews News Items:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalNews);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalNews);
 }
 
+$newsTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if($row['type'] == 'pickup') {
         $row['type'] = 'around';
     }
-        
+
     $categoryId = $newsCategoryTable->fetchCategoryIdFromName($row['type']);
     if(!is_numeric($categoryId)) {
         $categoryId = $newsCategoryTable->insert(array('name' => $row['type']));
@@ -56,6 +57,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$newsTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";

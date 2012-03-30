@@ -1,6 +1,9 @@
 <h1>How to submit a bid</h1>
+<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+<p align="center"><a class="button" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_edit'); ?>">Edit Bid Details</a></p>
+<?php endif; ?>
 
-<?php if(1): //if($this->tournamentInfo->bid_due > date('Y-m-d H:i:s')): ?>
+<?php if($this->tournamentInfo->bid_due > date('Y-m-d H:i:s')): ?>
 <p class="blurb">To submit a bid you must fill out this form with you and your team's information.  Please fill in all information so we can enter you into the correct spot for the tournament.  If you fail to enter in the correct information you risk being bumped by a team that fills out the information correctly.<p>
 
 <p class="blurb">

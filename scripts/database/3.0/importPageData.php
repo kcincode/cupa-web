@@ -14,9 +14,10 @@ if(DEBUG) {
     echo "    Importing `Page` data:\n";
 } else {
     echo "    Importing $totalPages Pages:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPages);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPages);
 }
 
+$pageTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "        Importing page `{$row['name']}`...";
@@ -43,6 +44,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$pageTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";

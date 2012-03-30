@@ -13,17 +13,18 @@ if(DEBUG) {
     echo "    Importing `Officer` data:\n";
 } else {
     echo "    Importing $totalOfficers Officers:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalOfficers);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalOfficers);
 }
 
 $i = 0;
+$officerTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
 	if(DEBUG) {
     	echo "        Importing officer `{$row['position']} #{$row['user_id']}`...";
 	} else {
 		$progressBar->update($i);
 	}
-    
+
     $officer = $officerTable->createRow();
     $officer->user_id = $row['user_id'];
     $officer->position = $row['position'];
@@ -31,13 +32,14 @@ foreach($results as $row) {
     $officer->to = null;
     $officer->weight = $row['order'];
     $officer->save();
-    
+
     if(DEBUG) {
     	echo "Done\n";
 	}
 
 	$i++;
 }
+$officerTable->getAdapter()->commit();
 
 if(DEBUG) {
 	echo "    Done\n";

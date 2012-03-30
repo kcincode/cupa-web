@@ -80,10 +80,11 @@ if(DEBUG) {
     echo "    Importing `Page` data:\n";
 } else {
     echo "    Importing $totalPickups Pickups:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPickups);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPickups);
 }
 
 $i = 0;
+$pickupTable->getAdapter()->beginTransaction();
 foreach($pickups as $pickup) {
     if(DEBUG) {
         echo "        Importing pickup item `{$pickup['title']}`...";
@@ -110,10 +111,11 @@ foreach($pickups as $pickup) {
 
     $i++;
 }
+$pickupTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";
 } else {
     $progressBar->update($totalPickups);
-    echo "\n";        
+    echo "\n";
 }

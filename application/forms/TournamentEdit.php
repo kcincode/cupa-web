@@ -197,4 +197,35 @@ class Form_TournamentEdit extends Zend_Form
 
     }
 
+    private function bid()
+    {
+        $this->addElement('text', 'cost', array(
+            'required' => true,
+            'label' => 'Cost:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->cost)) ? $this->_tournamentInfo->cost : null,
+        ));
+
+        $this->addElement('text', 'bid_due', array(
+            'required' => true,
+            'label' => 'Bid Due:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->bid_due)) ? $this->_tournamentInfo->bid_due : null,
+        ));
+
+        $this->addElement('textarea', 'paypal', array(
+            'required' => true,
+            'label' => 'Paypal Button HTML:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->paypal)) ? $this->_tournamentInfo->paypal : null,
+        ));
+
+        $this->addElement('textarea', 'mail_payment', array(
+            'required' => true,
+            'label' => 'Mail Payments To:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->mail_payment)) ? $this->_tournamentInfo->mail_payment : null,
+        ));
+    }
+
 }

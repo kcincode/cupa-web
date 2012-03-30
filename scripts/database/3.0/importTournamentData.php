@@ -9,8 +9,6 @@ $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
 $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
 $tournamentMemberTable = new Model_DbTable_TournamentMember();
 
-
-
 $stmt = $origDb->prepare('SELECT * FROM tournaments');
 $stmt->execute();
 $results = $stmt->fetchAll();
@@ -20,17 +18,18 @@ if(DEBUG) {
     echo "    Importing `Tournament` data:\n";
 } else {
     echo "    Importing $totalTournaments Tournaments:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTournaments);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTournaments);
 }
 
 $i = 0;
+$tournamentTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "        Importing tournament `{$row['name']}`...";
     } else {
         $progressBar->update($i);
     }
-    
+
     $tournament = $tournamentTable->createBlankTournament($row['year'], $row['link']);
     $tournament->name = $row['link'];
     $tournament->year = $row['year'];
@@ -38,20 +37,24 @@ foreach($results as $row) {
     $tournament->email = (empty($row['coordinator_email'])) ? null : $row['coordinator_email'];
     $tournament->is_visible = $row['visible'];
     $tournament->save();
-    
+
     $tournamentInfo = $tournamentInformationTable->find($tournament->id)->current();
     $tournamentInfo->tournament_id = $tournament->id;
 
     $matches = array();
     preg_match('/(\w*) (\d\d)(-\d\d)?/', $row['dates'], $matches);
-    if(!isset($matches[3])) {
+
+    if(count($matches) == 3) {
         $start = date('Y-m-d', strtotime($matches[1] . ' ' . $matches[2] . ', ' . $row['year']));
         $end = date('Y-m-d', strtotime($matches[1] . ' ' . $matches[2] . ', ' . $row['year']));
-    } else {
+    } else if(count($matches) == 4) {
         $matches[3] = abs($matches[3]);
         $start = date('Y-m-d', strtotime($matches[1] . ' ' . $matches[2] . ', ' . $row['year']));
         $end = date('Y-m-d', strtotime($matches[1] . ' ' . $matches[3] . ', ' . $row['year']));
+    } else {
+        $start = $end = date('Y-m-d');
     }
+
     $tournamentInfo->start = $start;
     $tournamentInfo->end = $end;
     $tournamentInfo->bid_due = date('Y-m-d H:i:s', strtotime($row['bid_due'] . '23:59:59'));
@@ -66,10 +69,10 @@ foreach($results as $row) {
     $matches = array();
     preg_match('/(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)/', $row['address'], $matches);
 
-    $tournamentInfo->location_street = $matches[1];
-    $tournamentInfo->location_city = $matches[2];
-    $tournamentInfo->location_state = $matches[3];
-    $tournamentInfo->location_zip = $matches[4];
+    $tournamentInfo->location_street = (isset($matches[1])) ? $matches[1] : 'Unknown';
+    $tournamentInfo->location_city = (isset($matches[2])) ? $matches[2] : 'Unknown';
+    $tournamentInfo->location_state = (isset($matches[3])) ? $matches[3] : 'Unknown';
+    $tournamentInfo->location_zip = (isset($matches[4])) ? $matches[4] : 'Unknown';
     $tournamentInfo->hotel_link = null;
     $tournamentInfo->photo_link = null;
     $tournamentInfo->save();
@@ -80,6 +83,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$tournamentTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";
@@ -98,10 +102,11 @@ if(DEBUG) {
     echo "    Importing `TournamentTeam` data:\n";
 } else {
     echo "    Importing $totalTeams Tournament Teams:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTeams);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTeams);
 }
 
 $i = 0;
+$tournamentTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "        Importing tournament team `{$row['team']}`...";
@@ -131,6 +136,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$tournamentTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";
@@ -148,10 +154,11 @@ if(DEBUG) {
     echo "    Importing `TournamentTeam` data:\n";
 } else {
     echo "    Importing $totalUpdates Tournament Updates:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalUpdates);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalUpdates);
 }
 
 $i = 0;
+$tournamentTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "        Importing tournament update `{$row['title']}`...";
@@ -172,6 +179,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$tournamentTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";
@@ -190,10 +198,11 @@ if(DEBUG) {
     echo "    Importing `TournamentMember` data:\n";
 } else {
     echo "    Importing $totalPeople Tournament Members:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPeople);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPeople);
 }
 
 $i = 0;
+$tournamentTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
     if(DEBUG) {
         echo "        Importing tournament people `{$row['name']}`...";
@@ -216,6 +225,7 @@ foreach($results as $row) {
 
     $i++;
 }
+$tournamentTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";

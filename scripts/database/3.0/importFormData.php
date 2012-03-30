@@ -155,6 +155,7 @@ if(DEBUG) {
 }
 
 $i = 0;
+$minuteTable->getAdapter()->beginTransaction();
 foreach($data as $row) {
     $filesize = filesize(__DIR__ . '/' . $row['location']);
     $md5 = md5_file(__DIR__ . '/' . $row['location']);
@@ -188,6 +189,7 @@ foreach($data as $row) {
         $i++;
     }
 }
+$minuteTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";

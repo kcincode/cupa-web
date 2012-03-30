@@ -49,18 +49,19 @@ if(DEBUG) {
     echo "    Importing `Minutes` data:\n";
 } else {
     echo "    Importing $totalMinutes Minutes:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalMinutes);    
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalMinutes);
 }
 
 $i = 0;
+$minuteTable->getAdapter()->beginTransaction();
 foreach($data as $row) {
     $filesize = filesize(__DIR__ . '/' . $row['pdf']);
     $fp = fopen(__DIR__ . '/' . $row['pdf'], 'r');
-    
+
     if(DEBUG) {
         echo "        Importing minutes `{$row['when']} {$row['location']}`...";
     } else {
-        $progressBar->update($i);        
+        $progressBar->update($i);
     }
 
     $minute = $minuteTable->createRow();
@@ -77,6 +78,7 @@ foreach($data as $row) {
 
     $i++;
 }
+$minuteTable->getAdapter()->commit();
 
 if(DEBUG) {
     echo "    Done\n";

@@ -1,4 +1,22 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>bidedit</b></p>
+<h1>Edit Payment Values</h1>
+
+<div id="edit-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->cost; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->bid_due; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->paypal; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->mail_payment; ?>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>

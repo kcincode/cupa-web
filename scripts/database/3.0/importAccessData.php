@@ -7,6 +7,8 @@ $userAccessLogTable = new Model_DbTable_UserAccessLog();
 echo "    Importing `UserAccessLog` data:\n";
 $stmt = $origDb->prepare('SELECT * FROM login_failed');
 $stmt->execute();
+
+$userAccessLogTable->getAdapter()->beginTransaction();
 foreach($stmt->fetchAll() as $row) {
     echo "Inserting failed login for user `{$row['username']}`\n";
     $userAccessLog = $userAccessLogTable->createRow();
@@ -17,9 +19,11 @@ foreach($stmt->fetchAll() as $row) {
     $userAccessLog->comment = $row['message'];
     $userAccessLog->save();
 }
+$userAccessLogTable->getAdapter()->commit();
 
 $stmt = $origDb->prepare('SELECT * FROM login_failed');
 $stmt->execute();
+$userAccessLogTable->getAdapter()->beginTransaction();
 foreach($stmt->fetchAll() as $row) {
     echo "Inserting successful login for user `{$row['username']}`\n";
     $userAccessLog = $userAccessLogTable->createRow();
@@ -31,5 +35,6 @@ foreach($stmt->fetchAll() as $row) {
     $userAccessLog->save();
 
 }
+$userAccessLogTable->getAdapter()->commit();
 
 echo "    Done\n";

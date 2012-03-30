@@ -20,6 +20,7 @@ if(!DEBUG) {
     $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalWaivers);
 }
 
+$userWaiverTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
 	if(DEBUG) {
 	    echo "        Importing user waivers for #{$row['user_id']}...";
@@ -39,6 +40,7 @@ foreach($results as $row) {
 	}
 	$i++;
 }
+$userWaiverTable->getAdapter()->commit();
 
 if(DEBUG) {
 	echo "    Done\n";
