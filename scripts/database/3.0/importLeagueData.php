@@ -219,13 +219,34 @@ foreach($results as $row) {
     $league->visible_from = $row['start'] . ' 00:00:00';
     $archived = 1;
 
-    $year = $leagueTable->fetchMostCurrentYear($league->season);
-    if(!empty($year) and $row['year'] >= $year) {
+    if($row['year'] == date('Y')) {
         $archived = 0;
     }
 
     $league->is_archived = $archived;
     $league->save();
+
+    while($league->id < $row['event_id']) {
+        $league->delete();
+
+        $league = $leagueTable->createRow();
+        $league->year = $row['year'];
+        $league->season = ($row['type'] < 5 and $row['type'] != 0) ? $row['type'] : null;
+        $league->day = (empty($row['day'])) ? 'Sunday' : $row['day'];
+        $league->name = generateName($row['name'], $seasonsArray);
+        $league->info = $row['intro'];
+        $league->registration_begin = $row['start'] . ' 00:00:00';
+        $league->registration_end = $row['end'] . ' 23:59:59';
+        $league->visible_from = $row['start'] . ' 00:00:00';
+        $archived = 1;
+
+        if($row['year'] == date('Y')) {
+            $archived = 0;
+        }
+
+        $league->is_archived = $archived;
+        $league->save();
+    }
 
     $leagueInformation = $leagueInformationTable->createRow();
     $leagueInformation->league_id = $league->id;
@@ -800,7 +821,7 @@ function generateColorCodes($color, $colorLookupTable)
     } else {
         $colorCode = '#ffffff';
     }
-    
+
     $textCode = calculateTextColor($colorCode);
 
     return array(

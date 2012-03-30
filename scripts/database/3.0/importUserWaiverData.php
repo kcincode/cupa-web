@@ -26,12 +26,14 @@ foreach($results as $row) {
 	} else {
 		$progressBar->update($i);
 	}
+
     $userWaiver = $userWaiverTable->createRow();
     $userWaiver->user_id = $row['user_id'];
     $userWaiver->year = $row['year'];
     $userWaiver->modified_at = date('Y-m-d H:i:s');
     $userWaiver->modified_by = null;
     $userWaiver->save();
+
     if(DEBUG) {
     	echo "Done\n";
 	}

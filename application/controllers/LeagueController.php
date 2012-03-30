@@ -2006,12 +2006,12 @@ class LeagueController extends Zend_Controller_Action
                     $this->view->message('You have successfully registered for ' . $this->view->leaguename($leagueId, true, true, true, true));
 
                     $session->unsetAll();
-                    
+
                     // if the user has not signed a waiver redirect to online waiver
                     if($userProfileTable->isEighteenOrOver($userProfile->birthday) and !$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
                         $this->_redirect('league/' . $leagueId . '/waiver');
                     }
-                    
+
                     $this->_redirect('league/' . $leagueId . '/register_success');
 
                 } else {
@@ -2081,7 +2081,7 @@ class LeagueController extends Zend_Controller_Action
         if(count($this->view->players) == count($userIds)) {
             $this->view->hasMinors = false;
         }
-        
+
         if(count($this->view->players) == 0) {
             $this->_redirect('league/' . $leagueId . '/register');
         }
@@ -2336,7 +2336,7 @@ class LeagueController extends Zend_Controller_Action
             flush();
         }
     }
-    
+
     public function waiverAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
@@ -2351,7 +2351,7 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
-        
+
         // redirect to the login page if the user is not logged in
         if(!isset($this->view->user)) {
             $this->_redirect('league/' . $leagueId . '/register_success');
@@ -2362,21 +2362,21 @@ class LeagueController extends Zend_Controller_Action
         if(!$userProfileTable->isEighteenOrOver($this->view->user->id)) {
             $this->_redirect('league/' . $leagueId . '/register_success');
         }
-        
+
         $userWaiverTable = new Model_DbTable_UserWaiver();
         if($userWaiverTable->hasWaiver($this->view->user->id, $this->view->league->year)) {
            $this->view->message('You have already signed a waiver for this year.', 'info');
            $this->_redirect('league/' . $leagueId . '/register_success');
         }
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             if(isset($post['cancel'])) {
                 $this->view->message('You disagreed with the waiver, before you may play in this league you must sign a waiver for the year.', 'error');
                 $this->_redirect('league/' . $leagueId . '/register_success');
             }
-            
+
             if(strstr($post['name'], $this->view->user->first_name) === false or strstr($post['name'], $this->view->user->last_name) === false or empty($post['name'])) {
                 $this->view->message('You must type your name into the name box to confirm that you read the waiver.', 'error');
             } else {
@@ -2384,7 +2384,7 @@ class LeagueController extends Zend_Controller_Action
                 $this->view->message('User waiver signed successfully', 'success');
                 $this->_redirect('league/' . $leagueId . '/register_success');
             }
-            
+
         }
     }
 }
