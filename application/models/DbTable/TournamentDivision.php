@@ -16,4 +16,12 @@ class Model_DbTable_TournamentDivision extends Zend_Db_Table
 
     	return $this->fetchRow($select);
     }
+
+    public function fetchDivisions()
+    {
+        $select = $this->select()
+                       ->order('weight ASC');
+
+        return $this->fetchAll($select);
+    }
 }

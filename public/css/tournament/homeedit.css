@@ -42,5 +42,9 @@ ul.errors {
     padding: 0;
 }
 
+#title {
+    width: 500px;
+    padding: 5px;
+}
 
 
