@@ -27,7 +27,37 @@ $application = new Zend_Application(
 );
 $application->bootstrap('db');
 
+echo "Import data from where?\n";
+
+echo "  Server [cincyultimate.org]: ";
+$host = trim(fgets(STDIN));
+if(empty($host)) {
+	$host = 'cincyultimate.org';
+}
+
+echo "Database Name [cincyu6_cupa]: ";
+$db = trim(fgets(STDIN));
+if(empty($db)) {
+	$db = 'cincyu6_cupa';
+}
+
+echo "          Username [cincyu6]: ";
+$username = trim(fgets(STDIN));
+if(empty($username)) {
+	$username = 'cincyu6';
+}
+
+echo "                    Password: ";
+system('stty -echo');
+$password =  trim(fgets(STDIN));
+system('stty echo');
+
 // original db connection string
-$origDb = new PDO('mysql:dbname=cupaweb;host=localhost', 'root', 'password');
+try {
+	$origDb = new PDO('mysql:dbname=' . $db . ';host=' . $host, $username, $password);
+} catch(Exception $e) {
+	echo 'Could not conned to source DB.  ' . $e->getMessage();
+}
 
 require_once('ProgressBar.php');
+echo "\n\n";

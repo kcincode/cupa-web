@@ -14,7 +14,7 @@ if(DEBUG) {
     echo "    Importing `Page` data:\n";
 } else {
     echo "    Importing $totalPages Pages:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPages);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalPages);
 }
 
 $pageTable->getAdapter()->beginTransaction();

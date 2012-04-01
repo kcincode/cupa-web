@@ -45,7 +45,7 @@ $i = 0;
 
 if(!DEBUG) {
     echo "    Importing $totalUsers Users:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalUsers);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalUsers);
 } else {
     echo "    Importing `User` data:\n";
 }
@@ -162,7 +162,7 @@ $i = 0;
 
 if(!DEBUG) {
     echo "\n    Importing $totalUsers Minors:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalUsers);
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $totalUsers);
 
 }
 

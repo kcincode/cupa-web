@@ -17,7 +17,7 @@ $totalWaivers = count($results);
 
 if(!DEBUG) {
 	echo "    Importing $totalWaivers User Waivers\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalWaivers);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalWaivers);
 }
 
 $userWaiverTable->getAdapter()->beginTransaction();

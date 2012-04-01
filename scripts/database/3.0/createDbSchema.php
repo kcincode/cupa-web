@@ -26,7 +26,7 @@ try {
         echo "    Dropping Database Tables:\n";
     } else {
         echo "    Dropping $totalTables Tables:\n";
-        $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTables);
+        $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalTables);
     }
 
     $i = 0;
@@ -57,7 +57,7 @@ try {
 
     if(!DEBUG) {
         echo "    Creating $totalTables Tables:\n";
-        $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTables);
+        $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalTables);
     }
 
     $db->beginTransaction();

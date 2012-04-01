@@ -49,7 +49,7 @@ if(DEBUG) {
     echo "    Importing `Minutes` data:\n";
 } else {
     echo "    Importing $totalMinutes Minutes:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalMinutes);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalMinutes);
 }
 
 $i = 0;

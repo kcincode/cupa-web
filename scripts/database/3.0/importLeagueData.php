@@ -157,7 +157,7 @@ if(DEBUG) {
     echo "    Importing `League` data:\n";
 } else {
     echo "    Importing $totalSeasons League Seasons:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalSeasons);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalSeasons);
 }
 
 $seasonsArray = array();
@@ -200,7 +200,7 @@ $totalLeagues = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalLeagues Leagues:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalLeagues);
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $totalLeagues);
 }
 
 $i = 0;
@@ -363,7 +363,7 @@ $totalTeams = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalTeams League Teams:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalTeams);
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $totalTeams);
 }
 
 $i = 0;
@@ -439,7 +439,7 @@ $totalPlayers = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalPlayers League Players:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalPlayers);
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $totalPlayers);
 }
 
 $i = 0;
@@ -528,7 +528,7 @@ $totalGames = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalGames League Games:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalGames);
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $totalGames);
 }
 
 // insert the league players
@@ -595,7 +595,7 @@ $totalQuestions = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalQuestions League Questions:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalQuestions);
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $totalQuestions);
 }
 
 $i = 0;
@@ -685,7 +685,7 @@ $totalAnswers = count($results);
 
 if(!DEBUG) {
     echo "    Importing $totalAnswers League Answers:\n";
-    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 100, $totalAnswers);
+    $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $totalAnswers);
 }
 
 $i = 0;

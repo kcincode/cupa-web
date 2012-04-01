@@ -142,7 +142,7 @@ if(DEBUG) {
     echo "    Importing `Club` data:\n";
 } else {
     echo "    Importing $totalClubs Clubs:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalClubs);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalClubs);
 }
 
 $i = 0;
@@ -184,7 +184,7 @@ if(DEBUG) {
     echo "        Importing captains:\n";
 } else {
     echo "    Importing $totalCaptains Club Captains:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalCaptains);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalCaptains);
 }
 
 $i = 0;

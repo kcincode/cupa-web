@@ -15,7 +15,7 @@ if(DEBUG) {
     echo "    Importing `News` data:\n";
 } else {
     echo "    Importing $totalNews News Items:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalNews);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalNews);
 }
 
 $newsTable->getAdapter()->beginTransaction();

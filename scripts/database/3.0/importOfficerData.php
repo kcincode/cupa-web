@@ -13,7 +13,7 @@ if(DEBUG) {
     echo "    Importing `Officer` data:\n";
 } else {
     echo "    Importing $totalOfficers Officers:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalOfficers);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalOfficers);
 }
 
 $i = 0;

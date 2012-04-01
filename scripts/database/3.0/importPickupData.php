@@ -80,7 +80,7 @@ if(DEBUG) {
     echo "    Importing `Page` data:\n";
 } else {
     echo "    Importing $totalPickups Pickups:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPickups);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalPickups);
 }
 
 $i = 0;

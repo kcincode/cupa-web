@@ -151,7 +151,7 @@ if(DEBUG) {
     echo "    Importing `Form` data:\n";
 } else {
     echo "    Importing $totalForms Forms:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalForms);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalForms);
 }
 
 $i = 0;

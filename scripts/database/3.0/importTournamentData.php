@@ -18,7 +18,7 @@ if(DEBUG) {
     echo "    Importing `Tournament` data:\n";
 } else {
     echo "    Importing $totalTournaments Tournaments:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTournaments);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalTournaments);
 }
 
 $i = 0;
@@ -102,7 +102,7 @@ if(DEBUG) {
     echo "    Importing `TournamentTeam` data:\n";
 } else {
     echo "    Importing $totalTeams Tournament Teams:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalTeams);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalTeams);
 }
 
 $i = 0;
@@ -154,7 +154,7 @@ if(DEBUG) {
     echo "    Importing `TournamentTeam` data:\n";
 } else {
     echo "    Importing $totalUpdates Tournament Updates:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalUpdates);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalUpdates);
 }
 
 $i = 0;
@@ -198,7 +198,7 @@ if(DEBUG) {
     echo "    Importing `TournamentMember` data:\n";
 } else {
     echo "    Importing $totalPeople Tournament Members:\n";
-    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 100, $totalPeople);
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalPeople);
 }
 
 $i = 0;
