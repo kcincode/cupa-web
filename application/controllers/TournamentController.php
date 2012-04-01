@@ -246,6 +246,7 @@ class TournamentController extends Zend_Controller_Action
 
     public function paymentAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/payment.css');
         $this->view->section = 'bid';
     }
 

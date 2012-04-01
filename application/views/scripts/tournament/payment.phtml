@@ -1,2 +1,26 @@
 <h1>Payment information</h1>
 
+<?php if(!empty($this->tournamentInfo->paypal)): ?>
+<p>
+    If you would like to pay via paypal you may do so below.  Just select the type of payment if there is one and click the button.  It will take you to paypal's site to pay for the tournament.
+</p>
+<div class="center">
+    <?php echo $this->tournamentInfo->paypal; ?>
+</div>
+
+<?php endif; ?>
+
+<?php if(!empty($this->tournamentInfo->mail_payment)): ?>
+<p>
+    If you would like to mail a check in for the payment for the tournament you may mail payments to here:
+</p>
+<div>
+    <strong><pre><?php echo $this->escape($this->tournamentInfo->mail_payment); ?></pre></strong>
+</div>
+<?php endif; ?>
+
+<?php if(empty($this->tournamentInfo->mail_payment) and empty($this->tournamentInfo->paypal)): ?>
+<p>
+    The payment information for this tournament has not been setup yet.  Please check back at a later time when payment inforation will be put up.  If you have any questions you may email the tournament director or someone else associated with the tournament <a href="">here</a>.
+</p>
+<?php endif; ?>
