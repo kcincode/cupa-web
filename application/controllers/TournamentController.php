@@ -190,7 +190,6 @@ class TournamentController extends Zend_Controller_Action
                     $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
                     $division = $tournamentDivisionTable->find($data['division'])->current();
 
-
                     $this->view->message('Bid for the team `' . $data['name'] . '` in the `' . $division->name . '` division submitted successfully.', 'success');
                     $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/payment');
 
@@ -257,16 +256,56 @@ class TournamentController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/teams.js');
         $this->view->section = 'teams';
 
+        if($this->getRequest()->isPost()) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['team']) and isset($post['division'])) {
+                $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+                if($tournamentTeamTable->isUnique($this->view->tournament->id, $post['team'], $post['division'])) {
+                    $teamId = $tournamentTeamTable->createTeam($this->view->tournament->id, $post['team'], $post['division']);
+
+                    $this->view->message('Basic team created successfully.', 'success');
+                    echo Zend_Json::encode(array('result' => 'success', 'url' => $this->view->baseUrl() . '/tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teamedit/' . $teamId));
+                    return;
+                } else {
+                    echo Zend_Json::encode(array('result' => 'error', 'message' => 'Name Already Exists'));
+                    return;
+                }
+            }
+
+            echo Zend_Json::encode(array('result' => 'error', 'message' => 'Could not create team'));
+        }
+
         $tournamentTeamTable = new Model_DbTable_TournamentTeam();
         $this->view->teams = $tournamentTeamTable->fetchAllTeams($this->view->tournament->id);
+
+        $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
+        $this->view->divisions = $tournamentDivisionTable->fetchDivisions();
     }
 
-    public function teamsaddAction()
+    public function teamdeleteAction()
     {
-        // action body
+        $teamId = $this->getRequest()->getUserParam('team_id');
+
+        if(!is_numeric($teamId) or !$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
+        }
+
+        $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+        $team = $tournamentTeamTable->find($teamId)->current();
+        if($team) {
+            $team->delete();
+            $this->view->message('Team deleted successfully.', 'success');
+        }
+
+        $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
     }
 
-    public function teamseditAction()
+    public function teameditAction()
     {
         // action body
     }
@@ -323,40 +362,3 @@ class TournamentController extends Zend_Controller_Action
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
