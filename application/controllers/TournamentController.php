@@ -252,7 +252,13 @@ class TournamentController extends Zend_Controller_Action
 
     public function teamsAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/teams.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/teams.js');
+        $this->view->section = 'teams';
+
+        $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+        $this->view->teams = $tournamentTeamTable->fetchAllTeams($this->view->tournament->id);
     }
 
     public function teamsaddAction()

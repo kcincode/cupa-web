@@ -1,4 +1,29 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>teams</b></p>
+<div id="tabs">
+    <ul>
+        <?php foreach($this->teams as $division => $teams): ?>
+        <li><a href="#division-<?php echo $this->escape(str_replace(' ', '', $division)); ?>"><?php echo $this->escape(ucwords($division)); ?> Division</a></li>
+        <?php endforeach; ?>
+    </ul>
+
+    <?php foreach($this->teams as $division => $teams): ?>
+    <div id="division-<?php echo $this->escape(str_replace(' ', '', $division)); ?>">
+        <div class="team header">
+            <div class="name">Team</div>
+            <div class="location">Location</div>
+            <div class="paid">Paid</div>
+            <div class="accepted">Accepted</div>
+            <div class="clearfix"></div>
+        </div>
+
+        <?php foreach($teams as $team): ?>
+        <div class="team">
+            <div class="name"><?php echo $this->escape(ucwords($team['name'])); ?></div>
+            <div class="location"><?php echo $this->escape($team['city']); ?>, <?php echo $this->escape($team['state']); ?></div>
+            <div class="paid"><span class="yes">Yes</span></div>
+            <div class="accepted"><span class="no">No</span></div>
+        </div>
+       <?php endforeach; ?>
+    </div>
+    <?php endforeach; ?>
+    <div class="clearfix">&nbsp;</div>
 </div>

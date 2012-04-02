@@ -1,0 +1,40 @@
+#tabs {
+    padding-bottom: 40px;
+}
+
+.team {
+    width: 550px;
+    margin: 10px auto;
+
+}
+.team.header {
+    font-size: 12pt;
+    border-bottom: 1px solid #444;
+}
+
+.team .name {
+    width: 200px;
+    float: left;
+    padding: 5px;
+}
+
+.team .location {
+    float: left;
+    width: 150px;
+    text-align: center;
+    padding: 5px;
+}
+
+.team .paid {
+    width: 75px;
+    float: left;
+    text-align: center;
+    padding: 5px;
+}
+
+.team .accepted {
+    width: 75px;
+    float: left;
+    text-align: center;
+    padding: 5px;
+}

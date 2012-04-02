@@ -4,7 +4,7 @@
     <?php $active = ($this->section == 'bid') ? ' class="active"' : ''; ?>
     <li><a <?php echo $active; ?>href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid'); ?>">Bid Information</a></li>
     <?php $active = ($this->section == 'teams') ? ' class="active"' : ''; ?>
-    <li><a <?php echo $active; ?>href="">Teams</a></li>
+    <li><a <?php echo $active; ?>href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_teams'); ?>">Teams</a></li>
     <?php $active = ($this->section == 'schedule') ? ' class="active"' : ''; ?>
     <li><a <?php echo $active; ?>href="">Schedule</a></li>
     <?php $active = ($this->section == 'location') ? ' class="active"' : ''; ?>
