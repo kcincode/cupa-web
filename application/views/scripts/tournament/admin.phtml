@@ -1,0 +1,25 @@
+<h1>Edit Tournament Settings</h1>
+
+<div id="edit-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->display_name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->email; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->start; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->end; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->is_visible; ?>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid'); ?>">Cancel</a>
+        </div>
+    </form>
+</div>

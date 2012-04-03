@@ -250,12 +250,54 @@ class Form_TournamentEdit extends Zend_Form
             'label' => 'Paid?',
             'value' => (isset($team->paid)) ? $team->paid : null,
         ));
-        
+
         $this->addElement('checkbox', 'accepted', array(
             'required' => true,
             'label' => 'Accepted?',
             'value' => (isset($team->accepted)) ? $team->accepted : null,
         ));
     }
+
+    public function admin()
+    {
+        $this->addElement('text', 'display_name', array(
+            'required' => true,
+            'label' => 'Display name:',
+            'description' => 'Enter the name you would like displayed in the header',
+            'value' => (isset($this->_tournament->display_name)) ? $this->_tournament->display_name : null,
+        ));
+
+        $this->addElement('text', 'email', array(
+            'required' => false,
+            'label' => 'Use Email:',
+            'description' => 'Enter an alternate email to use as director.',
+            'value' => (isset($this->_tournament->email)) ? $this->_tournament->email : null,
+        ));
+
+        $this->addElement('text', 'start', array(
+            'required' => true,
+            'label' => 'Start Date:',
+            'description' => 'Tournament start date',
+            'value' => (isset($this->_tournamentInfo->start)) ? $this->_tournamentInfo->start : null,
+            'class' => 'datepicker',
+        ));
+
+        $this->addElement('text', 'end', array(
+            'required' => true,
+            'label' => 'End Date:',
+            'description' => 'Tournament End date',
+            'value' => (isset($this->_tournamentInfo->end)) ? $this->_tournamentInfo->end : null,
+            'class' => 'datepicker',
+        ));
+
+        $this->addElement('checkbox', 'is_visible', array(
+            'required' => true,
+            'label' => 'Is Visible:',
+            'description' => 'Check this box to make the tournament public.',
+            'value' => (isset($this->_tournament->is_visible)) ? $this->_tournament->is_visible : null,
+        ));
+
+    }
+
 
 }

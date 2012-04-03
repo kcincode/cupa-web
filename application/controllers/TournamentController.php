@@ -27,8 +27,10 @@ class TournamentController extends Zend_Controller_Action
         }
 
         $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name);
+        if(empty($this->view->tournament) and $this->view->hasRole('admin')) {
+            $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name, true);
+        }
 
-        //Zend_Debug::dump($this->view->tournament);
         if(!$this->view->tournament) {
             $this->_helper->_layout->setLayout('layout');
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -36,7 +38,6 @@ class TournamentController extends Zend_Controller_Action
 
         $tournamentInformationTable = new Model_DbTable_TournamentInformation();
         $this->view->tournamentInfo = $tournamentInformationTable->find($this->view->tournament->id)->current();
-        //Zend_Debug::dump($this->view->tournamentInfo);
 
         if(file_exists(APPLICATION_PATH . '/../public/images/tournaments/' . $this->view->tournament->name . '.jpg')) {
             $this->view->headerImage = $this->view->baseUrl() . '/images/tournaments/' . $this->view->tournament->name . '.jpg';
@@ -403,6 +404,35 @@ class TournamentController extends Zend_Controller_Action
     public function contacteditAction()
     {
         // action body
+    }
+
+    public function adminAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/admin.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/admin.js');
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'admin');
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $this->view->tournament->display_name = $data['display_name'];
+                $this->view->tournament->email = (empty($data['email'])) ? null : $data['email'];
+                $this->view->tournament->is_visible = $data['is_visible'];
+                $this->view->tournament->save();
+
+                $this->view->tournamentInfo->start = $data['start'];
+                $this->view->tournamentInfo->end = $data['end'];
+                $this->view->tournamentInfo->save();
+
+                $this->view->message('Tournament settings updated successfully.', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
     }
 
 

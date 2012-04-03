@@ -13,16 +13,30 @@
         <a class="button" id="add-tournament" href="#">Add Tournament</a>
         <a class="button" id="add-pickup" href="#">Add Pickup</a>
         <div id="add-pickup-container"></div>
-        <div id="add-tournament-container"></div>
+        <div id="add-tournament-container">
+            <div class="row">
+                <dt>Year:</dt>
+                <dd>
+                    <input id="tournament-year" type="text" name="year" value="<?php echo date('Y'); ?>"/>
+                </dd>
+            </div>
+            <div class="row">
+                <dt>Name:</dt>
+                <dd>
+                    <input id="tournament-name" type="text" name="tournament" />
+                </dd>
+            </div>
+            <div id="error-string"></div>
+        </div>
         <?php endif; ?>
     </span>
-  
+
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
     <h3>CUPA Sponsored Tournaments</h3>
     <p>To be implemented.</p>
-    
+
     <h3>Pickup Ultimate Around Town</h3>
     <?php foreach($this->pickups['visible'] as $pickup): ?>
     <div class="pickup-container">
@@ -56,10 +70,10 @@
     </div>
     <?php endforeach; ?>
     <?php endif; ?>
-    
+
     <h3>Disc Golf Locations</h3>
-    
+
     <p>The PDGA manages a list of <a href="http://www.pdga.com/course_directory/zipcode?filter0=45201">locations</a> around Cincinnati.</p>
 </div>
-  
+
 <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

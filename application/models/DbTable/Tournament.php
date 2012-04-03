@@ -4,21 +4,21 @@ class Model_DbTable_Tournament extends Zend_Db_Table
 {
     protected $_name = 'tournament';
     protected $_primary = 'id';
- 
+
     public function isUnique($year, $name)
     {
         $select = $this->select()
                        ->where('year = ?', $year)
                        ->where('name = ?', $name);
-        
+
         $result = $this->fetchRow($select);
         if(!$result) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     public function createBlankTournament($year, $name)
     {
         $tournament = $this->createRow();
@@ -26,7 +26,7 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         $tournament->year = $year;
         $tournament->display_name = $name;
         $tournament->save();
-        
+
         $tournamentInfoTable = new Model_DbTable_TournamentInformation();
         $tournamentInfo = $tournamentInfoTable->createRow();
         $tournamentInfo->tournament_id = $tournament->id;
@@ -43,35 +43,39 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         $tournamentInfo->location_state = 'OH';
         $tournamentInfo->location_zip = '45209';
         $tournamentInfo->save();
-        
+
         return $tournament;
-        
+
     }
-    
+
     public function fetchMostCurrentYear($name)
     {
         $select = $this->select()
                        ->where('name = ?', $name)
                        ->order('year DESC');
-        
+
         $result = $this->fetchRow($select);
         if($result) {
             return $result->year;
         }
-        
+
         return null;
     }
-    
-    public function fetchTournament($year, $name)
+
+    public function fetchTournament($year, $name, $showHidden = false)
     {
         if(empty($year)) {
             return null;
         }
-        
+
         $select = $this->select()
                        ->where('year = ?', $year)
                        ->where('name = ?', $name);
-        
+
+        if(!$showHidden) {
+            $select = $select->where('is_visible = ?', 1);
+        }
+
         return $this->fetchRow($select);
     }
 }
