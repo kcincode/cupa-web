@@ -1,3 +1,23 @@
+<h1>Current Teams</h1>
+<div class="acttons">
+    <a id="add-team" href="#">Add Team</a>
+    <div id="add-team-container">
+        <input type="hidden" id="tournament-name" value="<?php echo $this->escape($this->tournament->name); ?>"/>
+        <input type="hidden" id="tournament-year" value="<?php echo $this->escape($this->tournament->year); ?>"/>
+        <div class="row">
+            Division:
+            <select id="team-division">
+                <?php foreach($this->divisions as $division): ?>
+                <option value="<?php echo $this->escape($division->id); ?>"><?php echo $this->escape(ucwords($division->name)); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="row">
+            Name: <input type="text" id="team-name"/>
+        </div>
+        <div id="error-string"></div>
+    </div>
+</div>
 <div id="tabs">
     <ul>
         <?php foreach($this->teams as $division => $teams): ?>
@@ -15,12 +35,19 @@
             <div class="clearfix"></div>
         </div>
 
+        <?php $this->cycle(array('even', 'odd')); ?>
         <?php foreach($teams as $team): ?>
-        <div class="team">
+        <div class="team <?php echo $this->cycle()->next(); ?>">
             <div class="name"><?php echo $this->escape(ucwords($team['name'])); ?></div>
             <div class="location"><?php echo $this->escape($team['city']); ?>, <?php echo $this->escape($team['state']); ?></div>
             <div class="paid"><span class="yes">Yes</span></div>
             <div class="accepted"><span class="no">No</span></div>
+            <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+            <div class="remove">
+                <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamedit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
+                <a class="remove" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamdelete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+            </div>
+            <?php endif; ?>
         </div>
        <?php endforeach; ?>
     </div>

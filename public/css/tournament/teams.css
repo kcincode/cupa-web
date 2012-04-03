@@ -3,7 +3,7 @@
 }
 
 .team {
-    width: 550px;
+    width: 570px;
     margin: 10px auto;
 
 }
@@ -37,4 +37,38 @@
     float: left;
     text-align: center;
     padding: 5px;
+}
+
+.team .remove {
+    float: left;
+    width: 30px;
+    text-align: center;
+    padding-top: 5px;
+}
+
+.team .remove img {
+    width: 20px;
+    height: 20px;
+}
+
+.team.highlight div {
+    background-color: #ffffcd;
+}
+
+.team.odd div {
+    background-color: #efefef;
+}
+
+.row {
+    margin: 5px auto;
+}
+
+.row input {
+    padding: 5px;
+    width: 150px
+}
+
+#error-string {
+    color: #c00;
+    text-align: center;
 }

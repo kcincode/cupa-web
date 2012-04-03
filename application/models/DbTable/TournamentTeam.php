@@ -36,4 +36,22 @@ class Model_DbTable_TournamentTeam extends Zend_Db_Table
 
         return $teams;
     }
+
+    public function createTeam($tournamentId, $name, $division)
+    {
+        $team = $this->createRow();
+        $team->tournament_id = $tournamentId;
+        $team->name = $name;
+        $team->city = 'Unknown';
+        $team->state = 'NA';
+        $team->contact_name = 'Unknown';
+        $team->contact_email = str_replace(' ', '_', $name) . '@email.com';
+        $team->contact_phone = '555-555-5555';
+        $team->division = $division;
+        $team->accepted = 0;
+        $team->paid = 0;
+        $team->save();
+
+        return $team->id;
+    }
 }
