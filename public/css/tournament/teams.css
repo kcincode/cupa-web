@@ -80,7 +80,7 @@
 }
 
 #edit-container {
-    width: 400px;
+    width: 410px;
     margin: 50px auto;
     padding: 20px;
     -webkit-box-shadow: 0 0 7px #444;
@@ -93,7 +93,7 @@
     font-weight: bold;
     text-align: right;
     margin-right: 5px;
-    width: 70px;
+    width: 80px;
     float: left;
 }
 
@@ -103,6 +103,11 @@
 
 #edit-container h2.pad {
     margin-top: 30px;
+}
+
+#paid-element,
+#accepted-element {
+    padding-top: 5px;
 }
 
 #buttons-container {

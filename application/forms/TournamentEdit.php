@@ -244,6 +244,18 @@ class Form_TournamentEdit extends Zend_Form
 
         $this->removeElement('bid');
         $this->removeElement('comments');
+
+        $this->addElement('checkbox', 'paid', array(
+            'required' => true,
+            'label' => 'Paid?',
+            'value' => (isset($team->paid)) ? $team->paid : null,
+        ));
+        
+        $this->addElement('checkbox', 'accepted', array(
+            'required' => true,
+            'label' => 'Accepted?',
+            'value' => (isset($team->accepted)) ? $team->accepted : null,
+        ));
     }
 
 }

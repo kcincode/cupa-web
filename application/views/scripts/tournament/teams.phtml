@@ -18,6 +18,9 @@
         <div id="error-string"></div>
     </div>
 </div>
+<div class="blurb">
+    <p>If you have any questions about your teams status you may contact the tournament director <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.</p>
+</div>
 <div id="tabs">
     <ul>
         <?php foreach($this->teams as $division => $teams): ?>
