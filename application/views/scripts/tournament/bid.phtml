@@ -33,11 +33,11 @@
 </div>
 <?php elseif(empty($this->tournamentInfo->bid_due)): ?>
 <p class="blurb">
-    The bid submission has not been enabled yet.  Please check back at a later time.  You may contact the tournament director(s) <a href="">here</a>.
+    The bid submission has not been enabled yet.  Please check back at a later time.  You may contact the tournament director(s) <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.
 <p>
 
 <?php else: ?>
 <p class="blurb">
-    The date to submit a bid has passed so you may not submit a bid.  If you want to contact the tournament director you may do so <a href="">here</a>.  If you have already submitted a bid and would like to pay for the tournament you may find more information about payments <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_payment'); ?>">here</a>.
+    The date to submit a bid has passed so you may not submit a bid.  If you want to contact the tournament director you may do so <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.  If you have already submitted a bid and would like to pay for the tournament you may find more information about payments <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_payment'); ?>">here</a>.
 <p>
 <?php endif; ?>

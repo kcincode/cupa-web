@@ -21,6 +21,6 @@
 
 <?php if(empty($this->tournamentInfo->mail_payment) and empty($this->tournamentInfo->paypal)): ?>
 <p>
-    The payment information for this tournament has not been setup yet.  Please check back at a later time when payment inforation will be put up.  If you have any questions you may email the tournament director or someone else associated with the tournament <a href="">here</a>.
+    The payment information for this tournament has not been setup yet.  Please check back at a later time when payment inforation will be put up.  If you have any questions you may email the tournament director or someone else associated with the tournament <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.
 </p>
 <?php endif; ?>
