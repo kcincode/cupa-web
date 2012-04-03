@@ -228,4 +228,22 @@ class Form_TournamentEdit extends Zend_Form
         ));
     }
 
+    public function team()
+    {
+        $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+        $team = $tournamentTeamTable->find($this->_id)->current();
+
+        $this->bidsubmit();
+
+        foreach($team as $key => $value) {
+            $element = $this->getElement($key);
+            if($element) {
+                $element->setValue($value);
+            }
+        }
+
+        $this->removeElement('bid');
+        $this->removeElement('comments');
+    }
+
 }

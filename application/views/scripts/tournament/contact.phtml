@@ -6,7 +6,7 @@
 
 <?php foreach($this->members as $member): ?>
 <div class="contact">
-    <div class="label"><?php echo $this->escape($member->type); ?></div>
+    <div class="label"><?php echo $this->escape($member->type); ?>:</div>
     <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->escape($member->name); ?></a></div>
 </div>
 <?php endforeach; ?>

@@ -54,4 +54,13 @@ class Model_DbTable_TournamentTeam extends Zend_Db_Table
 
         return $team->id;
     }
+
+    public function updateValues($teamId, $data)
+    {
+        $team = $this->find($teamId)->current();
+        foreach($data as $key => $value) {
+            $team->$key = $value;
+        }
+        $team->save();
+    }
 }

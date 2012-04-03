@@ -7,7 +7,7 @@ $(document).ready(function() {
         $(this).parent().parent().parent().removeClass('highlight');
     });
 
-    $('.team .remove a.remove').click(function(e) {
+    $('.team .remove a.remove-link').click(function(e) {
         if(!confirm('Are you sure you would like to remove this team?')) {
             e.preventDefault();
         }

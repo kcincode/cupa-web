@@ -1,6 +1,6 @@
 <h1>Current Teams</h1>
-<div class="acttons">
-    <a id="add-team" href="#">Add Team</a>
+<div class="actions">
+    <a class="button" id="add-team" href="#">Add Team</a>
     <div id="add-team-container">
         <input type="hidden" id="tournament-name" value="<?php echo $this->escape($this->tournament->name); ?>"/>
         <input type="hidden" id="tournament-year" value="<?php echo $this->escape($this->tournament->year); ?>"/>
@@ -32,6 +32,7 @@
             <div class="location">Location</div>
             <div class="paid">Paid</div>
             <div class="accepted">Accepted</div>
+            <div class="remove">&nbsp;</div>
             <div class="clearfix"></div>
         </div>
 
@@ -40,12 +41,12 @@
         <div class="team <?php echo $this->cycle()->next(); ?>">
             <div class="name"><?php echo $this->escape(ucwords($team['name'])); ?></div>
             <div class="location"><?php echo $this->escape($team['city']); ?>, <?php echo $this->escape($team['state']); ?></div>
-            <div class="paid"><span class="yes">Yes</span></div>
-            <div class="accepted"><span class="no">No</span></div>
+            <div class="paid"><span class="<?php echo ($team['paid'] == 1) ? 'yes' : 'no'; ?>"><?php echo ($team['paid'] == 1) ? 'Yes' : 'No'; ?></span></div>
+            <div class="accepted"><span class="<?php echo ($team['accepted'] == 1) ? 'yes' : 'no'; ?>"><?php echo ($team['accepted'] == 1) ? 'Yes' : 'No'; ?></span></div>
             <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
             <div class="remove">
                 <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamedit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
-                <a class="remove" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamdelete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+                <a class="remove-link" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamdelete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
             </div>
             <?php endif; ?>
         </div>

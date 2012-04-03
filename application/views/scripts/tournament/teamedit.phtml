@@ -1,4 +1,33 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>teamsedit</b></p>
+<h1>Edit team <?php echo $this->escape($this->team->name); ?></h1>
+
+<div id="edit-container">
+    <form method="post">
+        <h2>Team Information:</h2>
+        <div class="row">
+            <?php echo $this->form->name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->city; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->state; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->division; ?>
+        </div>
+        <h2 class="pad">Team Contact Information:</h2>
+        <div class="row">
+            <?php echo $this->form->contact_name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->contact_email; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->contact_phone; ?>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_teams'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>

@@ -3,13 +3,19 @@
 }
 
 .team {
-    width: 570px;
+    width: 600px;
     margin: 10px auto;
-
 }
-.team.header {
+
+.header div {
     font-size: 12pt;
-    border-bottom: 1px solid #444;
+    border: none;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.header div.remove {
+    text-decoration: none;
 }
 
 .team .name {
@@ -41,9 +47,9 @@
 
 .team .remove {
     float: left;
-    width: 30px;
+    width: 50px;
     text-align: center;
-    padding-top: 5px;
+    padding: 5px 0;
 }
 
 .team .remove img {
@@ -51,12 +57,12 @@
     height: 20px;
 }
 
-.team.highlight div {
-    background-color: #ffffcd;
-}
-
 .team.odd div {
     background-color: #efefef;
+}
+
+.team.highlight div {
+    background-color: #ffffcd;
 }
 
 .row {
@@ -71,4 +77,52 @@
 #error-string {
     color: #c00;
     text-align: center;
+}
+
+#edit-container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    -webkit-box-shadow: 0 0 7px #444;
+    -moz-box-shadow: 0 0 7px #444;
+    box-shadow: 0 0 7px #444;
+}
+
+#edit-container dt {
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: right;
+    margin-right: 5px;
+    width: 70px;
+    float: left;
+}
+
+#edit-container input[type=text] {
+    width: 300px;
+}
+
+#edit-container h2.pad {
+    margin-top: 30px;
+}
+
+#buttons-container {
+    width: 200px;
+    margin: 20px auto;
+}
+
+.actions {
+    text-align: right;
+    margin: 10px 10px 10px 0;
+}
+
+ul.message {
+    margin-top: 5px;
+}
+
+span.yes {
+    color: #080;
+}
+
+span.no {
+    color: #c00;
 }

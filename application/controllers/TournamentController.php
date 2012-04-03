@@ -307,7 +307,31 @@ class TournamentController extends Zend_Controller_Action
 
     public function teameditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/teams.css');
+        $teamId = $this->getRequest()->getUserParam('team_id');
+
+        if(!is_numeric($teamId) or !$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
+        }
+
+        $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+        $team = $tournamentTeamTable->find($teamId)->current();
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'team', $teamId);
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $tournamentTeamTable->updateValues($teamId, $data);
+                $this->view->message('Updated team successfully', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
+        $this->view->team = $team;
     }
 
     public function scheduleAction()
@@ -347,6 +371,7 @@ class TournamentController extends Zend_Controller_Action
 
     public function contactAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/contact.css');
         $tournamentMemberTable = new Model_DbTable_TournamentMember();
         $this->view->members = $tournamentMemberTable->fetchAllMembers($this->view->tournament->id);
     }

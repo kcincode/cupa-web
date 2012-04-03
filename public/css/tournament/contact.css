@@ -1,12 +1,18 @@
+p.blurb {
+    
+}
+.contact {
+    padding: 5px;
+}
 .contact .label {
-    width: 200px;
+    width: 300px;
     text-align: right;
     float: left;
     font-weight: bold;
-    font-size: 12pt;
+    font-size: 14pt;
     margin-right: 5px;
 }
 
 .contact .value {
-    font-size: 12pt;
+    font-size: 14pt;
 }
