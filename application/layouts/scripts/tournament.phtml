@@ -21,7 +21,6 @@
     </head>
     <body>
         <header>
-            <img src="<?php echo $this->getTournamentHeaderImage(); ?>"/>
             <div class="title">
                 <?php echo $this->tournament->display_name; ?>
             </div>
@@ -33,7 +32,7 @@
                 <?php endif; ?>
             </div>
             <div class="menu">
-                <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated, 'tournament' => $this->tournament)); ?>
+                <?php echo $this->partial('tournament/top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated, 'tournament' => $this->tournament)); ?>
                 <div id="login-container">Login Container</div>
             </div>
         </header>
@@ -51,3 +50,8 @@
         </footer>
     </body>
 </html>
+<?php if(!empty($this->headerImage)): ?>
+<script>
+    $('header').css('background-image', "url('<?php echo $this->headerImage; ?>')");
+</script>
+<?php endif; ?>

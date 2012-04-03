@@ -37,6 +37,10 @@ class TournamentController extends Zend_Controller_Action
         $tournamentInformationTable = new Model_DbTable_TournamentInformation();
         $this->view->tournamentInfo = $tournamentInformationTable->find($this->view->tournament->id)->current();
         //Zend_Debug::dump($this->view->tournamentInfo);
+
+        if(file_exists(APPLICATION_PATH . '/../public/images/tournaments/' . $this->view->tournament->name . '.jpg')) {
+            $this->view->headerImage = $this->view->baseUrl() . '/images/tournaments/' . $this->view->tournament->name . '.jpg';
+        }
     }
 
     public function indexAction()

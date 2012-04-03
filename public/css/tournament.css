@@ -77,50 +77,24 @@ body {
 }
 
 header {
-    height: 121px;
+    height: 150px;
     padding: 0;
     margin: 0;
-    -webkit-box-shadow: inset 0 0 5px #888;
-    -moz-box-shadow: inset 0 0 5px #888;
-    box-shadow: inset 0 0 5px #888;
-}
-
-header ul {
-    list-style: none;
-    width: 320px;
-    top: 0px;
-    margin: 5px 0 0 610px;
-    position: absolute;
-    float: right;
-    text-align: rights;
-}
-
-header ul li {
-    float: left;
-    margin-right: 8px;
-}
-
-header ul li a {
-    font-weight: bold;
-    color: #005700 !important;
-    text-decoration: none;
-    text-shadow: 0 0 2px #fff;
-}
-
-header img {
-    -webkit-box-shadow: 0 0 5px #aaa;
-    -moz-box-shadow: 0 0 5px #aaa;
-    box-shadow: 0 0 5px #aaa;
+    background: url('../images/tournaments/default.jpg');
+    -webkit-box-shadow: inset 0 0 5px #aaa;
+    -moz-box-shadow: inset 0 0 5px #aaa;
+    box-shadow: inset 0 0 5px #aaa;
+    clear: both;
 }
 
 header .title {
+    width: 700px;
     font-size: 32pt;
     font-weight: bold;
     text-shadow: 0 0 5px #fff;
     color: #222;
-    position: absolute;
-    top: 0;
     margin: 10px 0 0 10px;
+    float: left;
 }
 
 header .when {
@@ -128,27 +102,56 @@ header .when {
     font-style: italic;
     text-shadow: 0 0 5px #fff;
     color: #222;
-    position: absolute;
-    top: 55px;
-    margin: 0 0 0 10px;
+    margin: -10px 0 0 10px;
+    float: left;
+}
+
+header .menu {
+    float: right;
+    margin: -70px 0 0 0;
+    padding: 0;
+    background-color: #ddd;
+    -webkit-box-shadow: inset 0 0 5px #444;
+    -moz-box-shadow: inset 0 0 5px #444;
+    box-shadow: inset 0 0 2px #444;
+}
+
+header .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+header .menu li {
+    float: right;
+    padding: 5px;
+}
+
+header .menu li a {
+    font-weight: bold;
+    color: #005700;
+    text-shadow: 0 0 2px #fff;
+    text-decoration: none;
 }
 
 #main-content {
-  background-color: #fff;
-  padding-bottom: 15px;
-  min-height: 600px;
-  clear: both;
+    background-color: #fff;
+    padding-bottom: 15px;
+    min-height: 600px;
+    clear: both;
 }
 
 nav ul {
+    margin: 0;
+    padding: 0;
     background-color: #444;
-    height: 70px;
+    height: 39px;
 }
 
 nav ul li a {
     display: block;
     float: left;
-    padding: 40px 20px 10px 20px;
+    padding: 10px 20px;
     background-color: #444;
     text-align: center;
     text-decoration: none;
@@ -227,8 +230,7 @@ ul.error_list {
     width: 300px;
     height: 230px;
     border: 1px solid #000;
-    margin-top: -100px;
-    margin-left: 655px;
+    margin: 30px 0 0 -78px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;

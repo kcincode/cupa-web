@@ -1,7 +1,5 @@
 <ul>
-    <?php if($this->hasRole('admin') and isset($this->tournament->id)): ?>
-    <li><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_admin'); ?>">ADMIN</a> |</li>
-    <?php elseif($this->hasRole('admin')): ?>
+    <?php if($this->hasRole('admin')): ?>
     <li><a href="">ADMIN</a> |</li>
     <?php endif; ?>
     <li><a href="<?php echo $this->url(array(), 'page_contact'); ?>">CONTACT US</a> |</li>
