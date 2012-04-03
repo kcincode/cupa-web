@@ -1,0 +1,13 @@
+h1 {
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-left: 20px;
+}
+
+#score-reporter,
+#schedule-info {
+    margin-left: 50px;
+    padding: 5px;
+}

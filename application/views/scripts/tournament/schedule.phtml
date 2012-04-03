@@ -1,4 +1,13 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>schedule</b></p>
+<h1>Schedule Information</h1>
+
+<?php if(!empty($this->tournamentInfo->scorereporter_link)): ?>
+<h2>Score Reporter Link:</h2>
+<div id="score-reporter">
+    <a target="_blank" href="<?php echo $this->tournamentInfo->scorereporter_link; ?>"><?php echo $this->escape($this->tournament->year . ' ' . ucwords($this->tournament->display_name)); ?> on score reporter</a>
+</div>
+<?php endif; ?>
+
+<h2>General information:</h2>
+<div id="schedule-info">
+    <?php echo $this->tournamentInfo->schedule_text; ?>
 </div>

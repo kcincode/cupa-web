@@ -336,7 +336,7 @@ class TournamentController extends Zend_Controller_Action
 
     public function scheduleAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/schedule.css');
     }
 
     public function scheduleeditAction()
