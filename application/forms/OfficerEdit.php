@@ -12,7 +12,7 @@ class Form_OfficerEdit extends Zend_Form
         foreach($userTable->fetchAllUsers() as $user) {
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;
         }
-        
+
         $user_id = $this->addElement('select', 'user_id', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($users))),
@@ -23,7 +23,7 @@ class Form_OfficerEdit extends Zend_Form
             'description' => 'Select the user for the position.',
 
         ));
-        
+
 
         $position = $this->addElement('text', 'position', array(
             'filters' => array('StringTrim'),
@@ -32,7 +32,7 @@ class Form_OfficerEdit extends Zend_Form
             'description' => 'Enter the date the position name.',
 
         ));
-        
+
         $since = $this->addElement('text', 'since', array(
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -42,7 +42,7 @@ class Form_OfficerEdit extends Zend_Form
             'label' => 'Since:',
             'description' => 'Enter the date the position was active.',
         ));
-        
+
         $to = $this->addElement('text', 'to', array(
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -59,6 +59,13 @@ class Form_OfficerEdit extends Zend_Form
             'label' => 'Weight:',
             'description' => 'Lower numbers are shown first.',
         ));
+
+        $this->addElement('textarea', 'description', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Position Description',
+            'description' => 'Enter what this position is repsponsible for.',
+        ));
     }
 
     public function loadFromOfficer($officer)
@@ -68,6 +75,7 @@ class Form_OfficerEdit extends Zend_Form
         $this->getElement('since')->setValue($officer->since);
         $this->getElement('to')->setValue($officer->to);
         $this->getElement('weight')->setValue($officer->weight);
+        $this->getElement('description')->setValue($officer->description);
     }
 
 }

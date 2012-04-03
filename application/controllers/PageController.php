@@ -231,6 +231,7 @@ class PageController extends Zend_Controller_Action
                 $officer->since = $data['since'];
                 $officer->to = (empty($data['to'])) ? null : $data['to'];
                 $officer->weight = $data['weight'];
+                $officer->description = $data['description'];
                 $officer->save();
 
                 $this->view->message('Officer updated successfully.', 'success');
@@ -1154,7 +1155,7 @@ class PageController extends Zend_Controller_Action
         $form->delete();
         $this->_redirect('forms');
     }
-    
+
     public function tournamentaddAction()
     {
         $pageTable = new Model_DbTable_Page();
@@ -1180,13 +1181,13 @@ class PageController extends Zend_Controller_Action
             }
 
             $post = $this->getRequest()->getPost();
-            
+
             $tournamentTable = new Model_DbTable_Tournament();
 
-            if($tournamentTable->isUnique($post['year'], $post['tournament'])) {            
+            if($tournamentTable->isUnique($post['year'], $post['tournament'])) {
                 $tournament = $tournamentTable->createBlankTournament($post['year'], $post['tournament']);
                 if($tournament) {
-                    
+
                     $this->view->message('Tournament created successfully.', 'success');
                     echo Zend_Json::encode(array('result' => 'success', 'data' => '/tournament/' . $tournament->name . '/' . $tournament->year));
                     return;

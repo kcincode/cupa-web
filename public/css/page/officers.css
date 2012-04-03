@@ -4,16 +4,14 @@
 
 .officer .info {
     float: left;
-    padding: 5px 10px;
+    padding: 0 10px;
     width: 565px;
     height: 100px;
+    margin-bottom: 10px;
 }
 
 .officer.even .info {
     float: right;
-    padding: 5px 10px;
-    width: 565px;
-    height: 100px;
     text-align: right;
 }
 
@@ -53,9 +51,6 @@
 
 .officer.even .image {
     float: right;
-    -webkit-box-shadow: 1px 1px 5px #444;
-    -moz-box-shadow: 1px 1px 5px #444;
-    box-shadow: 1px 1px 5px #444;
 }
 
 .info .name {
@@ -66,6 +61,7 @@
 .info .position {
     color: #c55;
     font-size: 16pt;
+    margin: -5px 0 0 0;
 }
 
 .description {

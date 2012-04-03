@@ -21,7 +21,7 @@
 #officersedit-container #weight {
     width: 50px;
     text-align: center;
-    
+
 }
 
 #officersedit-container .row {
@@ -62,3 +62,14 @@ p.description {
     padding: 0;
 }
 
+dt#description-label {
+    width: 400px;
+    float: none;
+    text-align: left;
+    margin-left: 40px;
+}
+
+textarea {
+    width: 400px;
+    height: 200px;
+}
