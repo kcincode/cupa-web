@@ -7,3 +7,5 @@ scripts/database/3.0/update.txt
 public/error_log
 .idea
 public/images/team_logos/*.jpg
+public/images/officers/*.jpg
+public/images/tournaments/*.jpg

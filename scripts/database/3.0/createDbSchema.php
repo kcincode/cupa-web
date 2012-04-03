@@ -437,6 +437,7 @@ function createOfficerTable($db)
           `position` varchar(100) NOT NULL,
           `since` date NOT NULL,
           `to` date DEFAULT NULL,
+          `description` text NOT NULL,
           `weight` int(11) NOT NULL,
           PRIMARY KEY (`id`),
           KEY `user_id` (`user_id`)

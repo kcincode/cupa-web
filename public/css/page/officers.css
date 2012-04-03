@@ -1,12 +1,20 @@
 .officer {
-    float: left;
     margin: 10px;
 }
 
 .officer .info {
     float: left;
-    width: 235px;
-    padding: 10px;
+    padding: 5px 10px;
+    width: 565px;
+    height: 100px;
+}
+
+.officer.even .info {
+    float: right;
+    padding: 5px 10px;
+    width: 565px;
+    height: 100px;
+    text-align: right;
 }
 
 .officer .highlight {
@@ -20,16 +28,20 @@
     float: right;
 }
 
+.officer.even .info .links {
+    float: left;
+}
+
 .officer .info img {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     padding: 0;
     margin: 0;
 }
 
 .officer .image img {
-    width: 75px;
-    height: 75px;
+    width: 100px;
+    height: 100px;
 }
 
 .officer .image {
@@ -39,16 +51,26 @@
     box-shadow: 1px 1px 5px #444;
 }
 
+.officer.even .image {
+    float: right;
+    -webkit-box-shadow: 1px 1px 5px #444;
+    -moz-box-shadow: 1px 1px 5px #444;
+    box-shadow: 1px 1px 5px #444;
+}
 
-span.name {
+.info .name {
     font-weight: bold;
-    font-size: 14pt;
+    font-size: 22pt;
 }
 
-span.position {
+.info .position {
     color: #c55;
+    font-size: 16pt;
 }
 
+.description {
+    padding: 10px;
+}
 
 #add-officers-container .row dd input[type=text] {
     font-size: 12pt;
@@ -70,4 +92,9 @@ span.position {
     margin: 0;
     padding: 0;
     text-align: center;
+}
+
+hr {
+    margin: 10px auto;
+    width: 400px;
 }

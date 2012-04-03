@@ -14,15 +14,16 @@
         <div id="add-officers-container"></div>
         <?php endif; ?>
     </span>
-  
+
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
-
-<h2>Current Board Members</h2>
+<?php $this->cycle(array('even', 'odd')); ?>
 <?php foreach(array_merge($this->officers['current'], $this->officers['atLarge']) as $officer): ?>
-<div class="officer">
-    <div class="image"><img src="<?php echo $this->officerImageUrl($officer['user_id']); ?>"/></div>
+<div class="officer <?php echo $this->cycle()->next(); ?>">
+    <div class="image">
+        <img src="<?php echo $this->officerImageUrl($officer['user_id']); ?>"/>
+    </div>
     <div class="info">
         <div class="links">
             <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
@@ -36,10 +37,14 @@
             </a>
             <?php endif; ?>
         </div>
-        <span class="name"><?php echo $this->fullname($officer['user_id']); ?></span><br/>
-        <span class="position"><?php echo $this->escape($officer['position']); ?></span></br>
-        <span class="since">Since: <?php echo date('M dS, Y', strtotime($officer['since'])); ?></span>
+        <div class="name"><?php echo $this->fullname($officer['user_id']); ?></div>
+        <div class="position"><?php echo $this->escape($officer['position']); ?></div>
+        <div class="since">Since: <?php echo date('M dS, Y', strtotime($officer['since'])); ?></div>
     </div>
+    <div class="description">
+        <?php echo $this->escape($officer['description']); ?>
+    </div>
+    <div class="clearfix"><hr/></div>
 </div>
 <?php endforeach; ?>
 
