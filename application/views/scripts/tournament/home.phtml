@@ -27,7 +27,7 @@
         <div class="title">
             <?php echo $this->escape($update->title); ?>
             <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-            <a href="#"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete Update"/></a>
+            <a class="remove" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_delete'); ?>"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete Update"/></a>
             <?php endif; ?>
             <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
             <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_edit'); ?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit Update"/></a>

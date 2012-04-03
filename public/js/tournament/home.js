@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#description .link').hide();
-    
+
     $('#description').hover(function(){
          $('#description .link').show();
          $(this).addClass('highlight');
@@ -8,9 +8,15 @@ $(document).ready(function() {
         $('#description .link').hide();
          $(this).removeClass('highlight');
     });
-    
+
+    $('.update .title a.remove').click(function(e){
+        if(!confirm('Are you sure you would like to remove this update?')) {
+            e.preventDefault();
+        }
+    });
+
     $('#add-update-container').hide();
-    
+
     $('#add-update').click(function(e){
         e.preventDefault();
         $('#add-update-container').dialog({
@@ -44,5 +50,5 @@ $(document).ready(function() {
             }
         });
     });
-    
+
 });

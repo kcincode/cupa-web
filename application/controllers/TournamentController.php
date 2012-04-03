@@ -160,6 +160,21 @@ class TournamentController extends Zend_Controller_Action
         $this->view->form = $form;
     }
 
+    public function updatedeleteAction()
+    {
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+        }
+
+        $updateId = $this->getRequest()->getUserParam('update_id');
+
+        $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
+        $update = $tournamentUpdateTable->find($updateId)->current();
+        $update->delete();
+        $this->view->message('Tournament update removed successfully.', 'success');
+        $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+    }
+
     public function bidAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/bid.css');
