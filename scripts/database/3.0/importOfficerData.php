@@ -39,7 +39,11 @@ foreach($results as $row) {
     $officer->since = date('Y-m-d', strtotime('2010-05-14 00:00:00'));
     $officer->to = null;
     $officer->weight = $row['order'];
-    $officer->description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget turpis quam. Vivamus et neque augue. Donec imperdiet turpis augue, et feugiat augue. Nullam tristique suscipit purus et placerat. Quisque neque ante, sagittis eget porttitor ut, elementum et dui. Quisque odio purus, vehicula vel molestie at, viverra ac est. In lacinia tempus nibh ac mollis. Vivamus convallis tortor in sapien dictum ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras imperdiet vestibulum blandit.";
+    if($row['position'] != 'At Large Board Member') {
+        $officer->description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget turpis quam. Vivamus et neque augue. Donec imperdiet turpis augue, et feugiat augue. Nullam tristique suscipit purus et placerat. Quisque neque ante, sagittis eget porttitor ut, elementum et dui. Quisque odio purus, vehicula vel molestie at, viverra ac est. In lacinia tempus nibh ac mollis. Vivamus convallis tortor in sapien dictum ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras imperdiet vestibulum blandit.";
+    } else {
+        $officer->description = '';
+    }
     $officer->save();
 
     if(DEBUG) {
