@@ -308,7 +308,8 @@ class TournamentController extends Zend_Controller_Action
 
     public function contactAction()
     {
-        // action body
+        $tournamentMemberTable = new Model_DbTable_TournamentMember();
+        $this->view->members = $tournamentMemberTable->fetchAllMembers($this->view->tournament->id);
     }
 
     public function contactaddAction()

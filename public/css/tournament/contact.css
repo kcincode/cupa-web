@@ -1,0 +1,12 @@
+.contact .label {
+    width: 200px;
+    text-align: right;
+    float: left;
+    font-weight: bold;
+    font-size: 12pt;
+    margin-right: 5px;
+}
+
+.contact .value {
+    font-size: 12pt;
+}

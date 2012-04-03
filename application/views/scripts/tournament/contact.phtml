@@ -1,4 +1,12 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>contact</b></p>
+<h1>Tournament Contats</h1>
+
+<p class="blurb">
+    This is a list of people associated with the tournament and role in case you need to know who to contact or get a hold of someone for more questions.
+</p>
+
+<?php foreach($this->members as $member): ?>
+<div class="contact">
+    <div class="label"><?php echo $this->escape($member->type); ?></div>
+    <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->escape($member->name); ?></a></div>
 </div>
+<?php endforeach; ?>
