@@ -201,6 +201,11 @@ if(DEBUG) {
     $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $totalPeople);
 }
 
+$tournamentTypes = array(
+    'Co-Director' => 'director',
+    'Tournament Director' => 'director',
+);
+
 $i = 0;
 $tournamentTable->getAdapter()->beginTransaction();
 foreach($results as $row) {
@@ -214,7 +219,7 @@ foreach($results as $row) {
     $tournamentMember->tournament_id = $row['tournament_id'];
     $tournamentMember->user_id = null;
     $tournamentMember->name = $row['name'];
-    $tournamentMember->type = $row['type'];
+    $tournamentMember->type = $tournamentTypes[$row['type']];
     $tournamentMember->email = $row['email'];
     $tournamentMember->weight = $row['order'];
     $tournamentMember->save();

@@ -1,4 +1,25 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>contactedit</b></p>
+<h1>Edit Member Information</h1>
+
+<div id="edit-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->user_id; ?>
+        </div>
+        <div class="row-center">
+            <strong>- OR -</strong>
+        </div>
+        <div class="row">
+            <?php echo $this->form->name; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->email; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->type; ?>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>

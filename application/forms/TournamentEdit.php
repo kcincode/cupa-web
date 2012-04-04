@@ -258,11 +258,12 @@ class Form_TournamentEdit extends Zend_Form
         ));
     }
 
-    public function admin()
+    private function admin()
     {
         $this->addElement('text', 'display_name', array(
             'required' => true,
             'label' => 'Display name:',
+            'filters' => array('StringTrim'),
             'description' => 'Enter the name you would like displayed in the header',
             'value' => (isset($this->_tournament->display_name)) ? $this->_tournament->display_name : null,
         ));
@@ -270,6 +271,10 @@ class Form_TournamentEdit extends Zend_Form
         $this->addElement('text', 'email', array(
             'required' => false,
             'label' => 'Use Email:',
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('EmailAddress'),
+            ),
             'description' => 'Enter an alternate email to use as director.',
             'value' => (isset($this->_tournament->email)) ? $this->_tournament->email : null,
         ));
@@ -299,5 +304,54 @@ class Form_TournamentEdit extends Zend_Form
 
     }
 
+    private function contact()
+    {
+        $tournamentMemberTable = new Model_DbTable_TournamentMember();
+        $member = $tournamentMemberTable->find($this->_id)->current();
+
+        $userTable = new Model_DbTable_User();
+        $users = array('0' => 'Select User');
+        foreach($userTable->fetchAllUsers() as $user) {
+            $users[$user->id] = $user->first_name . ' ' . $user->last_name;
+        }
+
+        $this->addElement('select', 'user_id', array(
+            'filters' => array('StringTrim'),
+            'multiOptions' => $users,
+            'validators' => array(
+                array('InArray', false, array(array_keys($users), 'messages' => array('notInArray' => 'Please select a user'))),
+            ),
+            'required' => false,
+            'label' => 'Select a User:',
+            'value' => (isset($member->user_id)) ? $member->user_id : 0,
+        ));
+
+        $this->addElement('text', 'name', array(
+            'required' => false,
+            'label' => 'Use Name:',
+            'filters' => array('StringTrim'),
+            'description' => 'Enter an alternate name to use as member.',
+            'value' => (isset($member->name)) ? $member->name : null,
+        ));
+
+        $this->addElement('text', 'email', array(
+            'required' => false,
+            'label' => 'Use Email:',
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('EmailAddress'),
+            ),
+            'description' => 'Enter an alternate email to use as member.',
+            'value' => (isset($member->email)) ? $member->email : null,
+        ));
+
+        $this->addElement('text', 'type', array(
+            'required' => true,
+            'label' => 'Title:',
+            'filters' => array('StringTrim'),
+            'description' => 'Use `director` for admin access',
+            'value' => (isset($member->type)) ? $member->type : null,
+        ));
+    }
 
 }

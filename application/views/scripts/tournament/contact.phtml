@@ -1,12 +1,42 @@
-<h1>Tournament Contats</h1>
+<h1>Tournament Contacts</h1>
 
+<div class="actions">
+    <a class="button" id="add-person" href="#">Add Person</a>
+    <div id="add-person-container">
+        <div class="row">
+            <input type="hidden" id="tournament-name" value="<?php echo $this->escape($this->tournament->name); ?>"/>
+            <input type="hidden" id="tournament-year" value="<?php echo $this->escape($this->tournament->year); ?>"/>
+            <br/>
+            Select User:
+            <select id="contact-user">
+                <option value="0">Select a user</option>
+                <?php foreach($this->users as $user): ?>
+                <option value="<?php echo $this->escape($user->id); ?>"><?php echo $this->escape($user->first_name . ' ' . $user->last_name); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+</div>
 <p class="blurb">
     This is a list of people associated with the tournament and role in case you need to know who to contact or get a hold of someone for more questions.
 </p>
 
 <?php foreach($this->members as $member): ?>
 <div class="contact">
-    <div class="label"><?php echo $this->escape($member->type); ?>:</div>
-    <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->escape($member->name); ?></a></div>
+    <div class="label"><?php echo $this->escape(ucwords(str_replace('-', ' ', $member->type))); ?>:</div>
+    <?php if(empty($member->user_id)): ?>
+        <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->escape($member->name); ?></a></div>
+    <?php else: ?>
+    <?php $userTable = new Model_DbTable_User(); $user = $userTable->find($member->user_id)->current(); ?>
+        <?php if(empty($member->email)): ?>
+        <div class="value"><a href="mailto:<?php echo $this->escape($user->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
+        <?php else: ?>
+        <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
+        <?php endif; ?>
+    <?php endif; ?>
+    <div class="actions">
+        <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
+        <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+    </div>
 </div>
 <?php endforeach; ?>

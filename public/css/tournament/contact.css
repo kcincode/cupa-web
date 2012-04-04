@@ -1,5 +1,5 @@
 p.blurb {
-    
+
 }
 .contact {
     padding: 5px;
@@ -15,4 +15,64 @@ p.blurb {
 
 .contact .value {
     font-size: 14pt;
+}
+
+.row-center {
+    text-align: center;
+    margin: 10px 0;
+}
+
+#edit-container {
+    width: 450px;
+    margin: 50px auto;
+    padding: 20px;
+    -webkit-box-shadow: 0 0 7px #444;
+    -moz-box-shadow: 0 0 7px #444;
+    box-shadow: 0 0 7px #444;
+}
+
+#edit-container dt {
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 7px;
+    float: left;
+    width: 115px;
+    text-align: right;
+    margin-right: 5px;
+}
+
+#user_id {
+    width: 250px;
+}
+
+#edit-container input[type=text] {
+    padding: 5px;
+    width: 225px;
+}
+
+#user_id-element {
+    padding: 5px;
+}
+
+#buttons-container {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.button, button-red {
+    font-size: 14pt;
+    padding: 3px 25px;
+}
+
+p.description {
+    color: #a0a0a0;
+    margin: 0 0 10px 55px;
+    padding: 0;
+}
+
+ul.errors {
+    color: #c00;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }

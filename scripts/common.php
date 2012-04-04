@@ -57,6 +57,7 @@ try {
 	$origDb = new PDO('mysql:dbname=' . $db . ';host=' . $host, $username, $password);
 } catch(Exception $e) {
 	echo 'Could not conned to source DB.  ' . $e->getMessage();
+    exit();
 }
 
 require_once('ProgressBar.php');

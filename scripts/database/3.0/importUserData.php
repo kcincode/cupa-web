@@ -76,8 +76,8 @@ foreach($results as $row) {
     $user->salt = null;
     $user->password = $row['password'];
     $user->email = $row['email'];
-    $user->first_name = $row['name'];
-    $user->last_name = $row['surname'];
+    $user->first_name = ucfirst(trim($row['name']));
+    $user->last_name = ucfirst(trim($row['surname']));
     $user->activation_code = $userTable->generateUniqueCodeFor('activation_code');
     $user->requested_at = $row['created'];
 
