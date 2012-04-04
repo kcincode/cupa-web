@@ -1185,7 +1185,7 @@ class PageController extends Zend_Controller_Action
             $tournamentTable = new Model_DbTable_Tournament();
 
             if($tournamentTable->isUnique($post['year'], $post['tournament'])) {
-                $tournament = $tournamentTable->createBlankTournament($post['year'], $post['tournament']);
+                $tournament = $tournamentTable->createBlankTournament($post['year'], $post['tournament'], $this->view->user->id);
                 if($tournament) {
 
                     $this->view->message('Tournament created successfully.', 'success');

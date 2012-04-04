@@ -38,4 +38,17 @@ $(document).ready(function(){
         $('#contact-user').chosen();
 
     });
+
+    $('.contact .actions img').hover(function(){
+        $(this).parent().parent().parent().addClass('highlight');
+    }, function() {
+        $(this).parent().parent().parent().removeClass('highlight');
+    });
+
+    $('.contact .actions a.delete').click(function(e){
+        if(!confirm('Are you sure you would like to delete this contact?')) {
+            e.preventDefault();
+        }
+    });
+
 });

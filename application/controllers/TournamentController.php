@@ -478,6 +478,22 @@ class TournamentController extends Zend_Controller_Action
         $this->view->contact = $contact;
     }
 
+    public function contactdeleteAction()
+    {
+        $contactId = $this->getRequest()->getUserParam('contact_id');
+
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
+        }
+
+        $tournamentMemberTable = new Model_DbTable_TournamentMember();
+        $member = $tournamentMemberTable->find($contactId)->current();
+
+        $member->delete();
+        $this->view->message('Tournament contact deleted', 'success');
+        $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
+    }
+
     public function adminAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/admin.css');

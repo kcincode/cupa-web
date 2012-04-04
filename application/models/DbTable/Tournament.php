@@ -19,7 +19,7 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         return false;
     }
 
-    public function createBlankTournament($year, $name)
+    public function createBlankTournament($year, $name, $userId)
     {
         $tournament = $this->createRow();
         $tournament->name = $name;
@@ -43,6 +43,22 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         $tournamentInfo->location_state = 'OH';
         $tournamentInfo->location_zip = '45209';
         $tournamentInfo->save();
+
+        $tournamentMemberTable = new Model_DbTable_TournamentMember();
+        $tournamentMember = $tournamentMemberTable->createRow();
+        $tournamentMember->tournament_id = $tournament->id;
+        $tournamentMember->user_id = $userId;
+        $tournamentMember->weight = $tournamentMemberTable->getHighestWeight($tournament->id);
+        $tournamentMember->type = 'director';
+        $tournamentMember->save();
+
+        $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
+        $tournamentUpdate = $tournamentUpdateTable->createRow();
+        $tournamentUpdate->tournament_id = $tournament->id;
+        $tournamentUpdate->posted = date('Y-m-d H:i:s');
+        $tournamentUpdate->title = 'Tournament Page Created';
+        $tournamentUpdate->content = 'The tournament page has been created  you may edit this to enter initial info.';
+        $tournamentUpdate->save();
 
         return $tournament;
 

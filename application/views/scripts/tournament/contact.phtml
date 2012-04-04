@@ -1,6 +1,7 @@
 <h1>Tournament Contacts</h1>
 
-<div class="actions">
+<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+<div class="page-actions">
     <a class="button" id="add-person" href="#">Add Person</a>
     <div id="add-person-container">
         <div class="row">
@@ -17,6 +18,7 @@
         </div>
     </div>
 </div>
+<?php endif; ?>
 <p class="blurb">
     This is a list of people associated with the tournament and role in case you need to know who to contact or get a hold of someone for more questions.
 </p>
@@ -34,9 +36,13 @@
         <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
         <?php endif; ?>
     <?php endif; ?>
+
+    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
     <div class="actions">
         <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
-        <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+        <a class="delete" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
     </div>
+    <?php endif; ?>
+    <div class="clearfix"></div>
 </div>
 <?php endforeach; ?>
