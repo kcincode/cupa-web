@@ -357,11 +357,37 @@ class TournamentController extends Zend_Controller_Action
     public function scheduleAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/schedule.css');
+        $this->view->section = 'schedule';
     }
 
     public function scheduleeditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/schedule.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->section = 'schedule';
+
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'schedule');
+
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/schedule');
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $this->view->tournamentInfo->scorereporter_link = (!empty($data['scorereporter_link'])) ? $data['scorereporter_link'] : null;
+                $this->view->tournamentInfo->schedule_text = $data['schedule_text'];
+                $this->view->tournamentInfo->save();
+
+                $this->view->message('Schedule updated.', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/schedule');
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
     }
 
     public function directionsAction()
@@ -396,6 +422,7 @@ class TournamentController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/contact.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/contact.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
+        $this->view->section = 'contact';
         $tournamentMemberTable = new Model_DbTable_TournamentMember();
 
         if($this->getRequest()->isPost()) {
@@ -432,6 +459,7 @@ class TournamentController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/contactedit.js');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
+        $this->view->section = 'contact';
 
         $contactId = $this->getRequest()->getUserParam('contact_id');
 
@@ -475,7 +503,6 @@ class TournamentController extends Zend_Controller_Action
         }
 
         $this->view->form = $form;
-        $this->view->contact = $contact;
     }
 
     public function contactdeleteAction()

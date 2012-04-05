@@ -1,4 +1,17 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>scheduleedit</b></p>
+<h1>Edit Schedule Information</h1>
+
+<div id="edit-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->scorereporter_link; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->schedule_text; ?>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_schedule'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>
+<?php echo $this->partial('tinymce.phtml', array('element' => 'schedule_text', 'css' => '/css/tournament/schedule.css')); ?>

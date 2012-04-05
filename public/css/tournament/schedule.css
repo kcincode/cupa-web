@@ -11,3 +11,72 @@ h2 {
     margin-left: 50px;
     padding: 5px;
 }
+
+#edit-container {
+    width: 750px;
+    margin: 50px auto;
+    padding: 20px;
+    -webkit-box-shadow: 0 0 7px #444;
+    -moz-box-shadow: 0 0 7px #444;
+    box-shadow: 0 0 7px #444;
+}
+
+#edit-container dt {
+    font-size: 12pt;
+    font-weight: bold;
+    width: 100px;
+    padding-top: 5px;
+    float: left;
+    text-align: right;
+    margin-right: 5px;
+}
+
+#scorereporter_link {
+    width: 510px;
+    height: 100px;
+    margin-top: 5px;
+}
+
+
+#edit-container p.description {
+    margin: 0 0 15px 65px;
+    padding: 0;
+    color: #808080;
+    font-size: 10pt;
+}
+
+#cost {
+    width: 45px;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+#bid_due {
+    width: 140px;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+#buttons-container {
+    margin-top: 40px;
+    text-align: center;
+}
+
+#buttons-container .button, button-red {
+    font-size: 14pt;
+    padding: 3px 25px;
+}
+
+ul.errors {
+    color: #c00;
+    list-style: none;
+    margin: 0 0 10px 70px;
+    padding: 0;
+}
+
+.page-actions {
+    text-align: center;
+    margin: 10px 0;
+}

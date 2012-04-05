@@ -1,5 +1,9 @@
 <h1>Schedule Information</h1>
-
+<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+<div class="page-actions">
+    <a class="button" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_schedule_edit'); ?>">Edit Schedule Information</a>
+</div>
+<?php endif; ?>
 <?php if(!empty($this->tournamentInfo->scorereporter_link)): ?>
 <h2>Score Reporter Link:</h2>
 <div id="score-reporter">

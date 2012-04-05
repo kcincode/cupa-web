@@ -354,4 +354,21 @@ class Form_TournamentEdit extends Zend_Form
         ));
     }
 
+    private function schedule()
+    {
+        $this->addElement('textarea', 'scorereporter_link', array(
+            'required' => false,
+            'description' => 'Leave blank to remove the link',
+            'label' => 'Score Reporter Link:',
+            'value' => (isset($this->_tournamentInfo->scorereporter_link)) ? $this->_tournamentInfo->scorereporter_link : null,
+        ));
+        $this->addElement('textarea', 'schedule_text', array(
+            'required' => true,
+            'description' => 'Enter the schedule information you want displayed on the page.',
+            'label' => 'Schedule Information:',
+            'rows' => 28,
+            'value' => (isset($this->_tournamentInfo->schedule_text)) ? $this->_tournamentInfo->schedule_text : null,
+        ));
+    }
+
 }
