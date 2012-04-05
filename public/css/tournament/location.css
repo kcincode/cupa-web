@@ -1,0 +1,21 @@
+.map {
+    width: 735px;
+    margin: 20px auto;
+    padding: 5px;
+}
+
+.map .title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18pt;
+}
+
+.map .address {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 14pt;
+}
+
+.page-actions {
+    text-align: center;
+}

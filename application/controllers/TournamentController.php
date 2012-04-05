@@ -390,12 +390,14 @@ class TournamentController extends Zend_Controller_Action
         $this->view->form = $form;
     }
 
-    public function directionsAction()
+    public function locationAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/location.css');
+        $this->view->section = 'location';
+
     }
 
-    public function directionseditAction()
+    public function locationeditAction()
     {
         // action body
     }
