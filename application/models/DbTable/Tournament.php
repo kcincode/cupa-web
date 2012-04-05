@@ -94,4 +94,25 @@ class Model_DbTable_Tournament extends Zend_Db_Table
 
         return $this->fetchRow($select);
     }
+
+    public function fetchAllTournamentsForPage($showHidden = false)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('t' => $this->_name), array('*'))
+                       ->join(array('ti' => 'tournament_information'), 'ti.tournament_id = t.id', array('start', 'end'))
+                       ->order('name')
+                       ->order('year ASC');
+
+        if(!$showHidden) {
+            $select->where('t.is_visible = ?', 1);
+        }
+
+        $data = array();
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            $data[$row['name']] = $row;
+            $data[$row['name']]['type'] = 'tournament';
+        }
+
+        return $data;
+    }
 }

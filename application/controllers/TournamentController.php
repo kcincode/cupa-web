@@ -523,6 +523,7 @@ class TournamentController extends Zend_Controller_Action
 
     public function adminAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/admin.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/admin.js');
         $form = new Form_TournamentEdit($this->view->tournament->id, 'admin');

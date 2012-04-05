@@ -517,6 +517,9 @@ class PageController extends Zend_Controller_Action
 
         $pickupTable = new Model_DbTable_Pickup();
         $this->view->pickups = $pickupTable->fetchAllPickups();
+
+        $tournamentTable = new Model_DbTable_Tournament();
+        $this->view->tournaments = $tournamentTable->fetchAllTournamentsForPage();
     }
 
     public function pickupaddAction()

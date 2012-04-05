@@ -35,7 +35,16 @@
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
     <h3>CUPA Sponsored Tournaments</h3>
-    <p>To be implemented.</p>
+    <?php foreach($this->tournaments as $tournament): ?>
+    <div class="tournament-container">
+        <a href="<?php echo $this->url(array('name' => $tournament['name']), 'tournament_home'); ?>"><?php echo $this->escape($tournament['display_name']); ?></a> -
+        <?php if($tournament['start'] == $tournament['end']): ?>
+        <?php echo $this->escape(date('F jS Y', strtotime($tournament['start']))); ?>
+        <?php else: ?>
+        <?php echo $this->escape(date('F jS', strtotime($tournament['start']))); ?> - <?php echo $this->escape(date('jS Y', strtotime($tournament['end']))); ?>
+        <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
 
     <h3>Pickup Ultimate Around Town</h3>
     <?php foreach($this->pickups['visible'] as $pickup): ?>

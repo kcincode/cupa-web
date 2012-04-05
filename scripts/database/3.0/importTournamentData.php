@@ -30,7 +30,7 @@ foreach($results as $row) {
         $progressBar->update($i);
     }
 
-    $tournament = $tournamentTable->createBlankTournament($row['year'], $row['link']);
+    $tournament = $tournamentTable->createBlankTournament($row['year'], $row['link'], $row['coordinator']);
     $tournament->name = $row['link'];
     $tournament->year = $row['year'];
     $tournament->display_name = $row['name'];
