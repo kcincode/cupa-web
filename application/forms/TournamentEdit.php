@@ -371,4 +371,43 @@ class Form_TournamentEdit extends Zend_Form
         ));
     }
 
+    public function location()
+    {
+        $this->addElement('text', 'location', array(
+            'required' => true,
+            'label' => 'Title:',
+            'filters' => array('StringTrim'),
+            'description' => 'Enter the name of the fields',
+            'value' => (isset($this->_tournamentInfo->location)) ? $this->_tournamentInfo->location : null,
+        ));
+
+        $this->addElement('text', 'location_street', array(
+            'required' => true,
+            'label' => 'Street:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->location_street)) ? $this->_tournamentInfo->location_street : null,
+        ));
+
+        $this->addElement('text', 'location_city', array(
+            'required' => true,
+            'label' => 'City:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->location_city)) ? $this->_tournamentInfo->location_city : null,
+        ));
+
+        $this->addElement('text', 'location_state', array(
+            'required' => true,
+            'label' => 'State:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->location_state)) ? $this->_tournamentInfo->location_state : null,
+        ));
+
+        $this->addElement('text', 'location_zip', array(
+            'required' => true,
+            'label' => 'Zipcode:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($this->_tournamentInfo->location_zip)) ? $this->_tournamentInfo->location_zip : null,
+        ));
+    }
+
 }

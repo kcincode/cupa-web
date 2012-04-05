@@ -1,4 +1,25 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Tournament</b> and script/action name <b>directionsedit</b></p>
+<h1>Edit Tournament Description</h1>
+
+<div id="edit-container">
+    <form method="post">
+        <div class="row">
+            <?php echo $this->form->location; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->location_street; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->location_city; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->location_state; ?>
+        </div>
+        <div class="row">
+            <?php echo $this->form->location_zip; ?>
+        </div>
+        <div id="buttons-container">
+            <input class="button" type="submit" value="Save"/>
+            <a class="button button-red" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_location'); ?>">Cancel</a>
+        </div>
+    </form>
 </div>

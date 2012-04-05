@@ -37,7 +37,6 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         $tournamentInfo->description = 'Enter the tournament description here.';
         $tournamentInfo->schedule_text = 'Enter any schedule information here.';
         $tournamentInfo->location = 'Enter the name of the field location';
-        $tournamentInfo->location_map = 'Create a google map and copy the link here';
         $tournamentInfo->location_street = '9999 street name';
         $tournamentInfo->location_city = 'Cincinnati';
         $tournamentInfo->location_state = 'OH';

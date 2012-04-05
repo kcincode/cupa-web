@@ -799,12 +799,10 @@ function createTournamentInformationTable($db)
           `schedule_text` text NOT NULL,
           `scorereporter_link` text DEFAULT NULL,
           `location` varchar(255) NOT NULL,
-          `location_map` text NOT NULL,
           `location_street` varchar(255) NOT NULL,
           `location_city` varchar(150) NOT NULL,
           `location_state` varchar(2) NOT NULL,
           `location_zip` int(11) NOT NULL,
-          `hotel_link` text DEFAULT NULL,
           `photo_link` text DEFAULT NULL,
           PRIMARY KEY  (`tournament_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8");

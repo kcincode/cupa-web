@@ -64,7 +64,6 @@ foreach($results as $row) {
     $tournamentInfo->schedule_text = $row['schedule_info'];
     $tournamentInfo->scorereporter_link = $row['results_link'];
     $tournamentInfo->location = $row['location'];
-    $tournamentInfo->location_map = $row['location_link'];
 
     $matches = array();
     preg_match('/(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)/', $row['address'], $matches);
@@ -73,7 +72,6 @@ foreach($results as $row) {
     $tournamentInfo->location_city = (isset($matches[2])) ? $matches[2] : 'Unknown';
     $tournamentInfo->location_state = (isset($matches[3])) ? $matches[3] : 'Unknown';
     $tournamentInfo->location_zip = (isset($matches[4])) ? $matches[4] : 'Unknown';
-    $tournamentInfo->hotel_link = null;
     $tournamentInfo->photo_link = null;
     $tournamentInfo->save();
 

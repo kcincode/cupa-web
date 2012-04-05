@@ -399,7 +399,21 @@ class TournamentController extends Zend_Controller_Action
 
     public function locationeditAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/location.css');
+        $this->view->section = 'location';
+
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'location');
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                Zend_Debug::dump($data);
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
     }
 
     public function lodgingAction()
