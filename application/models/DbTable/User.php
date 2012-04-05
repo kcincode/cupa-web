@@ -154,7 +154,6 @@ class Model_DbTable_User extends Zend_Db_Table
 
         // get the public user profile data
         $userProfileTable = new Model_DbTable_UserProfile();
-        $userLevelTable = new Model_DbTable_UserLevel();
         $userProfile = $userProfileTable->find($user->id)->current();
         $data['profile'] = array(
             'nickname' => $userProfile->nickname,

@@ -4,7 +4,7 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
 {
     protected $_name = 'league_game';
     protected $_primary = 'id';
-    
+
     public function fetchGame($leagueId, $date, $week, $field)
     {
         $select = $this->select()
@@ -12,12 +12,16 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
                        ->where('day = ?', $date)
                        ->where('week = ?', $week)
                        ->where('field = ?', $field);
-        
+
         return $this->fetchRow($select);
     }
 
     public function fetchRecord($leagueId, $teamId)
     {
+        if(!is_numeric($teamId)) {
+            return '0-0-0';
+        }
+
         $select = $this->getAdapter()->select()
                        ->from(array('lg' => $this->_name), array())
                        ->join(array('lgdteam' => 'league_game_data'), 'lgdteam.league_game_id = lg.id', array('score AS team'))
@@ -53,7 +57,7 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
                        ->order('lg.week ASC')
                        ->order('lg.day ASC')
                        ->order('lg.field ASC');
-        
+
         $data = array();
         foreach($this->getAdapter()->fetchAll($select) as $row) {
             $data[$row['week']][$row['field']] = $row;
@@ -61,11 +65,11 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
 
         return $data;
     }
-    
+
     public function createGame($leagueId, $date, $week, $field)
     {
         $result = $this->fetchGame($leagueId, $date, $week, $field);
-        
+
         if(!$result) {
             return $this->insert(array(
                 'league_id' => $leagueId,
@@ -77,7 +81,7 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
             return $result->id;
         }
     }
-    
+
     public function fetchHeadToHead($leagueId, $team1, $team2)
     {
         $select = $this->getAdapter()->select()
@@ -88,14 +92,14 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
                        ->where('lgdaway.type = ?', 'away')
                        ->where('lgdhome.type = ?', 'home')
                        ->where("(lgdaway.league_team_id = '{$team1['id']}' AND lgdhome.league_team_id = '{$team2['id']}') OR (lgdaway.league_team_id = '{$team2['id']}' AND lgdhome.league_team_id = '{$team1['id']}')");
-        
+
         $result = $this->getAdapter()->fetchAll($select);
-        
+
         $wins = array(
             $team1['id'] => 0,
             $team2['id'] => 0,
         );
-        
+
         foreach($result as $row) {
             if($row['away_score'] > $row['home_score']) {
                 $wins[$row['away_team']]++;
@@ -103,11 +107,11 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
                 $wins[$row['home_team']]++;
             }
         }
-        
+
         if($wins[$team1['id']] == $wins[$team2['id']]) {
             return 0;
         } else {
-            return ($wins[$team1['id']] > $wins[$team2['id']]) ? -1 : 1; 
+            return ($wins[$team1['id']] > $wins[$team2['id']]) ? -1 : 1;
         }
     }
 

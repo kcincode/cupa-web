@@ -15,11 +15,11 @@
 }
 
 #userteams .name {
-    width: 300px;
+    width: 200px;
 }
 
 #userteams .request {
-    width: 200px;
+    width: 300px;
 }
 
 #userteams .header div {
@@ -38,5 +38,5 @@
 }
 
 #userteams .even div {
-    background-color: #fff;    
+    background-color: #fff;
 }
