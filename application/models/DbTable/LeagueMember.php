@@ -22,37 +22,43 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     public function fetchUniqueDirectors()
     {
         $data = array();
-        $data['league'] = array();
-        foreach(array('Winter', 'Spring', 'Summer', 'Fall') as $season) {
-            $select = $this->getAdapter()->select()
-                           ->from(array('l' => 'league', array('id')))
+        $select = $this->getAdapter()->select()
+                           ->from(array('l' => 'league', array('id', 'year', 'day', 'name', 'season')))
                            ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array())
                            ->joinLeft(array('lm' => 'league_member'), 'lm.league_id = l.id', array('user_id'))
-                           ->where('li.is_clinic = ?', 0)
-                           ->where('li.is_hat = ?', 0)
-                           ->where('l.season = ?', $season)
+                           ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array())
                            ->where('lm.position = ?', 'director')
+                           ->where('l.year >= ?', date('Y') - 1)
+                           ->order('u.last_name')
+                           ->order('u.first_name')
                            ->order('l.year DESC');
-
-            $stmt = $this->getAdapter()->query($select);
-            $prevYear = null;
-            foreach($stmt->fetchAll() as $row) {
-                if($prevYear == null or $prevYear <= $row['year']) {
-                    $data['league'][$season][] = array(
-                        'year' => $row['year'],
-                        'user_id' => $row['user_id'],
-                        'league_id' => $row['id'],
-                    );
-
-                    $prevYear = $row['year'];
-                }
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            $league = $row['year'] . ' ' . $row['day'] . ' ' . $row['name'];
+            if(!empty($row['season'])) {
+                $league .= ' League';
             }
+            $data['league'][$row['user_id']][] = array(
+                'name' => $league,
+                'link' => '/league/' . $row['id'],
+            );
         }
 
-        $data['youth'] = array();
-        $data['clinic'] = array();
-        $data['tournament'] = array();
-        $data['other'] = array();
+        $select = $this->getAdapter()->select()
+                           ->from(array('t' => 'tournament', array('id', 'year', 'display_name')))
+                           ->joinLeft(array('tm' => 'tournament_member'), 'tm.tournament_id = t.id', array('user_id', 'name AS overName'))
+                           ->joinLeft(array('u' => 'user'), 'u.id = tm.user_id', array())
+                           ->where('tm.type = ?', 'director')
+                           ->where('t.is_visible = ?', 1)
+                           ->order('t.year DESC');
+
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            if(!empty($row['user_id'])) {
+                $data['tournament'][$row['user_id']][] = array(
+                    'name' => $row['year'] . ' ' . $row['display_name'],
+                    'link' => '/tournament/' . $row['name'] . '/' . $row['year'],
+                );
+            }
+        }
 
         return $data;
     }

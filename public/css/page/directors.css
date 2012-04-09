@@ -1,18 +1,29 @@
 h3 {
-    font-size: 18pt;
+    font-size: 22pt;
+}
+
+h3.pad {
+   padding-top: 40px;
 }
 
 .director {
-    float: left;
-    width: 300px;
+    float: right;
+    width: 650px;
     padding: 10px;
+    text-align: right;
 }
 
 .name {
-    font-size: 14pt;
+    font-size: 18pt;
     font-weight: bold;
 }
 
-.league {
-    color: #c55; 
+.league a {
+    font-size: 12pt;
+    color: #c55;
+    text-decoration: none;
+}
+
+.league a:hover {
+    text-decoration: underline;
 }
