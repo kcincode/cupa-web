@@ -427,7 +427,31 @@ class TournamentController extends Zend_Controller_Action
 
     public function lodgingeditAction()
     {
-        // action body
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
+        }
+    }
+
+    public function lodgingdeleteAction()
+    {
+        // disable the layout
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
+        }
+
+        $lodgingId = $this->getRequest()->getUserParam('lodging_id');
+
+        $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
+        $lodging = $tournamentLodgingTable->find($lodgingId)->current();
+        if($lodging) {
+            $lodging->delete();
+            $this->view->message('Lodging deleted successfully.', 'success');
+        }
+        
+        $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
     }
 
     public function lodgingaddAction()

@@ -3,11 +3,13 @@
     <head>
         <title>CUPA - Cincinnati Ultimate Player Association</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=0" />
         <?php if(APPLICATION_ENV != 'production' and APPLICATION_ENV != 'testing'): ?>
         <meta http-equiv="EXPIRES" content="0" />
         <?php endif; ?>
         <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/ie-fix.css" type="text/css" media="all" />
         <![endif]-->
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/style.css" type="text/css" media="all" />
         <?php echo $this->headLink() . "\n"; ?>

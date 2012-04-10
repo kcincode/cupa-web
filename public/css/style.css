@@ -118,12 +118,17 @@ header .home-image {
 }
 
 nav ul {
-    background-color: #fff;
+    background-color: #00f;
+    height: 74px;
+}
+
+nav ul li {
+    width: 160px;
+    float: left;
 }
 
 nav ul li a {
     display: block;
-    float: left;
     width: 158px;
     padding: 40px 0 10px 0;
     background-color: #444;
@@ -291,7 +296,7 @@ ul.error_list {
 
 .login-row dt {
     text-align: left;
-    marign: 0;
+    margin: 0;
     font-weight: bold;
 }
 
@@ -301,6 +306,7 @@ ul.error_list {
 
 .login-row dd {
     margin: 0;
+    padding: 0;
 }
 
 .login-row input {
