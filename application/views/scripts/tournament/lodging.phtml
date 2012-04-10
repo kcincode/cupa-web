@@ -23,7 +23,7 @@
         <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
         <div class="actions">
             <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png" title="Edit Lodging"/></a>
-            <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Remove Lodging"/></a>
+            <a class="delete" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Remove Lodging"/></a>
         </div>
         <?php endif; ?>
         <div class="title">

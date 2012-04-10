@@ -410,4 +410,112 @@ class Form_TournamentEdit extends Zend_Form
         ));
     }
 
+    private function lodging()
+    {
+        $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
+        $lodging = $tournamentLodgingTable->find($this->_id)->current();
+
+        $this->addElement('text', 'title', array(
+            'required' => true,
+            'label' => 'Title:',
+            'filters' => array('StringTrim'),
+            'description' => 'Enter the name of the lodging',
+            'value' => (isset($lodging->title)) ? $lodging->title : null,
+        ));
+
+        $this->addElement('text', 'street', array(
+            'required' => true,
+            'label' => 'Street:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($lodging->street)) ? $lodging->street : null,
+        ));
+
+        $this->addElement('text', 'city', array(
+            'required' => true,
+            'label' => 'City:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($lodging->city)) ? $lodging->city : null,
+        ));
+
+        $states = array(
+            '0' => 'Select a State',
+            'AL' => "Alabama",
+            'AK' => "Alaska",
+            'AZ' => "Arizona",
+            'AR' => "Arkansas",
+            'CA' => "California",
+            'CO' => "Colorado",
+            'CT' => "Connecticut",
+            'DE' => "Delaware",
+            'DC' => "District Of Columbia",
+            'FL' => "Florida",
+            'GA' => "Georgia",
+            'HI' => "Hawaii",
+            'ID' => "Idaho",
+            'IL' => "Illinois",
+            'IN' => "Indiana",
+            'IA' => "Iowa",
+            'KS' => "Kansas",
+            'KY' => "Kentucky",
+            'LA' => "Louisiana",
+            'ME' => "Maine",
+            'MD' => "Maryland",
+            'MA' => "Massachusetts",
+            'MI' => "Michigan",
+            'MN' => "Minnesota",
+            'MS' => "Mississippi",
+            'MO' => "Missouri",
+            'MT' => "Montana",
+            'NE' => "Nebraska",
+            'NV' => "Nevada",
+            'NH' => "New Hampshire",
+            'NJ' => "New Jersey",
+            'NM' => "New Mexico",
+            'NY' => "New York",
+            'NC' => "North Carolina",
+            'ND' => "North Dakota",
+            'OH' => "Ohio",
+            'OK' => "Oklahoma",
+            'OR' => "Oregon",
+            'PA' => "Pennsylvania",
+            'RI' => "Rhode Island",
+            'SC' => "South Carolina",
+            'SD' => "South Dakota",
+            'TN' => "Tennessee",
+            'TX' => "Texas",
+            'UT' => "Utah",
+            'VT' => "Vermont",
+            'VA' => "Virginia",
+            'WA' => "Washington",
+            'WV' => "West Virginia",
+            'WI' => "Wisconsin",
+            'WY' => "Wyoming");
+
+        $stateValues = $states;
+        unset($stateValues[0]);
+
+        $this->addElement('select', 'state', array(
+            'filters' => array('StringTrim'),
+            'multiOptions' => $states,
+            'validators' => array(
+                array('InArray', false, array(array_keys($stateValues), 'messages' => array('notInArray' => 'Please select a state'))),
+            ),
+            'required' => true,
+            'label' => 'State:',
+            'value' => (isset($lodging->state)) ? $lodging->state : null,
+        ));
+        $this->addElement('text', 'zip', array(
+            'required' => true,
+            'label' => 'Zipcode:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($lodging->zip)) ? $lodging->zip : null,
+        ));
+
+        $this->addElement('textarea', 'other', array(
+            'required' => false,
+            'label' => 'Other infomation:',
+            'filters' => array('StringTrim'),
+            'value' => (isset($lodging->other)) ? $lodging->other : null,
+        ));
+    }
 }

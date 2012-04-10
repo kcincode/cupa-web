@@ -54,3 +54,61 @@
     text-align: center;
     margin: 10px 0;
 }
+
+#edit-container {
+    width: 450px;
+    margin: 50px auto;
+    padding: 20px;
+    -webkit-box-shadow: 0 0 7px #444;
+    -moz-box-shadow: 0 0 7px #444;
+    box-shadow: 0 0 7px #444;
+}
+
+#edit-container dt {
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 7px;
+    margin: 0 5px 0 0;
+    float: left;
+    width: 100px;
+    text-align: right;
+}
+
+#edit-container dd input {
+    padding: 5px;
+    width: 300px;
+    margin: 5px 0;
+}
+
+#edit-container dd select {
+    font-size: 12pt;
+    margin: 5px 0;
+}
+
+#edit-container textarea {
+    width: 308px;
+    height: 100px;
+}
+
+#buttons-container {
+    margin-top: 40px;
+    text-align: center;
+}
+
+#buttons-container .button, #buttons-container .button-red {
+    font-size: 14pt;
+    padding: 3px 25px;
+}
+
+p.description {
+    color: #a0a0a0;
+    margin: 0 0 10px 55px;
+    padding: 0;
+}
+
+ul.errors {
+    color: #c00;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}

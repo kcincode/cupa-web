@@ -427,9 +427,24 @@ class TournamentController extends Zend_Controller_Action
 
     public function lodgingeditAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/lodging.css');
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
         }
+        $lodgingId = $this->getRequest()->getUserParam('lodging_id');
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'lodging', $lodgingId);
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                Zend_Debug::dump($data);
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
     }
 
     public function lodgingdeleteAction()
@@ -450,7 +465,7 @@ class TournamentController extends Zend_Controller_Action
             $lodging->delete();
             $this->view->message('Lodging deleted successfully.', 'success');
         }
-        
+
         $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
     }
 
