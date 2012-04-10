@@ -11,7 +11,7 @@ $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
 $db = $userTable->getAdapter();
 
 $dropTables = array('tournament_member','tournament_update', 'tournament_team', 'tournament_information', 'tournament_division',
-                    'tournament', 'user_password_reset', 'user_role', 'user_level', 'user_profile', 'page',
+                    'tournament_lodging', 'tournament', 'user_password_reset', 'user_role', 'user_level', 'user_profile', 'page',
                     'news', 'news_category', 'club_captain', 'club', 'officer', 'pickup', 'user_emergency', 'league_question_list',
                     'league_answer', 'league_question', 'league_game_data', 'league_game', 'league_member',
                     'league_team', 'league_information', 'league_limit', 'league_location', 'league', 'league_season',
@@ -760,6 +760,29 @@ function createTournamentTable($db)
         `is_visible` tinyint(1) NOT NULL,
         PRIMARY KEY  (`id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+}
+
+function createTournamentLodgingTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `tournament_lodging` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `tournament_id` int(11) NOT NULL,
+        `title` varchar(255) NOT NULL,
+        `link` varchar(255) NOT NULL,
+        `street` varchar(255) NOT NULL,
+        `city` varchar(50) NOT NULL,
+        `state` varchar(2) NOT NULL,
+        `zip` varchar(5) NOT NULL,
+        `phone` varchar(12) NOT NULL,
+        `other` text DEFAULT NULL,
+        PRIMARY KEY (`id`),
+        KEY `tournament_id` (`tournament_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+
+    $db->query("
+        ALTER TABLE `tournament_lodging`
+            ADD CONSTRAINT `tournament_lodging_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function createTournamentDivisionTable($db)

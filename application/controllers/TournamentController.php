@@ -394,7 +394,6 @@ class TournamentController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/location.css');
         $this->view->section = 'location';
-
     }
 
     public function locationeditAction()
@@ -418,7 +417,12 @@ class TournamentController extends Zend_Controller_Action
 
     public function lodgingAction()
     {
-        // action body
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/lodging.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/lodging.js');
+        $this->view->section = 'location';
+
+        $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
+        $this->view->lodging = $tournamentLodgingTable->fetchAllLodgings($this->view->tournament->id);
     }
 
     public function lodgingeditAction()
@@ -566,6 +570,4 @@ class TournamentController extends Zend_Controller_Action
 
         $this->view->form = $form;
     }
-
-
 }

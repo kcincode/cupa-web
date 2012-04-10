@@ -1,0 +1,56 @@
+.map {
+    float: right;
+    width: 435px;
+    margin: 20px auto;
+    padding: 5px;
+    text-align: center;
+}
+
+.map iframe {
+    -webkit-box-shadow: 0 0 10px #444;
+    -moz-box-shadow: 0 0 10px #444;
+    box-shadow: 0 0 10px #444;
+}
+
+.map .title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18pt;
+}
+
+#lodging {
+    float: left;
+    width: 435px;
+    padding: 15px;
+}
+
+#lodging .item {
+    padding: 5px;
+    margin: 10px 0;
+}
+
+#lodging .item.highlight {
+    background-color: #efefef;
+    -webkit-box-shadow: inset 0 0 10px #888;
+    -moz-box-shadow: inset 0 0 10px #888;
+    box-shadow: inset 0 0 10px #888;
+}
+
+#lodging .title {
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+#lodging .actions {
+    float: right;
+}
+
+#lodging .actions a img {
+    width: 20px;
+    height: 20px;
+}
+
+.page-actions {
+    text-align: center;
+    margin: 10px 0;
+}

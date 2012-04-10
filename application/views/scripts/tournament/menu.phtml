@@ -9,6 +9,8 @@
     <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_schedule'); ?>">Schedule</a></li>
     <?php $active = ($this->section == 'location') ? ' class="active"' : ''; ?>
     <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_location'); ?>">Location</a></li>
+    <?php $active = ($this->section == 'lodging') ? ' class="active"' : ''; ?>
+    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_lodging'); ?>">Lodging</a></li>
     <?php $active = ($this->section == 'contact') ? ' class="active"' : ''; ?>
     <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">Contact</a></li>
 </ul>

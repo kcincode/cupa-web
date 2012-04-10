@@ -8,6 +8,7 @@ $tournamentTeamTable = new Model_DbTable_TournamentTeam();
 $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
 $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
 $tournamentMemberTable = new Model_DbTable_TournamentMember();
+$tournamentLodgingTable = new Model_DbTable_TournamentLodging();
 
 $stmt = $origDb->prepare('SELECT * FROM tournaments');
 $stmt->execute();
@@ -115,7 +116,7 @@ foreach($results as $row) {
     $tournamentTeam = $tournamentTeamTable->createRow();
     $tournamentTeam->tournament_id = $row['tournament_id'];
     $tournamentTeam->name = $row['team'];
-    list($city, $state) = explode(',', $row['location']);
+   list($city, $state) = explode(',', $row['location']);
     $tournamentTeam->city = trim($city);
     $tournamentTeam->state = trim($state);
     $tournamentTeam->contact_name = $row['contact_name'];
@@ -140,6 +141,61 @@ if(DEBUG) {
     echo "    Done\n";
 } else {
     $progressBar->update($totalTeams);
+    echo "\n";
+}
+
+$stmt = $origDb->prepare('SELECT * FROM tournament_hotels');
+$stmt->execute();
+$results = $stmt->fetchAll();
+$total = count($results);
+
+if(DEBUG) {
+    echo "    Importing `TournamentLodging` data:\n";
+} else {
+    echo "    Importing $total Tournament Lodgings:\n";
+    $progressBar = new Console_ProgressBar('    [%bar%] %percent%', '=>', '-', 50, $total);
+}
+
+$i = 0;
+$tournamentTable->getAdapter()->beginTransaction();
+foreach($results as $row) {
+    if(DEBUG) {
+        echo "        Importing tournament Lodging `{$row['name']}`...";
+    } else {
+        $progressBar->update($i);
+    }
+
+    $matches = array();
+    preg_match('/(.*)<br \/>(.*), ([A-Z][A-Z]) (\d*)/', $row['address'], $matches);
+    if(count($matches) == 5) {
+        $tournamentLodging = $tournamentLodgingTable->createRow();
+        $tournamentLodging->tournament_id = $row['tournament_id'];
+        $tournamentLodging->title = $row['name'];
+        $tournamentLodging->link = (empty($row['link'])) ? 'http://cincyultimate.org' : $row['link'];
+        $tournamentLodging->street = trim($matches[1]);
+        $tournamentLodging->city = trim($matches[2]);
+        $tournamentLodging->state = trim($matches[3]);
+        $tournamentLodging->zip = trim($matches[4]);
+        $phone = array();
+        preg_match('/(\d\d\d-\d\d\d-\d\d\d\d)/', $row['phone'], $phone);
+        $tournamentLodging->phone = (count($phone) == 2) ? trim($phone[1]) : 'Unknown';
+        $tournamentLodging->other = null;
+        $tournamentLodging->save();
+    }
+
+
+    if(DEBUG) {
+       echo "Done\n";
+    }
+
+    $i++;
+}
+$tournamentTable->getAdapter()->commit();
+
+if(DEBUG) {
+    echo "    Done\n";
+} else {
+    $progressBar->update($total);
     echo "\n";
 }
 

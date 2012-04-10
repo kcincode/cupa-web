@@ -9,9 +9,14 @@ class My_View_Helper_GenerateMapSearchUrl extends Zend_View_Helper_Abstract
         $this->view = $view;
     }
 
-    public function generateMapSearchUrl($tournamentInfo)
+    public function generateMapSearchUrl($tournamentInfo, $hotels = false)
     {
         $url = 'http://maps.google.com/maps?q=';
+        
+        if($hotels) {
+            $url .= 'hotels+near+';
+        }
+
         $url .= $tournamentInfo->location_street;
         $url .= '+' . $tournamentInfo->location_city;
         $url .= '+' . $tournamentInfo->location_state;
@@ -20,4 +25,5 @@ class My_View_Helper_GenerateMapSearchUrl extends Zend_View_Helper_Abstract
 
         return $url;
     }
+
 }
