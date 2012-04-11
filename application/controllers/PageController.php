@@ -85,7 +85,7 @@ class PageController extends Zend_Controller_Action
                 $page->last_updated_by = $this->view->user->id;
                 $page->save();
 
-                $this->view->message('Page updated successfully.', 'success');
+                $this->view->message('Page updated', 'success');
                 $this->_redirect('/' . $page->name);
             } else {
                 $form->populate($post);
@@ -134,7 +134,7 @@ class PageController extends Zend_Controller_Action
                 $page->last_updated_by = $this->view->user->id;
                 $page->save();
 
-                $this->view->message('Page updated successfully.', 'success');
+                $this->view->message('Page updated', 'success');
                 $this->_redirect('/' . $page->name);
             } else {
                 $form->populate($post);
@@ -166,7 +166,7 @@ class PageController extends Zend_Controller_Action
                 $data = $form->getValues();
 
                 Model_Email::sendContactEmail($data);
-                $this->view->message('Email sent successfully.', 'success');
+                $this->view->message('Email sent', 'success');
                 $this->_redirect('/contact');
             } else {
                 // display the form errors
@@ -234,7 +234,7 @@ class PageController extends Zend_Controller_Action
                 $officer->description = $data['description'];
                 $officer->save();
 
-                $this->view->message('Officer updated successfully.', 'success');
+                $this->view->message('Officer updated', 'success');
                 $this->_redirect('/officers');
             } else {
                 $form->populate($post);
@@ -279,7 +279,7 @@ class PageController extends Zend_Controller_Action
             $officer->weight = $officerTable->getNextWeight($post['position']);
             $officer->save();
 
-            $this->view->message('Officer created successfully.');
+            $this->view->message('Officer created');
             echo Zend_Json::encode(array('result' => 'success', 'data' => $officer->id));
         }
     }
@@ -306,7 +306,7 @@ class PageController extends Zend_Controller_Action
         }
 
         $officer->delete();
-        $this->view->message('Officer deleted successfully.', 'success');
+        $this->view->message('Officer deleted', 'success');
         $this->_redirect('/officers');
     }
 
@@ -378,7 +378,7 @@ class PageController extends Zend_Controller_Action
                     }
 
                     $minute->save();
-                    $this->view->message('Meeting minutes updated successfully.', 'success');
+                    $this->view->message('Meeting minutes updated.', 'success');
                     $this->_redirect('/board_meeting_minutes');
                 } else {
                     $form->populate($post);
@@ -422,7 +422,7 @@ class PageController extends Zend_Controller_Action
             $minute->is_visible = 0;
             $minute->save();
 
-            $this->view->message('Minutes created successfully.', 'success');
+            $this->view->message('Minutes created', 'success');
             echo Zend_Json::encode(array('result' => 'success', 'data' => $minute->id));
         }
 
@@ -563,7 +563,7 @@ class PageController extends Zend_Controller_Action
                 $pickup->is_visible = 0;
                 $pickup->save();
 
-                $this->view->message('Pickup created successfully.', 'success');
+                $this->view->message('Pickup created', 'success');
                 echo Zend_Json::encode(array('result' => 'success', 'data' => $pickup->id));
                 return;
             } else {
@@ -611,7 +611,7 @@ class PageController extends Zend_Controller_Action
             $pickup->is_visible = $post['is_visible'];
             $pickup->save();
 
-            $this->view->message('Pickup updated successfully.', 'success');
+            $this->view->message('Pickup updated', 'success');
             $this->_redirect('/pickup');
         }
 
@@ -633,7 +633,7 @@ class PageController extends Zend_Controller_Action
 
         $pickup->delete();
 
-        $this->view->message('Pickup deleted successfully.', 'success');
+        $this->view->message('Pickup deleted', 'success');
         $this->_redirect('/pickup');
     }
 
@@ -680,7 +680,7 @@ class PageController extends Zend_Controller_Action
                 $club->last_updated_by = $this->view->user->id;
                 $club->save();
 
-                $this->view->message('Club Team created successfully.');
+                $this->view->message('Club Team created');
                 echo Zend_Json::encode(array('result' => 'success', 'data' => $club->id));
             } else {
                 $this->_helper->viewRenderer->setNoRender(true);
@@ -743,7 +743,7 @@ class PageController extends Zend_Controller_Action
                 $clubCaptainTable = new Model_DbTable_ClubCaptain();
                 $clubCaptainTable->updateCaptains($data['captains'], $club->id);
 
-                $this->view->message('Team ' . $club->name . ' updated successfully.', 'success');
+                $this->view->message('Team ' . $club->name . ' updated', 'success');
                 $this->_redirect('/clubs');
             } else {
                 $form->populate($post);
@@ -877,7 +877,7 @@ class PageController extends Zend_Controller_Action
                 $news->edited_at = date('Y-m-d H:i:s');
                 $news->save();
 
-                $this->view->message('News item created successfully.');
+                $this->view->message('News item created');
                 echo Zend_Json::encode(array('result' => 'success', 'data' => $news->id));
             } else {
                 $this->_helper->viewRenderer->setNoRender(true);
@@ -917,7 +917,7 @@ class PageController extends Zend_Controller_Action
             $news->last_edited_by = $this->view->user->id;
             $news->save();
 
-            $this->view->message('News item updated successfully.', 'success');
+            $this->view->message('News item updated', 'success');
             $this->_redirect('/news/' . $news->slug);
         }
 
@@ -1117,7 +1117,7 @@ class PageController extends Zend_Controller_Action
                     $formData->modified_at = date('Y-m-d H:i:s');
                     $formData->modified_by = $this->view->user->id;
                     $formData->save();
-                    $this->view->message('Form ' . $formData->year . ' ' . $formData->name . ' updated successfully.', 'success');
+                    $this->view->message('Form ' . $formData->year . ' ' . $formData->name . ' updated', 'success');
                     $this->_redirect('forms');
                 }
             } else {
@@ -1154,7 +1154,7 @@ class PageController extends Zend_Controller_Action
             $this->_redirect('/forms');
         }
 
-        $this->view->message('Form ' . $form->year . '_' . $form->name . ' deleted successfully.', 'success');
+        $this->view->message('Form ' . $form->year . '_' . $form->name . ' deleted', 'success');
         $form->delete();
         $this->_redirect('forms');
     }
@@ -1191,7 +1191,7 @@ class PageController extends Zend_Controller_Action
                 $tournament = $tournamentTable->createBlankTournament($post['year'], $post['tournament'], $this->view->user->id);
                 if($tournament) {
 
-                    $this->view->message('Tournament created successfully.', 'success');
+                    $this->view->message('Tournament created', 'success');
                     echo Zend_Json::encode(array('result' => 'success', 'data' => '/tournament/' . $tournament->name . '/' . $tournament->year));
                     return;
                 }

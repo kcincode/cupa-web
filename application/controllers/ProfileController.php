@@ -257,7 +257,7 @@ class ProfileController extends Zend_Controller_Action
 
         if($weight == count($data['name'])) {
             $userEmergencyTable->updateContacts($user->id, $data['name'], $data['phone']);
-            $this->view->message('Emergency contacts updated successfully.', 'success');
+            $this->view->message('Emergency contacts updated', 'success');
             $this->_redirect('profile/contacts');
         }
     }

@@ -225,7 +225,7 @@ class AuthController extends Zend_Controller_Action
                             $user->last_login = date('Y-m-d H:i:s');
                             $user->is_active = 1;
                             $user->save();
-                            $this->view->message('You have successfully activated your account, you may now login with the password you entered.');
+                            $this->view->message('Activated your account, you may now login with the password you entered.');
                             $this->_redirect('/');
                         } else {
                             $this->view->message('An error occured please try again, if it persists please contact the webmaster.', 'error');
@@ -287,7 +287,7 @@ class AuthController extends Zend_Controller_Action
                             if($userId) {
                                 $passwordReset->completed_at = date('Y-m-d H:i:s');
                                 $passwordReset->save();
-                                $this->view->message('You have successfully reset your password, you may now login with that password.');
+                                $this->view->message('Password reset, you may now login with that password.');
                                 $this->_redirect('/');
                             } else {
                                 $this->view->message('An error occured please try again, if it persists please contact the webmaster.', 'error');

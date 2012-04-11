@@ -78,7 +78,7 @@ class TournamentController extends Zend_Controller_Action
                     'posted' => date('Y-m-d H:i:s'),
                 ));
 
-                $this->view->message('Tournament update created successfully.');
+                $this->view->message('Tournament update created.', 'success');
                 echo Zend_Json::encode(array('result' => 'success', 'url' => $this->view->baseUrl() . '/tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/updateedit/' . $updateId));
             } else {
                 echo Zend_Json::encode(array('result' => 'error', 'message' => 'Name Already Exists'));
@@ -116,7 +116,7 @@ class TournamentController extends Zend_Controller_Action
                 $this->view->tournamentInfo->description = $data['description'];
                 $this->view->tournamentInfo->save();
 
-                $this->view->message('Description updated successfully.', 'success');
+                $this->view->message('Description updated.', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
             } else {
                 $form->populate($post);
@@ -155,7 +155,7 @@ class TournamentController extends Zend_Controller_Action
                 $update->content = $data['content'];
                 $update->save();
 
-                $this->view->message('Tournament update successfully updated.', 'success');
+                $this->view->message('Tournament update', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
             } else {
                 $form->populate($post);
@@ -176,7 +176,7 @@ class TournamentController extends Zend_Controller_Action
         $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
         $update = $tournamentUpdateTable->find($updateId)->current();
         $update->delete();
-        $this->view->message('Tournament update removed successfully.', 'success');
+        $this->view->message('Tournament update removed', 'success');
         $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
     }
 
@@ -210,7 +210,7 @@ class TournamentController extends Zend_Controller_Action
                     $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
                     $division = $tournamentDivisionTable->find($data['division'])->current();
 
-                    $this->view->message('Bid for the team `' . $data['name'] . '` in the `' . $division->name . '` division submitted successfully.', 'success');
+                    $this->view->message('Bid for the team `' . $data['name'] . '` in the `' . $division->name . '` division submitted', 'success');
                     $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/payment');
 
                 } else {
@@ -252,7 +252,7 @@ class TournamentController extends Zend_Controller_Action
                 $this->view->tournamentInfo->mail_payment = (empty($data['mail_payment'])) ? null : $data['mail_payment'];
                 $this->view->tournamentInfo->save();
 
-                $this->view->message('Bid setting saved successfully.', 'success');
+                $this->view->message('Bid setting saved', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/bid');
 
             } else {
@@ -288,7 +288,7 @@ class TournamentController extends Zend_Controller_Action
                 if($tournamentTeamTable->isUnique($this->view->tournament->id, $post['team'], $post['division'])) {
                     $teamId = $tournamentTeamTable->createTeam($this->view->tournament->id, $post['team'], $post['division']);
 
-                    $this->view->message('Basic team created successfully.', 'success');
+                    $this->view->message('Basic team created', 'success');
                     echo Zend_Json::encode(array('result' => 'success', 'url' => $this->view->baseUrl() . '/tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teamedit/' . $teamId));
                     return;
                 } else {
@@ -319,7 +319,7 @@ class TournamentController extends Zend_Controller_Action
         $team = $tournamentTeamTable->find($teamId)->current();
         if($team) {
             $team->delete();
-            $this->view->message('Team deleted successfully.', 'success');
+            $this->view->message('Team deleted', 'success');
         }
 
         $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
@@ -343,7 +343,7 @@ class TournamentController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $tournamentTeamTable->updateValues($teamId, $data);
-                $this->view->message('Updated team successfully', 'success');
+                $this->view->message('Updated team', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
             } else {
                 $form->populate($post);
@@ -401,12 +401,24 @@ class TournamentController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/location.css');
         $this->view->section = 'location';
 
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/location');
+        }
+
         $form = new Form_TournamentEdit($this->view->tournament->id, 'location');
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                Zend_Debug::dump($data);
+                $this->view->tournamentInfo->location = $data['location'];
+                $this->view->tournamentInfo->location_street = $data['location_street'];
+                $this->view->tournamentInfo->location_city = $data['location_city'];
+                $this->view->tournamentInfo->location_state = $data['location_state'];
+                $this->view->tournamentInfo->location_zip = $data['location_zip'];
+                $this->view->tournamentInfo->save();
+
+                $this->view->message('Location updated', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/location');
             } else {
                 $form->populate($post);
             }
@@ -419,7 +431,7 @@ class TournamentController extends Zend_Controller_Action
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/lodging.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/lodging.js');
-        $this->view->section = 'location';
+        $this->view->section = 'lodging';
 
         $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
         $this->view->lodging = $tournamentLodgingTable->fetchAllLodgings($this->view->tournament->id);
@@ -428,9 +440,12 @@ class TournamentController extends Zend_Controller_Action
     public function lodgingeditAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/lodging.css');
+        $this->view->section = 'lodging';
+
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
         }
+
         $lodgingId = $this->getRequest()->getUserParam('lodging_id');
         $form = new Form_TournamentEdit($this->view->tournament->id, 'lodging', $lodgingId);
 
@@ -438,7 +453,19 @@ class TournamentController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                Zend_Debug::dump($data);
+                $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
+                $lodging = $tournamentLodgingTable->find($lodgingId)->current();
+
+                $lodging->title = $data['title'];
+                $lodging->street = $data['street'];
+                $lodging->city = $data['city'];
+                $lodging->state = $data['state'];
+                $lodging->zip = $data['zip'];
+                $lodging->other = (empty($data['other'])) ? null : $data['other'];
+
+                $lodging->save();
+                $this->view->message('Lodging updated.', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
             } else {
                 $form->populate($post);
             }
@@ -463,7 +490,7 @@ class TournamentController extends Zend_Controller_Action
         $lodging = $tournamentLodgingTable->find($lodgingId)->current();
         if($lodging) {
             $lodging->delete();
-            $this->view->message('Lodging deleted successfully.', 'success');
+            $this->view->message('Lodging deleted.', 'success');
         }
 
         $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
@@ -471,7 +498,10 @@ class TournamentController extends Zend_Controller_Action
 
     public function lodgingaddAction()
     {
-        // action body
+        $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
+        $lodgingId = $tournamentLodgingTable->addNewLodging($this->view->tournament->id);
+
+        $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodgingedit/' . $lodgingId);
     }
 
     public function contactAction()
@@ -497,7 +527,7 @@ class TournamentController extends Zend_Controller_Action
                 if($user) {
                     $contactId = $tournamentMemberTable->addMember($this->view->tournament->id, $post['user_id']);
 
-                    $this->view->message('Contact created successfully.', 'success');
+                    $this->view->message('Contact created.', 'success');
                     echo Zend_Json::encode(array('result' => 'success', 'url' => $this->view->baseUrl() . '/tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contactedit/' . $contactId));
                     return;
                 } else {
@@ -600,7 +630,7 @@ class TournamentController extends Zend_Controller_Action
                 $this->view->tournamentInfo->end = $data['end'];
                 $this->view->tournamentInfo->save();
 
-                $this->view->message('Tournament settings updated successfully.', 'success');
+                $this->view->message('Tournament settings updated.', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
             } else {
                 $form->populate($post);

@@ -85,7 +85,7 @@ class LeagueController extends Zend_Controller_Action
                 $this->view->season->information = $data['information'];
                 $this->view->season->save();
 
-                $this->view->message("Season `{$data['name']}` updated successfully.", 'success');
+                $this->view->message("Season `{$data['name']}` updated", 'success');
                 $this->_redirect('leagues');
             } else {
                 $form->populate($post);
@@ -128,7 +128,7 @@ class LeagueController extends Zend_Controller_Action
                 $season->weight = $leagueSeasonTable->fetchNextWeight();
                 $season->save();
 
-                $this->view->message('Season created successfully.');
+                $this->view->message('Season created');
                 echo Zend_Json::encode(array('result' => 'success', 'data' => $season->id));
             } else {
                 echo Zend_Json::encode(array('result' => 'error', 'message' => 'Season Already Exists'));
@@ -248,7 +248,7 @@ class LeagueController extends Zend_Controller_Action
                 $league->name = $data['name'];
                 $league->save();
 
-                $this->view->message('League data saved successfully.'. 'success');
+                $this->view->message('League data saved'. 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
             } else {
                 $form->populate($post);
@@ -438,7 +438,7 @@ class LeagueController extends Zend_Controller_Action
                     }
                 }
 
-                $this->view->message('League Information updated successfully.', 'success');
+                $this->view->message('League Information updated', 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
             } else {
                 $form->populate($post);
@@ -562,7 +562,7 @@ class LeagueController extends Zend_Controller_Action
                     $leagueQuestionListTable->updateQuestionList($leagueId, $leagueQuestion->id, $required, $weight);
                 }
 
-                $this->view->message('League registration updated successfully.', 'success');
+                $this->view->message('League registration updated', 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
 
             } else {
@@ -621,7 +621,7 @@ class LeagueController extends Zend_Controller_Action
                 $question->answers = (empty($data['answers'])) ? null : $this->convertQuestionAnswers($data['answers']);
                 $question->save();
 
-                $this->view->message('Question `' . $question->name . '` updated successfully.', 'success');
+                $this->view->message('Question `' . $question->name . '` updated', 'success');
                 $this->_redirect('league/' . $leagueId . '/edit_registration');
             } else {
                 $form->populate($post);
@@ -717,7 +717,7 @@ class LeagueController extends Zend_Controller_Action
                 $leagueInformationTable->description = $data['description'];
                 $leagueInformationTable->save();
 
-                $this->view->message('League description updated successfully.', 'success');
+                $this->view->message('League description updated', 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
 
             } else {
@@ -750,7 +750,7 @@ class LeagueController extends Zend_Controller_Action
 
                 $id = $leagueTable->createBlankLeague($post['year'], $post['season'], $post['day'], null, $this->view->user->id);
                 if(is_numeric($id)) {
-                    $this->view->message('League created successfully.');
+                    $this->view->message('League created');
                     echo Zend_Json::encode(array('result' => 'success', 'data' => strtolower($post['season'])));
                 } else {
                     echo Zend_Json::encode(array('result' => 'error', 'message' => 'Error Creating League'));
@@ -840,7 +840,7 @@ class LeagueController extends Zend_Controller_Action
                 if($id) {
                     echo Zend_Json::encode(array('result' => 'success', 'data' => $id));
 
-                    $this->view->message("Successfully created the team `{$post['name']}`", 'success');
+                    $this->view->message("Created the team `{$post['name']}`", 'success');
                     return;
                 }
 
@@ -924,7 +924,7 @@ class LeagueController extends Zend_Controller_Action
                 $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
                 $team->save();
 
-                $this->view->message("Team `{$team->name}` updated successfully.", 'success');
+                $this->view->message("Team `{$team->name}` updated", 'success');
                 $this->_redirect('league/' . $team->league_id);
             } else {
                 $form->populate($post);
@@ -961,7 +961,7 @@ class LeagueController extends Zend_Controller_Action
         $name = $team->name;
         $team->delete();
 
-        $this->view->message("Successfully deleted the team `$name`", 'success');
+        $this->view->message("Deleted the team `$name`", 'success');
 
         // redirect to teams page
         $this->_redirect('league/' . $leagueId);
@@ -1119,7 +1119,7 @@ class LeagueController extends Zend_Controller_Action
                 $homeGameData->save();
                 $awayGameData->save();
 
-                $this->view->message('Game data updated successfully.', 'success');
+                $this->view->message('Game data updated', 'success');
                 $this->_redirect('league/' . $leagueId . '/schedule');
             } else {
                 $form->populate($post);
@@ -1166,7 +1166,7 @@ class LeagueController extends Zend_Controller_Action
             $leagueGameData[1]->delete();
         }
 
-        $this->view->message('Successfully deleted the game.', 'success');
+        $this->view->message('Game deleted.', 'success');
         $this->_redirect('league/' . $leagueId . '/schedule');
     }
 
@@ -1218,7 +1218,7 @@ class LeagueController extends Zend_Controller_Action
                     }
                 }
 
-                $this->view->message('League Schedule generated successfully.', 'success');
+                $this->view->message('League schedule generated', 'success');
                 $this->_redirect('league/' . $leagueId . '/schedule');
             }
             if($form->isValid($post)) {
@@ -1419,7 +1419,7 @@ class LeagueController extends Zend_Controller_Action
                 }
 
 
-                $this->view->message('Email sent successfully.', 'success');
+                $this->view->message('Email sent.', 'success');
                 $this->_redirect('league/' . $leagueId . '/email');
 
             } else {
@@ -1479,7 +1479,7 @@ class LeagueController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
             if(isset($post['clear'])) {
                 $leagueTeamTable->clearFinalResults($leagueId);
-                $this->view->message('League final rankings cleared successfully.', 'success');
+                $this->view->message('League final rankings cleared', 'success');
                 $this->_redirect('league/' . $leagueId . '/rankings');
             } else {
                 $rank = 1;
@@ -1493,7 +1493,7 @@ class LeagueController extends Zend_Controller_Action
                 }
             }
 
-            $this->view->message('League final rankings updates successfully.', 'success');
+            $this->view->message('League final rankings updated', 'success');
             $this->_redirect('league/' . $leagueId . '/rankings');
         }
 
@@ -2236,7 +2236,7 @@ class LeagueController extends Zend_Controller_Action
                         $member->modified_by = $this->view->user->id;
                         $member->save();
                     }
-                    $this->view->message('Players moved successfully.', 'success');
+                    $this->view->message('Players moved', 'success');
                     $session->unsetAll();
                     $this->_redirect('league/' . $leagueId . '/move');
                 }
@@ -2274,7 +2274,7 @@ class LeagueController extends Zend_Controller_Action
                 $image->resize(85,85);
                 $image->save(APPLICATION_PATH . '/../public/images/team_logos/' . $teamId . '.jpg');
 
-                $this->view->message('Logo successfully updated.', 'success');
+                $this->view->message('Logo updated.', 'success');
                 $this->_redirect('league/' . $leagueId);
             }
         }
@@ -2381,7 +2381,7 @@ class LeagueController extends Zend_Controller_Action
                 $this->view->message('You must type your name into the name box to confirm that you read the waiver.', 'error');
             } else {
                 $userWaiverTable->updateWaiver($this->view->user->id, $this->view->league->year, 1, $this->view->user->id);
-                $this->view->message('User waiver signed successfully', 'success');
+                $this->view->message('User waiver signed', 'success');
                 $this->_redirect('league/' . $leagueId . '/register_success');
             }
 
