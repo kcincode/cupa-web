@@ -1,0 +1,13 @@
+<div id="error" class="not-found">
+    <div class="blurb">
+        <p>
+            The page you requested could not be found.  Please make sure you typed
+            in the correct url.  If you believe this page should exist you can email
+            the webmaster at <a href="mailto:webmaster@cincyultimate.org">webmaster@cincyultimate.org</a>.
+        </p>
+        <p>
+            Here are some links to get you back on track<br/>
+            <?php echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
+        </p>
+    </div>
+</div>
