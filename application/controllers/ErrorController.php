@@ -2,10 +2,21 @@
 
 class ErrorController extends Zend_Controller_Action
 {
+    protected $_url;
+    protected $_params;
+
     public function init()
     {
         // change the layout file for all pages.
         $this->_helper->_layout->setLayout('error');
+
+        $this->_url = $_SERVER['REQUEST_URI'];
+
+        $this->_params = array(
+            'get' => $this->getRequest()->getParams(),
+            'post' => $this->getRequest()->getPost(),
+        );
+        $this->_params = Zend_Json::encode($this->_params, true);
     }
 
     public function errorAction()
@@ -25,14 +36,12 @@ class ErrorController extends Zend_Controller_Action
                 $this->getResponse()->setHttpResponseCode(404);
                 $priority = Zend_Log::NOTICE;
                 $this->view->message = 'Page not found';
-                $this->_forward('notfound');
                 break;
             default:
                 // application error
                 $this->getResponse()->setHttpResponseCode(500);
                 $priority = Zend_Log::CRIT;
                 $this->view->message = 'Application error';
-                $this->_forward('server');
                 break;
         }
 
@@ -47,6 +56,9 @@ class ErrorController extends Zend_Controller_Action
             $this->view->exception = $errors->exception;
         }
 
+        $pageErrorTable = new Model_DbTable_PageError();
+        $pageErrorTable->log($this->_url, $this->_params, '404', $errors->exception);
+
         $this->view->request   = $errors->request;
     }
 
@@ -59,22 +71,4 @@ class ErrorController extends Zend_Controller_Action
         $log = $bootstrap->getResource('Log');
         return $log;
     }
-
-    public function notfoundAction()
-    {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/error/notfound.css');
-    }
-
-    public function serverAction()
-    {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/error/server.css');
-    }
-
-
 }
-
-
-
-
-
-

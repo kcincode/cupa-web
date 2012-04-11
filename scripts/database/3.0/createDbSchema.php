@@ -15,7 +15,7 @@ $dropTables = array('tournament_member','tournament_update', 'tournament_team', 
                     'news', 'news_category', 'club_captain', 'club', 'officer', 'pickup', 'user_emergency', 'league_question_list',
                     'league_answer', 'league_question', 'league_game_data', 'league_game', 'league_member',
                     'league_team', 'league_information', 'league_limit', 'league_location', 'league', 'league_season',
-                    'user_waiver', 'user_access_log', 'form', 'user', 'contact', 'minute');
+                    'user_waiver', 'user_access_log', 'form', 'user', 'contact', 'minute', 'page_error');
 
 $createTables = array_reverse($dropTables);
 $totalTables = count($dropTables);
@@ -96,6 +96,20 @@ try {
     endWithError();
 }
 
+
+function createPageErrorTable($db)
+{
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `page_error` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `url` varchar(255) NOT NULL,
+        `code` int(11) NOT NULL,
+        `data` text NOT NULL,
+        `exception` text NOT NULL,
+        `when` datetime NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+}
 
 function createUserTable($db)
 {
