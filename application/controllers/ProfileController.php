@@ -292,5 +292,52 @@ class ProfileController extends Zend_Controller_Action
         return true;
     }
 
+    public function passwordAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/password.css');
 
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            $this->_redirect('/profile');
+        }
+
+        $userTable = new Model_DbTable_User();
+        $this->view->data = $userTable->fetchProfile($this->view->user);
+        $form = new Form_Profile($this->view->user, 'password');
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('/profile');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                // check current password
+                $authentication = new Model_Authenticate($this->view->user);
+                // try the password for authentication
+                if(!$authentication->authenticate($data['current'])) {
+                    $this->view->message('Current password entered wrong.', 'error');
+                    $form->populate($post);
+                } else {
+                    // check that passwords match
+                    if($data['password'] == $data['confirm']) {
+                        $this->view->user->password = sha1($this->view->user->salt . $data['password']);
+                        $this->view->user->save();
+                        $this->view->message('Password updated.', 'success');
+                        $this->_redirect('/profile');
+                    } else {
+                        $this->view->message('New passwords do not match.', 'error');
+                        $form->populate($post);
+                    }
+                }
+            } else {
+                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
+    }
 }

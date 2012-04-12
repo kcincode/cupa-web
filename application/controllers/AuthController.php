@@ -46,7 +46,7 @@ class AuthController extends Zend_Controller_Action
                 }
 
                 // check to see if the user exists
-                if($user) {
+                if(!empty($user)) {
                     $authentication = new Model_Authenticate($user);
 
                     // try the password for authentication
@@ -98,7 +98,7 @@ class AuthController extends Zend_Controller_Action
 
                 } else {
                     // log the message
-                    $userAccessLogTable->log($user->username, 'login-failed', "Username does not exist.");
+                    $userAccessLogTable->log($data['username'], 'login-failed', "Username does not exist.");
 
                     // build the data to be sent
                     $data = array('result' => 'Error', 'msg' => 'Invalid Credentials');

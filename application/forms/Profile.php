@@ -247,9 +247,6 @@ class Form_Profile extends Zend_Form
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $leagueInformationTable = new Model_DbTable_LeagueInformation();
-        $leagueTeamTable = new Model_DbTable_LeagueTeam();
-        $leagueLimitTable = new Model_DbTable_LeagueLimit();
 
         $i = 1;
         foreach($leagueQuestionTable->fetchAllQuestionsFromLeague($this->_leagueId) as $question) {
@@ -306,6 +303,36 @@ class Form_Profile extends Zend_Form
 
             $i++;
         }
+    }
+
+    private function password()
+    {
+        $this->addElement('password', 'current', array(
+           'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', false, array(6,20)),
+            ),
+            'required' => true,
+            'label' => 'Enter current password:',
+        ));
+
+        $this->addElement('password', 'password', array(
+           'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', false, array(6,20)),
+            ),
+            'required' => true,
+            'label' => 'Enter a new password:',
+        ));
+
+        $this->addElement('password', 'confirm', array(
+           'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', false, array(6,20)),
+            ),
+            'required' => true,
+            'label' => 'Confirm new password:',
+        ));
     }
 
 }

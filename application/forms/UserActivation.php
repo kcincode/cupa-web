@@ -6,8 +6,8 @@ class Form_UserActivation extends Zend_Form
     public function init()
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
-        
-        $email = $this->addElement('text', 'email', array(
+
+        $this->addElement('text', 'email', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 'EmailAddress',
@@ -16,7 +16,7 @@ class Form_UserActivation extends Zend_Form
             'label' => 'Email Address:',
         ));
 
-        $password = $this->addElement('password', 'password', array(
+        $this->addElement('password', 'password', array(
            'filters' => array('StringTrim'),
             'validators' => array(
                 array('StringLength', false, array(6,20)),
@@ -24,8 +24,8 @@ class Form_UserActivation extends Zend_Form
             'required' => true,
             'label' => 'Enter a Password:',
         ));
-        
-        $confirm = $this->addElement('password', 'confirm', array(
+
+        $this->addElement('password', 'confirm', array(
            'filters' => array('StringTrim'),
             'validators' => array(
                 array('StringLength', false, array(6,20)),

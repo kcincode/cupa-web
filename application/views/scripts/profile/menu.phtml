@@ -1,4 +1,7 @@
-     <ul>
+    <div class="password">
+        <a class="button" href="<?php echo $this->url(array(), 'profile_password'); ?>">Change Password</a>
+    </div>
+    <ul>
           <?php if($this->state == 'personal'): $class = ' active'; else: $class = ''; endif; ?>
           <li><a class="personal<?php echo $class;?>" href="<?php echo $this->url(array('state' => 'personal'), 'profile'); ?>">Personal Info</a></li>
           <?php if($this->state == 'minors'): $class = ' active'; else: $class = ''; endif; ?>
