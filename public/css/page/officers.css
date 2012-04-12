@@ -40,6 +40,7 @@
 .officer .image img {
     width: 100px;
     height: 100px;
+    border: 1px solid #444;
 }
 
 .officer .image {
