@@ -197,8 +197,10 @@ class PageController extends Zend_Controller_Action
     public function officerseditAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officersedit.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officersedit.js');
 
         $pageTable = new Model_DbTable_Page();

@@ -3,7 +3,7 @@
     margin: 50px auto;
     padding: 20px;
     -webkit-box-shadow: 0 0 7px #444;
-    
+
 }
 
 #minutesedit-container dt {
@@ -12,13 +12,22 @@
     width: 80px;
     text-align: right;
     float: left;
-    margin-right: 10px;
+    margin: 5px 5px 5px 0;
     padding-top: 7px;
+}
+
+#minutesedit-container dd {
+    margin: 5px;
+}
+
+#minutesedit-container #pdf,
+#minutesedit-container #is_visible {
+    margin: 10px;
 }
 
 #minutesedit-container input[type=text] {
     font-size: 12pt;
-    padding: 5px;
+    padding: 10px;
 }
 
 #minutesedit-container #is_visible-element {

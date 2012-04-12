@@ -1,5 +1,5 @@
 #scheduleedit-container {
-    width: 550px;
+    width: 750px;
     margin: 50px auto;
     padding: 20px;
     -webkit-box-shadow: 0 0 7px #444;
@@ -27,6 +27,10 @@
     width: 150px;
 }
 
+#scheduleedit-container .row.left {
+    width: 525px;
+}
+
 #scheduleedit-container select {
     font-size:  12pt;
     margin-top: 5px;
@@ -36,7 +40,6 @@
     font-size: 8pt;
     color: #808080;
     margin: 0 0 10px 90px;
-
 }
 
 #scheduleedit-container .left {

@@ -6,6 +6,8 @@ $(document).ready(function() {
         timeFormat: 'hh:mm:ss'
     });
 
+    $('#home_team').chosen();
+    $('#away_team').chosen();
 });
 
 

@@ -18,7 +18,7 @@
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
     <h3>Current Active Teams</h3>
-    
+
     <?php foreach($this->activeClubs as $club): ?>
     <div class="club">
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id) or $this->isClubCaptain($club->id)): ?>
@@ -45,9 +45,9 @@
         <div class="info"><?php echo $club->content; ?></div>
     </div>
     <?php endforeach; ?>
-    
+
     <h3>Past Teams</h3>
-    
+
     <?php foreach($this->pastClubs as $club): ?>
     <div class="club">
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
@@ -57,7 +57,7 @@
         </div>
         <?php endif; ?>
         <div class="name"><?php echo $this->escape($club->name); ?> <span class="club-type">(<?php echo $this->escape($club->type); ?>)</span></div>
-        <div class="date"><?php echo $this->escape($club->begin); ?> - Current</div>
+        <div class="date"><?php echo $this->escape($club->begin); ?> - <?php echo $this->escape($club->end); ?></div>
         <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $this->escape($club->website) . '">Website</a>)'; ?></div>
         <div class="captains"><strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?></div>
         <?php if($club->email != null): ?><div class="contact"><strong>Contact Email:</strong> <?php echo $this->displayEmail($club->email); ?></div><?php endif; ?>
@@ -65,5 +65,5 @@
     </div>
     <?php endforeach; ?>
 </div>
-  
+
 <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

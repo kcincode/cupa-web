@@ -1065,9 +1065,11 @@ class LeagueController extends Zend_Controller_Action
     public function scheduleeditAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/scheduleedit.css');
 
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/scheduleedit.js');
 
