@@ -8,6 +8,7 @@ p {
     width: 500px;
     margin: 50px auto;
     padding: 20px;
+    border: 1px solid #444;
     -webkit-box-shadow: 0 0 7px #444;
     -moz-box-shadow: 0 0 7px #444;
     box-shadow: 0 0 7px #444;
@@ -41,7 +42,7 @@ p {
     color: #0c0;
     font-weight: bold;
 }
-    
+
 #email-status span.error {
     color: #c00;
     font-weight: bold;
