@@ -49,7 +49,7 @@
         <div class="since">Since: <?php echo date('M dS, Y', strtotime($officer['since'])); ?></div>
     </div>
     <div class="description">
-        <?php echo $this->escape($officer['description']); ?>
+        <?php echo $officer['description']; ?>
     </div>
     <div class="clearfix"><hr/></div>
 </div>
