@@ -40,15 +40,15 @@
 	<?php endif; ?>
 
 	<h2>Liability Forms</h2>
-        <p>Waivers are only required for the first CUPA event you participate in for 2011. If you haven't participated yet this year, please fill out the form below and bring it with you on the first night.</p>
+        <p>Waivers are only required for the first CUPA event you participate in for <?php echo $this->escape($this->league->year); ?>. If you haven't participated yet this year, please fill out the form below and bring it with you on the first night.</p>
         <p>If you are registering for a player <span class="highlight">18 or over</span> please click <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_waiver');?>">here</a> to sign an online waiver.</p>
 
 	<p>If you are registering for a player between <span class="highlight">16 and 18</span> please click <a href="<?php echo $this->url(array('type' => 'youth_waiver', 'year' => $this->league->year), 'page_forms'); ?>">here</a> to download the waiver form for your parent to sign.  Also you must click <a href="<?php echo $this->url(array('type' => 'release', 'year' => $this->league->year), 'page_forms'); ?>">here</a> to download the medical release form and have your parents sign that as well.</p>
 
 	<p>If you have trouble downloading these forms you may need Adobe Acrobat Reader.  To get it free <a href="http://get.adobe.com/reader/">click here</a>.</p>
 	<p>If you have other trouble please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a></p>
-    
-       
+
+
 
 
 

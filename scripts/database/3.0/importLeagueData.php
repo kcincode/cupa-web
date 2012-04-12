@@ -219,7 +219,7 @@ foreach($results as $row) {
     $league->info = $row['intro'];
     $league->registration_begin = $row['start'] . ' 00:00:00';
     $league->registration_end = $row['end'] . ' 23:59:59';
-    $league->visible_from = $row['start'] . ' 00:00:00';
+    $league->visible_from = date('Y-m-d H:i:s', strtotime($row['start'] . ' 00:00:00') - 1209600);
     $archived = 1;
 
     if($row['year'] == date('Y')) {
@@ -240,7 +240,7 @@ foreach($results as $row) {
         $league->info = $row['intro'];
         $league->registration_begin = $row['start'] . ' 00:00:00';
         $league->registration_end = $row['end'] . ' 23:59:59';
-        $league->visible_from = $row['start'] . ' 00:00:00';
+        $league->visible_from = date('Y-m-d H:i:s', strtotime($row['start'] . ' 00:00:00') - 1209600);
         $archived = 1;
 
         if($row['year'] == date('Y')) {
@@ -259,7 +259,8 @@ foreach($results as $row) {
     $leagueInformation->is_clinic = (strstr(strtolower($league->name), 'clinic')) ? 1 : 0;
     $leagueInformation->contact_email = (empty($row['contact_email'])) ? null : $row['contact_email'];
     $leagueInformation->cost = $row['cost'];
-    $leagueInformation->paypal_code = (empty($row['confirm'])) ? null : $row['confirm'];
+    $form = substr($row['confirm'], strpos($row['confirm'], '<form'), strpos($row['confirm'], 'form>') + 5);
+    $leagueInformation->paypal_code = (empty($form)) ? null : $form;
     $leagueInformation->description = $row['description'];
     $leagueInformation->save();
 
