@@ -1,0 +1,18 @@
+#admin-menu {
+    margin: 0;
+    padding: 10px;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+    background-color: #c0c0c0;}
+
+#admin-menu ul {
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+    height: 15px;
+}
+
+#admin-menu ul li {
+    float: left;
+    margin: 0 10px;
+}
