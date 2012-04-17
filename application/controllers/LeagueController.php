@@ -2362,12 +2362,13 @@ class LeagueController extends Zend_Controller_Action
         // make sure user is over 18
         $userProfileTable = new Model_DbTable_UserProfile();
         if(!$userProfileTable->isEighteenOrOver($this->view->user->id)) {
+            $this->view->message('You are not able to sign a waiver since you are younger than 18.', 'info');
             $this->_redirect('league/' . $leagueId . '/register_success');
         }
 
         $userWaiverTable = new Model_DbTable_UserWaiver();
         if($userWaiverTable->hasWaiver($this->view->user->id, $this->view->league->year)) {
-           $this->view->message('You have already signed a waiver for this year.', 'info');
+           $this->view->message('You have already signed a waiver for the ' . $this->view->league->year . ' year.', 'info');
            $this->_redirect('league/' . $leagueId . '/register_success');
         }
 

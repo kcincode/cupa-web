@@ -19,3 +19,8 @@
 .sign input[type=text] {
     width: 300px;
 }
+
+p.alert {
+    color: #c00;
+    text-align: center;
+}
