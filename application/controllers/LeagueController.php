@@ -1533,7 +1533,7 @@ class LeagueController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
 
-            apache_setenv('no-gzip', '1');
+            //apache_setenv('no-gzip', '1');
             ob_end_clean();
 
             header('Pragma: public');
