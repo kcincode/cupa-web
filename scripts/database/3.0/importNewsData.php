@@ -49,6 +49,11 @@ foreach($results as $row) {
     $news->edited_at = $row['updated_at'];
     $news->last_edited_by = 1;
     $news->remove_at = (empty($row['remove_at'])) ? null : $row['remove_at'];
+
+    if(strstr($news->slug, date('Y', strtotime($row['created_at']))) === false) {
+        $news->slug = date('Y', strtotime($row['created_at'])) . '-' . $news->slug;
+    }
+
     $news->save();
 
     if(DEBUG) {

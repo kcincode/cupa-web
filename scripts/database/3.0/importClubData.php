@@ -43,7 +43,7 @@ $clubs = array(
     ),
     array(
         'name' => 'Age Against the Machine',
-        'type' => 'Masters, Grand Masters',
+        'type' => 'Grand Masters',
         'facebook' => null,
         'twitter' => null,
         'begin' => '1990',
