@@ -308,6 +308,9 @@ class Model_DbTable_User extends Zend_Db_Table
             }
         }
 
+        // backup the database
+        $this->backupDb($this->getAdapter(), $ids, $this->find($userId)->current());
+
         $ids = implode(',', $ids);
         $tables = array(
             'club_captain',
@@ -332,5 +335,47 @@ class Model_DbTable_User extends Zend_Db_Table
             $user = $this->find($id)->current();
             $user->delete();
         }
+    }
+    private function backupDb($db, $ids, $user)
+    {
+        $tables = array(
+            'club_captain',
+            'league_member',
+            'officer',
+            'tournament_member',
+            'user_emergency',
+            'user_password_reset',
+            'user_role',
+            'user_waiver',
+            'user_profile',
+            'user',
+        );
+
+        $fp = fopen(APPLICATION_PATH . '/data/user_merges/' . $user->last_name . '-' . $user->first_name . '.log', 'a');
+        fwrite($fp, '=== BACKUP Starting ' . date('Y-m-d H:i:s') . " ===\n");
+        foreach($tables as $table) {
+            $stmt = $db->query('SELECT * FROM ' . $table);
+            $data = $stmt->fetchAll();
+
+            foreach($data as $row) {
+                $sql = "INSERT INTO $table VALUES (";
+                $i = 0;
+                if((isset($row['user_id']) and in_array($row['user_id'], $ids)) or ($table == 'user' and in_array($row['id'], $ids))) {
+                    foreach($row as $key => $value) {
+                        if($i > 0) {
+                            $sql .= ", ";
+                        }
+                        $sql .= "'" . addslashes($value) . "'";
+                        $i++;
+                    }
+                }
+                if($i > 0) {
+                    $sql .= ");\n";
+                    fwrite($fp, $sql);
+                }
+            }
+        }
+        fwrite($fp, '=== BACKUP Finished ' . date('Y-m-d H:i:s') . " ===\n\n");
+        fclose($fp);
     }
 }
