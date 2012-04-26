@@ -336,4 +336,24 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
 
         return $this->getAdapter()->fetchAll($select);
     }
+
+    public function fetchUnpaidPlayers()
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array('id', 'user_id'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
+                       ->joinLeft(array('l' => 'league'), 'l.id = lm.league_id', array('l.id AS league'))
+                       ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array('cost'))
+                       ->joinLeft(array('ll' => 'league_location'), 'll.league_id = l.id', array())
+                       ->where('lm.position = ?', 'player')
+                       ->where('lm.paid = ?', 0)
+                       ->where('l.year >= ?', 2011)
+                       ->where('ll.type = ?', 'league')
+                       ->where('ll.end < ?', date('Y-m-d H:i:s'))
+                       ->where('cost IS NOT NULL AND cost > ?', 0)
+                       ->order('u.last_name')
+                       ->order('u.first_name');
+
+        return $this->getAdapter()->fetchAll($select);
+    }
 }

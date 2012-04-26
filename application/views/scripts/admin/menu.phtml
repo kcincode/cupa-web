@@ -1,7 +1,9 @@
 <h1>CUPA Administration</h1>
-<div id="admin-menu">
+<div id="list">
+    <h2>Reports:</h2>
     <ul>
-        <li><a class="button" href="<?php echo $this->url(array(), 'admin'); ?>">Admin Home</a></li>
-        <li><a class="button" href="<?php echo $this->url(array(), 'admin_reports'); ?>">Reports</a></li>
+        <li><a class="button" id="browser-data" href="<?php echo $this->url(array(), 'admin_browser'); ?>">Browser Data</a></li>
+        <li><a class="button" id="unpaid-users" href="<?php echo $this->url(array(), 'admin_unpaid'); ?>">Unpaid Players</a></li>
+        <li><a class="button" id="duplicate-users" href="#">Duplicate Users</a></li>
     </ul>
 </div>

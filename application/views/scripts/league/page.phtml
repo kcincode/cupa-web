@@ -136,7 +136,7 @@
                 <?php if($league['limits']['male_players'] !== null and $league['limits']['female_players'] !== null): ?>
                 <?php echo $this->leagueBar('Male players', $league['male_players'], $league['limits']['male_players']); ?>
                 <?php echo $this->leagueBar('Female players', $league['female_players'], $league['limits']['female_players']); ?>
-                <?php else: ?>
+                <?php elseif($league['limits']['total_players'] !== null): ?>
                 <?php echo $this->leagueBar('Total Players', $league['total_players'], $league['limits']['total_players']); ?>
                 <?php endif; ?>
 

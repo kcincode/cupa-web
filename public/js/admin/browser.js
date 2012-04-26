@@ -1,15 +1,13 @@
 var chart;
 
 $(document).ready(function() {
-    $('#browser-data').click(function(e){
-        loadBrowserGraph();
-    });
-
+    loadBrowserGraph();
 });
 
 function loadBrowserGraph() {
     $.ajax({
-        url: BASE_URL + '/admin/loadbrowserdata',
+        url: BASE_URL + '/admin/browser',
+        type: 'post',
         success: function(resp) {
             chart = new Highcharts.Chart({
                 chart: {

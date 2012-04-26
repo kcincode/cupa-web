@@ -1,0 +1,28 @@
+<?php echo $this->partial('admin/menu.phtml', array()); ?>
+<div id="container">
+    <h1>Unpaid Players</h1>
+
+    <div id="table">
+        <div class="header">
+            <div class="name">Player</div>
+            <div class="leagues">League Name(s)</div>
+            <div class="owed">Owed</div>
+        </div>
+        <?php $this->cycle(array('odd', 'even')); ?>
+        <?php foreach($this->players as $playerId => $player): ?>
+        <div class="row <?php echo $this->cycle()->next(); ?>">
+            <div class="name"><?php echo $this->fullname($playerId); ?></div>
+            <div class="leagues">
+                <?php foreach($player['leagues'] as $league): ?>
+                <a href="<?php echo $this->url(array('league_id' => $league), 'league_status'); ?>">
+                    <?php echo $this->leaguename($league, true, true, true, true); ?>
+                </a>&nbsp; 
+                <?php endforeach; ?>
+            </div>
+            <div class="owed"><?php echo $this->escape($player['owed']); ?></div>
+        </div>
+        <?php endforeach; ?>
+        <div class="clearfix">&nbsp;</div>
+    </div>
+</div>
+

@@ -4,6 +4,8 @@ class AdminController extends Zend_Controller_Action
 {
     public function init()
     {
+        // TODO: check permissions per action
+
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             $this->_forward('auth');
         } else {
@@ -20,26 +22,45 @@ class AdminController extends Zend_Controller_Action
 
     }
 
-    public function reportsAction()
+    public function browserAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/reports.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/browser.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/highcharts/highcharts.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/admin/reports.js');
-    }
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/admin/browser.js');
 
-    public function loadbrowserdataAction()
-    {
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
+        if($this->getRequest()->isPost()) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
 
-        $userAccessLogTable = new Model_DbTable_UserAccessLog();
-        echo Zend_Json::encode($userAccessLogTable->fetchReportData(), true);
+            $userAccessLogTable = new Model_DbTable_UserAccessLog();
+            echo Zend_Json::encode($userAccessLogTable->fetchReportData(), true);
+        }
     }
 
     public function authAction()
     {
+    }
 
+    public function unpaidAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/unpaid.css');
 
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $data = array();
+        foreach($leagueMemberTable->fetchUnpaidPlayers() as $row) {
+            if(!isset($data[$row['user_id']])) {
+                $data[$row['user_id']] = array(
+                    'leagues' => array($row['league']),
+                    'owed' => $row['cost'],
+                );
+            } else {
+                if(!in_array($row['league'], $data[$row['user_id']]['leagues'])) {
+                    $data[$row['user_id']]['leagues'][] = $row['league'];
+                    $data[$row['user_id']]['owed'] += $row['cost'];
+                }
+            }
+        }
+        $this->view->players = $data;
     }
 }

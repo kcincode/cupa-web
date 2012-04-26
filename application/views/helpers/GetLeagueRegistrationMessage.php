@@ -3,18 +3,18 @@
 class My_View_Helper_GetLeagueRegistrationMessage extends Zend_View_Helper_Abstract
 {
     public $view;
- 
+
     public function setView(Zend_View_Interface $view)
     {
         $this->view = $view;
-    }    
-    
+    }
+
     public function getLeagueRegistrationMessage($leagueId)
     {
-        $leagueTable = new Model_DbTable_League(); 
-        $leagueLimitTable = new Model_DbTable_LeagueLimit(); 
+        $leagueTable = new Model_DbTable_League();
+        $leagueLimitTable = new Model_DbTable_LeagueLimit();
         $leagueInformationTable = new Model_DbTable_LeagueInformation();
-        
+
         $league = $leagueTable->find($leagueId)->current();
         if(!$league) {
             return null;
@@ -41,7 +41,7 @@ class My_View_Helper_GetLeagueRegistrationMessage extends Zend_View_Helper_Abstr
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $genders = $leagueMemberTable->fetchAllPlayersByGender($leagueId);
         $totalPlayers = $genders['male_players'] + $genders['female_players'];
-        if($totalPlayers >= $leagueLimit->total_players) {
+        if($leagueLimit->total_players !== null and $totalPlayers >= $leagueLimit->total_players) {
             return 'League registration is full with ' . $leagueLimit->total_players . ' players.';
         }
 
