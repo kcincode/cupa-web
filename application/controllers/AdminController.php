@@ -63,4 +63,26 @@ class AdminController extends Zend_Controller_Action
         }
         $this->view->players = $data;
     }
+
+    public function duplicatesAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/duplicates.css');
+
+        $user = $this->getRequest()->getParam('user');
+
+        $userTable = new Model_DbTable_User();
+        if($user) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            $userTable->mergeAccounts($user);
+            $this->view->message("User data merged to #$user.", 'success');
+            $this->_redirect('admin/duplicates');
+        }
+
+        $session = new Zend_Session_Namespace('previous');
+        $session->previousPage = '/admin/duplicates';
+
+        $this->view->users = $userTable->fetchAllDuplicates();
+    }
 }

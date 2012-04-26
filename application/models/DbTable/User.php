@@ -250,4 +250,87 @@ class Model_DbTable_User extends Zend_Db_Table
         }
 
     }
+
+    public function fetchAllDuplicates($userId = null, $actives = true)
+    {
+        $duplicates = array();
+
+        $select = $this->select();
+
+        if(!$actives) {
+            $select->where('is_active = ?', 1);
+        }
+
+        foreach($this->fetchAll($select) as $row) {
+            $key = strtolower($row['last_name']) . '-' . strtolower($row['first_name']);
+            $duplicates[$key][] = $row->toArray();
+        }
+
+        foreach($duplicates as $name => $data) {
+            if(count($data) == 1) {
+                unset($duplicates[$name]);
+            } else if($userId) {
+                $flag = 0;
+                foreach($data as $item) {
+                    if($item['id'] == $userId) {
+                        $flag = 1;
+                        break;
+                    }
+                }
+                if($flag == 0) {
+                    unset($duplicates[$name]);
+                }
+            }
+        }
+
+        return $duplicates;
+    }
+
+    public function toggle($userId)
+    {
+        $user = $this->find($userId)->current();
+        if($user) {
+            $user->is_active = ($user->is_active == 1) ? 0 : 1;
+            $user->save();
+        }
+    }
+
+    public function mergeAccounts($userId)
+    {
+        $users = $this->fetchAllDuplicates($userId);
+
+        $ids = array();
+        foreach($users as $data) {
+            foreach($data as $user) {
+                if($user['id'] != $userId) {
+                    $ids[] = $user['id'];
+                }
+            }
+        }
+
+        $ids = implode(',', $ids);
+        $tables = array(
+            'club_captain',
+            'league_member',
+            'officer',
+            'tournament_member',
+            'user_emergency',
+            'user_password_reset',
+            'user_role',
+            'user_waiver',
+        );
+
+        foreach($tables as $table) {
+            $sql = "UPDATE $table SET user_id = $userId WHERE user_id IN ($ids)";
+            $this->getAdapter()->query($sql);
+        }
+
+        $userProfileTable = new Model_DbTable_UserProfile();
+        $userProfileTable->mergeUsers($ids, $userId);
+
+        foreach(explode(',', $ids) as $id) {
+            $user = $this->find($id)->current();
+            $user->delete();
+        }
+    }
 }

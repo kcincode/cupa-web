@@ -8,18 +8,32 @@ class Model_DbTable_UserProfile extends Zend_Db_Table
     public function isEighteenOrOver($userId, $date = null)
     {
         $userProfile = $this->find($userId)->current();
-        
+
         if(!$date) {
             $date = date('Y-m-d H:i:s');
         }
-        
+
         if(!empty($userProfile->birthday)) {
             list($year, $month, $day) = explode("-", $userProfile->birthday);
             $age = (date("md", strtotime($date)) < $month.$day) ? date("Y", strtotime($date)) - $year - 1 : date("Y", strtotime($date)) - $year;
             return ($age >= 18) ? true : false;
         }
-        
+
         return false;
     }
-    
+
+    public function mergeUsers($ids, $userId)
+    {
+        $profile = $this->find($userId)->current();
+        foreach(explode(',', $ids) as $id) {
+            $newProfile = $this->find($id)->current();
+            foreach($newProfile as $key => $value) {
+                if(empty($profile->$key) and !empty($value)) {
+                    $profile->$key = $value;
+                }
+            }
+        }
+        $profile->save();
+    }
+
 }

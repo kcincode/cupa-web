@@ -4,7 +4,7 @@ class Model_DbTable_ClubCaptain extends Zend_Db_Table
 {
     protected $_name = 'club_captain';
     protected $_primary = 'id';
- 
+
     public function fetchAllByClub($clubId)
     {
         $select = $this->getAdapter()->select()
@@ -13,7 +13,7 @@ class Model_DbTable_ClubCaptain extends Zend_Db_Table
                        ->where('cc.club_id = ?', $clubId)
                        ->order('u.last_name')
                        ->order('u.first_name');
-        
+
         $stmt = $this->getAdapter()->query($select);
         return $stmt->fetchAll();
     }
