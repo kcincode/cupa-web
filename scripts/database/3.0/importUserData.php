@@ -7,14 +7,6 @@ $userRoleTable = new Model_DbTable_UserRole();
 $userProfileTable = new Model_DbTable_UserProfile();
 $userLevelTable = new Model_DbTable_UserLevel();
 
-// get all the user failures
-$failures = array();
-$stmt = $origDb->prepare('SELECT COUNT(*) AS failures, username FROM login_failed GROUP BY username');
-$stmt->execute();
-foreach($stmt->fetchAll() as $row) {
-    $failures[$row['username']] = $row['failures'];
-}
-
 // get all the user stats
 $stats = array();
 $stmt = $origDb->prepare('SELECT user_id, data FROM user_stats ORDER BY date DESC');
@@ -81,20 +73,15 @@ foreach($results as $row) {
     $user->activation_code = $userTable->generateUniqueCodeFor('activation_code');
     $user->requested_at = $row['created'];
 
-    if($row['active']) {
+    if($row['active'] and $row['active'] != '0000-00-00 00:00:00') {
        $user->activated_at = $row['created'];
     } else {
         $user->activated_at = null;
     }
 
     $user->expires_at = date('Y-m-d H:i:s', strtotime($row['created']) + 604800);
-    $user->updated_at = $row['modified'];
-    $user->last_login = $row['last'];
-    if(isset($failures[$row['username']])) {
-        $user->login_errors = $failures[$row['username']];
-    } else {
-        $user->login_errors = 0;
-    }
+    $user->updated_at = (empty($row['modified']) or $row['modified'] == '0000-00-00 00:00:00') ? $user->requested_at : $row['modified'];
+    $user->last_login = (empty($row['last']) or $row['last'] == '0000-00-00 00:00:00') ? $user->requested_at : $row['last'];
     $user->is_active = $row['active'];
     $user->save();
 
@@ -193,7 +180,6 @@ foreach($results as $row) {
     $user->expires_at = null;
     $user->updated_at = null;
     $user->last_login = date('Y-m-d H:i:s');
-    $user->login_errors = 0;
     $user->is_active = 1;
     $user->save();
 

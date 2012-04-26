@@ -5,6 +5,7 @@ try {
     include('createDbSchema.php');
     include('importUserData.php');
     include('importUserWaiverData.php');
+    include('importUserAccessLogData.php');
     include('importPageData.php');
     include('importNewsData.php');
     include('importClubData.php');

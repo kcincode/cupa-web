@@ -129,7 +129,6 @@ function createUserTable($db)
           `expires_at` datetime DEFAULT NULL,
           `updated_at` datetime DEFAULT NULL,
           `last_login` datetime DEFAULT NULL,
-          `login_errors` int(11) NOT NULL,
           `is_active` tinyint(1) NOT NULL,
           PRIMARY KEY (`id`),
           UNIQUE KEY `username` (`username`),
