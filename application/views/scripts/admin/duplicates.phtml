@@ -22,7 +22,7 @@
                 <div class="requested"><?php echo date('Y-m-d H:i:s', strtotime($item['requested_at'])); ?></div>
                 <div class="activated"><?php echo (empty($item['activated_at'])) ? 'Not<br/>Activated' : date('Y-m-d H:i:s', strtotime($item['activated_at'])); ?></div>
                 <div class="last-login"><?php echo (empty($item['last_login']) or $item['last_login'] == '0000-00-00 00:00:00') ? 'Never<br/> Logged In' : date('Y-m-d H:i:s', strtotime($item['last_login'])); ?></div>
-                <div class="action"><a href="<?php echo $this->url(array(), 'admin_duplicates'); ?>?user=<?php echo $item['id']; ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-warning.png" title="Merge Accounts"/></a></div>
+                <div class="action"><a id="merge-link" href="<?php echo $this->url(array(), 'admin_duplicates'); ?>?user=<?php echo $item['id']; ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-warning.png" title="Merge Accounts"/></a></div>
             </div>
             <?php endforeach; ?>
             <div class="clearfix">&nbsp;</div>

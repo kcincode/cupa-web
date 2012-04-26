@@ -67,6 +67,7 @@ class AdminController extends Zend_Controller_Action
     public function duplicatesAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/duplicates.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/admin/duplicates.js');
 
         $user = $this->getRequest()->getParam('user');
 
