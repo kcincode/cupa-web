@@ -62,3 +62,7 @@ ul.errors {
     border: 1px solid #a0a0a0;
     background: #c0c0c0;
 }
+
+#contact-container .row input[type=checkbox] {
+    margin: 12px 0;
+}

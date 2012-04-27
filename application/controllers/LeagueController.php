@@ -1408,22 +1408,23 @@ class LeagueController extends Zend_Controller_Action
                 $mail->setSubject($post['subject']);
                 $mail->setFrom($post['from']);
 
-                foreach($data[$post['to']] as $email) {
-                    $mail->clearRecipients();
-                    if(APPLICATION_ENV == 'production') {
-                        $mail->addTo($email);
-                        $mail->setBodyText($post['content']);
-                    } else {
-                        $mail->addTo('kcin1018@gmail.com');
-                        $mail->setBodyText("TO: $email\r\n\r\n" . $post['content']);
+                $mail->clearRecipients();
+                foreach($post['to'] as $to) {
+                    foreach($data[$to] as $email) {
+                        if(APPLICATION_ENV == 'production') {
+                            $mail->addTo($email);
+                            $mail->setBodyText($post['content']);
+                            $mail->send();
+                        } else {
+                            $mail->clearRecipients();
+                            $mail->addTo('kcin1018@gmail.com');
+                            $mail->setBodyText("TO: $email\r\n\r\n" . $post['content']);
+                        }
                     }
-                    $mail->send();
                 }
-
 
                 $this->view->message('Email sent.', 'success');
                 $this->_redirect('league/' . $leagueId . '/email');
-
             } else {
                 $form->populate($post);
             }
