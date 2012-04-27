@@ -148,8 +148,8 @@
                 <p class="register-link"><a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_register'); ?>">Register</a> for the league now!</p>
                 <?php else: ?>
                 <p class="register-link">Registration is <span class="closed">Closed</span></p>
-                <?php $begin = date('l F j h:i:s A', strtotime($league['registration_begin'])); ?>
-                <?php $end = date('l F j h:i:s A', strtotime($league['registration_end'])); ?>
+                <?php $begin = date('l, F j h:i:s A', strtotime($league['registration_begin'])); ?>
+                <?php $end = date('l, F j h:i:s A', strtotime($league['registration_end'])); ?>
                 <p><?php echo ($league['registration_begin'] > date('Y-m-d H:i:s')) ? 'Registration opens on <a>' . $begin . '</a>' : 'Registration ended on <a>' . $end . '</a>'; ?></p>
                 <?php endif; ?>
                 <p class="pay-link">You may also <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_register_success'); ?>">Pay</a> for your registration if you have already registered.</p>
