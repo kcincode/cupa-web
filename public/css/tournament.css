@@ -98,6 +98,7 @@ header .title {
 }
 
 header .when {
+    width: 500px;
     font-size: 18pt;
     font-style: italic;
     text-shadow: 0 0 5px #fff;

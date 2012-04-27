@@ -27,7 +27,7 @@
             </div>
             <div class="when">
                 <?php if(isset($this->tournamentInfo->start)): ?>
-                <?php echo date('l F jS Y', strtotime($this->tournamentInfo->start)); ?>
+                <?php echo date('l, F j, Y', strtotime($this->tournamentInfo->start)); ?>
                 <?php else: ?>
                 <?php echo 'TBD'; ?>
                 <?php endif; ?>
