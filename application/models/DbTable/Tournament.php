@@ -63,11 +63,15 @@ class Model_DbTable_Tournament extends Zend_Db_Table
 
     }
 
-    public function fetchMostCurrentYear($name)
+    public function fetchMostCurrentYear($name, $isAdmin = false)
     {
         $select = $this->select()
                        ->where('name = ?', $name)
                        ->order('year DESC');
+
+        if(!$isAdmin) {
+            $select->where('is_visible = ?', 1);
+        }
 
         $result = $this->fetchRow($select);
         if($result) {

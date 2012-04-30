@@ -28,7 +28,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                            ->joinLeft(array('lm' => 'league_member'), 'lm.league_id = l.id', array('user_id'))
                            ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array())
                            ->where('lm.position = ?', 'director')
-                           ->where('l.year >= ?', date('Y') - 1)
+                           ->where('l.is_archived = ?', 0)
                            ->order('u.last_name')
                            ->order('u.first_name')
                            ->order('l.year DESC');

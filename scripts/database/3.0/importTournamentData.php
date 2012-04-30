@@ -116,9 +116,14 @@ foreach($results as $row) {
     $tournamentTeam = $tournamentTeamTable->createRow();
     $tournamentTeam->tournament_id = $row['tournament_id'];
     $tournamentTeam->name = $row['team'];
-   list($city, $state) = explode(',', $row['location']);
-    $tournamentTeam->city = trim($city);
-    $tournamentTeam->state = trim($state);
+    $data = explode(',', $row['location']);
+    if(count($data) == 2) {
+        $tournamentTeam->city = trim($city);
+        $tournamentTeam->state = trim($state);
+    } else {
+        $tournamentTeam->city = 'Unknown'
+        $tournamentTeam->state = 'NA';
+    }
     $tournamentTeam->contact_name = $row['contact_name'];
     $tournamentTeam->contact_phone = $row['contact_phone'];
     $tournamentTeam->contact_email = $row['contact_email'];
