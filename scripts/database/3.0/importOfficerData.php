@@ -42,6 +42,11 @@ foreach($results as $row) {
     $officer->description = $row['description'];
     $officer->save();
 
+    if(APPLICATION_ENV != 'production') {
+        $userRoleTable = new Model_DbTable_UserRole();
+        $userRoleTable->addRole($row['user_id'], 'admin');
+    }
+
     if(DEBUG) {
     	echo "Done\n";
 	}
