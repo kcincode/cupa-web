@@ -9,14 +9,8 @@
 <h1>All <?php echo $this->escape($this->category); ?> News</h1>
 <?php foreach($this->news as $news): ?>
 <div class="news-row">
-    <?php if($this->hasRole('admin') or $this->hasRole('reporter')): ?>
-    <div class="links">
-        <a href="<?php echo $this->url(array('slug' => $news['slug']), 'news_view');?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
-    </div>
-    <?php endif; ?>
-    
     <div class="title">
-        <?php echo $news['title']; ?>
+        <a href="<?php echo $this->url(array('slug' => $news['slug']), 'news_view'); ?>"><?php echo $news['title']; ?></a>
     </div>
     <div class="date">
         <?php if($news['posted_at'] == $news['edited_at']): ?>

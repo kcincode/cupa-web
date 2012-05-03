@@ -23,11 +23,16 @@
     <?php else: ?>
     Updated by <?php echo $this->fullname($this->news->last_edited_by); ?> on <?php echo date('m/d/Y @ h:i:s A', strtotime($this->news->edited_at)); ?>
     <?php endif; ?>
-    
+
 </div>
 
 <div class="content">
-    <?php echo $this->news->content; ?>
+    <p>
+        <?php echo $this->news->info; ?>
+    </p>
+    <p>
+        <?php echo $this->news->content; ?>
+    </p>
 </div>
 
 <div class="clearfix">&nbsp;</div>

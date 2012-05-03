@@ -30,8 +30,14 @@ $data = array(
         'is_visible' => 1,
     ),
     array(
+        'when' => '2010-11-16 19:00:00',
+        'location' => 'Moeller HS Library',
+        'pdf' => 'minutes/2010-11-16.pdf',
+        'is_visible' => 1,
+    ),
+    array(
         'when' => '2011-02-08 19:00:00',
-        'location' => 'Moeller Library',
+        'location' => 'Moeller HS Library',
         'pdf' => 'minutes/2011-02-08.pdf',
         'is_visible' => 1,
     ),
@@ -39,6 +45,24 @@ $data = array(
         'when' => '2011-03-12 12:00:00',
         'location' => "Peter's House",
         'pdf' => 'minutes/2011-03-12.pdf',
+        'is_visible' => 1,
+    ),
+    array(
+        'when' => '2011-08-22 19:00:00',
+        'location' => "Moeller HS Library",
+        'pdf' => 'minutes/2011-08-22.pdf',
+        'is_visible' => 1,
+    ),
+    array(
+        'when' => '2011-10-24 19:00:00',
+        'location' => "Moeller HS Library",
+        'pdf' => 'minutes/2011-10-24.pdf',
+        'is_visible' => 1,
+    ),
+    array(
+        'when' => '2012-01-09 19:00:00',
+        'location' => "Moeller HS Library",
+        'pdf' => 'minutes/2012-01-09.pdf',
         'is_visible' => 1,
     ),
 );
