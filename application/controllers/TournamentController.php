@@ -193,6 +193,9 @@ class TournamentController extends Zend_Controller_Action
 
                 // insert bid into the database
                 $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+                $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
+                $division = $tournamentDivisionTable->find($data['division'])->current();
+
                 if($tournamentTeamTable->isUnique($this->view->tournament->id, $data['name'], $data['division'])) {
                     $team = $tournamentTeamTable->createRow();
                     $team->tournament_id = $this->view->tournament->id;
@@ -207,11 +210,46 @@ class TournamentController extends Zend_Controller_Action
                     $team->paid = 0;
                     $team->save();
 
-                    $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
-                    $division = $tournamentDivisionTable->find($data['division'])->current();
+
+                    $mail = new Zend_Mail();
+                    $mail->setFrom('webmaster@cincyultimate.org');
+                    $mail->setSubject('[' . $this->view->tournament->year . ' ' . $this->view->tournament->display_name . ' Bid]');
+                    $body = '';
+                    $tournamentMemberTable = new Model_DbTable_TournamentMember();
+                    foreach($tournamentMemberTable->fetchAllDirectors($this->view->tournament->id) as $director) {
+                        if(APPLICATION_ENV == 'production') {
+                            if(!empty($director->email)) {
+                                $mail->addTo($director->email);
+                            } else {
+                                $userTable = new Model_DbTable_User();
+                                $user = $userTable->find($director->user_id)->current();
+                                $mail->addTo($user->email);
+                            }
+                        } else {
+                            if(!empty($director->email)) {
+                                $body .= $director->email . "\r\n";
+                            } else {
+                                $userTable = new Model_DbTable_User();
+                                $user = $userTable->find($director->user_id)->current();
+                                $body .= $user->email . "\r\n";
+                            }
+                        }
+                    }
+                    $body .= "\r\nTournament Directors,\r\n";
+                    $body .= "  A team has submitted a bid to the tournament.  Details below:\r\n\r\n";
+                    $body .= print_r($team->toArray(), true);
+                    $body .= "\r\n\r\nThanks,\r\nCUPA Tournament System";
+                    $mail->setBodyText($body);
 
                     $this->view->message('Bid for the team `' . $data['name'] . '` in the `' . $division->name . '` division submitted', 'success');
-                    $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/payment');
+
+                    if(APPLICATION_ENV == 'production') {
+                        $mail->send();
+                        $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/payment');
+                    } else {
+                        Zend_Debug::dump($mail);
+                    }
+
 
                 } else {
                     $this->view->message('The team `' . $data['name'] . '` in the `' . $division->name . '` division has already submitted a bid.', 'error');

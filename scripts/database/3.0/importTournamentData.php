@@ -35,7 +35,6 @@ foreach($results as $row) {
     $tournament->name = $row['link'];
     $tournament->year = $row['year'];
     $tournament->display_name = $row['name'];
-    $tournament->email = (empty($row['coordinator_email'])) ? null : $row['coordinator_email'];
     $tournament->is_visible = $row['visible'];
     $tournament->save();
 
@@ -118,10 +117,10 @@ foreach($results as $row) {
     $tournamentTeam->name = $row['team'];
     $data = explode(',', $row['location']);
     if(count($data) == 2) {
-        $tournamentTeam->city = trim($city);
-        $tournamentTeam->state = trim($state);
+        $tournamentTeam->city = trim($data[0]);
+        $tournamentTeam->state = trim($data[1]);
     } else {
-        $tournamentTeam->city = 'Unknown'
+        $tournamentTeam->city = 'Unknown';
         $tournamentTeam->state = 'NA';
     }
     $tournamentTeam->contact_name = $row['contact_name'];

@@ -1,9 +1,6 @@
 header {
-    background: url('../../images/cupa.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    text-align: center;
     height: 85px;
-    background-size: 221px 80px
 }
 
 .not-found,

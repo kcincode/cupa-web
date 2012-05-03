@@ -30,7 +30,9 @@
         <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->escape($member->name); ?></a></div>
     <?php else: ?>
     <?php $userTable = new Model_DbTable_User(); $user = $userTable->find($member->user_id)->current(); ?>
-        <?php if(empty($member->email)): ?>
+        <?php if(!empty($this->tournament->email) and $member->type == 'director'): ?>
+        <div class="value"><a href="mailto:<?php echo $this->escape($this->tournament->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
+        <?php elseif(empty($member->email)): ?>
         <div class="value"><a href="mailto:<?php echo $this->escape($user->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
         <?php else: ?>
         <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>

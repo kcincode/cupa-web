@@ -49,4 +49,13 @@ class Model_DbTable_TournamentMember extends Zend_Db_Table
         }
     }
 
+    public function fetchAllDirectors($tournamentId)
+    {
+        $select = $this->select()
+                       ->where('tournament_id = ?', $tournamentId)
+                       ->where('type = ?', 'director')
+                       ->order('weight ASC');
+
+        return $this->fetchAll($select);
+    }
 }
