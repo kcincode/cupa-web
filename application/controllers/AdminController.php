@@ -4,8 +4,6 @@ class AdminController extends Zend_Controller_Action
 {
     public function init()
     {
-        // TODO: check permissions per action
-
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             $this->_forward('auth');
         } else {
@@ -19,7 +17,6 @@ class AdminController extends Zend_Controller_Action
 
     public function indexAction()
     {
-
     }
 
     public function browserAction()

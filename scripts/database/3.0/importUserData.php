@@ -127,6 +127,13 @@ foreach($results as $row) {
             $userRole->save();
         }
     }
+ 
+    if($row['id'] == 41) {
+        $userRole = $userRoleTable->createRow();
+        $userRole->user_id = $user->id;
+        $userRole->role = 'volunteer';
+        $userRole->save();
+    }
 
     if(DEBUG) {
         echo "Done.\n";
