@@ -31,7 +31,7 @@
         <div class="nickname"><?php echo (empty($minor['nickname'])) ? '&nbsp;' : $this->escape($minor['nickname']); ?></div>
         <div class="height"><?php echo (empty($minor['height'])) ? '&nbsp;' : $this->displayHeight($minor['height']); ?></div>
         <div class="level"><?php echo (empty($minor['level'])) ? '&nbsp;' : $this->escape($minor['level']); ?></div>
-        <div class="experience"><?php echo (empty($minor['experience'])) ? '&nbsp;' : $this->escape($minor['experience']); ?></div>
+        <div class="experience"><?php echo (empty($minor['experience'])) ? '&nbsp;' : $this->escape(date('Y') - $minor['experience'] . ' years'); ?></div>
         <div class="action">
             <a href="<?php echo $this->url(array('minor_id' => $minor['id']), 'profile_edit_minor'); ?>"><img title="Edit Minor" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
         </div>
