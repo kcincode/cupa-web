@@ -20,8 +20,12 @@
     <div class="section">
         <div class="color" style="color: <?php echo $this->escape($shirt['text_code']); ?>; background-color: <?php echo $this->escape($shirt['color_code']); ?>"><?php echo $this->escape($color); ?></div>
         <div class="counts">
-            <div class="label">Extra Small:</div>
-            <div class="value"><?php echo (isset($shirt['XS'])) ? $this->escape($shirt['XS']) : 0; ?></div>
+            <div class="label">Youth Small:</div>
+            <div class="value"><?php echo (isset($shirt['YS'])) ? $this->escape($shirt['YS']) : 0; ?></div>
+            <div class="label">Youth Medium:</div>
+            <div class="value"><?php echo (isset($shirt['YM'])) ? $this->escape($shirt['YM']) : 0; ?></div>
+            <div class="label">Youth Large:</div>
+            <div class="value"><?php echo (isset($shirt['YL'])) ? $this->escape($shirt['YL']) : 0; ?></div>
             <div class="label">Small:</div>
             <div class="value"><?php echo (isset($shirt['S'])) ? $this->escape($shirt['S']) : 0; ?></div>
             <div class="label">Medium:</div>
