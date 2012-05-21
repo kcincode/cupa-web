@@ -6,6 +6,11 @@
     border: 1px solid #444;
 }
 
+#table .notification {
+    float: right;
+    height: 30px;
+}
+
 #table .name {
     font-weight: bold;
     font-size: 14pt;

@@ -3,6 +3,9 @@
     <h1>Duplicate User Accounts</h1>
 
     <div id="table">
+        <div class="notification">
+            <a class="button" href="<?php echo $this->url(array(), 'admin_duplicates_email'); ?>">Send Notification to Users</a>
+        </div>
         <?php foreach($this->users as $user): ?>
         <div class="user">
             <div class="name"><?php echo $this->escape($user[0]['first_name'] . ' ' . $user[0]['last_name']); ?></div>
@@ -17,8 +20,13 @@
             <?php $this->cycle(array('odd', 'even')); ?>
             <?php foreach($user as $item): ?>
             <div class="row <?php echo $this->cycle()->next(); ?> <?php echo ($item['is_active'] == 1) ? 'active' : 'inactive'; ?>">
+                <?php if(empty($item['username'])): ?>
+                <div class="sub-name">User<br/>&nbsp;</div>
+                <div class="email">is Minor<br/>&nbsp;</div>
+                <?php else: ?>
                 <div class="sub-name"><a href="<?php echo $this->url(array('user_id' => $item['id']), 'page_profile_public'); ?>"><?php echo $this->escape($item['username']); ?></a><br/>&nbsp;</div>
                 <div class="email"><?php echo $this->escape($item['email']); ?><br/>&nbsp;</div>
+                <?php endif; ?>
                 <div class="requested"><?php echo date('Y-m-d H:i:s', strtotime($item['requested_at'])); ?></div>
                 <div class="activated"><?php echo (empty($item['activated_at'])) ? 'Not<br/>Activated' : date('Y-m-d H:i:s', strtotime($item['activated_at'])); ?></div>
                 <div class="last-login"><?php echo (empty($item['last_login']) or $item['last_login'] == '0000-00-00 00:00:00') ? 'Never<br/> Logged In' : date('Y-m-d H:i:s', strtotime($item['last_login'])); ?></div>

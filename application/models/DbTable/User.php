@@ -251,7 +251,7 @@ class Model_DbTable_User extends Zend_Db_Table
 
     }
 
-    public function fetchAllDuplicates($userId = null, $actives = true)
+    public function fetchAllDuplicates($userId = null, $actives = true, $excludeMinors = false)
     {
         $duplicates = array();
 
@@ -262,8 +262,12 @@ class Model_DbTable_User extends Zend_Db_Table
         }
 
         foreach($this->fetchAll($select) as $row) {
-            $key = strtolower($row['last_name']) . '-' . strtolower($row['first_name']);
-            $duplicates[$key][] = $row->toArray();
+            if($excludeMinors == true and is_numeric($row['parent'])) {
+                // do nothing
+            } else {
+              $key = strtolower($row['last_name']) . '-' . strtolower($row['first_name']);
+              $duplicates[$key][] = $row->toArray();
+            }
         }
 
         foreach($duplicates as $name => $data) {

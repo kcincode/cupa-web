@@ -71,15 +71,15 @@ foreach($results as $row) {
     $user->first_name = ucfirst(trim($row['name']));
     $user->last_name = ucfirst(trim($row['surname']));
     $user->activation_code = $userTable->generateUniqueCodeFor('activation_code');
-    $user->requested_at = $row['created'];
+    $user->requested_at = (empty($row['created']) or $row['created'] ==  '0000-00-00 00:00:00') ? '2010-04-28 15:32:15' : $row['created'];
 
     if($row['active'] and $row['active'] != '0000-00-00 00:00:00') {
-       $user->activated_at = $row['created'];
+       $user->activated_at = $user->requested_at;
     } else {
         $user->activated_at = null;
     }
 
-    $user->expires_at = date('Y-m-d H:i:s', strtotime($row['created']) + 604800);
+    $user->expires_at = date('Y-m-d H:i:s', strtotime($user->requested_at) + 604800);
     $user->updated_at = (empty($row['modified']) or $row['modified'] == '0000-00-00 00:00:00') ? $user->requested_at : $row['modified'];
     $user->last_login = (empty($row['last']) or $row['last'] == '0000-00-00 00:00:00') ? $user->requested_at : $row['last'];
     $user->is_active = $row['active'];
