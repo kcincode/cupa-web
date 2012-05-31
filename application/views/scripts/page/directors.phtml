@@ -15,31 +15,34 @@
 </div>
 
 <div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    <?php if(count($this->directors['league'])): ?>
-    <h3>League Directors</h3>
-    <?php foreach($this->directors['league'] as $userId => $leagues): ?>
-    <div class="director">
-        <div class="name"><?php echo $this->fullname($userId); ?></div>
-        <div class="league">
-            <?php foreach($leagues as $league): ?>
-                <a href="<?php echo $this->baseUrl() . $league['link']; ?>"><?php echo $this->escape($league['name']); ?></a>
-            <?php endforeach; ?>
-
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    <?php endforeach; ?>
-    <?php endif; ?>
-
+    
     <?php if(count($this->directors['tournament'])): ?>
-    <h3 class="pad">Tournament Directors</h3>
+    <h3 class="pad">Tournaments</h3>
     <?php foreach($this->directors['tournament'] as $userId => $tournaments): ?>
     <div class="director">
         <div class="name"><?php echo $this->fullname($userId); ?></div>
         <div class="league">
             <?php foreach($tournaments as $tournament): ?>
-                <a href="<?php echo $this->baseUrl() . $tournament['link']; ?>"><?php echo $this->escape($tournament['name']); ?></a>
+                <a href="<?php echo $this->baseUrl() . $tournament['link']; ?>"><?php echo $this->escape($tournament['name']); ?></a> |
             <?php endforeach; ?>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <?php endforeach; ?>
+    <?php endif; ?>
+    
+    <hr/>
+
+    <?php if(count($this->directors['league'])): ?>
+    <h3>Leagues</h3>
+    <?php foreach($this->directors['league'] as $userId => $leagues): ?>
+    <div class="director">
+        <div class="name"><?php echo $this->fullname($userId); ?></div>
+        <div class="league">
+            <?php foreach($leagues as $league): ?>
+                <a href="<?php echo $this->baseUrl() . $league['link']; ?>"><?php echo $this->escape($league['name']); ?></a> |
+            <?php endforeach; ?>
+
         </div>
     </div>
     <div class="clearfix"></div>
