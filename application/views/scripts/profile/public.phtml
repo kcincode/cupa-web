@@ -45,7 +45,7 @@
         <?php foreach($this->data['leagues'] as $row): ?>
         <div class="row">
             <div class="year"><?php echo $this->escape($row['year']); ?></div>
-            <div class="league"><?php echo substr($this->leaguename($row['league_id'], false, true, true, false), 0, 25) . '...'; ?></div>
+            <div class="league"><a href="<?php echo $this->url(array('league_id' => $row['league_id']), 'league_view'); ?>"><?php echo substr($this->leaguename($row['league_id'], false, true, true, false), 0, 25) . '...'; ?></a></div>
             <div class="team"><?php echo (empty($row['team'])) ? 'Not Assigned' : $this->escape($row['team']); ?></div>
             <div class="record"><?php echo $this->getLeagueTeamRecord($row['league_id'], $row['team_id']); ?></div>
         </div>

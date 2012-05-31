@@ -47,7 +47,7 @@
                     <?php if($league['teams'] > 0): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_schedule'); ?>">Schedule</a> -
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Teams</a> -
-                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_results'); ?>">Results</a>
+                    <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_rankings'); ?>">Rankings</a>
                     <?php elseif($this->isLeagueDirector($league['id'])): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_view'); ?>">Event Page</a>
                     <?php endif; ?>
@@ -70,9 +70,9 @@
                     <strong>League Director(s):</strong>
                     <?php $i = 1; foreach($league['directors'] as $director): ?>
                     <?php if(!empty($league['information']['contact_email'])): ?>
-                    <a href="mailto:<?php echo $this->escape($league['information']['contact_email']); ?>"><?php echo $this->fullname($director['user_id']); ?></a>
+                    <?php echo $this->generateEmailLink($league['information']['contact_email'], $this->fullname($director['user_id'])); ?>
                     <?php else: ?>
-                    <a href="mailto:<?php echo $this->displayEmail($director['user_id']); ?>"><?php echo $this->fullname($director['user_id']); ?></a>
+                    <?php echo $this->generateEmailLink($director['user_id'], $this->fullname($director['user_id'])); ?>
                     <?php if($i != sizeof($league['directors'])): ?>
                     ,
                     <?php endif; $i++; ?>

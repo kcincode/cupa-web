@@ -59,7 +59,7 @@
         </div>
         <div class="title"><?php echo $this->escape($pickup['title']); ?><?php echo (empty($pickup['map'])) ? '' : ' (<a href="' . $this->escape($pickup['map']) . '">Map</a>)'; ?></div>
         <div class="when"><strong>When/Where:</strong> <?php echo $pickup['day']; ?> <?php echo $pickup['time']; ?> at <?php echo $pickup['location']; ?></div>
-        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->fullname($pickup['user_id']) . ' ( <a>' . $this->displayEmail($pickup['user_id']) . '</a> )' : $pickup['email']; ?></div>
+        <div class="contact"><strong>Contact:</strong> <?php echo (empty($pickup['email'])) ? $this->fullname($pickup['user_id']) . ' ( ' . $this->generateEmailLink($pickup['user_id']) . ' )' : $this->generateEmailLink($pickup['email']); ?></div>
         <div class="info"><?php echo (empty($pickup['info'])) ? '&nbsp;' : $pickup['info']; ?></div>
     </div>
     <?php endforeach; ?>

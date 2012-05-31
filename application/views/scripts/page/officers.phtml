@@ -41,9 +41,9 @@
         <div class="position"><?php echo $this->escape($officer['position']); ?></div>
         <div class="email">
             <?php if($officer['position'] != 'At Large Board Member'): ?>
-            <?php echo $this->displayEmail(strtolower(str_replace(' ', '-', $officer['position'])) . '@cincyultimate.org'); ?>
+            <?php echo $this->generateEmailLink(strtolower(str_replace(' ', '-', $officer['position'])) . '@cincyultimate.org'); ?>
             <?php else: ?>
-            <?php echo $this->displayEmail($officer['user_id']); ?>
+            <?php echo $this->generateEmailLink($officer['user_id'], $this->fullname($officer['user_id'])); ?>
             <?php endif; ?>
         </div>
         <div class="since">Since: <?php echo date('M dS, Y', strtotime($officer['since'])); ?></div>

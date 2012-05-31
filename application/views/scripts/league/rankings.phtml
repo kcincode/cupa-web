@@ -43,7 +43,7 @@
   <?php endforeach; ?>
   <div class="clearfix"></div>
   <?php elseif(count($this->teams['current'])): ?>
-  <h1>Current Team Results</h1>
+  <h1>Current Team Rankings</h1>
     <?php if($this->isLeagueDirector($this->league->id)): ?>
     <div id="admin-buttons">
         <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_rankings_edit'); ?>">Update Final Rankings</a>

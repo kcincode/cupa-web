@@ -27,15 +27,15 @@
 <div class="contact">
     <div class="label"><?php echo $this->escape(ucwords(str_replace('-', ' ', $member->type))); ?>:</div>
     <?php if(empty($member->user_id)): ?>
-        <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->escape($member->name); ?></a></div>
+        <div class="value"><?php echo $this->generateEmailLink($member->email, $member->name); ?></a></div>
     <?php else: ?>
     <?php $userTable = new Model_DbTable_User(); $user = $userTable->find($member->user_id)->current(); ?>
         <?php if(!empty($this->tournament->email) and $member->type == 'director'): ?>
-        <div class="value"><a href="mailto:<?php echo $this->escape($this->tournament->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
+        <div class="value"><?php echo $this->generateEmailLink($this->tournament->email, $this->fullname($user->id)); ?></div>
         <?php elseif(empty($member->email)): ?>
-        <div class="value"><a href="mailto:<?php echo $this->escape($user->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
+        <div class="value"><?php echo $this->generateEmailLink($user->email, $this->fullname($user->id)); ?></div>
         <?php else: ?>
-        <div class="value"><a href="mailto:<?php echo $this->escape($member->email); ?>"><?php echo $this->fullname($user->id); ?></a></div>
+        <div class="value"><?php echo $this->generateEmailLink($member->email, $this->fullname($user->id)); ?></a></div>
         <?php endif; ?>
     <?php endif; ?>
 

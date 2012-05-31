@@ -8,7 +8,7 @@ class Model_DbTable_Minute extends Zend_Db_Table
     public function fetchAllMinutes()
     {
         $select = $this->select()
-                       ->order('when');
+                       ->order('when DESC');
 
         $data = array();
         foreach($this->fetchAll($select) as $row) {

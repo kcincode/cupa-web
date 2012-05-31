@@ -35,7 +35,7 @@
         <?php $row = 'even'; foreach($this->minutes['visible'] as $minute): ?>
         <?php $row = ($row == 'even') ? 'odd' : 'even'; ?>
         <div class="minute <?php echo $this->escape($row); ?>">
-            <div class="when"><?php echo $this->escape($minute['when']); ?></div>
+            <div class="when"><?php echo $this->escape(date('m/d/Y h:i:s A', strtotime($minute['when']))); ?></div>
             <div class="location"><?php echo $this->escape($minute['location']); ?></div>
             <div class="links">
                 <?php if($minute['pdf'] != null): ?>

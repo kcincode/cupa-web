@@ -73,6 +73,7 @@ $colorLookupTable = array(
     'white or dark' => '#ffffff',
     'all' => '#ffffff',
     'navy' => '#000090',
+    'columbia blue' => '#75b2dd',
 );
 
 $seasons = array(
