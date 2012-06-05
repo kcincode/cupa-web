@@ -13,11 +13,11 @@ class Form_News extends Zend_Form
             $categories[$category->id] = $category->name;
         }
         
-        $is_visible = $this->addElement('checkbox', 'is_visible', array(
+        $this->addElement('checkbox', 'is_visible', array(
             'label' => 'Is Visible:',
         ));
         
-        $category = $this->addElement('select', 'category', array(
+        $this->addElement('select', 'category', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($categories))),
             ),
@@ -26,19 +26,19 @@ class Form_News extends Zend_Form
             'multiOptions' => $categories,
         ));
         
-        $title = $this->addElement('text', 'title', array(
+        $this->addElement('text', 'title', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Title:',
         ));
         
-        $url = $this->addElement('text', 'url', array(
+        $this->addElement('text', 'url', array(
             'filters' => array('StringTrim'),
             'label' => 'Url:',
             'description' => '(optional)',
         ));
        
-        $info = $this->addElement('textarea', 'info', array(
+        $this->addElement('textarea', 'info', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'validators' => array(
@@ -47,7 +47,13 @@ class Form_News extends Zend_Form
             'label' => 'Short Description:',
         ));
         
-        $content = $this->addElement('textarea', 'content', array(
+        $this->addElement('text', 'remove_at', array(
+            'filters' => array('StringTrim'),
+            'required' => false,
+            'label' => 'Remove At:',
+        ));
+
+        $this->addElement('textarea', 'content', array(
             'filters' => array('StringTrim'),
             'label' => 'Content:',
             'description' => '(optional)',
@@ -61,6 +67,7 @@ class Form_News extends Zend_Form
         $this->getElement('title')->setValue($news->title);
         $this->getElement('url')->setValue($news->url);
         $this->getElement('info')->setValue($news->info);
+        $this->getElement('remove_at')->setValue($news->remove_at);
         $this->getElement('content')->setValue($news->content);
     }
 

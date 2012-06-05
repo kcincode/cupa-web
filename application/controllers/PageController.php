@@ -794,6 +794,7 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/allnews.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/jquery-ui-timepicker.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/news.js');
 
         $category = $this->getRequest()->getUserParam('category');
@@ -874,13 +875,15 @@ class PageController extends Zend_Controller_Action
                 $news->url = null;
                 $news->info = '';
                 $news->content = '';
-                $news->type = $newsTable->getNewsType($news);
+                $news->type = null;
+                $news->posted_at = date('Y-m-d H:i:s');
+                $news->posted_by = $this->view->user->id;
                 $news->last_edited_by = $this->view->user->id;
                 $news->edited_at = date('Y-m-d H:i:s');
                 $news->save();
 
                 $this->view->message('News item created');
-                echo Zend_Json::encode(array('result' => 'success', 'data' => $news->id));
+                echo Zend_Json::encode(array('result' => 'success', 'data' => $news->slug));
             } else {
                 $this->_helper->viewRenderer->setNoRender(true);
                 echo Zend_Json::encode(array('result' => 'error', 'message' => 'News Title Already Exists'));
@@ -915,8 +918,9 @@ class PageController extends Zend_Controller_Action
             $news->info = $post['info'];
             $news->content = $post['content'];
             $news->edited_at = date('Y-m-d H:i:s');
-            $news->type = $newsTable->getNewsType($news);
+            $news->type = $newsTable->getNewsType($post['category']);
             $news->last_edited_by = $this->view->user->id;
+            $news->remove_at = $post['remove_at'];
             $news->save();
 
             $this->view->message('News item updated', 'success');
@@ -931,8 +935,11 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/newsedit.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/jquery-ui-timepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/news.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
 
         $this->view->form = $form;

@@ -37,5 +37,11 @@ $(document).ready(function() {
         $('#add-news-container').load(BASE_URL + '/news/add').dialog('open');
         $('#news-title').focus();
     });
-
+    
+    $('#remove_at').datetimepicker({
+        dateFormat: 'yy-mm-dd',
+        timeFormat: 'hh:mm:ss',
+        changeMonth: true,
+        changeYear: true
+    });
 });
