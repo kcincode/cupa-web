@@ -10,17 +10,16 @@
             <p>
             <fieldset>
                 <legend>Add Players</legend>
-                    <select id="add-players" name="players" multiple>
+                    <select id="add-players" name="addplayers" multiple>
                         <?php foreach($this->users as $user): ?>
                         <option value="<?php echo $this->escape($user->id); ?>"><?php echo $this->escape($user->first_name . ' ' . $user->last_name); ?></option>
                         <?php endforeach; ?>
                     </select>
                     <button id="add-players-button" class="button" type="button">Add Players</button>
-                </form>
             </fieldset>
             <fieldset>
                 <legend>Remove Players</legend>
-                <select id="remove-players" name="players" multiple>
+                <select id="remove-players" name="removeplayers" multiple>
                     <?php foreach($this->leaguePlayers as $user): ?>
                     <option value="<?php echo $this->escape($user['id']); ?>"><?php echo $this->escape($user['first_name'] . ' ' . $user['last_name']); ?></option>
                     <?php endforeach; ?>
@@ -49,9 +48,9 @@
 		</div>
 		    
 	    <div id="buttons">
-	    	<p><input class="button" type="submit" name="add" value="Add =>"/></p>
-	    	<p><input class="button" type="submit" name="remove" value="<= Remove"/></p>
-	    	<p><input class="button" type="submit" name="clear" value="Clear Team"/></p>
+	    	<p><input class="button" type="submit" name="add" value="Add =>" /></p>
+	    	<p><input class="button" type="submit" name="remove" value="<= Remove" /></p>
+	    	<p><input class="button" type="submit" name="clear" value="Clear Team" /></p>
 	    </div>
 
 	    <div id="players">
