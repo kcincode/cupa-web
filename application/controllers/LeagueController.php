@@ -1014,10 +1014,11 @@ class LeagueController extends Zend_Controller_Action
 
             $leagueGameTable = new Model_DbTable_LeagueGame();
             $leagueGameDataTable = new Model_DbTable_LeagueGameData();
-            $game = $leagueGameTable->fetchGame($post['day'], $post['week'], $post['field']);
+            $game = $leagueGameTable->fetchGame($leagueId, $post['day'], $post['week'], $post['field']);
 
             if($leagueGameDataTable->isUnique($game, $post['home_team'], $post['away_team'])) {
-                $game = $leagueGameTable->fetchGame($post['day'], $post['week'], $post['field']);
+                // TODO: Remove this??
+                $game = $leagueGameTable->fetchGame($leagueId, $post['day'], $post['week'], $post['field']);
 
                 if(!$game) {
                     $game = $leagueGameTable->createRow();
@@ -2093,8 +2094,10 @@ class LeagueController extends Zend_Controller_Action
     public function manageAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/manage.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/manage.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $teamId = $this->getRequest()->getUserParam('team_id');
@@ -2159,6 +2162,52 @@ class LeagueController extends Zend_Controller_Action
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
         $this->view->available = $leagueMemberTable->fetchPlayersByTeam($leagueId, null);
         $this->view->teamPlayers = $leagueMemberTable->fetchPlayersByTeam($leagueId, $teamId);
+        
+        $userTable = new Model_DbTable_User();
+        $this->view->users = $userTable->fetchAllUsers();
+        $this->view->leaguePlayers = $leagueMemberTable->fetchPlayersByLeague($leagueId);
+    }
+    
+    public function addplayerAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $players = $this->getRequest()->getParam('players');
+        
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $flag = 0;
+        if($players) {
+            foreach(explode(',', $players) as $playerId) {
+                $ret = $leagueMemberTable->addNewPlayer($leagueId, $playerId);
+                if($ret == 'duplicate') {
+                    if($flag < 1) {
+                        $this->view->message('Some players were already members of the league', 'info');
+                    }
+                    $flag++;
+                }
+            }
+        }
+        if($flag != count(explode(',', $players))) {
+            $this->view->message('Player(s) added', 'success');
+        }
+    }
+
+    public function removeplayerAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        
+        $players = $this->getRequest()->getParam('players');
+        
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        if($players) {
+            foreach(explode(',', $players) as $playerId) {
+                $leagueMemberTable->removePlayer($playerId);
+            }
+        }
+        $this->view->message('Player(s) removed', 'success');
     }
 
 
@@ -2184,10 +2233,6 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $session = new Zend_Session_Namespace('move_players');
-
-        $leagueTable = new Model_DbTable_League();
-//        $leagues = $this->fetchAll
-
         $leagueMemberTable = new Model_DbTable_LeagueMember();
 
         if($this->view->state == 'players') {

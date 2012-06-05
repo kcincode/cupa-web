@@ -356,4 +356,34 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
 
         return $this->getAdapter()->fetchAll($select);
     }
+    
+    public function addNewPlayer($leagueId, $playerId)
+    {
+        $player = $this->fetchMember($leagueId, $playerId);
+        
+        if(!$player) {
+            // add to league member table
+            $this->insert(array(
+                'league_id' => $leagueId,
+                'user_id' => $playerId,
+                'position' => 'player',
+                'league_team_id' => null,
+                'paid' => 0,
+                'release' => 0,
+                'created_at' => date('Y-m-d H:i:s'),
+                'modified_at' => date('Y-m-d H:i:s'),
+                'modified_by' => Zend_Auth::getInstance()->getIdentity(),
+            ));
+        } else {
+            return 'duplicate';
+        }
+    }
+    
+    public function removePlayer($memberId) 
+    {
+        $player = $this->find($memberId)->current();
+        if($player) {
+            $player->delete();
+        }
+    }
 }

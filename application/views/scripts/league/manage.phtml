@@ -7,6 +7,27 @@
 			<p>
 				<a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_move'); ?>">Move Players to Another League</a>
 			</p>
+            <p>
+            <fieldset>
+                <legend>Add Players</legend>
+                    <select id="add-players" name="players" multiple>
+                        <?php foreach($this->users as $user): ?>
+                        <option value="<?php echo $this->escape($user->id); ?>"><?php echo $this->escape($user->first_name . ' ' . $user->last_name); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button id="add-players-button" class="button" type="button">Add Players</button>
+                </form>
+            </fieldset>
+            <fieldset>
+                <legend>Remove Players</legend>
+                <select id="remove-players" name="players" multiple>
+                    <?php foreach($this->leaguePlayers as $user): ?>
+                    <option value="<?php echo $this->escape($user['id']); ?>"><?php echo $this->escape($user['first_name'] . ' ' . $user['last_name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button id="remove-players-button" class="button" type="button">Remove Players</button>
+            </fieldset>
+            </p>
 	    	Select a team:
 	    	<select id="teams-select" name="teams-select">
 	    		<?php if($this->teamId == 0) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>

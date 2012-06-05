@@ -15,7 +15,7 @@
 
 #players {
 	float: left;
-	margin-right; 30px;
+	margin-right: 30px;
 }
 
 #buttons {
@@ -30,4 +30,26 @@
 	text-align: center;
 	width: 600px;
 	margin: 15px auto;	
+}
+
+fieldset select {
+    width: 500px;
+}
+
+fieldset button.button {
+    margin: 3px 10px 0 0;
+    float: right;
+}
+
+fieldset {
+    border: 1px solid #444;
+    width: 675px;
+    padding: 5px;
+    margin: 5px;
+}
+
+fieldset legend {
+    font-size: 14pt;
+    font-weight: bold;
+    padding: 0 5px;
 }

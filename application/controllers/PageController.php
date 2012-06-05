@@ -467,7 +467,7 @@ class PageController extends Zend_Controller_Action
         $minuteTable = new Model_DbTable_Minute();
         $minute = $minuteTable->find($minuteId)->current();
 
-        apache_setenv('no-gzip', '1');
+        //apache_setenv('no-gzip', '1');
         ob_end_clean();
 
         header('Pragma: public');
@@ -962,7 +962,7 @@ class PageController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
 
-            apache_setenv('no-gzip', '1');
+            //apache_setenv('no-gzip', '1');
             ob_end_clean();
 
             header('Pragma: public');

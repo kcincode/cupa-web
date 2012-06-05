@@ -23,7 +23,7 @@
         <?php $this->cycle(array('even', 'odd')); ?>
         <?php foreach($this->players as $player): ?>
         <div class="row <?php echo $this->cycle()->next(); ?>">
-            <div class="name"><?php echo $this->fullname($player['user_id']); ?></div>
+            <div class="name"><?php echo $this->generateEmailLink($player['email'], $this->fullname($player['user_id'])); ?></div>
             <div class="gender"><?php echo $this->escape($player['profile']['gender']); ?></div>
             <div class="age"><?php echo $this->displayAge($player['profile']['birthday']); ?></div>
             <div class="height"><?php echo $this->displayHeight($player['profile']['height']); ?></div>
