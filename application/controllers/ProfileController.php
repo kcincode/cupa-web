@@ -232,7 +232,29 @@ class ProfileController extends Zend_Controller_Action
 
         $this->_redirect('profile/contacts');
     }
+    public function contactsremoveAction()
+    {
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
 
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            return;
+        }
+        
+        $contactId = $this->getRequest()->getUserParam('contact_id');
+        if(is_numeric($contactId)) {
+            $userEmergencyTable = new Model_DbTable_UserEmergency();
+            $contact = $userEmergencyTable->find($contactId)->current();
+            if($contact) {
+                $contact->delete();
+                $this->view->message('User emergency contact removed', 'success');
+            }
+            
+            $this->_redirect('/profile/contacts');
+        }
+    }
+    
     public function contacts($user, $data)
     {
         $userEmergencyTable = new Model_DbTable_UserEmergency();
