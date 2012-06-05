@@ -714,8 +714,9 @@ class LeagueController extends Zend_Controller_Action
                 $data = $form->getValues();
 
                 $leagueInformationTable = new Model_DbTable_LeagueInformation();
-                $leagueInformationTable->description = $data['description'];
-                $leagueInformationTable->save();
+                $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
+                $leagueInformation->description = $data['description'];
+                $leagueInformation->save();
 
                 $this->view->message('League description updated', 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
