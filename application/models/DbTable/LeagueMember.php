@@ -192,7 +192,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     {
         $sql = "SELECT lm.user_id,
                 (SELECT uw.year FROM user_waiver uw WHERE uw.user_id = u.id
-                ORDER BY year DESC LIMIT 1) AS waiver, lm.release, lm.paid,
+                AND uw.year <= $year ORDER BY year DESC LIMIT 1) AS waiver, lm.release, lm.paid,
                 (SELECT SUM(li.cost)
                 FROM league_member lm2
                 LEFT JOIN user u2 ON u2.id = lm2.user_id
