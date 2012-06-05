@@ -264,9 +264,9 @@ class Model_DbTable_User extends Zend_Db_Table
         foreach($this->fetchAll($select) as $row) {
             if($excludeMinors == true and is_numeric($row['parent'])) {
                 // do nothing
-            } else {
-              $key = strtolower($row['last_name']) . '-' . strtolower($row['first_name']);
-              $duplicates[$key][] = $row->toArray();
+            } else if($row['last_name'] != 'Southard' and $row['first_name'] != 'Terence') {
+                $key = strtolower($row['last_name']) . '-' . strtolower($row['first_name']);
+                $duplicates[$key][] = $row->toArray();
             }
         }
 
@@ -340,6 +340,7 @@ class Model_DbTable_User extends Zend_Db_Table
             $user->delete();
         }
     }
+    
     private function backupDb($db, $ids, $user)
     {
         $tables = array(
