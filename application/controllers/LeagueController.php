@@ -2311,7 +2311,7 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->isLeagueCaptain($leagueId, $teamId) or !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->view->isLeagueCaptain($leagueId, $teamId) and !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
 
