@@ -12,7 +12,7 @@ class Model_DbTable_UserRole extends Zend_Db_Table
                        ->where('role = ?', $role);
 
         if($pageId) {
-            $select->where('page_id = ?', $pageId);
+            $select->where('page_id = ? OR page_id IS NULL', $pageId);
         } else {
             $select->where('page_id IS NULL');
         }
