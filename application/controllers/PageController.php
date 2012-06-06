@@ -920,7 +920,7 @@ class PageController extends Zend_Controller_Action
             $news->edited_at = date('Y-m-d H:i:s');
             $news->type = $newsTable->getNewsType($post['category']);
             $news->last_edited_by = $this->view->user->id;
-            $news->remove_at = $post['remove_at'];
+            $news->remove_at = (empty($post['remove_at']) or $post['remove_at'] == '0000-00-00 00:00:00') ? null : $post['remove_at'];
             $news->save();
 
             $this->view->message('News item updated', 'success');
