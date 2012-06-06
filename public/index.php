@@ -1,14 +1,23 @@
 <?php
-ini_set('memory_limit', '512M');
-
-// Define path to application directory
-defined('APPLICATION_PATH')
-    || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
+ini_set('memory_limit', '768M');
 
 // Define application environment
 defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
+if(APPLICATION_ENV == 'production') {
+    // Define path to application directory
+    defined('APPLICATION_PATH')
+        || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../cupaweb/application'));
+
+    define('APPLICATION_WEBROOT', realpath(dirname(__FILE__)));
+} else {
+    // Define path to application directory
+    defined('APPLICATION_PATH')
+        || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
+
+    define('APPLICATION_WEBROOT', APPLICATION_PATH . '/../public');
+}
 // Ensure library/ is on include_path
 set_include_path(implode(PATH_SEPARATOR, array(
     realpath(APPLICATION_PATH . '/../library'),

@@ -64,8 +64,7 @@ class PageController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->hasRole('editor', $page->id))) {
+           !$this->view->hasRole('editor'))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this page.');
             $this->_redirect('/' . $page->name);
         }

@@ -2311,7 +2311,7 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->isLeagueCaptain($leagueId, $teamId)) {
+        if(!$this->view->isLeagueCaptain($leagueId, $teamId) or !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId);
         }
 
@@ -2320,6 +2320,9 @@ class LeagueController extends Zend_Controller_Action
                 $image = new Model_SimpleImage();
                 $image->load($_FILES['file']['tmp_name']);
                 $image->resize(85,85);
+                if(APPLICATION_ENV == 'production') {
+                    $image->save(APPLICATION_WEBROOT . '/images/team_logos/' . $teamId . '.jpg');
+                }
                 $image->save(APPLICATION_PATH . '/../public/images/team_logos/' . $teamId . '.jpg');
 
                 $this->view->message('Logo updated.', 'success');

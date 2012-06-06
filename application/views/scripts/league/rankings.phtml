@@ -15,14 +15,7 @@
     <?php else: ?>
     <div class="logo">
     <?php endif; ?>
-  
-      <?php if(file_exists($this->baseUrl() . '/images/team_logos/' . $this->escape($team['id']) . '.png')): ?>
-      <?php   $imgFile = $this->escape($team['id']) . '.png'; ?>
-      <?php else: ?>
-      <?php   $imgFile = 'default.png'; ?>
-      <?php endif; ?>
-         
-        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $imgFile; ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
+        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
     </div>
     <div class="info">
         <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>
@@ -56,14 +49,7 @@
     <?php else: ?>
     <div class="logo">
     <?php endif; ?>
-  
-      <?php if(file_exists($this->baseUrl() . '/images/team_logos/' . $this->escape($team['id']) . '.png')): ?>
-      <?php   $imgFile = $this->escape($team['id']) . '.png'; ?>
-      <?php else: ?>
-      <?php   $imgFile = 'default.png'; ?>
-      <?php endif; ?>
-         
-        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $imgFile; ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
+        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
     </div>
     <div class="info">
         <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>

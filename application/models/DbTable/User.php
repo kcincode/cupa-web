@@ -167,7 +167,7 @@ class Model_DbTable_User extends Zend_Db_Table
 
         // get users league data
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $data['leagues'] = $leagueMemberTable->fetchUserLeagues($user->id);
+        $data['leagues'] = $leagueMemberTable->fetchUserLeagues($user->id, false);
 
         $data['minors'] = $this->fetchAllMinors($user->id, true);
 
