@@ -68,7 +68,6 @@ class Model_DbTable_User extends Zend_Db_Table
             'expires_at' => $expire,
             'updated_at' => $date,
             'last_login' => null,
-            'login_errors' => 0,
             'is_active' => 0,
         );
 

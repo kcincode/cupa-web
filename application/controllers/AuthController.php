@@ -87,10 +87,6 @@ class AuthController extends Zend_Controller_Action
                         // log the message
                         $userAccessLogTable->log($user->username, 'login-failed', "Invalid Credentials.");
 
-                        // increment the login errors count
-                        $user->login_errors++;
-                        $user->save();
-
                         // build the data to be sent
                         $data = array('result' => 'Error', 'msg' => 'Invalid Credentials');
                         echo Zend_Json::encode($data);
