@@ -1,16 +1,16 @@
 $(document).ready(function (){
     
-   $('#email').blur(function(e) {
-       if(($('#email').val() != '')) {
+   $('#email').keyup(function(e) {
+       if(($('#email').val() != '' && $('#email').val().length > 5)) {
            // check for valid email address
            $.ajax({
               type: 'post',
               url: BASE_URL + '/register/' + $('#email').val(),
               success: function(response) {
                  if(response == 'ok') {
-                     $('#email-status').html('<span class="ok">Ok</span>');
+                     $('#email-status').html('<span class="ok">Email Ok</span>');
                  } else if(response == 'error') {
-                     $('#email-status').html('<span class="error">Already in use</span>');
+                     $('#email-status').html('<span class="error">Email already in use</span>');
                  } else if(response == 'invalid') {
                      $('#email-status').html('<span class="error">Invalid Email</span>');
                  } else {
@@ -26,7 +26,7 @@ $(document).ready(function (){
    $('#reg-submit-button').click(function(e) {
        e.preventDefault();
        
-       if($('#email-status').html() == '<span class="ok">Ok</span>') {
+       if($('#email-status').html() == '<span class="ok">Email Ok</span>') {
            if($('#first_name').val() && $('#last_name').val()) {
                $('#registration-form').submit();
            } else {

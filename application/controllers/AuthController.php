@@ -295,7 +295,7 @@ class AuthController extends Zend_Controller_Action
                         $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
                     }
                 } else {
-                    $form->populate();
+                    $form->populate($post);
                 }
             }
 

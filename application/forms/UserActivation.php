@@ -19,7 +19,7 @@ class Form_UserActivation extends Zend_Form
         $this->addElement('password', 'password', array(
            'filters' => array('StringTrim'),
             'validators' => array(
-                array('StringLength', false, array(6,20)),
+                array('StringLength', false, array(6,25)),
             ),
             'required' => true,
             'label' => 'Enter a Password:',
@@ -28,7 +28,7 @@ class Form_UserActivation extends Zend_Form
         $this->addElement('password', 'confirm', array(
            'filters' => array('StringTrim'),
             'validators' => array(
-                array('StringLength', false, array(6,20)),
+                array('StringLength', false, array(6,25)),
             ),
             'required' => true,
             'label' => 'Confirm Password:',

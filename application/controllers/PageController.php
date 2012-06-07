@@ -61,6 +61,7 @@ class PageController extends Zend_Controller_Action
         $form = new Form_PageEdit();
         $form->loadFromPage($page);
 
+        $this->view->page = $page;
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
@@ -95,7 +96,6 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
 
-        $this->view->page = $page;
         $this->view->form = $form;
     }
 

@@ -16,7 +16,7 @@ class Form_UserLogin extends Zend_Form
         $password = $this->addElement('password', 'password', array(
            'filters' => array('StringTrim'),
             'validators' => array(
-                array('StringLength', false, array(6,20)),
+                array('StringLength', false, array(6,25)),
             ),
             'required' => true,
             'label' => 'Password:',

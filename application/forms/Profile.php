@@ -310,7 +310,7 @@ class Form_Profile extends Zend_Form
         $this->addElement('password', 'current', array(
            'filters' => array('StringTrim'),
             'validators' => array(
-                array('StringLength', false, array(6,20)),
+                array('StringLength', false, array(6,25)),
             ),
             'required' => true,
             'label' => 'Enter current password:',
@@ -319,7 +319,7 @@ class Form_Profile extends Zend_Form
         $this->addElement('password', 'password', array(
            'filters' => array('StringTrim'),
             'validators' => array(
-                array('StringLength', false, array(6,20)),
+                array('StringLength', false, array(6,25)),
             ),
             'required' => true,
             'label' => 'Enter a new password:',
@@ -328,7 +328,7 @@ class Form_Profile extends Zend_Form
         $this->addElement('password', 'confirm', array(
            'filters' => array('StringTrim'),
             'validators' => array(
-                array('StringLength', false, array(6,20)),
+                array('StringLength', false, array(6,25)),
             ),
             'required' => true,
             'label' => 'Confirm new password:',
