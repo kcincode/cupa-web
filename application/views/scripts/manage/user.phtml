@@ -1,0 +1,19 @@
+<?php echo $this->partial('manage/menu.phtml', array()); ?>
+<div id="container">
+    <h1>User Management</h1>
+
+    <fieldset>
+        <legend>Edit a User</legend>
+        <form method="post">
+            <select id="users">
+                <option value="0">Start typing a name/email</option>
+                <?php foreach($this->users as $user): ?>
+                <option value="<?php echo $this->escape($user->id); ?>"><?php echo $this->escape($user->first_name . ' ' . $user->last_name); ?> (<?php echo $this->escape($user->email); ?>)</option>
+                <?php endforeach; ?>
+            </select>
+            <input type="submit" value="Edit User"/>
+        </form>
+    </fieldset>
+    
+</div>
+

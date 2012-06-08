@@ -21,8 +21,6 @@ $(document).ready(function (){
        }
    });
    
-
-
    $('#reg-submit-button').click(function(e) {
        e.preventDefault();
        

@@ -47,4 +47,16 @@ class ManageController extends Zend_Controller_Action
         }
         $this->view->players = $data;
     }
+    
+    public function userAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/user.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/manage/user.js');
+        
+        $userTable = new Model_DbTable_User();
+        $this->view->users = $userTable->fetchAllUsers(true);
+        
+    }
 }
