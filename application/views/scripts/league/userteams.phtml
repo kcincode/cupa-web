@@ -17,7 +17,7 @@
     <?php foreach($this->players as $player): ?>
     <div class="row <?php echo $this->cycle()->next(); ?>">
     	<div class="name"><?php echo $this->escape($player['first_name'] . ' ' . $player['last_name']); ?></div>
-    	<div class="request"><?php echo $this->escape($player['team']); ?></div>
+    	<div class="request"><?php echo $this->getLeagueTeamName($player['team']); ?></div>
 	</div>
 	<?php endforeach; ?>
 </div>
