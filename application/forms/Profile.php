@@ -139,7 +139,7 @@ class Form_Profile extends Zend_Form
             'filters' => array('digits'),
             'required' => true,
             'validators' => array(
-                array('GreaterThan', true, array('min' => 1940, 'messages' => array('notGreaterThan' => 'Please enter a valid year.'))),
+                array('Between', true, array('min' => 1940, 'max' => date('Y'), 'messages' => array('notBetween' => 'Please enter a valid year.'))),
             ),
             'label' => 'Ultimate Experience:',
             'value' => (empty($this->_data['profile']['experience'])) ? null : $this->_data['profile']['experience'],
