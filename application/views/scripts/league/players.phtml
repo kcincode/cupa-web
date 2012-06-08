@@ -4,11 +4,14 @@
     
     <?php if($this->isLeagueDirector($this->league->id) and count($this->players) > 1): ?>
     <div id="admin-buttons">
-        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Complete Data</a>
+        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Complete Data</a><br/><br/>
+        Players registered: <?php echo $this->escape($this->genderCounts['male_players'] + $this->genderCounts['female_players']); ?> 
+        (<?php echo $this->escape($this->genderCounts['male_players']); ?> Males,
+        <?php echo $this->escape($this->genderCounts['female_players']); ?> Females)
     </div>
     <?php endif; ?>
 
-    <div class="clearfix">&nbsp;<br/>&nbsp;</div>
+    <div class="clearfix"></div>
 
     <div id="players">
         <div class="row header">

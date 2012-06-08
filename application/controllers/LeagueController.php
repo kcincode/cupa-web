@@ -1532,6 +1532,7 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->players = $leagueMemberTable->fetchPlayerInformation($leagueId);
+        $this->view->genderCounts = $leagueMemberTable->fetchAllPlayersByGender($leagueId);
 
         if($this->getRequest()->getParam('export')) {
             // disable the layout
