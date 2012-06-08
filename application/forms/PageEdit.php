@@ -9,13 +9,13 @@ class Form_PageEdit extends Zend_Form
 
         $pageTable = new Model_DbTable_Page();
 
-        $title = $this->addElement('text', 'title', array(
+        $this->addElement('text', 'title', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Title:',
         ));
         
-        $url = $this->addElement('text', 'url', array(
+        $this->addElement('text', 'url', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Url:',
@@ -29,7 +29,7 @@ class Form_PageEdit extends Zend_Form
             $targets[$target] = $target;
         }
 
-        $target = $this->addElement('select', 'target', array(
+        $this->addElement('select', 'target', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($targets))),
             ),
@@ -39,14 +39,14 @@ class Form_PageEdit extends Zend_Form
             'description' => 'Only used if url is specified.',
         ));
 
-        $weight = $this->addElement('text', 'weight', array(
+        $this->addElement('text', 'weight', array(
             'filters' => array('Int'),
             'required' => true,
             'label' => 'Weight:',
             'description' => 'Lower numbers are shown first.',
         ));
         
-        $content = $this->addElement('textarea', 'content', array(
+        $this->addElement('textarea', 'content', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Content:',

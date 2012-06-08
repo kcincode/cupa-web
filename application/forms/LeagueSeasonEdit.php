@@ -7,21 +7,21 @@ class Form_LeagueSeasonEdit extends Zend_Form
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
-        $name = $this->addElement('text', 'name', array(
+        $this->addElement('text', 'name', array(
             'filters' => array('StringTrim', 'StringToLower'),
             'required' => true,
             'label' => 'Name:',
             'description' => 'Enter the name of the season.',
         ));
         
-        $when = $this->addElement('text', 'when', array(
+        $this->addElement('text', 'when', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'When:',
             'description' => 'Enter the months this season is (ie June - July)',
         ));
                 
-        $infomation = $this->addElement('textarea', 'information', array(
+        $this->addElement('textarea', 'information', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Information:',

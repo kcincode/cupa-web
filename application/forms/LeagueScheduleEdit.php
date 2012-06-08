@@ -25,7 +25,7 @@ class Form_LeagueScheduleEdit extends Zend_Form
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
-        $day = $this->addElement('text', 'day', array(
+        $this->addElement('text', 'day', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Day/Time:',
@@ -33,7 +33,7 @@ class Form_LeagueScheduleEdit extends Zend_Form
             'value' => (empty($this->_game->day)) ? null : $this->_game->day,
         ));
 
-        $week = $this->addElement('text', 'week', array(
+        $this->addElement('text', 'week', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Week:',
@@ -41,7 +41,7 @@ class Form_LeagueScheduleEdit extends Zend_Form
             'value' => (empty($this->_game->week)) ? null : $this->_game->week,
         ));
 
-        $field = $this->addElement('text', 'field', array(
+        $this->addElement('text', 'field', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Field:',
@@ -58,7 +58,7 @@ class Form_LeagueScheduleEdit extends Zend_Form
             $leagueTeams[$row->id] = $row->name;
         }
 
-        $home_team = $this->addElement('select', 'home_team', array(
+        $this->addElement('select', 'home_team', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($leagueTeams))),
             ),
@@ -69,7 +69,7 @@ class Form_LeagueScheduleEdit extends Zend_Form
             'value' => (empty($this->_gameData[0])) ? null : $this->_gameData[0]->league_team_id,
         ));
 
-        $home_score = $this->addElement('text', 'home_score', array(
+        $this->addElement('text', 'home_score', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Score:',
@@ -77,7 +77,7 @@ class Form_LeagueScheduleEdit extends Zend_Form
             'value' => (empty($this->_gameData[0])) ? null : $this->_gameData[0]->score,
         ));
 
-        $away_team = $this->addElement('select', 'away_team', array(
+        $this->addElement('select', 'away_team', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($leagueTeams))),
             ),
@@ -88,7 +88,7 @@ class Form_LeagueScheduleEdit extends Zend_Form
             'value' => (empty($this->_gameData[1])) ? null : $this->_gameData[1]->league_team_id,
         ));
 
-        $away_score = $this->addElement('text', 'away_score', array(
+        $this->addElement('text', 'away_score', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Score:',

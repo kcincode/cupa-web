@@ -7,7 +7,7 @@ class Form_UserForgotPassword extends Zend_Form
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
-        $email = $this->addElement('text', 'email', array(
+        $this->addElement('text', 'email', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 'EmailAddress',

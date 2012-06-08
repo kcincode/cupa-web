@@ -190,14 +190,14 @@ class Form_LeagueRegister extends Zend_Form
     private function league()
     {
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-        $leagueInformationTable = new Model_DbTable_LeagueInformation();
+        //$leagueInformationTable = new Model_DbTable_LeagueInformation();
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $leagueLimitTable = new Model_DbTable_LeagueLimit();
 
         $i = 1;
         foreach($leagueQuestionTable->fetchAllQuestionsFromLeague($this->_leagueId) as $question) {
             if($question['name'] == 'user_teams') {
-                $leagueInformation = $leagueInformationTable->fetchInformation($this->_leagueId);
+                //$leagueInformation = $leagueInformationTable->fetchInformation($this->_leagueId);
 
                 $limits = $leagueLimitTable->fetchLimits($this->_leagueId);
                 $teams = $leagueTeamTable->fetchAllTeams($this->_leagueId);

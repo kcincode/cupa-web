@@ -16,7 +16,7 @@ class Form_GenerateSchedule extends Zend_Form
     
     public function init()
     {
-        $number_of_teams = $this->addElement('text', 'number_of_teams', array(
+        $this->addElement('text', 'number_of_teams', array(
             'filter' => array('Digits'),
             'validators' => array(
                 array('GreaterThan', false, array('min' => 2)),
@@ -32,7 +32,7 @@ class Form_GenerateSchedule extends Zend_Form
             $fields[] = $i + 1;
         }
 
-        $number_of_fields = $this->addElement('text', 'number_of_fields', array(
+        $this->addElement('text', 'number_of_fields', array(
             'filter' => array('StringTrim'),
             'required' => true,
             'label' => 'Field Numbers:',
@@ -46,7 +46,7 @@ class Form_GenerateSchedule extends Zend_Form
             $teams[$team->id] = $team->name;
         }
         
-        $home_advantage = $this->addElement('select', 'home_advantage', array(
+        $this->addElement('select', 'home_advantage', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($teams))),
             ),
@@ -56,7 +56,7 @@ class Form_GenerateSchedule extends Zend_Form
             'multiOptions' => $teams,
         ));
 
-        $home_field = $this->addElement('text', 'home_field', array(
+        $this->addElement('text', 'home_field', array(
             'filter' => array('Digits'),
             'required' => true,
             'label' => 'Home Advantage Field:',

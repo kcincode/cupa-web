@@ -13,7 +13,7 @@ class Form_PageAdmin extends Zend_Form
             $pages[$page->id] = $page->name;
         }
         
-        $parent = $this->addElement('select', 'parent', array(
+        $this->addElement('select', 'parent', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($pages))),
             ),
@@ -22,13 +22,13 @@ class Form_PageAdmin extends Zend_Form
             'multiOptions' => $pages,
         ));
         
-        $name = $this->addElement('text', 'name', array(
+        $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
         ));
         
-        $is_visible = $this->addElement('checkbox', 'is_visible', array(
+        $this->addElement('checkbox', 'is_visible', array(
             'label' => 'Is Visible:',
         ));
         
@@ -39,6 +39,5 @@ class Form_PageAdmin extends Zend_Form
         $this->getElement('parent')->setValue($page->parent);
         $this->getElement('name')->setValue($page->name);
         $this->getElement('is_visible')->setValue($page->is_visible);
-        
     }
 }

@@ -7,24 +7,24 @@ class Form_MinuteEdit extends Zend_Form
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
-        $when = $this->addElement('text', 'when', array(
+        $this->addElement('text', 'when', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Date:',
         ));
         
-        $location = $this->addElement('text', 'location', array(
+        $this->addElement('text', 'location', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Location:',
         ));
 
-        $pdf = $this->addElement('file', 'pdf', array(
+        $this->addElement('file', 'pdf', array(
             'required' => false,
             'label' => 'PDF File:',
         ));
         
-        $is_visible = $this->addElement('checkbox', 'is_visible', array(
+        $this->addElement('checkbox', 'is_visible', array(
             'label' => 'Is Visible:',
         ));        
     }

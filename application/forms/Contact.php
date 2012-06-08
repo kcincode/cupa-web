@@ -8,7 +8,7 @@ class Form_Contact extends Zend_Form
         
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
-        $email = $this->addElement('text', 'from', array(
+        $this->addElement('text', 'from', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 array('EmailAddress', true),
@@ -19,7 +19,7 @@ class Form_Contact extends Zend_Form
         
         $toSelection = $this->getContacts();
         
-        $to = $this->addElement('select', 'to', array(
+        $this->addElement('select', 'to', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($toSelection))),
             ),
@@ -28,20 +28,20 @@ class Form_Contact extends Zend_Form
             'multiOptions' => $toSelection,
         ));
         
-        $subject = $this->addElement('text', 'subject', array(
+        $this->addElement('text', 'subject', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Subject:',
             'value' => '[CUPA Information] More Information',
         ));
         
-        $body = $this->addElement('textarea', 'content', array(
+        $this->addElement('textarea', 'content', array(
            'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Message Content:',
         ));
         
-        $send = $this->addElement('submit', 'send', array(
+        $this->addElement('submit', 'send', array(
             'required' => false,
             'ignore' => true,
             'label' => 'Send Email',

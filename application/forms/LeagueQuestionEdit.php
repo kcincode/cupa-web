@@ -12,7 +12,7 @@ class Form_LeagueQuestionEdit extends Zend_Form
     
     public function init()
     {
-        $name = $this->addElement('text', 'name', array(
+        $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
@@ -20,7 +20,7 @@ class Form_LeagueQuestionEdit extends Zend_Form
             'value' => (isset($this->_question)) ? $this->_question->name : null,
         ));
         
-        $title = $this->addElement('text', 'title', array(
+        $this->addElement('text', 'title', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Title:',
@@ -35,7 +35,7 @@ class Form_LeagueQuestionEdit extends Zend_Form
             'textarea' => 'Long Answer',
         );
         
-        $type = $this->addElement('select', 'type', array(
+        $this->addElement('select', 'type', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($types))),
             ),
@@ -46,7 +46,7 @@ class Form_LeagueQuestionEdit extends Zend_Form
             'value' => (isset($this->_question)) ? $this->_question->type : null,
         ));
         
-        $answers = $this->addElement('textarea', 'answers', array(
+        $this->addElement('textarea', 'answers', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Answers',

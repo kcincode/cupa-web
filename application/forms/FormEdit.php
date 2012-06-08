@@ -12,7 +12,7 @@ class Form_FormEdit extends Zend_Form
     
     public function init()
     {
-        $year = $this->addElement('text', 'year', array(
+        $this->addElement('text', 'year', array(
             'filters' => array('digits'),
             'required' => true,
             'validators' => array(
@@ -22,31 +22,31 @@ class Form_FormEdit extends Zend_Form
             'description' => 'Enter the year the form is for or the year uploaded.',
         ));
 
-        $name = $this->addElement('text', 'name', array(
+        $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
             'description' => 'Enter the name of the form, should be the same each year.',
         ));
 
-        $file = $this->addElement('file', 'file', array(
+        $this->addElement('file', 'file', array(
             'required' => false,
             'label' => 'Form:',
             'description' => 'Select a form to re-upload or blank to leave the form unchanged',
         ));
 
-        $submit = $this->addElement('submit', 'upload', array(
+        $this->addElement('submit', 'upload', array(
             'label' => 'Upload',
             'class' => 'button',
         ));
 
-        $cancel = $this->addElement('submit', 'cancel', array(
+        $this->addElement('submit', 'cancel', array(
             'label' => 'Cancel',
             'class' => 'button',
         ));
 
         if(is_numeric($this->_formId)) {
-            $id = $this->addElement('hidden', 'form_id', array(
+            $this->addElement('hidden', 'form_id', array(
                 'value' => $this->_formId,
             ));
 

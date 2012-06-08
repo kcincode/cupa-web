@@ -13,7 +13,7 @@ class Form_OfficerEdit extends Zend_Form
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;
         }
 
-        $user_id = $this->addElement('select', 'user_id', array(
+        $this->addElement('select', 'user_id', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($users))),
             ),
@@ -25,7 +25,7 @@ class Form_OfficerEdit extends Zend_Form
         ));
 
 
-        $position = $this->addElement('text', 'position', array(
+        $this->addElement('text', 'position', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Position:',
@@ -33,7 +33,7 @@ class Form_OfficerEdit extends Zend_Form
 
         ));
 
-        $since = $this->addElement('text', 'since', array(
+        $this->addElement('text', 'since', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 'Date',
@@ -43,7 +43,7 @@ class Form_OfficerEdit extends Zend_Form
             'description' => 'Enter the date the position was active.',
         ));
 
-        $to = $this->addElement('text', 'to', array(
+        $this->addElement('text', 'to', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 'Date',
@@ -53,7 +53,7 @@ class Form_OfficerEdit extends Zend_Form
             'description' => 'Enter the date the position was revoked.',
         ));
 
-        $weight = $this->addElement('text', 'weight', array(
+        $this->addElement('text', 'weight', array(
             'filters' => array('Int'),
             'required' => true,
             'label' => 'Weight:',

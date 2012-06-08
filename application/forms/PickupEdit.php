@@ -7,25 +7,25 @@ class Form_PickupEdit extends Zend_Form
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
-        $title = $this->addElement('text', 'title', array(
+        $this->addElement('text', 'title', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
         ));
         
-        $day = $this->addElement('text', 'day', array(
+        $this->addElement('text', 'day', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Day:',
         ));
         
-        $time = $this->addElement('text', 'time', array(
+        $this->addElement('text', 'time', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Time:',
         ));
         
-        $info = $this->addElement('textarea', 'info', array(
+        $this->addElement('textarea', 'info', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Information:',
@@ -39,7 +39,7 @@ class Form_PickupEdit extends Zend_Form
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;
         }
         
-        $user_id = $this->addElement('select', 'user_id', array(
+        $this->addElement('select', 'user_id', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($users))),
             ),
@@ -49,7 +49,7 @@ class Form_PickupEdit extends Zend_Form
             'description' => 'Select the contact person, or Unknown.',
         ));
 
-        $email = $this->addElement('text', 'email', array(
+        $this->addElement('text', 'email', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 'EmailAddress',
@@ -59,7 +59,7 @@ class Form_PickupEdit extends Zend_Form
             'description' => 'This will overwrite the contacts email if specified.',
         ));
 
-        $location = $this->addElement('text', 'location', array(
+        $this->addElement('text', 'location', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Location:',
@@ -67,21 +67,21 @@ class Form_PickupEdit extends Zend_Form
 
         ));
         
-        $map = $this->addElement('text', 'map', array(
+        $this->addElement('text', 'map', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Map:',
             'description' => 'Enter the url of the map to the location.',
         ));
         
-        $weight = $this->addElement('text', 'weight', array(
+        $this->addElement('text', 'weight', array(
             'filters' => array('Int'),
             'required' => true,
             'label' => 'Weight:',
             'description' => 'Lower numbers are shown first.',
         ));
         
-        $is_visible = $this->addElement('checkbox', 'is_visible', array(
+        $this->addElement('checkbox', 'is_visible', array(
             'label' => 'Is Visible:',
         ));
     }

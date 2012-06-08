@@ -21,7 +21,7 @@ class Form_ClubEdit extends Zend_Form
             'Masters, Grand Masters' => 'Masters, Grand Masters',
         );
         
-        $type = $this->addElement('select', 'type', array(
+        $this->addElement('select', 'type', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($typeArray))),
             ),
@@ -35,7 +35,7 @@ class Form_ClubEdit extends Zend_Form
         foreach($userTable->fetchAllUsers(true) as $user) {
             $users[$user->id] = $user->first_name . ' ' . $user->last_name;
         }
-        $captains = $this->addElement('multiselect', 'captains', array(
+        $this->addElement('multiselect', 'captains', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($users))),
             ),
@@ -45,35 +45,35 @@ class Form_ClubEdit extends Zend_Form
             'data-placeholder' => 'Select Captains',
         ));
 
-        $facebook = $this->addElement('text', 'facebook', array(
+        $this->addElement('text', 'facebook', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Facebook Link:',
             'description' => 'the part of the url after www.facebook.com excluding the first slash.',
         ));
         
-        $twitter = $this->addElement('text', 'twitter', array(
+        $this->addElement('text', 'twitter', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Twitter Account:',
             'description' => 'Enter the @<name> twitter account.',
         ));
         
-        $begin = $this->addElement('text', 'begin', array(
+        $this->addElement('text', 'begin', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'First Year:',
             'description' => 'Enter a year or leave blank if unknown.',
         ));
         
-        $end = $this->addElement('text', 'end', array(
+        $this->addElement('text', 'end', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Last Year:',
             'description' => 'Enter a year or leave blank if current.',
         ));
         
-        $email = $this->addElement('text', 'email', array(
+        $this->addElement('text', 'email', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 'EmailAddress',  
@@ -83,14 +83,14 @@ class Form_ClubEdit extends Zend_Form
             'description' => 'Enter the contact email address or leave blank.',
         ));
         
-        $website = $this->addElement('text', 'website', array(
+        $this->addElement('text', 'website', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Website:',
             'description' => 'Enter the whole url or leave blank if none.',
         ));
         
-        $content = $this->addElement('textarea', 'content', array(
+        $this->addElement('textarea', 'content', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Page Content:',

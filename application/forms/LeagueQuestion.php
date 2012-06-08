@@ -22,7 +22,7 @@ class Form_LeagueQuestion extends Zend_Form
         
         switch($this->_question->type) {
             case 'text':
-                $element = $this->addElement('text', $this->question->name, array(
+                $this->addElement('text', $this->question->name, array(
                     'filters' => array('StringTrim'),
                     'required' => ($this->_question->required == 1) ? true : false,
                     'label' => $this->_question->title,

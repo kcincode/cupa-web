@@ -16,7 +16,7 @@ class Form_LeagueTeamEdit extends Zend_Form
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
         
-        $name = $this->addElement('text', 'name', array(
+        $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'value' => $this->_team->name,
@@ -36,7 +36,7 @@ class Form_LeagueTeamEdit extends Zend_Form
             $captains[] = $user->id;
         }
 
-        $captains = $this->addElement('multiselect', 'captains', array(
+        $this->addElement('multiselect', 'captains', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($users))),
             ),
@@ -48,7 +48,7 @@ class Form_LeagueTeamEdit extends Zend_Form
             'data-placeholder' => 'Select one or more captains'
         ));
 
-        $color = $this->addElement('text', 'color', array(
+        $this->addElement('text', 'color', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Color:',
@@ -56,14 +56,14 @@ class Form_LeagueTeamEdit extends Zend_Form
             'description' => 'Enter the color of the team.',
         ));
         
-        $color_code = $this->addElement('text', 'color_code', array(
+        $this->addElement('text', 'color_code', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'value' => $this->_team->color_code,
             'label' => 'Select the color:',
         ));
         
-        $final_rank = $this->addElement('text', 'final_rank', array(
+        $this->addElement('text', 'final_rank', array(
             'filters' => array('digits'),
             'required' => false,
             'label' => 'Final Rank:',
@@ -84,9 +84,6 @@ class Form_LeagueTeamEdit extends Zend_Form
         $this->getElement('email')->setValue($club->email);
         $this->getElement('website')->setValue($club->website);
         $this->getElement('content')->setValue($club->content);
-        
     }
-
-
 }
 

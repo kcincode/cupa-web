@@ -23,7 +23,7 @@ class Form_LeagueEdit extends Zend_Form
     
     private function league()
     {
-        $year = $this->addElement('text', 'year', array(
+        $this->addElement('text', 'year', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Year:',
@@ -37,7 +37,7 @@ class Form_LeagueEdit extends Zend_Form
             $seasons[$season->id] = $season->name;
         }
         
-        $season = $this->addElement('select', 'season', array(
+        $this->addElement('select', 'season', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($seasons))),
             ),
@@ -55,7 +55,7 @@ class Form_LeagueEdit extends Zend_Form
         $tmp = array_values(explode(',', str_replace("'",'', substr($info['metadata']['day']['DATA_TYPE'], 6, -1))));
         $targets = array_combine($tmp, $tmp);
 
-        $day = $this->addElement('select', 'day', array(
+        $this->addElement('select', 'day', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($targets))),
             ),
@@ -66,7 +66,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['day'],
         ));
 
-        $name = $this->addElement('text', 'name', array(
+        $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Name:',
@@ -76,7 +76,7 @@ class Form_LeagueEdit extends Zend_Form
         
         $radioSelect = array('1' => 'Yes', '0' => 'No');
         
-        $is_youth = $this->addElement('radio', 'is_youth', array(
+        $this->addElement('radio', 'is_youth', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($radioSelect))),
             ),
@@ -87,7 +87,7 @@ class Form_LeagueEdit extends Zend_Form
             'separator' => '&nbsp;&nbsp;'
         ));
         
-        $user_teams = $this->addElement('radio', 'user_teams', array(
+        $this->addElement('radio', 'user_teams', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($radioSelect))),
             ),
@@ -98,7 +98,7 @@ class Form_LeagueEdit extends Zend_Form
             'separator' => '&nbsp;&nbsp;'
         ));
         
-        $is_pods = $this->addElement('radio', 'is_pods', array(
+        $this->addElement('radio', 'is_pods', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($radioSelect))),
             ),
@@ -109,7 +109,7 @@ class Form_LeagueEdit extends Zend_Form
             'separator' => '&nbsp;&nbsp;'
         ));
         
-        $is_hat = $this->addElement('radio', 'is_hat', array(
+        $this->addElement('radio', 'is_hat', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($radioSelect))),
             ),
@@ -120,7 +120,7 @@ class Form_LeagueEdit extends Zend_Form
             'separator' => '&nbsp;&nbsp;'
         ));
         
-        $is_clinic = $this->addElement('radio', 'is_clinic', array(
+        $this->addElement('radio', 'is_clinic', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($radioSelect))),
             ),
@@ -131,7 +131,7 @@ class Form_LeagueEdit extends Zend_Form
             'separator' => '&nbsp;&nbsp;'
         ));
         
-        $contact_email = $this->addElement('text', 'contact_email', array(
+        $this->addElement('text', 'contact_email', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 array('EmailAddress'),
@@ -142,7 +142,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['information']['contact_email'],
         ));
         
-        $visible_from = $this->addElement('text', 'visible_from', array(
+        $this->addElement('text', 'visible_from', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Visible From:',
@@ -150,7 +150,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['visible_from'],
         ));
         
-        $is_archived = $this->addElement('radio', 'is_archived', array(
+        $this->addElement('radio', 'is_archived', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($radioSelect))),
             ),
@@ -178,7 +178,7 @@ class Form_LeagueEdit extends Zend_Form
             $directors[] = $user->id;
         }
         
-        $directors = $this->addElement('multiselect', 'directors', array(
+        $this->addElement('multiselect', 'directors', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($users))),
             ),
@@ -190,7 +190,7 @@ class Form_LeagueEdit extends Zend_Form
             'data-placeholder' => 'Select one or more directors'
         ));
 
-        $info = $this->addElement('textarea', 'info', array(
+        $this->addElement('textarea', 'info', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'League Information:',
@@ -198,7 +198,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['info'],
         ));
 
-        $league_name = $this->addElement('text', 'league_name', array(
+        $this->addElement('text', 'league_name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
@@ -212,14 +212,14 @@ class Form_LeagueEdit extends Zend_Form
                  . $this->_leagueData['locations']['league']['address_state'] . ' '
                  . $this->_leagueData['locations']['league']['address_zip'];
 
-        $league_address = $this->addElement('address', 'league_address', array(
+        $this->addElement('address', 'league_address', array(
             'required' => true,
             'label' => 'Address:',
             'description' => 'Enter in the Street, City, State, and Zipcode.',
             'value' => $leagueAddress,
         ));
         
-        $league_map_link = $this->addElement('text', 'league_map_link', array(
+        $this->addElement('text', 'league_map_link', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Map Link:',
@@ -227,7 +227,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['league']['map_link'],
         ));
 
-        $league_start = $this->addElement('text', 'league_start', array(
+        $this->addElement('text', 'league_start', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Start:',
@@ -235,7 +235,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['league']['start'],
         ));
         
-        $league_end = $this->addElement('text', 'league_end', array(
+        $this->addElement('text', 'league_end', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'End:',
@@ -243,7 +243,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['league']['end'],
         ));
         
-        $league_photo_link = $this->addElement('text', 'league_photo_link', array(
+        $this->addElement('text', 'league_photo_link', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Photo Link:',
@@ -267,13 +267,13 @@ class Form_LeagueEdit extends Zend_Form
             );
         }
 
-        $tournament_exists = $this->addElement('checkbox', 'tournament_ignore', array(
+        $this->addElement('checkbox', 'tournament_ignore', array(
             'required' => false,
             'label' => 'Ignore this',
             'value' => ($this->_leagueData['locations']['tournament']['location'] === null) ? 1 : 0,
         ));        
         
-        $tournament_name = $this->addElement('text', 'tournament_name', array(
+        $this->addElement('text', 'tournament_name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
@@ -286,14 +286,14 @@ class Form_LeagueEdit extends Zend_Form
                  . $this->_leagueData['locations']['tournament']['address_state'] . ' '
                  . $this->_leagueData['locations']['tournament']['address_zip'];
 
-        $tournament_address = $this->addElement('address', 'tournament_address', array(
+        $this->addElement('address', 'tournament_address', array(
             'required' => true,
             'label' => 'Address:',
             'description' => 'Enter in the Street, City, State, and Zipcode.',
             'value' => $tournamentAddress,
         ));
         
-        $tournament_map_link = $this->addElement('text', 'tournament_map_link', array(
+        $this->addElement('text', 'tournament_map_link', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Map Link:',
@@ -301,7 +301,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['tournament']['map_link'],
         ));
 
-        $tournament_start = $this->addElement('text', 'tournament_start', array(
+        $this->addElement('text', 'tournament_start', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Start:',
@@ -309,7 +309,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['tournament']['start'],
         ));
         
-        $tournament_end = $this->addElement('text', 'tournament_end', array(
+        $this->addElement('text', 'tournament_end', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'End:',
@@ -317,7 +317,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['tournament']['end'],
         ));
         
-        $tournament_photo_link = $this->addElement('text', 'tournament_photo_link', array(
+        $this->addElement('text', 'tournament_photo_link', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Photo Link:',
@@ -339,13 +339,13 @@ class Form_LeagueEdit extends Zend_Form
             );
         }
 
-        $draft_exists = $this->addElement('checkbox', 'draft_ignore', array(
+        $this->addElement('checkbox', 'draft_ignore', array(
             'required' => false,
             'label' => 'Ignore this',
             'value' => ($this->_leagueData['locations']['draft']['location'] === null) ? 1 : 0,
         ));        
 
-        $draft_name = $this->addElement('text', 'draft_name', array(
+        $this->addElement('text', 'draft_name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
@@ -358,14 +358,14 @@ class Form_LeagueEdit extends Zend_Form
                  . $this->_leagueData['locations']['draft']['address_state'] . ' '
                  . $this->_leagueData['locations']['draft']['address_zip'];
 
-        $draft_address = $this->addElement('address', 'draft_address', array(
+        $this->addElement('address', 'draft_address', array(
             'required' => true,
             'label' => 'Address:',
             'description' => 'Enter in the Street, City, State, and Zipcode.',
             'value' => $draftAddress,
         ));
         
-        $draft_map_link = $this->addElement('text', 'draft_map_link', array(
+        $this->addElement('text', 'draft_map_link', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Map Link:',
@@ -373,7 +373,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['draft']['map_link'],
         ));
 
-        $draft_start = $this->addElement('text', 'draft_start', array(
+        $this->addElement('text', 'draft_start', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Start:',
@@ -381,7 +381,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['draft']['start'],
         ));
         
-        $draft_end = $this->addElement('text', 'draft_end', array(
+        $this->addElement('text', 'draft_end', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'End:',
@@ -389,7 +389,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['locations']['draft']['end'],
         ));
         
-        $draft_photo_link = $this->addElement('text', 'draft_photo_link', array(
+        $this->addElement('text', 'draft_photo_link', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Photo Link:',
@@ -401,7 +401,7 @@ class Form_LeagueEdit extends Zend_Form
     
     private function registration()
     {
-        $registration_begin = $this->addElement('text', 'registration_begin', array(
+        $this->addElement('text', 'registration_begin', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Registration Begin:',
@@ -409,7 +409,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['registration_begin'],
         ));
         
-        $registration_end = $this->addElement('text', 'registration_end', array(
+        $this->addElement('text', 'registration_end', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Registration End:',
@@ -417,7 +417,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['registration_end'],
         ));
         
-        $cost = $this->addElement('text', 'cost', array(
+        $this->addElement('text', 'cost', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Cost:',
@@ -432,13 +432,13 @@ class Form_LeagueEdit extends Zend_Form
            $limitGenders = 1;
         }
         
-        $limit_select = $this->addElement('checkbox', 'limit_select', array(
+        $this->addElement('checkbox', 'limit_select', array(
             'required' => false,
             'label' => 'Enter specific gender limits',
             'value' => $limitGenders, 
         ));
         
-        $male_players = $this->addElement('text', 'male_players', array(
+        $this->addElement('text', 'male_players', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Male Players:',
@@ -446,7 +446,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => (empty($this->_leagueData['limits']['male_players'])) ? 0 : $this->_leagueData['limits']['male_players'],
         ));
         
-        $female_players = $this->addElement('text', 'female_players', array(
+        $this->addElement('text', 'female_players', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Female Players:',
@@ -454,7 +454,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => (empty($this->_leagueData['limits']['female_players'])) ? 0 : $this->_leagueData['limits']['female_players'],
         ));
         
-        $total_players = $this->addElement('text', 'total_players', array(
+        $this->addElement('text', 'total_players', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Total Players:',
@@ -462,7 +462,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => (empty($this->_leagueData['limits']['total_players'])) ? 0 : $this->_leagueData['limits']['total_players'],
         ));
         
-        $teams = $this->addElement('text', 'teams', array(
+        $this->addElement('text', 'teams', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Teams:',
@@ -470,7 +470,7 @@ class Form_LeagueEdit extends Zend_Form
             'value' => $this->_leagueData['limits']['teams'],
         ));
 
-        $paypal_code = $this->addElement('text', 'paypal_code', array(
+        $this->addElement('text', 'paypal_code', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Paypal Code:',
@@ -481,7 +481,7 @@ class Form_LeagueEdit extends Zend_Form
     
     private function description()
     {
-        $description = $this->addElement('textarea', 'description', array(
+        $this->addElement('textarea', 'description', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'League Description:',
