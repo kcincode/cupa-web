@@ -26,7 +26,7 @@ $(document).ready(function (){
    $('#reg-submit-button').click(function(e) {
        e.preventDefault();
        
-       if($('#email-status').html() == '<span class="ok">Email Ok</span>') {
+       if($('#email-status').html().toLowerCase() == '<span class="ok">email ok</span>' || $('#email-status').html().toLowerCase() == '<span class=ok>email ok</span>') {
            if($('#first_name').val() && $('#last_name').val()) {
                $('#registration-form').submit();
            } else {

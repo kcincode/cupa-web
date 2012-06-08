@@ -6,14 +6,7 @@
         <ol id="sortable">
             <?php foreach($this->teams as $team): ?>
             <li data-id="<?php echo $this->escape($team['id']); ?>" style="background-color: <?php echo $this->escape($team['color_code']); ?>;">
-                <?php if(file_exists($this->baseUrl() . '/images/team_logos/' . $this->escape($team['id']) . '.png')): ?>
-                <?php   $imgFile = $this->escape($team['id']) . '.png'; ?>
-                <?php else: ?>
-                <?php   $imgFile = 'default.png'; ?>
-                <?php endif; ?>
-
-                <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $imgFile; ?>" title="<?php echo $this->escape($team['name']); ?> logo"/>
-
+                <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" title="<?php echo $this->escape($team['name']); ?> logo"/>
                 <span class="text" style="color: <?php echo $this->escape($team['text_code']); ?>;"><?php echo $this->escape($team['name']); ?></span>
                 <input type="hidden" name="ranks[]" value="<?php echo $this->escape($team['id']); ?>"/>
             </li>
