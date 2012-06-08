@@ -32,6 +32,8 @@ $(document).ready(function (){
            } else {
                $('#email-status').html('<span class="error">Please enter first and last name.</span>');
            }
+       } else {
+           $('#email-status').html('<span class="error">Please enter all information.</span>');
        }
    });
    
