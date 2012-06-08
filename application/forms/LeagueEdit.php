@@ -443,7 +443,7 @@ class Form_LeagueEdit extends Zend_Form
             'required' => true,
             'label' => 'Max Male Players:',
             'description' => 'Enter the max # of male players. (optional)',
-            'value' => $this->_leagueData['limits']['male_players'],
+            'value' => (empty($this->_leagueData['limits']['male_players'])) ? 0 : $this->_leagueData['limits']['male_players'],
         ));
         
         $female_players = $this->addElement('text', 'female_players', array(
@@ -451,7 +451,7 @@ class Form_LeagueEdit extends Zend_Form
             'required' => true,
             'label' => 'Max Female Players:',
             'description' => 'Enter the max # of female players. (optional)',
-            'value' => $this->_leagueData['limits']['female_players'],
+            'value' => (empty($this->_leagueData['limits']['female_players'])) ? 0 : $this->_leagueData['limits']['female_players'],
         ));
         
         $total_players = $this->addElement('text', 'total_players', array(
@@ -459,7 +459,7 @@ class Form_LeagueEdit extends Zend_Form
             'required' => true,
             'label' => 'Max Total Players:',
             'description' => 'Enter the max # of total players.',
-            'value' => $this->_leagueData['limits']['total_players'],
+            'value' => (empty($this->_leagueData['limits']['total_players'])) ? 0 : $this->_leagueData['limits']['total_players'],
         ));
         
         $teams = $this->addElement('text', 'teams', array(

@@ -31,7 +31,7 @@ class Form_LeagueRegister extends Zend_Form
             $users[$id] = $minor;
         }
 
-        $user = $this->addElement('radio', 'user', array(
+        $this->addElement('radio', 'user', array(
             'required' => true,
             'validators' => array(
                 array('InArray', false, array(array_keys($users))),
@@ -58,7 +58,7 @@ class Form_LeagueRegister extends Zend_Form
             $userProfile->phone = $parentProfile->phone;
         }
 
-        $first_name = $this->addElement('text', 'first_name', array(
+        $this->addElement('text', 'first_name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'First name:',
@@ -66,7 +66,7 @@ class Form_LeagueRegister extends Zend_Form
             'description' => 'Enter/Check your first name.',
         ));
 
-        $last_name = $this->addElement('text', 'last_name', array(
+        $this->addElement('text', 'last_name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Last name:',
@@ -74,7 +74,7 @@ class Form_LeagueRegister extends Zend_Form
             'description' => 'Enter/Check your last name.',
         ));
 
-        $email = $this->addElement('text', 'email', array(
+        $this->addElement('text', 'email', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 'EmailAddress',
@@ -91,7 +91,7 @@ class Form_LeagueRegister extends Zend_Form
             $this->getElement('email')->setRequired(false);
         }
 
-        $phone = $this->addElement('text', 'phone', array(
+        $this->addElement('text', 'phone', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'validators' => array(
@@ -113,7 +113,7 @@ class Form_LeagueRegister extends Zend_Form
             'Female' => 'Female',
         );
 
-        $gender = $this->addElement('radio', 'gender', array(
+        $this->addElement('radio', 'gender', array(
             'required' => true,
             'validators' => array(
                 array('InArray', false, array(array_keys($genders))),
@@ -125,7 +125,7 @@ class Form_LeagueRegister extends Zend_Form
             'description' => 'Select/Check your gender.',
         ));
 
-        $birthday = $this->addElement('text', 'birthday', array(
+        $this->addElement('text', 'birthday', array(
             'required' => true,
             'validators' => array(
                 array('Date'),
@@ -137,7 +137,7 @@ class Form_LeagueRegister extends Zend_Form
             'value' => $userProfile->birthday,
         ));
 
-        $nickname = $this->addElement('text', 'nickname', array(
+        $this->addElement('text', 'nickname', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Nickname:',
@@ -145,7 +145,7 @@ class Form_LeagueRegister extends Zend_Form
             'description' => 'Enter your nickname (optional).',
         ));
 
-        $height = $this->addElement('text', 'height', array(
+        $this->addElement('text', 'height', array(
             'filters' => array('digits'),
             'required' => true,
             'validators' => array(
@@ -163,7 +163,7 @@ class Form_LeagueRegister extends Zend_Form
             $levels[$level->id] = $level->name;
         }
 
-        $level = $this->addElement('select', 'level', array(
+        $this->addElement('select', 'level', array(
             'validators' => array(
                 array('InArray', false, array(array_keys($levels))),
             ),
@@ -174,7 +174,7 @@ class Form_LeagueRegister extends Zend_Form
             'description' => 'Select/Check the level of experience you have in ultimate.',
         ));
 
-        $experience = $this->addElement('text', 'experience', array(
+        $this->addElement('text', 'experience', array(
             'filters' => array('digits'),
             'required' => true,
             'validators' => array(
@@ -209,14 +209,14 @@ class Form_LeagueRegister extends Zend_Form
                 }
 
 
-                $teamSelect = $this->addElement('radio', 'team_select', array(
+                $this->addElement('radio', 'team_select', array(
                     'required' => true,
                     'label' => '1.) Do you want to create a team or join a team?',
                     'multiOptions' => array('0' => 'Create a Team', '1' => 'Join a Team'),
                     'separator' => '&nbsp;&nbsp;&nbsp;',
                 ));
 
-                $teamSelect = $this->addElement('select', 'user_team_select', array(
+                $this->addElement('select', 'user_team_select', array(
                     'required' => true,
                     'validators' => array(
                         array('InArray', false, array(array_keys($validTeams), 'messages' => array('notInArray' => 'Please select a valid team.'))),
@@ -227,8 +227,8 @@ class Form_LeagueRegister extends Zend_Form
                     'separator' => '&nbsp;&nbsp;&nbsp;',
                 ));
 
-                $teamSelect = $this->addElement('text', 'user_team_new', array(
-                    'required' => true,
+                $this->addElement('text', 'user_team_new', array(
+                    'required' => false,
                     'filters' => array('StringTrim'),
                     'label' => 'a.) Enter the team name you would like to create:',
                     'description' => 'Enter the team name you would like to create.  First come first serve.',

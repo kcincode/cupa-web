@@ -513,9 +513,12 @@ class LeagueController extends Zend_Controller_Action
 
             if($post['limit_select'] == 1) {
                 $form->getElement('total_players')->setRequired(false);
+                $form->getElement('male_players')->setRequired(true);
+                $form->getElement('female_players')->setRequired(true);
             } else {
                 $form->getElement('male_players')->setRequired(false);
                 $form->getElement('female_players')->setRequired(false);
+                $form->getElement('total_players')->setRequired(true);
             }
 
             if($this->view->league['information']['user_teams'] == 0) {
@@ -534,13 +537,13 @@ class LeagueController extends Zend_Controller_Action
                 $leagueLimit = $leagueLimitTable->fetchLimits($leagueId);
 
                 if($data['limit_select'] == 1) {
-                    $leagueLimit->male_players = $data['male_players'];
-                    $leagueLimit->female_players = $data['female_players'];
+                    $leagueLimit->male_players = (empty($data['male_players'])) ? null : $data['male_players'];
+                    $leagueLimit->female_players = (empty($data['female_players'])) ? null : $data['female_players'];
                     $leagueLimit->total_players = null;
                 } else {
                     $leagueLimit->male_players = null;
                     $leagueLimit->female_players = null;
-                    $leagueLimit->total_players = $data['total_players'];
+                    $leagueLimit->total_players = (empty($data['total_players'])) ? null : $data['total_players'];
                 }
 
                 $leagueLimit->teams = (empty($data['teams'])) ? null : $data['teams'];
