@@ -39,28 +39,6 @@ class AdminController extends Zend_Controller_Action
     {
     }
 
-    public function unpaidAction()
-    {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/unpaid.css');
-
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $data = array();
-        foreach($leagueMemberTable->fetchUnpaidPlayers() as $row) {
-            if(!isset($data[$row['user_id']])) {
-                $data[$row['user_id']] = array(
-                    'leagues' => array($row['league']),
-                    'owed' => $row['cost'],
-                );
-            } else {
-                if(!in_array($row['league'], $data[$row['user_id']]['leagues'])) {
-                    $data[$row['user_id']]['leagues'][] = $row['league'];
-                    $data[$row['user_id']]['owed'] += $row['cost'];
-                }
-            }
-        }
-        $this->view->players = $data;
-    }
-
     public function duplicatesAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/duplicates.css');

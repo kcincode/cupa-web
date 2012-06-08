@@ -19,7 +19,7 @@ class My_View_Helper_HasRole extends Zend_View_Helper_Abstract
      */
     public function hasRole($role)
     {
-        if($this->view->user) {
+        if(Zend_Auth::getInstance()->hasIdentity()) {
             $userRoleTable = new Model_DbTable_UserRole();
             if($this->view->page and $role == 'editor') {
                 return $userRoleTable->hasRole($this->view->user->id, $role, $this->view->page->id);

@@ -389,4 +389,11 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
             $player->delete();
         }
     }
+    
+    public function fetchAllLeagueDirectors($userId)
+    {
+        $select = $this->select()->where('user_id = ?', $userId)->where('position = ?', 'director');
+        
+        return $this->fetchAll($select);
+    }
 }

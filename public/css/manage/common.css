@@ -1,0 +1,26 @@
+#list {
+    margin: 37px 0 0 10px;
+    width: 175px;
+    height: 600px;
+    border: 1px solid #444;
+    float: left;
+    padding: 5px;
+}
+
+
+
+#list ul {
+    list-style: none;
+    margin: 10px 0;
+    padding: 0;
+}
+
+#list ul li {
+    margin: 8px 0;
+}
+
+p.blurb {
+    width: 500px;
+    margin: 10px auto;
+    text-align: center;
+}
