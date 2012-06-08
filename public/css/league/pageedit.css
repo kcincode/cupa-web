@@ -158,6 +158,10 @@ p.description {
     height: 32px;
 }
 
+#leagueedit-container #limit_select-element {
+    height: 32px;
+    margin: 20px 10px 10px 10px;
+}
 
 .questions div.question {
     border: 1px solid #444;
@@ -232,7 +236,7 @@ p.description {
 
 #leagueedit-container #registration_begin,
 #leagueedit-container #registration_end {
-    width: 160px;
+    width: 175px;
     text-align: center;
 }
 
