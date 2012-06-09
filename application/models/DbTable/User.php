@@ -118,7 +118,7 @@ class Model_DbTable_User extends Zend_Db_Table
         return false;
     }
 
-    public function fetchAllUsers($showDisabled = false)
+    public function fetchAllUsers($showDisabled = false, $showMinors = false)
     {
         $select = $this->select()
                        ->order('last_name')
@@ -126,6 +126,10 @@ class Model_DbTable_User extends Zend_Db_Table
 
         if(!$showDisabled) {
             $select->where('is_active = ?', 1);
+        }
+
+        if(!$showMinors) {
+            $select->where('parent IS NULL');
         }
 
         return $this->fetchAll($select);
@@ -339,7 +343,7 @@ class Model_DbTable_User extends Zend_Db_Table
             $user->delete();
         }
     }
-    
+
     private function backupDb($db, $ids, $user)
     {
         $tables = array(

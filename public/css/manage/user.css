@@ -1,0 +1,50 @@
+fieldset {
+    border: 1px solid #444;
+    padding: 15px;
+    width: 700px;
+    margin: 10px;
+    float: right;
+}
+
+legend {
+    font-size: 14pt;
+}
+
+.impersonate,
+.edit-form {
+    width: 700px;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid #444;
+    float: right;
+}
+
+.edit-form dt {
+    float: left;
+    width: 180px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 14pt;
+    margin: 7px 5px 5px 5px;
+}
+
+.edit-form dd {
+    margin: 15px 0 10px 0;
+    width: 500px;
+}
+
+.edit-form dd input {
+    padding: 5px;
+}
+
+#is_active {
+    margin: 10px;
+}
+#user_id-label {
+    display: none;
+}
+
+#username-label {
+    margin-top: 2px;
+}
+

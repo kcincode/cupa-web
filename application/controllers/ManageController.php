@@ -7,7 +7,7 @@ class ManageController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             $this->_forward('auth');
         }
-        
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/common.css');
     }
 
@@ -47,16 +47,51 @@ class ManageController extends Zend_Controller_Action
         }
         $this->view->players = $data;
     }
-    
+
     public function userAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/user.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/manage/user.js');
-        
+
+        $this->view->edit = 0;
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            $this->view->edit = 1;
+
+
+            $userTable = new Model_DbTable_User();
+            $this->view->userEdit = $userTable->find($post['user_id'])->current();
+            $form = new Form_UserManage($this->view->userEdit);
+            if(isset($post['edit'])) {
+                if($form->isValid($post)) {
+                    $user = $userTable->fetchUserBy('email', $post['email']);
+
+                    if($user and ($user->id == $this->view->userEdit->id)) {
+                        $this->view->userEdit->username = $post['username'];
+                        $this->view->userEdit->email = $post['email'];
+                        $this->view->userEdit->first_name = $post['first_name'];
+                        $this->view->userEdit->last_name = $post['last_name'];
+                        $this->view->userEdit->is_active = $post['is_active'];
+                        $this->view->userEdit->updated_at = date('Y-m-d H:i:s');
+                        $this->view->userEdit->save();
+
+                        $this->view->message('User ' . $this->view->userEdit->email . ' modified.', 'success');
+                        $this->_redirect('manage/user');
+                    } else {
+                        $this->view->message('The email you entered is already taken.', 'error');
+                    }
+                }
+            }
+
+            $this->view->form = $form;
+        }
+
+
         $userTable = new Model_DbTable_User();
-        $this->view->users = $userTable->fetchAllUsers(true);
-        
+        $this->view->users = $userTable->fetchAllUsers(true, false);
+
     }
 }
