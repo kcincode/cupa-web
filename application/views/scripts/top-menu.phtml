@@ -1,20 +1,47 @@
-<ul>
-    <!--<li><a href="<?php echo $this->url(array(), 'volunteer'); ?>">VOLUNTEER INFO</a> |</li> -->
-    <?php if($this->hasRole('admin')): ?>
-    <li><a href="<?php echo $this->url(array(), 'admin'); ?>">ADMIN</a> |</li>
-    <?php endif; ?>
-    <?php if($this->hasRole('manager') or $this->hasRole('admin')): ?>
-    <li><a href="<?php echo $this->url(array(), 'manage'); ?>">MANAGE</a> |</li>
-    <?php endif; ?>
-    <li><a href="<?php echo $this->url(array(), 'page_contact'); ?>">CONTACT US</a> |</li>
+<ul id="top-menu" class="nav nav-pills">
     <?php if($this->user): ?>
-    <li><a href="<?php echo $this->url(array(), 'profile'); ?>">MY PROFILE</a> |</li>
-    <?php if($this->isImpersonated): ?>
-    <li><a id="logout-link" href="#">STOP IMPERSONATING <?php echo strtoupper($this->user->username); ?></a></li>
+        <?php if($this->isImpersonated): ?>
+        <li class="pull-right"><a id="logout-link" href="#">STOP IMPERSONATING <?php echo $this->escape(strtoupper($this->user->username)); ?></a></li>
+        <?php else: ?>
+        <li class="pull-right"><a id="logout-link" href="#">LOGOUT</a></li>
+        <?php endif; ?>
+
+        <li class="pull-right"><a href="<?php echo $this->url(array(), 'profile'); ?>">MY PROFILE</a></li>
     <?php else: ?>
-    <li><a id="logout-link" href="#">LOGOUT</a></li>
+        <li class="dropdown pull-right" id="login-link">
+            <a class="dropdown-toggle" id="login-link" data-toggle="dropdown" href="#login-link">LOGIN / REGISTER <b class="caret"></b></a>
+            <ul class="dropdown-menu login-box">
+                <li id="login-error">&nbsp;</li>
+                <li class="well-small">Username or Email: <input type="text" id="email" name="email"/></li>
+                <li class="well-small">Password: <input type="password" id="password" name="password"/></li>
+                <li class="well-small">
+                    <div style="float: left;">
+                        <input type="checkbox" id="remember" name="remember"/> Remember Me
+                    </div>
+                    <div style="float: right;">
+                        <input id="login-submit" class="btn btn-primary" type="submit" value="Login"/>
+                    </div>
+                    <div class="clear: both;">&nbsp;</div>
+                </li>
+                <li class="divider">&nbsp;</li>
+                <li><a href="<?php echo $this->url(array(), 'auth_forgot_password'); ?>">Forgot username/password?</a></li>
+                <li><a href="<?php echo $this->url(array(), 'auth_registration'); ?>">Register for a new account</a></li>
+            </ul>
+        </li>
     <?php endif; ?>
-    <?php else: ?>
-    <li><a id="login-link" href="#">LOGIN / REGISTER</a></li>
+
+
+    <li class="pull-right"><a href="<?php echo $this->url(array(), 'page_contact'); ?>">CONTACT US</a></li>
+
+    <?php if($this->hasRole('manager') or $this->hasRole('admin')): ?>
+        <li class="pull-right"><a href="<?php echo $this->url(array(), 'manage'); ?>">MANAGE</a></li>
     <?php endif; ?>
+
+    <?php if($this->hasRole('admin')): ?>
+        <li class="dropdown pull-right">
+            <a class="dropdown-toggle" data-toggle="admin-dropdown" href="#">ADMIN<b class="caret"></b></a>
+        </li>
+    <?php endif; ?>
+    
+    <li class="pull-right"><a href="<?php echo $this->url(array(), 'volunteer'); ?>">VOLUNTEER INFO</a></li>
 </ul>

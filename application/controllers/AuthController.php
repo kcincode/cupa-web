@@ -72,6 +72,13 @@ class AuthController extends Zend_Controller_Action
                             $user->save();
                         }
 
+                        // implement the remember me
+                        if(empty($data['remember'])) {
+                            Zend_Session::forgetMe();
+                        } else {
+                            Zend_Session::rememberMe();
+                        }
+                        
                         // set the user id in the session storage
                         Zend_Auth::getInstance()->getStorage()->write($user->id);
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>CUPA - Cincinnati Ultimate Player Association</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -11,36 +11,42 @@
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/ie-fix.css" type="text/css" media="all" />
         <![endif]-->
+        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/bootstrap.min.css" type="text/css" media="all" />
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/style.css" type="text/css" media="all" />
         <?php echo $this->headLink() . "\n"; ?>
-        <?php $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-ui-1.8.16.min.js') . "\n"; ?>
-        <?php $this->headScript()->appendFile($this->baseUrl() . '/js/global.js') . "\n"; ?>
-        <?php echo $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-1.7.1.min.js') . "\n"; ?>
-        <script>
-            var BASE_URL = '<?php echo $this->baseUrl(); ?>';
-        </script>
         <link rel="shortcut icon" href="<?php echo $this->baseUrl(); ?>/favicon.ico" />
     </head>
     <body>
-        <header>
-            <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">&nbsp;</a>
-            <div class="menu">
-                <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
-                <div id="login-container">Login Container</div>
+        <div class="container">
+        <div class="row">
+            <div class="span6">
+                <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">
+                    <img src="<?php echo $this->baseUrl(); ?>/images/logo.png" title="CUPA Logo" height="121px" width="512px"/>
+                </a>
             </div>
-        </header>
-        <nav>
-            <?php echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
-        </nav>
-        <?php echo $this->message(); ?>
-        <div id="main-content">
-            <?php echo $this->layout()->content; ?>
-            <div class="clearfix"></div>
+            <div class="span6">
+                <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
+            </div>
         </div>
-        <footer>
-            <!--Hosted by: InMotion Hosting<br/> -->
-            &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/>
-            If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a>
-        </footer>
+        <div class="row">
+            <div class="span12">
+                <?php echo $this->message(); ?>
+                <?php echo $this->layout()->content; ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span12">
+                <!--Hosted by: InMotion Hosting<br/> -->
+                &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/>
+                If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a>
+            </div>
+        </div>
+        </div>
+        <script>
+            var BASE_URL = '<?php echo $this->baseUrl(); ?>';
+        </script>
+        <?php echo $this->headScript()->prependFile($this->baseUrl() . '/js/bootstrap.min.js')
+                                      ->prependFile('https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+                                      ->appendFile($this->baseUrl() . '/js/scripts.js') . "\n"; ?>
     </body>
 </html>
