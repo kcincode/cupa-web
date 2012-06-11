@@ -1964,7 +1964,7 @@ class LeagueController extends Zend_Controller_Action
                         if(!$contact) {
                             $nameData = explode(' ', $contactName);
                             if(count($nameData) == 1) {
-                                $first = $info['name'];
+                                $first = $nameData[0];
                                 $last = '';
                             } else if(count($nameData) == 2) {
                                 $first = $nameData[0];
