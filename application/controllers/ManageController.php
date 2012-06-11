@@ -92,6 +92,28 @@ class ManageController extends Zend_Controller_Action
 
         $userTable = new Model_DbTable_User();
         $this->view->users = $userTable->fetchAllUsers(true, false);
-
+    }
+    
+    public function pageAction()
+    {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/page.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/manage/page.js');        
+        
+        $pageTable = new Model_DbTable_Page();
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            $page = $pageTable->fetchBy('name', $post['page']);
+            if($page) {
+                $this->view->message('A page already exists with that name.', 'error');
+            } else {
+                $pageTable->createPage($post['page']);
+                $this->_redirect('/' . $post['page'] . '/edit');
+            }
+        }
+        
+        $this->view->pages = $pageTable->fetchAllpages();
     }
 }

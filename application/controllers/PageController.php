@@ -36,9 +36,11 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
 
-        if($page and ($page->is_visible or (Zend_Auth::getInstance()->hasIdentity() and ($this->view->hasRole('admin') or
+        if(($page and $page->is_visible) or
+           ($page and !$page->is_visible and (Zend_Auth::getInstance()->hasIdentity() and ($this->view->hasRole('admin') or
            $this->view->hasRole('editor') or
-           $this->view->hasRole('editor', $page->id))))) {
+           $this->view->hasRole('editor', $page->id) or
+           $this->view->hasRole('manager'))))) {
             $this->view->page = $page;
             $this->view->links = $pageTable->fetchChildren($page);
         } else {
@@ -65,7 +67,8 @@ class PageController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor'))) {
+           !$this->view->hasRole('editor') and
+           !$this->view->hasRole('manager'))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this page.');
             $this->_redirect('/' . $page->name);
         }
@@ -118,7 +121,7 @@ class PageController extends Zend_Controller_Action
 
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin'))) {
+           (!$this->view->hasRole('admin') and !$this->view->hasRole('manager'))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this page.');
             $this->_redirect('/' . $page->name);
         }

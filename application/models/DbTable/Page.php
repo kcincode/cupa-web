@@ -42,4 +42,30 @@ class Model_DbTable_Page extends Zend_Db_Table
         
         return $this->fetchAll($select);
     }
+    
+    public function fetchAllPages()
+    {
+        $select = $this->select()
+                       ->order('name');
+        
+        return $this->fetchAll($select);
+    }
+    
+    public function createPage($name)
+    {
+        $this->insert(array(
+            'parent' => null,
+            'name' => $name,
+            'title' => $name,
+            'content' => '',
+            'url' => null,
+            'target' => 'self',
+            'weight' => 0,
+            'is_visible' => 0,
+            'created_at' => date('Y-m-d H:i:s'),
+            'created_by' => Zend_Auth::getInstance()->getIdentity(),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'last_updated_by' => Zend_Auth::getInstance()->getIdentity(),
+        ));
+    }
 }

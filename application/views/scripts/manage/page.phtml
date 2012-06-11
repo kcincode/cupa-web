@@ -1,0 +1,24 @@
+<?php echo $this->partial('manage/menu.phtml', array()); ?>
+<div id="container">
+    <h1>Page Management</h1>
+
+    <fieldset>
+        <legend>Add a Page</legend>
+        <form method="post">
+            <input type="text" name="page"/>
+            <input class="button" type="submit" name="add" value="Add Page"/>
+        </form>
+    </fieldset>
+
+    <fieldset>
+        <legend>Edit a Page</legend>
+        <select id="pages" name="page_id">
+            <option value="0">Start typing a the page name</option>
+            <?php foreach($this->pages as $page): ?>
+            <option value="<?php echo $this->escape($page->name); ?>"><?php echo $this->escape($page->name); ?></option>
+            <?php endforeach; ?>
+        </select>
+        <button type="button" id="goto-page" class="button">Goto Page</button>
+    </fieldset>
+</div>
+
