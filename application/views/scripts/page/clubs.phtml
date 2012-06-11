@@ -24,7 +24,9 @@
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id) or $this->isClubCaptain($club->id)): ?>
         <div class="links">
             <a href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
+            <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
             <a onclick="if(!confirm('Are you sure you want to delete the club <?php echo $club->name; ?>?')) { return false; } " href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
         <div class="name"><?php echo $this->escape($club->name); ?> <span class="club-type">(<?php echo $this->escape($club->type); ?>)</span></div>
