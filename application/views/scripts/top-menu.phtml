@@ -9,7 +9,7 @@
         <li class="pull-right"><a href="<?php echo $this->url(array(), 'profile'); ?>">MY PROFILE</a></li>
     <?php else: ?>
         <li class="dropdown pull-right" id="login-link">
-            <a class="dropdown-toggle" id="login-link" data-toggle="dropdown" href="#login-link">LOGIN / REGISTER <b class="caret"></b></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#login-link">LOGIN / REGISTER <b class="caret"></b></a>
             <ul class="dropdown-menu login-box">
                 <li id="login-error">&nbsp;</li>
                 <li class="well-small">Username or Email: <input type="text" id="email" name="email"/></li>
@@ -42,6 +42,6 @@
             <a class="dropdown-toggle" data-toggle="admin-dropdown" href="#">ADMIN<b class="caret"></b></a>
         </li>
     <?php endif; ?>
-    
+
     <li class="pull-right"><a href="<?php echo $this->url(array(), 'volunteer'); ?>">VOLUNTEER INFO</a></li>
 </ul>

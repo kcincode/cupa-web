@@ -1,8 +1,5 @@
 $(document).ready(function() {
-    $('#login-link').on('click', function() {
-        $('#email').focus();
-    });
-    
+
     $('#login-submit').click(function(e) {
         e.preventDefault();
         $.ajax({
@@ -21,7 +18,7 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     $('#logout-link').click(function(e) {
         e.preventDefault();
         $.ajax({
@@ -32,7 +29,7 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     $('.login-box').click(function(e) {
         e.stopPropagation();
     });
