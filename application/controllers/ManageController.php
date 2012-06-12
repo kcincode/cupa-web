@@ -50,6 +50,10 @@ class ManageController extends Zend_Controller_Action
 
     public function userAction()
     {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/user.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
@@ -93,18 +97,22 @@ class ManageController extends Zend_Controller_Action
         $userTable = new Model_DbTable_User();
         $this->view->users = $userTable->fetchAllUsers(true, false);
     }
-    
+
     public function pageAction()
     {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/page.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/manage/page.js');        
-        
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/manage/page.js');
+
         $pageTable = new Model_DbTable_Page();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             $page = $pageTable->fetchBy('name', $post['page']);
             if($page) {
                 $this->view->message('A page already exists with that name.', 'error');
@@ -113,7 +121,51 @@ class ManageController extends Zend_Controller_Action
                 $this->_redirect('/' . $post['page'] . '/edit');
             }
         }
-        
+
         $this->view->pages = $pageTable->fetchAllpages();
+    }
+
+    public function volunteerAction()
+    {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/volunteer.css');
+
+        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+        $this->view->volunteers = $leagueAnswerTable->fetchAllVolunteers();
+
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            ////apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="CUPA-Volunteers.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+
+            echo "first_name,last_name,email\n";
+            foreach($this->view->volunteers as $volunteer) {
+                $email = (empty($volunteer['email'])) ? $volunteer['parent_email'] : $volunteer['email'];
+                echo "{$volunteer['first_name']},{$volunteer['last_name']},{$email}\n";
+            }
+
+            flush();
+        }
     }
 }

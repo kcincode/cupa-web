@@ -1,0 +1,24 @@
+<?php echo $this->partial('manage/menu.phtml', array()); ?>
+<div id="container">
+    <h1>Volunteer List</h1>
+
+    <div class="actions">
+        <a class="button" href="?export=1">Export List</a>
+    </div>
+
+    <div id="table">
+        <div class="header">
+            <div class="name">Name</div>
+            <div class="email">Email</div>
+        </div>
+        <?php $this->cycle(array('odd', 'even')); ?>
+        <?php foreach($this->volunteers as $volunteer): ?>
+        <div class="row <?php echo $this->cycle()->next(); ?>">
+            <div class="name"><?php echo $this->escape($volunteer['first_name'] . ' ' . $volunteer['last_name']); ?></div>
+            <div class="email"><?php echo (empty($volunteer['email'])) ? $this->escape($volunteer['parent_email']) : $this->escape($volunteer['email']); ?></div>
+        </div>
+        <?php endforeach; ?>
+        <div class="clearfix">&nbsp;</div>
+    </div>
+
+</div>
