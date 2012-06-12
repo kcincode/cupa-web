@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class My_View_Helper_Message extends Zend_View_Helper_Abstract {
     const SUCCESS = 'success';
@@ -34,11 +34,11 @@ class My_View_Helper_Message extends Zend_View_Helper_Abstract {
         $messages = ($session->messages) ? $session->messages : array();
 
         foreach ($messages as $msg) {
-            $buf[] = "<li class=\"" . $this->severity_class($msg[1]) . "\">" . $this->view->escape($msg[0]) . "</li>";
+            $buf[] = "<div class=\"alert alert-" . $this->severity_class($msg[1]) . "\"><button class=\"close\" data-dismiss=\"alert\">×</button>" . $this->view->escape($msg[0]) . "</div>";
         }
         if ($buf) {
             $session->unsetAll();
-            return "<ul class=\"message\">" . implode("", $buf) . "</ul>";
+            return implode("", $buf);
         }
     }
 

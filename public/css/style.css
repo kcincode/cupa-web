@@ -21,3 +21,204 @@ body {
     color: #005700;
 }
 
+#main-menu ul {
+    list-style: none;
+    margin: 0 0 0 20px;
+    padding: 0;
+}
+
+#main-menu ul li a {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    width: 154px;
+    float: left;
+    padding: 40px 0 10px 0;
+    font-weight: bold;
+    text-shadow: 0 1px 1px #000;
+    -webkit-box-shadow: inset 0 -5px 15px -5px #444;
+    -moz-box-shadow: inset 0 -5px 15px -5px #444;
+    box-shadow: inset 0 -5px 15px -5px #444;
+}
+
+#main-menu ul li a:hover, #main-menu ul li a:active {
+    color: #fff;
+}
+
+#main-menu ul li a.about {
+    background-color: #c00;
+    border: 1px solid #f99;
+    border-bottom: 5px solid #000;
+    width: 155px;
+}
+
+#main-menu ul li a.about:hover {
+    background-color: #b30000;
+}
+
+#main-menu ul li a.youth {
+    background-color: #800080;
+    border: 1px solid #ff99ff;
+    border-bottom: 5px solid #000;
+}
+
+#main-menu ul li a.youth:hover {
+    background-color: #606;
+}
+
+#main-menu ul li a.leagues {
+    background-color: #f88017;
+    border: 1px solid #fcd0ab;
+    border-bottom: 5px solid #000;
+    width: 155px;
+}
+
+#main-menu ul li a.leagues:hover {
+    background-color: #ed7307;
+}
+
+#main-menu ul li a.pickup {
+    background-color: #080;
+    border: 1px solid #99dd99;
+    border-bottom: 5px solid #000;
+    width: 155px;
+}
+
+#main-menu ul li a.pickup:hover {
+    background-color: #007000;
+}
+
+#main-menu ul li a.clubs {
+    background-color: #443377;
+    border: 1px solid #bbb0dd;
+    border-bottom: 5px solid #000;
+}
+
+#main-menu ul li a.clubs:hover {
+    background-color: #392b64;
+}
+
+#main-menu ul li a.links {
+    background-color: #088;
+    border: 1px solid #a3dddd;
+    border-bottom: 5px solid #000;
+    width: 155px;
+}
+
+#main-menu ul li a.links:hover {
+    background-color: #007070;
+}
+
+.middle {
+    background: url('../images/homeBanner.png') no-repeat;
+    background-size: 940px 215px;
+    height: 214px;
+    border-bottom: 20px solid #000;
+    margin: 0;
+}
+
+.middle section {
+    float: left;
+    background: #d0dd71;
+    width: 290px;
+    margin: 30px 10px 0 10px;
+    height: 184px;
+    padding: 0 5px;
+    -webkit-box-shadow: 0 -1px 10px #808c21
+}
+
+section {
+    overflow-y: auto;
+}
+
+section .all {
+    float: right;
+    font-size: 10pt;
+    color: #7d8c12;
+    margin-top: -12px;
+}
+
+section .all a {
+    color: #555f0c;
+}
+
+section h2 {
+    margin: -5px 0 5px 0;
+    padding: 5px;
+    text-align: center;
+    color: #7d8c12;
+    text-shadow: 1px 1px 1px #000;
+    text-decoration: underline;
+}
+
+section h3 {
+    font-size: 10pt;
+    font-weight: bold;
+    margin: 0 0 0 5px;
+    padding: 0;
+    color: #222;
+}
+
+section p {
+    font-size: 8pt;
+    margin: 0 0 5px 15px;
+    padding: 0;
+}
+
+
+.lower section {
+    width: 300px;
+    height: 370px;
+    float: left;
+    background: #fff;
+    padding: 5px;
+}
+
+.lower section .all {
+    margin-top: -28px;
+}
+
+.lower section p {
+    margin: 0 0 10px 15px;
+}
+
+.lower section h2 {
+    text-align: left;
+    text-decoration: none;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.lower section.youth h2 {
+    color: #800080;
+}
+
+.lower section.calendar {
+    text-align: center;
+}
+
+.lower section.calendar h2 {
+    color: #a25;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.lower section.info h2 {
+    color: #f90;
+}
+
+#footer {
+    background-color: #f0f0f0;
+    height: 30px;
+    width: 920px;
+    padding: 10px;
+    text-align: right;
+    color: #999;
+    border-top: 1px solid #aaa;
+    box-shadow: 0 -1px 5px #aaa;
+}
+
+
+
+
+

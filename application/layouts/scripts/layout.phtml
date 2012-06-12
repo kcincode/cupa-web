@@ -18,29 +18,33 @@
     </head>
     <body>
         <div class="container">
-        <div class="row">
-            <div class="span6">
-                <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">
-                    <img src="<?php echo $this->baseUrl(); ?>/images/logo.png" title="CUPA Logo" height="121px" width="512px"/>
-                </a>
+            <div class="row">
+                <div class="span6">
+                    <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">
+                        <img src="<?php echo $this->baseUrl(); ?>/images/logo.png" title="CUPA Logo" height="121px" width="512px"/>
+                    </a>
+                </div>
+                <div class="span6">
+                    <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
+                </div>
             </div>
-            <div class="span6">
-                <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
+            <div class="row">
+                <div id="main-menu">
+                    <?php echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="span12">
-                <?php echo $this->message(); ?>
-                <?php echo $this->layout()->content; ?>
+            <div class="row">
+                <div id="main-content" class="span12">
+                    <?php echo $this->message(); ?>
+                    <?php echo $this->layout()->content; ?>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="span12">
-                <!--Hosted by: InMotion Hosting<br/> -->
-                &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/>
-                If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a>
+            <div class="row">
+                <div id="footer" class="span12">
+                    &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/>
+                    If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a>
+                </div>
             </div>
-        </div>
         </div>
         <script>
             var BASE_URL = '<?php echo $this->baseUrl(); ?>';

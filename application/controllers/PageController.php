@@ -10,7 +10,7 @@ class PageController extends Zend_Controller_Action
 
     public function homeAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/home.css');
+        //$this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/home.css');
 
         // link to the db table
         $newsTable = new Model_DbTable_News();
