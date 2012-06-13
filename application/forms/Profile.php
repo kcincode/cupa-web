@@ -45,6 +45,16 @@ class Form_Profile extends Zend_Form
             'value' => (empty($this->_data['username'])) ? null : $this->_data['username'],
         ));
 
+        $this->addElement('text', 'email', array(
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                'EmailAddress',
+            ),
+            'required' => true,
+            'label' => 'Email Address:',
+            'value' => (empty($this->_data['email'])) ? null : $this->_data['email'],
+        ));
+
         $this->addElement('text', 'first_name', array(
             'filters' => array('StringTrim'),
             'validators' => array(

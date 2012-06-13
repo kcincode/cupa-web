@@ -38,11 +38,9 @@
     color: #c00;
     margin: 0 0 0 70px;
     list-style: none;
-
 }
 
 #created_at-element,
-#email-element,
 #updated_at-element {
     padding: 10px 5px 5px 5px;
     color: #808080;
@@ -75,4 +73,8 @@ dd.no {
 #experience {
     width: 50px;
     text-align: center;
+}
+
+#email-label {
+    margin-top: 2px;
 }

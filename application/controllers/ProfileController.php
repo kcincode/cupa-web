@@ -45,6 +45,16 @@ class ProfileController extends Zend_Controller_Action
 
     private function personal($user, $data)
     {
+        $userTable = new Model_DbTable_User();
+        if($user->email != $data['email']) {
+            $userTest = $userTable->fetchUserBy('email', $data['email']);
+
+            if($userTest) {
+                $this->view->message('Email address already in use', 'error');
+                return;
+            }
+        }
+
         $user->username = $data['username'];
         $user->first_name = $data['first_name'];
         $user->last_name = $data['last_name'];
@@ -241,7 +251,7 @@ class ProfileController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             return;
         }
-        
+
         $contactId = $this->getRequest()->getUserParam('contact_id');
         if(is_numeric($contactId)) {
             $userEmergencyTable = new Model_DbTable_UserEmergency();
@@ -250,11 +260,11 @@ class ProfileController extends Zend_Controller_Action
                 $contact->delete();
                 $this->view->message('User emergency contact removed', 'success');
             }
-            
+
             $this->_redirect('/profile/contacts');
         }
     }
-    
+
     public function contacts($user, $data)
     {
         $userEmergencyTable = new Model_DbTable_UserEmergency();
