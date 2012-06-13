@@ -125,7 +125,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->where('lm.user_id = ?', $userId)
                        ->where('lm.position = ?', 'player')
                        ->order('l.registration_end DESC');
-        
+
         if($leaguesOnly) {
             $select->where('l.season IS NOT NULL');
         }
@@ -137,7 +137,13 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     {
         $data = array();
 
-        $data['all-directors'] = $this->fetchMemberEmails($leagueId, 'director');
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
+        $leagueInfo = $leagueInformationTable->fetchInformation($leagueId);
+        if(empty($leagueInfo->contact_email)) {
+            $data['all-directors'] = $this->fetchMemberEmails($leagueId, 'director');
+        } else {
+            $data['all-directors'] = array($leagueInfo->contact_email);
+        }
 
         if($user) {
             if($isDirector) {
@@ -359,11 +365,11 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
 
         return $this->getAdapter()->fetchAll($select);
     }
-    
+
     public function addNewPlayer($leagueId, $playerId)
     {
         $player = $this->fetchMember($leagueId, $playerId);
-        
+
         if(!$player) {
             // add to league member table
             $this->insert(array(
@@ -381,19 +387,19 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
             return 'duplicate';
         }
     }
-    
-    public function removePlayer($memberId) 
+
+    public function removePlayer($memberId)
     {
         $player = $this->find($memberId)->current();
         if($player) {
             $player->delete();
         }
     }
-    
+
     public function fetchAllLeagueDirectors($userId)
     {
         $select = $this->select()->where('user_id = ?', $userId)->where('position = ?', 'director');
-        
+
         return $this->fetchAll($select);
     }
 }
