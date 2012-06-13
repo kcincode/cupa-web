@@ -197,7 +197,7 @@ class LeagueController extends Zend_Controller_Action
 
         if(!$this->view->hasRole('admin') and
            !$this->view->hasRole('editor') and
-           !$this->view->hasRole('editor', $page->id) ) {
+           !$this->view->isLeagueDirector($leagueId) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
 
@@ -277,7 +277,7 @@ class LeagueController extends Zend_Controller_Action
 
         if(!$this->view->hasRole('admin') and
            !$this->view->hasRole('editor') and
-           !$this->view->hasRole('editor', $page->id) ) {
+           !$this->view->isLeagueDirector($leagueId) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
 
@@ -468,7 +468,7 @@ class LeagueController extends Zend_Controller_Action
 
         if(!$this->view->hasRole('admin') and
            !$this->view->hasRole('editor') and
-           !$this->view->hasRole('editor', $page->id) ) {
+           !$this->view->isLeagueDirector($leagueId) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
 
@@ -698,7 +698,7 @@ class LeagueController extends Zend_Controller_Action
 
         if(!$this->view->hasRole('admin') and
            !$this->view->hasRole('editor') and
-           !$this->view->hasRole('editor', $page->id) ) {
+           !$this->view->isLeagueDirector($leagueId) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
 
@@ -1426,7 +1426,7 @@ class LeagueController extends Zend_Controller_Action
                         }
                     }
                 }
-                
+
                 $this->view->message('Email sent.', 'success');
                 $this->_redirect('league/' . $leagueId . '/email');
             } else {
@@ -2166,20 +2166,20 @@ class LeagueController extends Zend_Controller_Action
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
         $this->view->available = $leagueMemberTable->fetchPlayersByTeam($leagueId, null);
         $this->view->teamPlayers = $leagueMemberTable->fetchPlayersByTeam($leagueId, $teamId);
-        
+
         $userTable = new Model_DbTable_User();
         $this->view->users = $userTable->fetchAllUsers();
         $this->view->leaguePlayers = $leagueMemberTable->fetchPlayersByLeague($leagueId);
     }
-    
+
     public function addplayerAction()
     {
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
-        
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $players = $this->getRequest()->getParam('players');
-        
+
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $flag = 0;
         if($players) {
@@ -2202,9 +2202,9 @@ class LeagueController extends Zend_Controller_Action
     {
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
-        
+
         $players = $this->getRequest()->getParam('players');
-        
+
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         if($players) {
             foreach(explode(',', $players) as $playerId) {
