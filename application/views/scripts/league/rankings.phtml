@@ -26,7 +26,7 @@
         <?php endforeach; ?>
         </span><br/>
         <span class="captains">
-        <strong>League Record:</strong> <?php echo $this->escape($team['record']); ?><br/>
+        <strong>League Record:</strong> <?php echo $this->escape($team['record']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)<br/>
         </span>
     </div>
     <div class="clearfix"></div>
@@ -60,7 +60,7 @@
         <?php endforeach; ?>
         </span><br/>
         <span class="captains">
-        <strong>Record:</strong> <?php echo $this->escape($team['record']); ?><br/>
+        <strong>Record:</strong> <?php echo $this->escape($team['record']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)<br/>
         </span>
     </div>
     <div class="clearfix"></div>
@@ -69,7 +69,7 @@
   </div>
   <?php endforeach; ?>
   <div class="clearfix"></div>
-  
+
   <?php else: ?>
   <p align="center">There are no teams defined yet for this league.  Stay tuned...</p>
   <?php endif; ?>

@@ -11,7 +11,7 @@
   <?php if(count($this->teams)): ?>
   <?php foreach($this->teams as $team): ?>
   <div class="team">
-    
+
     <?php if($team->color_code): ?>
     <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>;">
     <?php else: ?>
@@ -37,7 +37,7 @@
         <?php endforeach; ?>
         </span><br/>
         <span class="captains">
-        <strong>Record:</strong> <?php echo $this->getLeagueTeamRecord($team->league_id, $team->id); ?><br/>
+        <strong>Record:</strong> <?php echo $this->getLeagueTeamRecord($team->league_id, $team->id); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)<br/>
         </span>
     </div>
     <div class="clearfix"></div>
