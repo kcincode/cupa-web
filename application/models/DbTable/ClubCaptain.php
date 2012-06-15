@@ -20,7 +20,7 @@ class Model_DbTable_ClubCaptain extends Zend_Db_Table
 
     public function updateCaptains($captains, $clubId)
     {
-        foreach($this->fetchAll() as $row) {
+        foreach($this->fetchAllByClub($clubId) as $row) {
             if(!in_array($row->user_id, $captains)) {
                 $row->delete();
             }
