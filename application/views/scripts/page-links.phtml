@@ -4,7 +4,11 @@
         <?php if($link->name == $this->page->name): ?>
         <li><?php echo $this->escape($link->title); ?></li>
         <?php else: ?>
+        <?php if(empty($link->url)): ?>
         <li><a href="<?php echo $this->url(array('page' => $link->name), 'page_view'); ?>"><?php echo $this->escape($link->title); ?></a></li>
+        <?php else: ?>
+        <li><a href="<?php echo $this->escape($link->url); ?>" target="<?php echo $this->escape($link->target); ?>"><?php echo $this->escape($link->title); ?></a></li>
+        <?php endif; ?>
         <?php endif; ?>
         <?php endforeach; ?>
     </ul>
