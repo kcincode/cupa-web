@@ -13,7 +13,7 @@ class ManageController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin') and !$this->view->isLeagueDirector()) {
             $this->_forward('auth');
         }
     }
@@ -24,7 +24,7 @@ class ManageController extends Zend_Controller_Action
 
     public function unpaidAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin') and !$this->view->isLeagueDirector()) {
             $this->_forward('auth');
         }
 

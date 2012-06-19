@@ -9,19 +9,25 @@ class My_View_Helper_IsLeagueDirector extends Zend_View_Helper_Abstract
         $this->view = $view;
     }    
     
-    public function isLeagueDirector($leagueId)
+    public function isLeagueDirector($leagueId = null)
     {        
         if($this->view->hasRole('admin')) {
             return true;
         }
+
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            return false;
+        }
         
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        if(Zend_Auth::getInstance()->hasIdentity()) {
+        if($leagueId) {
             foreach($leagueMemberTable->fetchAllByType($leagueId, 'director') as $member) {
                 if($member->user_id == $this->view->user->id) {
                     return true;
                 }
             }
+        } else {
+            return $leagueMemberTable->isALeagueDirector($this->view->user->id);
         }
 
         return false;

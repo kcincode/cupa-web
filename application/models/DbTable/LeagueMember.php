@@ -396,10 +396,10 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
         }
     }
 
-    public function fetchAllLeagueDirectors($userId)
+    public function isALeagueDirector($userId)
     {
         $select = $this->select()->where('user_id = ?', $userId)->where('position = ?', 'director');
 
-        return $this->fetchAll($select);
+        return (count($this->fetchAll($select)) > 0) ? true : false;
     }
 }

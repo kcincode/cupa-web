@@ -21,8 +21,9 @@
         <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>
         <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team['color']));?></span><br/>
         <span class="captains"><strong>Captain(s):</strong>
-        <?php foreach($this->getLeagueTeamCaptains($team['league_id'], $team['id']) as $captain): ?>
-            <?php echo $this->fullname($captain->user_id); ?>
+        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team->league_id, $team->id); ?>
+        <?php foreach($captains as $captain): ?>
+            <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
         <?php endforeach; ?>
         </span><br/>
         <span class="captains">
@@ -55,8 +56,9 @@
         <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>
         <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team['color']));?></span><br/>
         <span class="captains"><strong>Captain(s):</strong>
-        <?php foreach($this->getLeagueTeamCaptains($team['league_id'], $team['id']) as $captain): ?>
-            <?php echo $this->fullname($captain->user_id); ?>
+        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team['league_id'], $team['id']); ?>
+        <?php foreach($captains as $captain): ?>
+            <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
         <?php endforeach; ?>
         </span><br/>
         <span class="captains">

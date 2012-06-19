@@ -3,8 +3,10 @@
     <h2>Management Tasks:</h2>
     <ul>
         <li><a class="button" id="unpaid-users" href="<?php echo $this->url(array(), 'manage_unpaid'); ?>">Unpaid Players</a></li>
+        <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
         <li><a class="button" id="manage-users" href="<?php echo $this->url(array(), 'manage_users'); ?>">Users</a></li>
         <li><a class="button" id="manage-pages" href="<?php echo $this->url(array(), 'manage_pages'); ?>">Pages</a></li>
         <li><a class="button" id="volunteers" href="<?php echo $this->url(array(), 'manage_volunteer'); ?>">Volunteers</a></li>
+        <?php endif; ?>
     </ul>
 </div>
