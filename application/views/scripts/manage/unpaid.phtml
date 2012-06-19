@@ -15,17 +15,9 @@
             <div class="leagues">
                 <?php $i = 1; ?>
                 <?php foreach($player['leagues'] as $league): ?>
-                
-                <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
                 <a href="<?php echo $this->url(array('league_id' => $league), 'league_status'); ?>">
-                <?php endif; ?>
-                    
                     <?php echo $this->leaguename($league, true, true, true, true); ?><?php if($i < count($player['leagues'])): ?>, <?php $i++; endif; ?>
-                    
-                <?php if(!$this->hasRole('admin') or $this->hasRole('manager')): ?>
                 </a>
-                <?php endif; ?>
-                
                 <?php endforeach; ?>
             </div>
             <div class="owed"><?php echo $this->escape($player['owed']); ?></div>
