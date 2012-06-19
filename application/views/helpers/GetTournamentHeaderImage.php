@@ -11,7 +11,7 @@ class My_View_Helper_GetTournamentHeaderImage extends Zend_View_Helper_Abstract
 
     public function getTournamentHeaderImage()
     {
-        if(file_exists(APPLICATION_PATH . '/../public/images/tournaments/' . $this->view->tournament->name . '.jpg')) {
+        if(file_exists(APPLICATION_WEBROOT . '/images/tournaments/' . $this->view->tournament->name . '.jpg')) {
             return $this->view->baseUrl() . '/images/tournaments/' . $this->view->tournament->name . '.jpg';
         }
 

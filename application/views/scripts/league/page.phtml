@@ -36,7 +36,7 @@
                 </div>
                 <?php endif; ?>
                 <div class="edit-links">
-                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->isLeagueDirector($league['id'])): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League"/></a>
                     <?php endif; ?>
                     <?php if($this->hasRole('admin')): ?>
@@ -56,7 +56,7 @@
             <hr/>
             <div class="section">
                 <div class="edit-links">
-                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->isLeagueDirector($league['id'])): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_information_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League Information"/></a>
                     <?php endif; ?>
                 </div>
@@ -112,7 +112,7 @@
             <hr/>
             <div class="section">
                 <div class="edit-links">
-                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->isLeagueDirector($league['id'])): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_registration_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League Registration"/></a>
                     <?php endif; ?>
                 </div>
@@ -157,7 +157,7 @@
             <hr/>
             <div class="section">
                 <div class="edit-links">
-                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->isLeagueDirector($league['id'])): ?>
                     <a href="<?php echo $this->url(array('league_id' => $league['id']), 'league_description_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit League Description"/></a>
                     <?php endif; ?>
                 </div>
