@@ -156,15 +156,17 @@ class Model_DbTable_User extends Zend_Db_Table
         }
 
         // get the public user profile data
+        $userLevelTable = new Model_DbTable_UserLevel();
         $userProfileTable = new Model_DbTable_UserProfile();
         $userProfile = $userProfileTable->find($user->id)->current();
+        $level = $userLevelTable->find($userProfile->level)->current();
         $data['profile'] = array(
             'nickname' => $userProfile->nickname,
             'gender' => $userProfile->gender,
             'age' => $userProfile->birthday,
             'phone' => $userProfile->phone,
             'height' => $userProfile->height,
-            'level' => (empty($userProfile->level)) ? null : $userProfile->level,
+            'level' => (empty($level)) ? null : $level->name,
             'experience' => $userProfile->experience,
         );
 
