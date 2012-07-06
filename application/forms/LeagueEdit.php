@@ -103,7 +103,7 @@ class Form_LeagueEdit extends Zend_Form
                 array('InArray', false, array(array_keys($radioSelect))),
             ),
             'required' => true,
-            'label' => 'Does the league have pods?',
+            'label' => 'Does the league have pods? (Not Implemented Yet)',
             'value' => $this->_leagueData['information']['is_pods'], 
             'multiOptions' => $radioSelect,
             'separator' => '&nbsp;&nbsp;'

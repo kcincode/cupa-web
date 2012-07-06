@@ -219,28 +219,26 @@ class LeagueController extends Zend_Controller_Action
                 $league = $leagueTable->find($leagueId)->current();
                 $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
 
-                if($this->view->hasRole('admin')) {
-                    $league->year = $data['year'];
-                    $league->season = $data['season'];
-                    $league->day = $data['day'];
-                    $league->is_archived = $data['is_archived'];
+                $league->year = $data['year'];
+                $league->season = $data['season'];
+                $league->day = $data['day'];
+                $league->is_archived = $data['is_archived'];
 
-                    $leagueInformation->is_youth = $data['is_youth'];
-                    $leagueInformation->is_pods = $data['is_pods'];
-                    $leagueInformation->is_hat = $data['is_hat'];
-                    $leagueInformation->is_clinic = $data['is_clinic'];
-                    $leagueInformation->user_teams = $data['user_teams'];
-                    $leagueInformation->contact_email = $data['contact_email'];
-                    $leagueInformation->save();
+                $leagueInformation->is_youth = $data['is_youth'];
+                $leagueInformation->is_pods = $data['is_pods'];
+                $leagueInformation->is_hat = $data['is_hat'];
+                $leagueInformation->is_clinic = $data['is_clinic'];
+                $leagueInformation->user_teams = $data['user_teams'];
+                $leagueInformation->contact_email = $data['contact_email'];
+                $leagueInformation->save();
 
-                    if($leagueInformation->user_teams == 1) {
-                        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-                        $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
+                if($leagueInformation->user_teams == 1) {
+                    $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+                    $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
 
-                        $question = $leagueQuestionTable->fetchQuestion('user_teams');
-                        if($question) {
-                            $leagueQuestionListTable->addQuestionToLeague($league->id, $question->id, 1, -15);
-                        }
+                    $question = $leagueQuestionTable->fetchQuestion('user_teams');
+                    if($question) {
+                        $leagueQuestionListTable->addQuestionToLeague($league->id, $question->id, 1, -15);
                     }
                 }
 
