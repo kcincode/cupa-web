@@ -872,12 +872,13 @@ class PageController extends Zend_Controller_Action
             if($newsTable->isUnique($post['title'])) {
                 $news = $newsTable->createRow();
                 $news->title = $post['title'];
+                $news->category_id = $post['category'];
                 $news->is_visible = 0;
                 $news->slug = $newsTable->slugifyTitle($post['title']);
                 $news->url = null;
                 $news->info = '';
                 $news->content = '';
-                $news->type = null;
+                $news->type = 1;
                 $news->posted_at = date('Y-m-d H:i:s');
                 $news->posted_by = $this->view->user->id;
                 $news->last_edited_by = $this->view->user->id;
@@ -892,6 +893,8 @@ class PageController extends Zend_Controller_Action
                 return;
             }
         }
+        $newsCategoryTable = new Model_DbTable_NewsCategory();
+        $this->view->types = $newsCategoryTable->fetchAllCategories();
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
     }

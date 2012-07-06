@@ -15,6 +15,7 @@ class Form_News extends Zend_Form
         
         $this->addElement('checkbox', 'is_visible', array(
             'label' => 'Is Visible:',
+            'description' => 'Make sure this is checked to see the news item.',
         ));
         
         $this->addElement('select', 'category', array(
@@ -23,6 +24,7 @@ class Form_News extends Zend_Form
             ),
             'required' => true,
             'label' => 'Category:',
+            'description' => 'This will be the box that it appears in',
             'multiOptions' => $categories,
         ));
         
@@ -35,7 +37,7 @@ class Form_News extends Zend_Form
         $this->addElement('text', 'url', array(
             'filters' => array('StringTrim'),
             'label' => 'Url:',
-            'description' => '(optional)',
+            'description' => 'Enter the url to the news link (optional)',
         ));
        
         $this->addElement('textarea', 'info', array(
@@ -45,18 +47,20 @@ class Form_News extends Zend_Form
                 array('StringLength', false, array(1, 255)),
             ),
             'label' => 'Short Description:',
+            'description' => 'This is what is displayed on the home page',
         ));
         
         $this->addElement('text', 'remove_at', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Remove At:',
+            'description' => 'Date/Time that the news item will not be shown on the home page.',
         ));
 
         $this->addElement('textarea', 'content', array(
             'filters' => array('StringTrim'),
             'label' => 'Content:',
-            'description' => '(optional)',
+            'description' => 'This is if there is no page and you just want to have a link to a page with text. (optional)',
         ));
     }
 

@@ -4,6 +4,14 @@
         <dd>
             <input id="news-title" type="text" name="title" />
         </dd>
+        <dt>News Type:</dt>
+        <dd>
+            <select id="news-type" name="type">
+            <?php foreach($this->types as $type): ?>
+                <option value="<?php echo $type->id; ?>"><?php echo $type->name; ?></option>
+            <?php endforeach; ?>
+            </select>
+        </dd>
     </div>
     <div id="error-string"></div>
 </form>

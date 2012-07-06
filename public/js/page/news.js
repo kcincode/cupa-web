@@ -15,7 +15,7 @@ $(document).ready(function() {
                 $.ajax({
                     type: 'post',
                     url: BASE_URL + '/news/add',
-                    data: 'title='+$('#news-title').val(),
+                    data: 'title='+$('#news-title').val()+'&category='+$('#news-type').val(),
                     success: function(response) {
                         var obj = eval('(' + response + ')');
                         if(obj.result == 'error') {
