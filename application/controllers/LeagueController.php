@@ -173,7 +173,7 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
         $this->view->links = $leagueSeasonTable->generateLinks();
-        $admin = $this->view->hasRole('admin') or $this->view->hasRole('editor') or $this->view->hasRole('editor', $this->view->page->id);
+        $admin = $this->view->hasRole('admin') or $this->view->hasRole('editor') or $this->view->hasRole('manager');
         $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $admin);
     }
 
