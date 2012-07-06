@@ -11,7 +11,7 @@ class My_View_Helper_IsTournamentAdmin extends Zend_View_Helper_Abstract
 
     public function isTournamentAdmin($tournamentId)
     {
-        if($this->view->hasRole('admin')) {
+        if($this->view->hasRole('admin') or $this->view->hasRole('manager')) {
             return true;
         }
 

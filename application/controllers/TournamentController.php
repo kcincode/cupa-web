@@ -18,7 +18,7 @@ class TournamentController extends Zend_Controller_Action
         if(empty($this->_name)) {
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         } else if(empty($this->_year)) {
-            $this->_year = $tournamentTable->fetchMostCurrentYear($this->_name, $this->view->hasRole('admin'));
+            $this->_year = $tournamentTable->fetchMostCurrentYear($this->_name, ($this->view->hasRole('admin') or $this->view->hasRole('manager')));
         }
 
         if(empty($this->_year)) {
@@ -27,7 +27,7 @@ class TournamentController extends Zend_Controller_Action
         }
 
         $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name);
-        if(empty($this->view->tournament) and $this->view->hasRole('admin')) {
+        if(empty($this->view->tournament) and ($this->view->hasRole('admin') || $this->view->hasRole('manager'))) {
             $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name, true);
         }
 
