@@ -244,3 +244,8 @@ p.description {
     width: 50px;
     text-align: center;
 }
+
+#leagueedit-container #paypal_code {
+    width: 500px;
+    height: 150px;
+}

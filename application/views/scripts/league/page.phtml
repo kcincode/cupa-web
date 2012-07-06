@@ -11,8 +11,8 @@
     </div>
     <?php endif; ?>
     <span class="actions">
-        <?php if($this->hasRole('admin')): ?>
-        <a id="add-league" class="button" href="#" data-season="<?php echo $this->escape(ucwords($this->season));?>">Add <?php echo $this->escape(ucwords($this->season));?> League</a>
+        <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+        <a id="add-league" class="button" href="#" data-season="<?php echo $this->escape(ucwords($this->season)); ?>">Add <?php echo $this->escape(ucwords($this->season)); ?> League</a>
         <div id="add-league-container"></div>
         <?php endif; ?>
     </span>

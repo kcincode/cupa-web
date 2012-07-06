@@ -424,6 +424,14 @@ class Form_LeagueEdit extends Zend_Form
             'description' => 'Enter the amount the league costs to register.',
             'value' => $this->_leagueData['information']['cost'],
         ));
+        
+        $this->addElement('textarea', 'paypal_code', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Paypal Button:',
+            'description' => 'Enter the paypal button HTML code.',
+            'value' => $this->_leagueData['information']['paypal_code'],
+        ));
 
         $limitGenders = 0;
         if(!empty($this->_leagueData['limits']['male_players']) and 
@@ -468,14 +476,6 @@ class Form_LeagueEdit extends Zend_Form
             'label' => 'Max Teams:',
             'description' => 'Enter the max # of teams.',
             'value' => $this->_leagueData['limits']['teams'],
-        ));
-
-        $this->addElement('text', 'paypal_code', array(
-            'filters' => array('StringTrim'),
-            'required' => false,
-            'label' => 'Paypal Code:',
-            'description' => 'Enter the paypal code for payment.',
-            'value' => $this->_leagueData['information']['paypal_code'],
         ));
     }
     
