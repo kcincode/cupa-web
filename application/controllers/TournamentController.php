@@ -660,7 +660,6 @@ class TournamentController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $this->view->tournament->display_name = $data['display_name'];
-                $this->view->tournament->email = (empty($data['email'])) ? null : $data['email'];
                 $this->view->tournament->is_visible = $data['is_visible'];
                 $this->view->tournament->save();
 

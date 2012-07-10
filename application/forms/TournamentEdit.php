@@ -268,17 +268,6 @@ class Form_TournamentEdit extends Zend_Form
             'value' => (isset($this->_tournament->display_name)) ? $this->_tournament->display_name : null,
         ));
 
-        $this->addElement('text', 'email', array(
-            'required' => false,
-            'label' => 'Use Email:',
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('EmailAddress'),
-            ),
-            'description' => 'Enter an alternate email to use as director.',
-            'value' => (isset($this->_tournament->email)) ? $this->_tournament->email : null,
-        ));
-
         $this->addElement('text', 'start', array(
             'required' => true,
             'label' => 'Start Date:',
