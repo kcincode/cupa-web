@@ -1440,7 +1440,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
 
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankings.js');
+        //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankings.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
