@@ -345,6 +345,7 @@ class Model_DbTable_User extends Zend_Db_Table
         $userProfileTable->mergeUsers($ids, $userId);
 
         foreach(explode(',', $ids) as $id) {
+            $db->query("UPDATE user SET parent = $userId WHERE parent = $id");
             $user = $this->find($id)->current();
             $user->delete();
         }
@@ -392,4 +393,5 @@ class Model_DbTable_User extends Zend_Db_Table
         fwrite($fp, '=== BACKUP Finished ' . date('Y-m-d H:i:s') . " ===\n\n");
         fclose($fp);
     }
+
 }
