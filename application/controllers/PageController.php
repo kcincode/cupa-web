@@ -49,6 +49,12 @@ class PageController extends Zend_Controller_Action
         }
     }
 
+    public function oldviewAction()
+    {
+        $page = $this->getRequest()->getUserParam('page');
+        $this->_redirect($page);
+    }
+
     public function editAction()
     {
         $page = $this->getRequest()->getUserParam('page');
