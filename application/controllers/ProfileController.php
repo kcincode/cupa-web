@@ -13,7 +13,9 @@ class ProfileController extends Zend_Controller_Action
         $state = $this->getRequest()->getUserParam('state');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/' . $state . '.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/profile/' . $state . '.js');
+        if(file_exists(APPLICATION_PATH . '/../public/js/profile/' . $state . '.js')) {
+            $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/profile/' . $state . '.js');
+        }
 
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             return;
