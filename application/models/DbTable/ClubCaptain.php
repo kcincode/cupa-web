@@ -18,11 +18,23 @@ class Model_DbTable_ClubCaptain extends Zend_Db_Table
         return $stmt->fetchAll();
     }
 
+    public function fetchClubCaptain($clubId, $userId)
+    {
+        $select = $this->select()
+                       ->where('club_id = ?', $clubId)
+                       ->where('user_id = ?', $userId);
+
+        return $this->fetchRow($select);
+    }
+
     public function updateCaptains($captains, $clubId)
     {
         foreach($this->fetchAllByClub($clubId) as $row) {
-            if(!in_array($row->user_id, $captains)) {
-                $row->delete();
+            if(!in_array($row['user_id'], $captains)) {
+                $entry = $this->fetchClubCaptain($clubId, $row['user_id']);
+                if($entry) {
+                    $entry->delete();
+                }
             }
         }
 
