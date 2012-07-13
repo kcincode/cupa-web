@@ -75,3 +75,8 @@ a.website-link {
     width: 25px;
     height: 25px;
 }
+
+.roster {
+    margin: 10px 0;
+    color: #444 !important;
+}

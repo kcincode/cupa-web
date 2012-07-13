@@ -117,12 +117,6 @@ $clubMembers = array(
             'Kristi Schmeling',
         ),
     ),
-    'Hustle' => array(
-        2011 => array(
-            'Neil Narayan',
-            'Ben Sage',
-        ),
-    ),
     'Age Against the Machine' => array(
         2010 => array(
             'George White',

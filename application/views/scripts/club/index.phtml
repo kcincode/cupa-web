@@ -1,1 +1,47 @@
-Club home page.
+<h1><?php echo $this->escape($this->club->name); ?></h1>
+<h3 class="club">A <?php echo $this->escape($this->club->type); ?> Ultimate Team from <?php echo $this->escape($this->club->begin); ?><?php echo $this->escape((empty($this->club->end)) ? '' : $this->club->end); ?>
+</h3>
+
+<div class="social">
+    <?php if($this->club->facebook): ?>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    <div class="fb-like" data-href="http://www.facebook.com/<?php echo $this->escape($this->club->facebook); ?>" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <?php endif; ?>
+    <?php if($this->club->twitter): ?>
+    <a href="https://twitter.com/<?php echo $this->escape($this->club->twitter); ?>" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @cincysfb</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <?php endif; ?>
+</div>
+
+<div class="contact">
+	<strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($this->club->id)) > 0) ? $this->getClubCaptains($this->club->id) . '<br/>' : 'Unknown<br/>'; ?>
+    <?php echo (empty($this->club->website)) ? '&nbsp;' : '<strong>Website:</strong> <a class="website-link" href="' . $this->escape($this->club->website) . '">' . $this->escape($this->club->website) . '</a><br/>'; ?>
+	<?php if($this->club->email != null): ?><strong>Contact Email:</strong> <?php echo $this->generateEmailLink($this->club->email); ?><?php endif; ?>
+</div>
+
+<div class="info"><?php echo $this->club->content; ?></div>
+
+<div id="members">
+    <ul>
+	    <?php foreach($this->years as $year => $members): ?>
+	    <li><a href="#<?php echo $this->escape($year);?>"><?php echo $this->escape($year); ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+
+    <?php foreach($this->years as $year => $members): ?>
+    <div id="<?php echo $this->escape($year);?>">
+    	<ul>
+	    	<?php foreach($members as $member): ?>
+    		<li><a href="<?php echo $this->url(array('user_id' => $member['user_id']), 'page_profile_public'); ?>"><?php echo $this->escape($member['member']); ?></a></li>
+		    <?php endforeach; ?>
+    	</ul>
+    </div>
+    <?php endforeach; ?>
+</div>
