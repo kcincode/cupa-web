@@ -19,7 +19,11 @@
         <?php foreach($this->data['profile'] as $key => $value): ?>
         <?php if($key != 'phone'): ?>
         <div class="key">
+            <?php if($key == 'experience'): ?>
+            Playing Since:
+            <?php else: ?>
             <?php echo $this->escape(ucwords($key)); ?>:
+            <?php endif; ?>
         </div>
         <div class="value">
             <?php if($key == 'age'): ?>
@@ -48,6 +52,22 @@
             <div class="league"><a href="<?php echo $this->url(array('league_id' => $row['league_id']), 'league_view'); ?>"><?php echo substr($this->leaguename($row['league_id'], false, true, true, false), 0, 25) . '...'; ?></a></div>
             <div class="team"><?php echo (empty($row['team'])) ? 'Not Assigned' : $this->escape($row['team']); ?></div>
             <div class="record"><?php echo $this->getLeagueTeamRecord($row['league_id'], $row['team_id']); ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="clubs">
+        <h3>Cincinnati Club Teams</h3>
+        <div class="row">
+            <div class="year header">Year</div>
+            <div class="type header">Type</div>
+            <div class="team header">Team</div>
+        </div>
+        <?php foreach($this->data['clubs'] as $row): ?>
+        <div class="row">
+            <div class="year"><?php echo $this->escape($row['year']); ?></div>
+            <div class="type"><?php echo $this->escape($row['type']); ?></div>
+            <div class="team"><a href="<?php echo $this->url(array('club_id' => $row['club_id']), 'club_home'); ?>#<?php echo $this->escape($row['year']); ?>"><?php echo $this->escape($row['name']); ?></a></div>
         </div>
         <?php endforeach; ?>
     </div>

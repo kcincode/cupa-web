@@ -50,7 +50,8 @@ h1 {
     text-align: right;
 }
 
-#player-card .leagues h3 {
+#player-card .leagues h3,
+#player-card .clubs h3 {
     margin: 10px 0;
     background-color: #e0e0e0;
     border: 1px solid #aaa;
@@ -59,7 +60,10 @@ h1 {
 #player-card .leagues .year,
 #player-card .leagues .league,
 #player-card .leagues .team,
-#player-card .leagues .record {
+#player-card .leagues .record,
+#player-card .clubs .team,
+#player-card .clubs .type,
+#player-card .clubs .year {
     padding: 0;
     margin: 0;
     float: left;
@@ -81,10 +85,35 @@ h1 {
     text-align: center;
 }
 
-#player-card .leagues .header {
+#player-card .leagues .header,
+#player-card .clubs .header {
     font-weight: bold;
     text-decoration: underline;
 }
+
+#player-card .clubs .team,
+#player-card .clubs .year {
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+#player-card .clubs .year {
+    width: 40px;
+    text-align: center;
+}
+
+#player-card .clubs .type {
+    width: 100px;
+    text-align: left;    
+}
+
+#player-card .clubs .team {
+    width: 360px;
+    text-align: left;
+}
+
+
 
 
 

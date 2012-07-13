@@ -158,6 +158,7 @@ class Model_DbTable_User extends Zend_Db_Table
         // get the public user profile data
         $userLevelTable = new Model_DbTable_UserLevel();
         $userProfileTable = new Model_DbTable_UserProfile();
+        $clubMemberTable = new Model_DbTable_ClubMember();
         $userProfile = $userProfileTable->find($user->id)->current();
         $level = $userLevelTable->find($userProfile->level)->current();
         $data['profile'] = array(
@@ -173,6 +174,7 @@ class Model_DbTable_User extends Zend_Db_Table
         // get users league data
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $data['leagues'] = $leagueMemberTable->fetchUserLeagues($user->id, false);
+        $data['clubs'] = $clubMemberTable->fetchUserClubs($user->id);
 
         $data['minors'] = $this->fetchAllMinors($user->id, true);
 
@@ -392,6 +394,20 @@ class Model_DbTable_User extends Zend_Db_Table
         }
         fwrite($fp, '=== BACKUP Finished ' . date('Y-m-d H:i:s') . " ===\n\n");
         fclose($fp);
+    }
+
+    public function fetchByFullname($name)
+    {
+        $data = explode(' ', $name);
+        if(count($data) == 2) {
+            $select = $this->select()
+                           ->where('first_name = ?', $data[0])
+                           ->where('last_name = ?', $data[1]);
+
+            return $this->fetchRow($select);
+        }
+
+        return null;
     }
 
 }

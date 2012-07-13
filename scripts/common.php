@@ -26,7 +26,7 @@ $application = new Zend_Application(
     APPLICATION_PATH . '/configs/application.ini'
 );
 $application->bootstrap('db');
-
+/*
 echo "Import data from where?\n";
 
 echo "  Server [cincyultimate.org]: ";
@@ -59,6 +59,6 @@ try {
 	echo 'Could not conned to source DB.  ' . $e->getMessage();
     exit();
 }
-
+*/
 require_once('ProgressBar.php');
 echo "\n\n";
