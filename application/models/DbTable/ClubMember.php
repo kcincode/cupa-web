@@ -20,22 +20,27 @@ class Model_DbTable_ClubMember extends Zend_Db_Table
     public function addMember($clubId, $userId, $year, $position = 'player')
     {
         if($this->isUnique($clubId, $userId, $year, $position)) {
-            $this->insert(array(
+            return $this->insert(array(
                 'club_id' => $clubId,
                 'user_id' => $userId,
                 'year' => $year,
                 'position' => $position,
             ));
         }
+
+        return null;
     }
 
     public function fetchMembers($clubId, $year = null)
     {
         $select = $this->getAdapter()->select()
-                       ->from(array('cm' => $this->_name), array('year'))
+                       ->from(array('cm' => $this->_name), array('id', 'year'))
                        ->join(array('c' => 'club'), 'c.id = cm.club_id', array('name'))
                        ->join(array('u' => 'user'), 'u.id = cm.user_id', array('id AS user_id', "CONCAT(first_name, ' ', last_name) AS member"))
-                       ->where('club_id = ?', $clubId);
+                       ->where('club_id = ?', $clubId)
+                       ->order('cm.year')
+                       ->order('u.last_name')
+                       ->order('u.first_name');
 
         if($year) {
             $select->where('year = ?', $year);

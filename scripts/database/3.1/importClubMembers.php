@@ -11,7 +11,7 @@ $clubMembers = array(
         2008 => array(
             'Nick Felicelli',
             'Maureen Felicelli',
-            'Edward Mack',
+            'Eddie Mack',
             'Michael Rimler',
             'Josh Findley',
             'Jen Golan',
@@ -40,7 +40,7 @@ $clubMembers = array(
         ),
         2009 => array(
             'Peter Ferrante',
-            'Edward Mack',
+            'Eddie Mack',
             'Jonathan Cummings',
             'Steph Mack',
             'Michael Rimler',
@@ -75,7 +75,7 @@ $clubMembers = array(
             'Aaron Armbruster',
             'Aaron Bacon',
             'Maureen Felicelli',
-            'Edward Mack',
+            'Eddie Mack',
             'Steph Mack',
             'Brittany Winner',
             'Jen Golan',
@@ -94,7 +94,7 @@ $clubMembers = array(
         ),
         2011 => array(
             'Tj Bartczack',
-            'Edward Mack',
+            'Eddie Mack',
             'Steph Mack',
             'Ryan Gorman',
             'Jen Golan',

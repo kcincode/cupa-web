@@ -37,6 +37,11 @@
 
     <?php foreach($this->years as $year => $members): ?>
     <div id="<?php echo $this->escape($year);?>">
+        <?php if($this->isClubCaptain($this->club->id)): ?>
+        <div class="edit">
+            <a class="button" href="<?php echo $this->url(array('club_id' => $this->club->id, 'year' => $year), 'club_edit'); ?>">Edit Roster</a>
+        </div>
+        <?php endif; ?>
     	<ul>
 	    	<?php foreach($members as $member): ?>
     		<li><a href="<?php echo $this->url(array('user_id' => $member['user_id']), 'page_profile_public'); ?>"><?php echo $this->escape($member['member']); ?></a></li>
