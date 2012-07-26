@@ -21,6 +21,9 @@ class ClubController extends Zend_Controller_Action
 
     	$clubMemberTable = new Model_DbTable_ClubMember();
     	$this->view->years = $clubMemberTable->fetchAllMemberByYear($clubId);
+
+        $session = new Zend_Session_Namespace('previous');
+        $session->previousPage = str_replace($this->view->baseUrl() . '/', '', $_SERVER['REQUEST_URI']);
     }
 
     public function editAction()

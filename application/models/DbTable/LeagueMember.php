@@ -226,12 +226,13 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
 
     public function fetchPlayerInformation($leagueId)
     {
-        $sql = "SELECT lm.id, lm.user_id, u.first_name, u.last_name, u.email, up.gender, up.birthday, up.phone, up.nickname, up.height, ul.name AS user_level, up.experience, lq.name, la.answer
+        $sql = "SELECT lm.id, lm.user_id, u.first_name, u.last_name, u.email, up.gender, up.birthday, up.phone, up.nickname, up.height, ul.name AS user_level, lt.name AS team, up.experience, lq.name, la.answer
 FROM league_member lm
 LEFT JOIN user u ON u.id = lm.user_id
 LEFT JOIN league_question_list lql ON lql.league_id = lm.league_id
 LEFT JOIN league_question lq ON lq.id = lql.league_question_id
 LEFT JOIN league_answer la ON la.league_member_id = lm.id AND la.league_question_id = lq.id
+LEFT JOIN league_team lt ON lt.id = lm.league_team_id
 LEFT JOIN user_profile up ON up.user_id = lm.user_id
 LEFT JOIN user_level ul ON ul.id = up.level
 WHERE lm.league_id = ? AND
@@ -251,6 +252,7 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
                     'first_name' => $row['first_name'],
                     'last_name' => $row['last_name'],
                     'email' => $row['email'],
+                    'team' => $row['team'],
                     'profile' => array(
                         'gender' => $row['gender'],
                         'birthday' => $row['birthday'],

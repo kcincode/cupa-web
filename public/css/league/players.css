@@ -3,9 +3,8 @@
     margin-top: 10px;
 }
 
-
 #players {
-    width: 650px;
+    width: 900px;
     margin: 10px auto;
 }
 
@@ -14,7 +13,8 @@
 #players .age,
 #players .height,
 #players .experience,
-#players .level {
+#players .level,
+#players .team {
     float: left;
     padding: 5px;
 }
@@ -26,7 +26,6 @@
 #players .gender {
     width: 70px;
     text-align: center;
-
 }
 
 #players .age {
@@ -48,6 +47,10 @@
     width: 170px;
 }
 
+#players .team {
+    width: 240px;
+}
+
 #players .header {
     font-weight: bold;
     font-size: 12pt;
@@ -65,5 +68,5 @@
 }
 
 #players .even div {
-    background-color: #fff;    
+    background-color: #fff;
 }

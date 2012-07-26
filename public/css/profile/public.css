@@ -104,16 +104,11 @@ h1 {
 }
 
 #player-card .clubs .type {
-    width: 100px;
-    text-align: left;    
-}
-
-#player-card .clubs .team {
-    width: 360px;
+    width: 200px;
     text-align: left;
 }
 
-
-
-
-
+#player-card .clubs .team {
+    width: 260px;
+    text-align: left;
+}
