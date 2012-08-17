@@ -14,7 +14,19 @@ class VolunteerController extends Zend_Controller_Action
 
     public function registerAction()
     {
+        $form = new Form_Volunteer($this->view->user);
 
+        $request = $this->getRequest();
+        if($request->isPost()) {
+            $post = $request->getPost();
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                Zend_Debug::dump($data);
+            }
+        }
+
+        $this->view->form = $form;
     }
 
     public function listAction()

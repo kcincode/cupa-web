@@ -20,7 +20,7 @@ foreach($volunteers as $volunteer) {
         'user_id' => $volunteer['user_id'],
         'experience' => 'Unknown',
         'primary_interest' => 'Unknown',
-        'involvement' => 'Unknown',
+        'involvement' => '0-1 year',
     ));
 
     $progressBar->update($i);
