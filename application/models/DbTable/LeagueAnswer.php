@@ -99,7 +99,7 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
                        ->from(array('la' => $this->_name), array('answer'))
                        ->join(array('lq' => 'league_question'), 'lq.id = la.league_question_id', array('name'))
                        ->join(array('lm' => 'league_member'), 'lm.id = la.league_member_id', array())
-                       ->join(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name', 'email'))
+                       ->join(array('u' => 'user'), 'u.id = lm.user_id', array('u.id AS user_id', 'first_name', 'last_name', 'email'))
                        ->joinLeft(array('u2' => 'user'), 'u2.id = u.parent', array('email AS parent_email'))
                        ->where('lq.name = ?', 'volunteer')
                        ->where('la.answer = ?', 1)

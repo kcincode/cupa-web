@@ -4,6 +4,7 @@ try {
     $begin = microtime(true);
     include('updateDbSchema.php');
     include('importClubMembers.php');
+    include('importVolunteers.php');
     $end = microtime(true);
 } catch(Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";

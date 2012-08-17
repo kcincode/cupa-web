@@ -10,10 +10,10 @@ $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
 
 $db = $userTable->getAdapter();
 
-$dropTables = array('club_member');
+$createTables = array('club_member', 'volunteer', 'volunteer_pool', 'volunteer_location', 'volunteer_member');
 
-$createTables = array_reverse($dropTables);
-$totalTables = count($dropTables);
+$dropTables = array_reverse($createTables);
+$totalTables = count($createTables);
 
 try {
     $userTable->getAdapter()->beginTransaction();
@@ -103,11 +103,80 @@ function createClubMemberTable($db)
         PRIMARY KEY (`id`),
         KEY `club_id` (`club_id`),
         KEY `user_id` (`user_id`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;");
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
 
     $db->query("ALTER TABLE `club_member`
         ADD CONSTRAINT `club_member_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
         ADD CONSTRAINT `club_member_ibfk_1` FOREIGN KEY (`club_id`) REFERENCES `club` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+}
+
+function createVolunteerTable($db)
+{
+    $db->query("CREATE TABLE IF NOT EXISTS `volunteer` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(255) NOT NULL,
+        `start` datetime NOT NULL,
+        `end` datetime NOT NULL,
+        `contact_id` int(11) DEFAULT NULL,
+        `max_volunteers` int(11) NOT NULL,
+        `information` int(11) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `contact_id` (`contact_id`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
+
+    $db->query("ALTER TABLE `volunteer`
+        ADD CONSTRAINT `volunteer_ibfk_1` FOREIGN KEY (`contact_id`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;");
+}
+
+function createVolunteerPoolTable($db)
+{
+    $db->query("CREATE TABLE IF NOT EXISTS `volunteer_pool` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `user_id` int(11) DEFAULT NULL,
+        `name` varchar(100) DEFAULT NULL,
+        `email` int(255) DEFAULT NULL,
+        `phone` varchar(12) DEFAULT NULL,
+        `involvement` varchar(25) DEFAULT NULL,
+        `primary_interest` text,
+        `experience` text,
+        PRIMARY KEY (`id`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
+}
+
+function createVolunteerLocationTable($db)
+{
+    $db->query("CREATE TABLE IF NOT EXISTS `volunteer_location` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `volunteer_id` int(11) NOT NULL,
+        `name` varchar(255) NOT NULL,
+        `street` varchar(255) NOT NULL,
+        `city` varchar(150) NOT NULL,
+        `state` varchar(2) NOT NULL,
+        `zip` varchar(5) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `volunteer_id` (`volunteer_id`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
+
+    $db->query("ALTER TABLE `volunteer_location`
+        ADD CONSTRAINT `volunteer_location_ibfk_1` FOREIGN KEY (`volunteer_id`) REFERENCES `volunteer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+}
+
+function createVolunteerMemberTable($db)
+{
+    $db->query("CREATE TABLE IF NOT EXISTS `volunteer_member` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `volunteer_id` int(11) NOT NULL,
+        `volunteer_pool_id` int(11) NOT NULL,
+        `enrolled_at` datetime NOT NULL,
+        `comment` text,
+        PRIMARY KEY (`id`),
+        KEY `volunteer_id` (`volunteer_id`),
+        KEY `volunteer_pool_id` (`volunteer_pool_id`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
+
+    $db->query("ALTER TABLE `volunteer_member`
+        ADD CONSTRAINT `volunteer_member_ibfk_1` FOREIGN KEY (`volunteer_id`) REFERENCES `volunteer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        ADD CONSTRAINT `volunteer_member_ibfk_2` FOREIGN KEY (`volunteer_pool_id`) REFERENCES `volunteer_pool` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 }
 
 function endWithError()
