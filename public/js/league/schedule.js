@@ -2,7 +2,7 @@ $(document).ready(function() {
     $('#add-game-container').dialog({
         modal: true,
         width: 390,
-        height: 400,
+        height: 550,
         autoOpen: false,
         title: 'Create a Game',
         buttons: {
@@ -21,7 +21,7 @@ $(document).ready(function() {
                         if(obj.result == 'error') {
                             $('#error-string').html(obj.message);
                         } else {
-                            window.location = BASE_URL + '/league/' + league_id + '/schedule/' + obj.data + '/edit';
+                            window.location = BASE_URL + '/league/' + league_id + '/schedule/' + obj.data;
                         }
                     }
                 });
@@ -35,7 +35,18 @@ $(document).ready(function() {
 
     $('#add-game').click(function(e) {
         e.preventDefault();
-        $('#add-game-container').load(BASE_URL + '/league/' + league_id + '/schedule/add').dialog('open');
+        $('#add-game-container').load(BASE_URL + '/league/' + league_id + '/schedule/add', function(resp, status, xhr){
+            if(status == 'success') {
+                $('#day').datetimepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'yy-mm-dd',
+                    timeFormat: 'hh:mm:ss'
+                });
+
+                $('.chosen select').chosen();
+            }
+        }).dialog('open');
     });
 
     $('.week').hover(function(){

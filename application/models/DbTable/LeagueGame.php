@@ -60,7 +60,7 @@ class Model_DbTable_LeagueGame extends Zend_Db_Table
 
         $data = array();
         foreach($this->getAdapter()->fetchAll($select) as $row) {
-            $data[$row['week']][$row['field']] = $row;
+            $data[$row['week']][] = $row;
         }
 
         return $data;

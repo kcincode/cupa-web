@@ -972,9 +972,12 @@ class LeagueController extends Zend_Controller_Action
     public function scheduleAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
 
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/schedule.js');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
@@ -988,6 +991,7 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueGameTable = new Model_DbTable_LeagueGame();
         $this->view->games = $leagueGameTable->fetchSchedule($leagueId);
+
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
     }
