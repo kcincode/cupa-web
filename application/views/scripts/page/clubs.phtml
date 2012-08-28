@@ -20,6 +20,7 @@
     <h3>Current Active Teams</h3>
 
     <?php foreach($this->activeClubs as $club): ?>
+    <a name="<?php echo $this->escape(strtolower(preg_replace('/\s|\(|\)/', '', $club['name']))); ?>"></a>
     <div class="club">
         <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id) or $this->isClubCaptain($club->id)): ?>
         <div class="links">
@@ -69,4 +70,4 @@
     <?php endforeach; ?>
 </div>
 
-<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+<?php echo $this->partial('club-page-links.phtml', array('links' => $this->activeClubs, 'page' => $this->page)); ?>

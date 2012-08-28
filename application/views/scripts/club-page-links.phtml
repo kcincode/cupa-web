@@ -1,0 +1,7 @@
+<div id="page-links" class="<?php echo $this->pageClass(); ?>">
+    <ul>
+        <?php foreach($this->links as $link): ?>
+        <li><a href="#<?php echo $this->escape(strtolower(preg_replace('/\s|\(|\)/', '', $link['name']))); ?>"><?php echo $this->escape($link['name']); ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
