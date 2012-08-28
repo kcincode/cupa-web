@@ -124,6 +124,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        //->where('lm.league_team_id IS NOT NULL')
                        ->where('lm.user_id = ?', $userId)
                        ->where('lm.position = ?', 'player')
+                       ->where('l.id NOT IN (43,44)') // remove steamboat leagues since clubs does it now
                        ->order('l.registration_end DESC');
 
         if($leaguesOnly) {
