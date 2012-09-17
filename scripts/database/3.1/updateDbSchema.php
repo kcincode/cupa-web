@@ -134,11 +134,12 @@ function createVolunteerPoolTable($db)
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `user_id` int(11) DEFAULT NULL,
         `name` varchar(100) DEFAULT NULL,
-        `email` int(255) DEFAULT NULL,
+        `email` varchar(255) DEFAULT NULL,
         `phone` varchar(12) DEFAULT NULL,
         `involvement` varchar(25) DEFAULT NULL,
         `primary_interest` text,
-        `experience` text,
+        `other` text DEFAULT NULL,
+        `experience` text DEFAULT NULL,
         PRIMARY KEY (`id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
 }

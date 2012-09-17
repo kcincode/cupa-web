@@ -14,6 +14,7 @@ class VolunteerController extends Zend_Controller_Action
 
     public function registerAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/volunteer/register.css');
         $form = new Form_Volunteer($this->view->user);
 
         $request = $this->getRequest();
@@ -22,7 +23,15 @@ class VolunteerController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                Zend_Debug::dump($data);
+                $data['name'] = $data['first_name'] . ' ' . $data['last_name'];
+                unset($data['first_name']);
+                unset($data['last_name']);
+
+                $volunteerPoolTable = new Model_DbTable_VolunteerPool();
+                $volunteerPoolTable->addVolunteer($data);
+
+                $this->view->message('You have successfully signed up to be a volunteer, you will be contacted for upcomming opportunities.');
+                $this->_redirect('volunteer/list');
             }
         }
 

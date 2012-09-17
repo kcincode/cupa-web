@@ -16,8 +16,12 @@ $i = 0;
 echo "    Importing $volunteerCount Volunteers:\n";
 $progressBar->reset('    [%bar%] %percent%', '=>', '-', 50, $volunteerCount);
 foreach($volunteers as $volunteer) {
+    $userProfileTable = new Model_DbTable_UserProfile();
+    $profile = $userProfileTable->find($volunteer['user_id'])->current();
+
     $tmp = $volunteerPoolTable->addVolunteer(array(
         'user_id' => $volunteer['user_id'],
+        'phone' => (isset($profile['phone'])) ? $profile['phone'] : null,
         'experience' => 'Unknown',
         'primary_interest' => 'Unknown',
         'involvement' => '0-1 year',

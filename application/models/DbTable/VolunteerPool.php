@@ -11,15 +11,24 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
     		return null;
     	}
 
+        $userTable = new Model_DbTable_User();
     	if(!empty($userData['user_id'])) {
 	    	$volunteer = $this->fetchVolunteerFromId($userData['user_id']);
+            $user = $userTable->find($userData['user_id'])->current();
 		} else {
 			$volunteer = $this->fetchVolunteerFromEmail($userData['email']);
+            $user = $userTable->fetchUserBy('email', $userData['email']);
 		}
 
 		if(!empty($volunteer)) {
 			return $volunteer;
 		}
+
+        if($user) {
+            $userData['user_id'] = $user->id;
+            unset($userData['name']);
+            unset($userData['email']);
+        }
 
 		$id = $this->insert($userData);
 

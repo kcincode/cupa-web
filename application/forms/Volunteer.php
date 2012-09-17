@@ -3,6 +3,7 @@
 class Form_Volunteer extends Zend_Form
 {
     protected $_user;
+    protected $_profile;
 
     public function __construct($user)
     {
@@ -62,7 +63,7 @@ class Form_Volunteer extends Zend_Form
             'description' => 'Use format: ###-###-####',
         ));
 
-        $involvement = array('0-1 year', '2-4 years', '5-9 years', '10+ years');
+        $involvement = array('0-1 year' => '0-1 year', '2-4 years' => '2-4 years', '5-9 years' => '5-9 years', '10+ years' => '10+ years');
         $this->addElement('select', 'involvement', array(
             'validators' => array(
                 array('InArray', false, array($involvement)),
@@ -73,7 +74,18 @@ class Form_Volunteer extends Zend_Form
             'description' => 'Select the amount of time you have been involved with CUPA.',
         ));
 
-        $primary = array('Youth Outreach Events', 'Running CUPA Leagues', 'Running CUPA Sponsored Tournaments', 'Helping with USA Ultimate Sponsord Tournaments', 'Helping with General Volunteer Tasks', 'Large Event Help - Various Tasks', 'Off-Field Event Help', 'Public Relations Efforts', 'Other');
+        $primary = array(
+            'Youth Outreach Events' => 'Youth Outreach Events',
+            'Running CUPA Leagues' => 'Running CUPA Leagues',
+            'Running CUPA Sponsored Tournaments' => 'Running CUPA Sponsored Tournaments',
+            'Helping with USA Ultimate Sponsord Tournaments' => 'Helping with USA Ultimate Sponsord Tournaments',
+            'Helping with General Volunteer Tasks' => 'Helping with General Volunteer Tasks',
+            'Large Event Help - Various Tasks' => 'Large Event Help - Various Tasks',
+            'Off-Field Event Help' => 'Off-Field Event Help',
+            'Public Relations Efforts' => 'Public Relations Efforts',
+             'Other' => 'Other',
+        );
+
         $this->addElement('multiCheckbox', 'primary_interest', array(
             'validators' => array(
                 array('InArray', false, array($primary)),
@@ -81,23 +93,25 @@ class Form_Volunteer extends Zend_Form
             'required' => true,
             'label' => 'Primary Interest for Volunteering:',
             'multiOptions' => $primary,
-            'description' => 'Select the amount of time you have been involved with CUPA.',
+            'description' => 'Select the activities that you would be interested in.',
         ));
 
         $this->addElement('textarea', 'other', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Other: Please Specify:',
-            'value' => (empty($this->_profile['phone'])) ? null : $this->_profile['phone'],
             'description' => 'Specify what you are interested in with volunteering.',
         ));
 
         $this->addElement('textarea', 'experience', array(
             'filters' => array('StringTrim'),
-            'required' => true,
+            'required' => false,
             'label' => 'Please list all past CUPA volunteer experience:',
-            'value' => (empty($this->_profile['phone'])) ? null : $this->_profile['phone'],
             'description' => 'List all your past volunteering experiences with CUPA.',
+        ));
+
+        $this->addElement('submit', 'register', array(
+            'label' => 'Register as a Volunteer',
         ));
 
     }
