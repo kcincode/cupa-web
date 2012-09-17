@@ -8,5 +8,5 @@
     <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
     <li><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_admin'); ?>">ADMIN</a> |</li>
     <?php endif; ?>
-    <li><a href="<?php echo $this->baseUrl(); ?>">CUPA HOME</a> |</li>
+    <li><a href="<?php echo $this->baseUrl(); ?>/">CUPA HOME</a> |</li>
 </ul>

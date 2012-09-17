@@ -15,9 +15,9 @@ class My_View_Helper_IsTournamentAdmin extends Zend_View_Helper_Abstract
             return true;
         }
 
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $tournamentMemberTable = new Model_DbTable_TournamentMember();
         if(Zend_Auth::getInstance()->hasIdentity()) {
-            foreach($leagueMemberTable->fetchAllByType($tournamentId, 'director') as $member) {
+            foreach($tournamentMemberTable->fetchAllDirectors($tournamentId) as $member) {
                 if($member->user_id == $this->view->user->id) {
                     return true;
                 }
