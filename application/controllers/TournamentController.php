@@ -315,6 +315,11 @@ class TournamentController extends Zend_Controller_Action
         $this->view->section = 'teams';
 
         if($this->getRequest()->isPost()) {
+
+            if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
+            }
+
             // disable the layout
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
