@@ -923,6 +923,7 @@ class PageController extends Zend_Controller_Action
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             $news->is_visible = $post['is_visible'];
+            $news->category_id = $post['category'];
             $news->title = $post['title'];
             $news->slug = $newsTable->slugifyTitle($post['title']);
             $news->url = (empty($post['url'])) ? null : $post['url'];

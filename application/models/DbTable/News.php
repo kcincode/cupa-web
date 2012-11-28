@@ -12,12 +12,12 @@ class Model_DbTable_News extends Zend_Db_Table
 
     public function getNewsType($news)
     {
-        if(!empty($news['content'])) {
-            return 'news';
-        } else if(strpos($news['url'], 'http') !== false) {
+        if(strpos($news['url'], 'http') !== false) {
             return 'external';
         } else if(strpos($news['url'], 'http') === false and !empty($news['url'])) {
             return 'internal';
+        } else if(!empty($news['content'])) {
+            return 'news';
         } else {
             return 'text';
         }
