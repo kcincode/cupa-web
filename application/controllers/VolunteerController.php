@@ -15,6 +15,7 @@ class VolunteerController extends Zend_Controller_Action
     public function registerAction()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/volunteer/register.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/volunteer/register.js');
         $form = new Form_Volunteer($this->view->user);
 
         $request = $this->getRequest();
@@ -40,6 +41,8 @@ class VolunteerController extends Zend_Controller_Action
 
     public function listAction()
     {
-
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/volunteer/list.css');
+        $volunteerTable = new Model_DbTable_Volunteer();
+        $this->view->volunteers = $volunteerTable->fetchUpcomingVolunteers();
     }
 }

@@ -24,3 +24,16 @@ ul.errors {
     list-style: none;
     margin: 5px 0 0 -30px;
 }
+
+#email {
+    width: 300px;
+}
+
+#first_name, #last_name {
+    width: 200px;
+}
+
+#phone {
+    width: 100px;
+    text-align: center;
+}

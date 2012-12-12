@@ -3,6 +3,28 @@
 
 <div id="page-content" class="about">
     <h1>Volunteer Opportunities</h1>
+
+    <div id="opportunity-list">
+        <?php foreach($this->volunteers as $volunteer): ?>
+        <div class="opportunity">
+            <h2><?php echo $this->escape($volunteer['name']); ?></h2>
+            <?php if(date('Y-m-d', strtotime($volunteer['start'])) == date('Y-m-d', strtotime($volunteer['end']))): ?>
+            <p class="date" style="font-weight: bold; font-style: italic;"><?php echo $this->escape(date('m/d/Y', strtotime($volunteer['start']))); ?> <?php echo $this->escape(date('h:i A', strtotime($volunteer['start']))); ?> - <?php echo $this->escape(date('h:i A', strtotime($volunteer['end']))); ?></p>
+            <?php else: ?>
+            <p class="date" style="font-weight: bold; font-style: italic;"><?php echo $this->escape(date('m/d/Y @ h:i A', strtotime($volunteer['start']))); ?> to <?php echo $this->escape(date('m/d/Y @ h:i A', strtotime($volunteer['end']))); ?></p>
+            <?php endif; ?>
+            <div class="actions">
+                <a class="button" href="#">Register</a>
+                <a class="button" href="#">View</a>
+                <a class="button" href="#">Edit</a>
+            </div>
+            <div class="vol-bar">
+                <?php echo $this->escape($volunteer['max_volunteers'] - count($volunteer['members'])); ?> More Volunteers Needed
+            </div>
+            <p><?php echo $this->escape($volunteer['information']); ?></p>
+        </div>
+        <?php endforeach; ?>
+    </div>
 </div>
 
 <?php echo $this->partial('volunteer/links.phtml'); ?>
