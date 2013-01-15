@@ -14,14 +14,22 @@
             <p class="date" style="font-weight: bold; font-style: italic;"><?php echo $this->escape(date('m/d/Y @ h:i A', strtotime($volunteer['start']))); ?> to <?php echo $this->escape(date('m/d/Y @ h:i A', strtotime($volunteer['end']))); ?></p>
             <?php endif; ?>
             <div class="actions">
-                <a class="button" href="#">Register</a>
+                <a class="button" href="#">Sign Up</a>
+                <?php if($this->isVolunteerAdmin($volunteer['id'])): ?>
                 <a class="button" href="#">View</a>
                 <a class="button" href="#">Edit</a>
+                <?php endif; ?>
             </div>
             <div class="vol-bar">
                 <?php echo $this->escape($volunteer['max_volunteers'] - count($volunteer['members'])); ?> More Volunteers Needed
             </div>
-            <p><?php echo $this->escape($volunteer['information']); ?></p>
+            <p>
+                <strong>Location:</strong><br/>
+                <?php echo $this->escape($volunteer['location'] . ', ' . $volunteer['street'] . ', ' . $volunteer['city'] . ', ' . $volunteer['state'] . ' ' . $volunteer['zip']); ?>
+            </p>
+            <p><strong>About the Event:</strong><br/>
+                <?php echo $this->escape($volunteer['information']); ?>
+            </p>
         </div>
         <?php endforeach; ?>
     </div>

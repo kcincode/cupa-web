@@ -1113,7 +1113,7 @@ class PageController extends Zend_Controller_Action
                         $this->view->message('The uploaded file is a duplicate of another file already uploaded.', 'warning');
                     } else {
                         if($fp) {
-                            $extension = end(explode('.', $data['file']));
+                            $extension = strtolower(end(explode('.', $data['file'])));
                             if(in_array($extension, $validForms)) {
                                 $formData->md5 = $md5;
                                 $formData->size = $filesize;

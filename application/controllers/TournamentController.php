@@ -27,7 +27,8 @@ class TournamentController extends Zend_Controller_Action
         }
 
         $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name);
-        if(empty($this->view->tournament) and ($this->view->hasRole('admin') || $this->view->hasRole('manager'))) {
+        $tournamentTmp = $tournamentTable->fetchTournament($this->_year, $this->_name, true);
+        if(empty($this->view->tournament) and ($this->view->hasRole('admin') || $this->view->hasRole('manager') || $this->view->isTournamentAdmin($tournamentTmp->id))) {
             $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name, true);
         }
 

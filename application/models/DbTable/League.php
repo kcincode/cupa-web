@@ -15,7 +15,8 @@ class Model_DbTable_League extends Zend_Db_Table
                        ->where('ls.name = ?', $season)
                        ->where('li.is_youth = ?', 0)
                        ->where('is_archived = ?', 0)
-                       ->order('l.year DESC');
+                       ->order('l.year DESC')
+                       ->order('l.registration_end');
 
         if(!$all) {
             $select->where('l.visible_from <= ?', date('Y-m-d H:i:s'));

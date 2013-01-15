@@ -45,4 +45,10 @@ class VolunteerController extends Zend_Controller_Action
         $volunteerTable = new Model_DbTable_Volunteer();
         $this->view->volunteers = $volunteerTable->fetchUpcomingVolunteers();
     }
+
+    public function signupAction()
+    {
+        $volunteerId = $this->getRequest()->getUserParam('volunteer');
+
+    }
 }

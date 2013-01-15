@@ -9,7 +9,7 @@ class Form_FormEdit extends Zend_Form
         $this->_formId = $formId;
         parent::__construct();
     }
-    
+
     public function init()
     {
         $this->addElement('text', 'year', array(
@@ -33,6 +33,7 @@ class Form_FormEdit extends Zend_Form
             'required' => false,
             'label' => 'Form:',
             'description' => 'Select a form to re-upload or blank to leave the form unchanged',
+            'valueDisabled' => true,
         ));
 
         $this->addElement('submit', 'upload', array(
@@ -58,4 +59,4 @@ class Form_FormEdit extends Zend_Form
 
 
     }
-}       
+}
