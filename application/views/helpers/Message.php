@@ -1,9 +1,10 @@
-<?php 
+<?php
 
-class My_View_Helper_Message extends Zend_View_Helper_Abstract {
+class My_View_Helper_Message extends Zend_View_Helper_Abstract
+{
     const SUCCESS = 'success';
     const INFO    = 'info';
-    const WARNING = 'warning';
+    const WARNING = 'block';
     const ERROR   = 'error';
 
     const SESSION_NAMESPACE = "messages";
@@ -18,7 +19,7 @@ class My_View_Helper_Message extends Zend_View_Helper_Abstract {
     }
 
     public function add($msg, $severity)
-                {
+    {
         $session = new Zend_Session_Namespace(self::SESSION_NAMESPACE);
         $status = $session->messages;
         $status[] = array($msg, $severity);
@@ -34,11 +35,12 @@ class My_View_Helper_Message extends Zend_View_Helper_Abstract {
         $messages = ($session->messages) ? $session->messages : array();
 
         foreach ($messages as $msg) {
-            $buf[] = "<li class=\"" . $this->severity_class($msg[1]) . "\">" . $this->view->escape($msg[0]) . "</li>";
+            $buf[] = "<div class=\"row messages\"><div class=\"span12\"><div class=\"alert alert-" . $this->severity_class($msg[1]) . "\"><a class=\"close\" data-dismiss=\"alert\">×</a>" . $msg[0] . "</div></div></div>";
         }
+
         if ($buf) {
             $session->unsetAll();
-            return "<ul class=\"message\">" . implode("", $buf) . "</ul>";
+            return implode("", $buf);
         }
     }
 
@@ -61,7 +63,7 @@ class My_View_Helper_Message extends Zend_View_Helper_Abstract {
                 return "info";
 
             case self::WARNING:
-                return "warning";
+                return "block";
 
             case self::ERROR:
                 return "error";

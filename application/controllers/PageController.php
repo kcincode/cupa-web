@@ -10,7 +10,7 @@ class PageController extends Zend_Controller_Action
 
     public function homeAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/home.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/home.css');
 
         // link to the db table
         $newsTable = new Model_DbTable_News();
@@ -30,7 +30,7 @@ class PageController extends Zend_Controller_Action
 
     public function viewAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $page = $this->getRequest()->getUserParam('page');
         $pageTable = new Model_DbTable_Page();
@@ -41,8 +41,11 @@ class PageController extends Zend_Controller_Action
            $this->view->hasRole('editor') or
            $this->view->hasRole('editor', $page->id) or
            $this->view->hasRole('manager'))))) {
-            $this->view->page = $page;
-            $this->view->links = $pageTable->fetchChildren($page);
+                if(!$page->is_visible) {
+                    $this->view->message('*** This page is not yet visible to the public ***', 'warning');
+                }
+                $this->view->page = $page;
+                $this->view->links = $pageTable->fetchChildren($page);
         } else {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -66,8 +69,7 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Form_PageEdit();
-        $form->loadFromPage($page);
+        $form = new Form_PageEdit($page);
 
         $this->view->page = $page;
         if(!Zend_Auth::getInstance()->hasIdentity() or
@@ -81,6 +83,10 @@ class PageController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('/' . $page->name);
+            }
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
@@ -96,22 +102,19 @@ class PageController extends Zend_Controller_Action
 
                 $this->view->message('Page updated', 'success');
                 $this->_redirect('/' . $page->name);
-            } else {
-                $form->populate($post);
             }
        }
 
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        //$this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $this->view->form = $form;
     }
 
     public function adminAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/admin.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $page = $this->getRequest()->getUserParam('page');
         $pageTable = new Model_DbTable_Page();
@@ -122,8 +125,7 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Form_PageAdmin();
-        $form->loadFromPage($page);
+        $form = new Form_PageAdmin($page);
 
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
@@ -134,6 +136,11 @@ class PageController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('/' . $page->name);
+            }
+
             if($form->isValid($post)) {
                 $page->parent = ($post['parent'] == 0) ? null : $post['parent'];
                 $page->name = $post['name'];
@@ -155,8 +162,7 @@ class PageController extends Zend_Controller_Action
 
     public function contactAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         // initialize the contact form and add the users email if valid
         $form = new Form_Contact();
@@ -188,10 +194,7 @@ class PageController extends Zend_Controller_Action
 
     public function officersAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officers.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officers.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $officerTable = new Model_DbTable_Officer();
         $this->view->officers = $officerTable->fetchAllOfficers();
@@ -204,12 +207,10 @@ class PageController extends Zend_Controller_Action
 
     public function officerseditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/officersedit.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/officersedit.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
@@ -231,32 +232,40 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Form_OfficerEdit();
+        $form = new Form_OfficerEdit($officer);
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('/officers');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $officer->user_id = $data['user_id'];
                 $officer->position = $data['position'];
-                $officer->since = $data['since'];
-                $officer->to = (empty($data['to'])) ? null : $data['to'];
+                $officer->since = date('Y-m-d', strtotime($data['since']));
+                $officer->to = (empty($data['to'])) ? null : date('Y-m-d', strtotime($data['to']));
                 $officer->weight = $data['weight'];
                 $officer->description = $data['description'];
                 $officer->save();
 
                 $this->view->message('Officer updated', 'success');
                 $this->_redirect('/officers');
-            } else {
-                $form->populate($post);
             }
         }
 
-        $form->loadFromOfficer($officer);
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
         $this->view->form = $form;
     }
 
     public function officersaddAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
 
@@ -268,30 +277,33 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/officers');
-        }
+        $form = new Form_OfficerEdit();
 
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
-
-        $officerTable = new Model_DbTable_Officer();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $this->_helper->viewRenderer->setNoRender(true);
 
-            $officer = $officerTable->createRow();
-            $officer->user_id = null;
-            $officer->position = $post['position'];
-            $officer->since = date('Y-m-d');
-            $officer->to = null;
-            $officer->weight = $officerTable->getNextWeight($post['position']);
-            $officer->save();
+            if(isset($post['cancel'])) {
+                $this->_redirect('officers');
+            }
 
-            $this->view->message('Officer created');
-            echo Zend_Json::encode(array('result' => 'success', 'data' => $officer->id));
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $officerTable = new Model_DbTable_Officer();
+                $officer = $officerTable->createRow();
+                $officer->user_id = $data['user_id'];
+                $officer->position = $data['position'];
+                $officer->since = date('Y-m-d', strtotime($data['since']));
+                $officer->to = (empty($data['to'])) ? null : date('Y-m-d', strtotime($data['to']));
+                $officer->weight = $data['weight'];
+                $officer->save();
+
+                $this->view->message('Officer created');
+                $this->_redirect('officers');
+            }
         }
+
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
+        $this->view->form = $form;
     }
 
     public function officersdeleteAction()
@@ -322,11 +334,7 @@ class PageController extends Zend_Controller_Action
 
     public function minutesAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutes.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutes.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $minuteTable = new Model_DbTable_Minute();
         $this->view->minutes = $minuteTable->fetchAllMinutes();
@@ -349,11 +357,9 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/minutesedit.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/minutesedit.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
 
         $minuteId = $this->getRequest()->getUserParam('minute');
         $minuteTable = new Model_DbTable_Minute();
@@ -361,15 +367,19 @@ class PageController extends Zend_Controller_Action
 
         if($minute) {
             $this->view->minute = $minute;
-            $form = new Form_MinuteEdit();
-            $form->loadFromMinute($minute);
+            $form = new Form_MinuteEdit($minute);
 
             if($this->getRequest()->isPost()) {
                 $post = $this->getRequest()->getPost();
+
+                if(isset($post['cancel'])) {
+                    $this->_redirect('/board_meeting_minutes');
+                }
+
                 if($form->isValid($post)) {
                     $data = $form->getValues();
 
-                    $minute->when = $data['when'];
+                    $minute->when = date('Y-m-d H:i:s', strtotime($data['when'] . ':00'));
                     $minute->location = $data['location'];
                     $minute->is_visible = $data['is_visible'];
 
@@ -390,11 +400,10 @@ class PageController extends Zend_Controller_Action
                     $minute->save();
                     $this->view->message('Meeting minutes updated.', 'success');
                     $this->_redirect('/board_meeting_minutes');
-                } else {
-                    $form->populate($post);
                 }
             }
 
+            $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
             $this->view->form = $form;
         }
     }

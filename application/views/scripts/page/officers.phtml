@@ -1,85 +1,60 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
-<div id="page-header" class="<?php echo $this->pageClass(); ?>">
-    <span class="title">
+
+<div class="row actions">
+    <div class="span9 pull-left <?php echo $this->pageClass(); ?>">
         <h2><?php echo $this->escape($this->page->title); ?></h2>
-    </span>
-    <?php if(!$this->page->is_visible): ?>
-    <div class="visible">
-        *** This page is not yet visible to the public ***
     </div>
-    <?php endif; ?>
-    <span class="actions">
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" id="add-officer" href="#">Add Officer</a>
-        <div id="add-officers-container"></div>
-        <?php endif; ?>
-    </span>
-
-</div>
-
-<div id="page-content" class="<?php echo $this->pageClass(); ?>">
-<?php $this->cycle(array('even', 'odd')); ?>
-<?php foreach(array_merge($this->officers['current'], $this->officers['atLarge']) as $officer): ?>
-<div class="officer <?php echo $this->cycle()->next(); ?>">
-    <div class="image">
-        <img src="<?php echo $this->officerImageUrl($officer['user_id']); ?>"/>
-    </div>
-    <div class="info">
-        <div class="links">
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-            <a href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_edit'); ?>">
-                <img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
-            </a>
-            <?php endif; ?>
-            <?php if($this->hasRole('admin')): ?>
-            <a onclick="if(!confirm('Are you sure you would like to delete this officer?')) { return false; }" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_delete'); ?>">
-                <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
-            </a>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_officers_add'); ?>"><i class="icon-user"></i> Add Officer</a>
             <?php endif; ?>
         </div>
-        <div class="name"><?php echo $this->fullname($officer['user_id']); ?></div>
-        <div class="position"><?php echo $this->escape($officer['position']); ?></div>
-        <div class="email">
-            <?php if($officer['position'] != 'At Large Board Member'): ?>
-            <?php echo $this->generateEmailLink(strtolower(str_replace(' ', '-', $officer['position'])) . '@cincyultimate.org'); ?>
-            <?php else: ?>
-            <?php echo $this->generateEmailLink($officer['user_id'], $this->fullname($officer['user_id'])); ?>
-            <?php endif; ?>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span9">
+            <?php foreach(array_merge($this->officers['current'], $this->officers['atLarge']) as $officer): ?>
+            <div class="row">
+                <div class="span2">
+                    <img class="well well-small" src="<?php echo $this->officerImageUrl($officer['user_id']); ?>"/>
+                </div>
+                <div class="span7">
+                    <ul class="officers">
+                        <li class="name"><?php echo $this->fullname($officer['user_id']); ?></li>
+                        <li class="position"><?php echo $this->escape($officer['position']); ?></li>
+                        <li>
+                            <?php if($officer['position'] != 'At Large Board Member'): ?>
+                            <?php echo $this->generateEmailLink(strtolower(str_replace(' ', '-', $officer['position'])) . '@cincyultimate.org'); ?>
+                            <?php else: ?>
+                            <?php echo $this->generateEmailLink($officer['user_id'], $this->fullname($officer['user_id'])); ?>
+                            <?php endif; ?>
+                        </li>
+                        <li class="since">Starting <?php echo date('F d, Y', strtotime($officer['since'])); ?></li>
+                        <li>
+                            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                            <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_edit'); ?>">
+                                <i class="icon-edit icon-white"></i> Edit
+                            </a>
+                            <?php endif; ?>
+                            <?php if($this->hasRole('admin')): ?>
+                            <a class="btn btn-danger btn-mini" onclick="if(!confirm('Are you sure you would like to delete this officer?')) { return false; }" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_delete'); ?>">
+                                <i class="icon-trash icon-white"></i> Remove
+                            </a>
+                            <?php endif; ?>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset1 span8"><?php echo $officer['description']; ?></div>
+            </div>
+            <hr/>
+            <?php endforeach; ?>
         </div>
-        <div class="since">Since: <?php echo date('M dS, Y', strtotime($officer['since'])); ?></div>
-    </div>
-    <div class="description">
-        <?php echo $officer['description']; ?>
-    </div>
-    <div class="clearfix"><hr/></div>
-</div>
-<?php endforeach; ?>
-
-<?php if($this->hasRole('admin') and isset($this->officers['past'])): ?>
-<h2>Past Board Members</h2>
-<?php foreach($this->officers['past'] as $officer): ?>
-<div class="officer">
-    <div class="image"><img src="<?php echo $this->officerImageUrl($officer['user_id']); ?>"/></div>
-    <div class="info">
-        <div class="links">
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-            <a href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_edit'); ?>">
-                <img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
-            </a>
-            <?php endif; ?>
-            <?php if($this->hasRole('admin')): ?>
-            <a onclick="if(!confirm('Are you sure you would like to delete this officer?')) { return false; }" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_delete'); ?>">
-                <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
-            </a>
-            <?php endif; ?>
+        <div class="span3 page-links">
+            <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
         </div>
-        <span class="name"><?php echo $this->fullname($officer['user_id']); ?></span><br/>
-        <span class="position"><?php echo $this->escape($officer['position']); ?></span></br>
-        <span class="since"><?php echo date('M dS, Y', strtotime($officer['since'])); ?> - <?php echo date('M dS, Y', strtotime($officer['to'])); ?></span>
     </div>
 </div>
-<?php endforeach; ?>
-<?php endif; ?>
-</div>
-
-<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

@@ -14,7 +14,7 @@ class My_View_Helper_OfficerImageUrl extends Zend_View_Helper_Abstract
         if(file_exists(APPLICATION_WEBROOT . '/images/officers/' . $userId . '.jpg')) {
             $url = $this->view->baseUrl() . '/images/officers/' . $this->view->escape($userId) . '.jpg';
         } else {
-            $url = $this->view->baseUrl() . '/images/officers/default-profile.png';
+            $url = $this->view->baseUrl() . '/images/officers/default-profile.jpg';
         }
 
         return $url;

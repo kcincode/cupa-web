@@ -1,26 +1,27 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
-<div id="page-header" class="<?php echo $this->pageClass(); ?>">
-    <span class="title">
-        <h2><?php echo $this->escape($this->page->title); ?></h2>
-    </span>
-    <?php if(!$this->page->is_visible): ?>
-    <div class="visible">
-        *** This page is not yet visible to the public ***
-    </div>
-    <?php endif; ?>
-    <span class="actions">
-        <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>">Admin</a>
-        <?php endif; ?>
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
-        <a class="button" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>">Edit</a>
-        <?php endif; ?>
-    </span>
-  
-</div>
 
-<div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    <?php echo $this->page->content; ?>
+<div class="row actions">
+    <div class="span9 pull-left <?php echo $this->pageClass(); ?>">
+        <h2><?php echo $this->escape($this->page->title); ?></h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>"><i class="icon-book"></i> Admin</a>
+            <?php endif; ?>
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>"><i class="icon-list"></i> Edit</a>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
-  
-<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+<div class="page-content">
+    <div class="row">
+        <div class="span9">
+            <?php echo $this->page->content; ?>
+        </div>
+        <div class="span3 page-links">
+            <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,158 @@
+nav ul li a {
+    padding: 5px 0  5px 0 !important;
+}
+
+nav ul {
+    height: 34px;
+}
+
+#page-banner {
+    margin: 0;
+    padding: 0;
+}
+
+#page-header {
+    line-height: 85px;
+    height: 85px;
+}
+
+#page-banner {
+    background: url('../images/menu_shadow.jpg') no-repeat;
+    height: 25px;
+}
+
+.page-content {
+    margin: 0 0 0 10px;
+}
+
+.actions {
+    margin: -55px 0 0 5px;
+}
+
+.page-links ul {
+    margin-top: 10px;
+    list-style: none;
+    border-left: 3px solid #aaa;
+}
+
+.page-links ul li {
+    margin-left: 5px;
+}
+
+.page-links ul li a {
+    font-size: 10pt;
+    text-decoration: underline;
+}
+
+/*******************************************************************************
+ * About page CSS
+ ******************************************************************************/
+#page-banner.about {
+    background: url('../images/banners/about.jpg');
+    height: 140px;
+}
+
+.about a,
+.about h1,
+.about h2,
+.about h3 {
+    color: #c00;
+}
+
+/*******************************************************************************
+ * Youth page CSS
+ ******************************************************************************/
+#page-banner.youth {
+    background: url('../images/banners/youth.jpg');
+    height: 140px;
+}
+
+.youth a,
+.youth h1,
+.youth h2,
+.youth h3 {
+    color: #800080;
+}
+
+/*******************************************************************************
+ * Leagues page CSS
+ ******************************************************************************/
+#page-banner.leagues {
+    background: url('../images/banners/leagues.jpg');
+    height: 140px;
+}
+
+.leagues,
+.leagues a,
+.leagues h1,
+.leagues h2,
+.leagues h3 {
+    color: #f88017;
+}
+
+/*******************************************************************************
+ * Pickup page CSS
+ ******************************************************************************/
+#page-banner.pickup {
+    background: url('../images/banners/pickup.jpg');
+    height: 140px;
+}
+
+.pickup a,
+.pickup h1,
+.pickup h2,
+.pickup h3 {
+    color: #080;
+}
+
+/*******************************************************************************
+ * Clubs page CSS
+ ******************************************************************************/
+#page-banner.clubs {
+    background: url('../images/banners/clubs.jpg');
+    height: 140px;
+}
+
+.clubs a,
+.clubs h1,
+.clubs h2,
+.clubs h3 {
+    color: #443377;
+}
+
+/*******************************************************************************
+ * Links page CSS
+ ******************************************************************************/
+#page-banner.links {
+    background: url('../images/banners/links.jpg');
+    height: 140px;
+}
+
+.links a,
+.links h1,
+.links h2,
+.links h3 {
+    color: #088;
+}
+
+.officer {
+    margin-bottom: 20px;
+}
+
+ul.officers {
+    margin-top: 30px;
+    list-style: none;
+}
+
+ul.officers .name {
+    font-weight: bold;
+    font-size: 22pt;
+    line-height: 38px;
+}
+
+ul.officers .position {
+    color: #c55;
+    font-size: 16pt;
+    margin: -5px 0 0 0;
+    line-height: 20px;
+}

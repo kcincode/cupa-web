@@ -21,9 +21,6 @@ class AuthController extends Zend_Controller_Action
         // load the css for the login page
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/login.css');
 
-        // initialize the Login form
-        $form = new Form_UserLogin();
-
         // create link to user_access_logs table
         $userAccessLogTable = new Model_DbTable_UserAccessLog();
 
@@ -108,9 +105,6 @@ class AuthController extends Zend_Controller_Action
             }
 
         }
-
-        // set the form to the view
-        $this->view->form = $form;
     }
 
     public function logoutAction()
@@ -278,7 +272,7 @@ class AuthController extends Zend_Controller_Action
                     $passwordReset = $userPasswordResetTable->fetchByCode($code);
                     if($passwordReset) {
                         $user = $userTable->find($passwordReset->user_id)->current();
-                        if($post['email'] == $user->email) {
+                        if(strtolower($post['email']) == strtolower($user->email)) {
                             $userId = $userTable->updateUserPasswordFromId($user->id, $post['password']);
                             if($userId) {
                                 $passwordReset->completed_at = date('Y-m-d H:i:s');

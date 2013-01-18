@@ -1,24 +1,7 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Administer <?php echo $this->page->title; ?></h1>
-
-<form method="post">
-    <div id="admin-container">
-            <div class="row">
-                <?php echo $this->form->parent; ?>
-            </div>
-            <div class="row">
-                <?php echo $this->form->name; ?>
-            </div>
-            <div class="row">
-                <?php echo $this->form->title; ?>
-            </div>
-            <div class="row">
-                <?php echo $this->form->is_visible; ?>
-            </div>
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
     </div>
-    <div id="buttons-container">
-        <input class="button" type="submit" value="Save"/>
-        <a class="button button-red" href="<?php echo $this->url(array('page' => $this->page->name), 'page_view'); ?>">Cancel</a>
-    </div>
-</form>
+</div>

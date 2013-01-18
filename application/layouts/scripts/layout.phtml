@@ -11,14 +11,9 @@
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/ie-fix.css" type="text/css" media="all" />
         <![endif]-->
+        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/bootstrap.min.css" type="text/css" media="all" />
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/style.css" type="text/css" media="all" />
         <?php echo $this->headLink() . "\n"; ?>
-        <?php $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-ui-1.8.16.min.js') . "\n"; ?>
-        <?php $this->headScript()->appendFile($this->baseUrl() . '/js/global.js') . "\n"; ?>
-        <?php echo $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-1.7.1.min.js') . "\n"; ?>
-        <script>
-            var BASE_URL = '<?php echo $this->baseUrl(); ?>';
-        </script>
         <link rel="shortcut icon" href="<?php echo $this->baseUrl(); ?>/favicon.ico" />
     </head>
     <body>
@@ -26,14 +21,13 @@
             <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">&nbsp;</a>
             <div class="menu">
                 <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
-                <div id="login-container">Login Container</div>
             </div>
         </header>
         <nav>
-            <?php echo $this->partial('menu.phtml', array('user' => $this->user)); ?>
+            <?php echo $this->partial('menu.phtml'); ?>
         </nav>
-        <?php echo $this->message(); ?>
         <div id="main-content">
+            <?php echo $this->message(); ?>
             <?php echo $this->layout()->content; ?>
             <div class="clearfix"></div>
         </div>
@@ -42,5 +36,12 @@
             &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/>
             If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a>
         </footer>
+        <script>
+            var BASE_URL = '<?php echo $this->baseUrl(); ?>';
+        </script>
+        <?php echo $this->headScript()
+                        ->prependFile($this->baseUrl() . '/js/global.js')
+                        ->prependFile($this->baseUrl() . '/js/bootstrap.min.js')
+                        ->prependFile($this->baseUrl() . '/js/jquery-1.9.0.min.js') . "\n"; ?>
     </body>
 </html>

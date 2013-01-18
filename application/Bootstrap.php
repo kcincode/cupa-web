@@ -39,7 +39,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             $layout->setLayout('mobile');
         }
 */
-        
+
         // make sure that the db is loaded
         $this->bootstrap('db');
 

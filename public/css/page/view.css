@@ -1,9 +1,5 @@
 nav ul li a {
-    padding: 5px 0  5px 0;
-}
-
-nav ul {
-    height: 34px;
+    padding: 5px 0  5px 0 !important;
 }
 
 .main-content {
@@ -17,28 +13,8 @@ nav ul {
 }
 
 #page-header {
-    margin-top: -85px;
     line-height: 85px;
     height: 85px;
-}
-
-#page-header span.title {
-    font-size: 22pt;
-    font-weight: bold;
-    float: left;
-    margin: 10px 0 0 30px;
-    text-shadow: 0 2px 2px #000;
-    text-decoration: none;
-    width: 670px;
-}
-
-#page-header span.actions {
-    margin-top: -80px;
-    float: right;
-    padding-right: 20px;
-    line-height: 85px;
-    width: 260px;
-    text-align: right;
 }
 
 #page-banner {

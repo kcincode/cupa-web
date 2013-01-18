@@ -1,23 +1,7 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Edit <?php echo $this->escape($this->minute->when); ?> <?php echo $this->escape($this->minute->location); ?></h1>
-<div id="minutesedit-container">
-    <form method="post" enctype="multipart/form-data">
-        <div class="row">
-            <?php echo $this->form->when; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->location; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->pdf; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->is_visible; ?>
-        </div>
-        <div id="buttons-container">
-            <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->url(array(), 'page_minutes'); ?>">Cancel</a>
-        </div>
-    </form>
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
+    </div>
 </div>

@@ -1,101 +1,112 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
-<div id="page-header" class="<?php echo $this->pageClass(); ?>">
-    <span class="title">
+
+<div class="row actions">
+    <div class="span9 pull-left <?php echo $this->pageClass(); ?>">
         <h2><?php echo $this->escape($this->page->title); ?></h2>
-    </span>
-    <?php if(!$this->page->is_visible): ?>
-    <div class="visible">
-        *** This page is not yet visible to the public ***
     </div>
-    <?php endif; ?>
-    <span class="actions">
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" id="add-minutes" href="#">Add Minutes</a>
-        <div id="add-minutes-container"></div>
-        <?php endif; ?>
-    </span>
-  
-</div>
-
-<div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    
-    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-    <h2>Viewable Minutes</h2>
-    <?php endif; ?>
-    <div class="minute-container">
-        <div class="minute header">
-            <div class="when header">When</div>
-            <div class="location header">Where</div>
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-            <div class="links header">Actions</div>
-            <?php else: ?>
-            <div class="links header">Download</div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_minutes_add'); ?>"><i class="icon-list"></i> Add Minutes</a>
             <?php endif; ?>
         </div>
-        <?php $row = 'even'; foreach($this->minutes['visible'] as $minute): ?>
-        <?php $row = ($row == 'even') ? 'odd' : 'even'; ?>
-        <div class="minute <?php echo $this->escape($row); ?>">
-            <div class="when"><?php echo $this->escape(date('m/d/Y h:i:s A', strtotime($minute['when']))); ?></div>
-            <div class="location"><?php echo $this->escape($minute['location']); ?></div>
-            <div class="links">
-                <?php if($minute['pdf'] != null): ?>
-                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
-                    <img title="Download Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-pdf.png"/>
-                </a>
-                <?php endif; ?>
-
-                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
-                    <img title="Edit Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
-                </a>
-                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
-                    <img title="Delete Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
-                </a>
-                <?php endif; ?>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-        <?php endforeach; ?>
     </div>
-
-    <?php if(($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)) and isset($this->minutes['hidden'])): ?>
-    <h2>Hidden Minutes</h2>
-    <div class="minute-container">
-        <div class="minute header">
-            <div class="when header">When</div>
-            <div class="location header">Where</div>
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-            <div class="links header">Actions</div>
-            <?php else: ?>
-            <div class="links header">Download</div>
-            <?php endif; ?>
-        </div>
-        <?php $row = 'even'; foreach($this->minutes['hidden'] as $minute): ?>
-        <?php $row = ($row == 'even') ? 'odd' : 'even'; ?>
-        <div class="minute <?php echo $this->escape($row); ?>">
-            <div class="when"><?php echo $this->escape($minute['when']); ?></div>
-            <div class="location"><?php echo $this->escape($minute['location']); ?></div>
-            <div class="links">
-                <?php if($minute['pdf'] != null): ?>
-                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
-                    <img title="Download Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-pdf.png"/>
-                </a>
-                <?php endif; ?>
-
-                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-                <a href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
-                    <img title="Edit Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/>
-                </a>
-                <a onclick="return confirm('Are you sure you want to delete these minutes?');" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
-                    <img title="Delete Minutes" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
-                </a>
-                <?php endif; ?>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-        <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
 </div>
+<div class="page-content">
+    <div class="row">
+        <div class="span9">
+            <br/>
+            <p>Here is a list of all the board meeing with the notes if available.</p>
 
-<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#visible" data-toggle="tab">Meeting Minutes</a></li>
+                <?php if(($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)) and !empty($this->minutes['hidden'])): ?>
+                <li><a href="#hidden" data-toggle="tab">Hidden Meeting Minutes</a></li>
+                <?php endif; ?>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="visible">
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th>When</th>
+                                <th>Where</th>
+                                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                                <th>Actions</th>
+                                <?php else: ?>
+                                <th>Download</th>
+                                <?php endif; ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->minutes['visible'] as $minute): ?>
+                            <tr>
+                                <td><?php echo $this->escape(date('m/d/Y h:i:s A', strtotime($minute['when']))); ?></td>
+                                <td><?php echo $this->escape($minute['location']); ?></td>
+                                <td>
+                                    <?php if($minute['pdf'] != null): ?>
+                                    <a class="btn btn-small" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
+                                        <i class="icon-download"></i> Download
+                                    </a>
+                                    <?php endif; ?>
+                                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                                    <a class="btn btn-small btn-info" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
+                                        <i class="icon-edit icon-white"></i> Edit
+                                    </a>
+                                    <a class="btn btn-small btn-danger" onclick="return confirm('Are you sure you would like to delete these minutes?');"href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
+                                        <i class="icon-trash icon-white"></i> Delete
+                                    </a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php if(($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)) and !empty($this->minutes['hidden'])): ?>
+                <div class="tab-pane" id="hidden">
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th>When</th>
+                                <th>Where</th>
+                                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                                <th>Actions</th>
+                                <?php else: ?>
+                                <th>Download</th>
+                                <?php endif; ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->minutes['hidden'] as $minute): ?>
+                            <tr>
+                                <td><?php echo $this->escape(date('m/d/Y h:i:s A', strtotime($minute['when']))); ?></td>
+                                <td><?php echo $this->escape($minute['location']); ?></td>
+                                <td>
+                                    <?php if($minute['pdf'] != null): ?>
+                                    <a class="btn btn-small" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_download'); ?>">
+                                        <i class="icon-download"></i> Download
+                                    </a>
+                                    <?php endif; ?>
+                                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                                    <a class="btn btn-small btn-info" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
+                                        <i class="icon-edit icon-white"></i> Edit
+                                    </a>
+                                    <a class="btn btn-small btn-danger" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
+                                        <i class="icon-trash icon-white"></i> Delete
+                                    </a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>                </div>
+                <?php endif; ?>
+            </div>
+
+        </div>
+        <div class="span3 page-links">
+            <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+        </div>
+    </div>
+</div>
