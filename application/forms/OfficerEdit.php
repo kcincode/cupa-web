@@ -39,6 +39,16 @@ class Form_OfficerEdit extends Twitter_Bootstrap_Form_Horizontal
             'value' => (empty($this->_officer->user_id)) ? null : $this->_officer->user_id,
         ));
 
+        $this->addElement('file', 'image', array(
+            'label' => 'Picture',
+            'required' => false,
+            'validators' => array(
+                array('Count', false, 1),
+                array('Extension', false, 'jpg,png,gif'),
+            ),
+            'valueDisabled' => true,
+            'description' => '(Not Required)',
+        ));
 
         $this->addElement('text', 'position', array(
             'filters' => array('StringTrim'),
@@ -51,9 +61,6 @@ class Form_OfficerEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $this->addElement('text', 'since', array(
             'filters' => array('StringTrim'),
-            'validators' => array(
-                'Date',
-            ),
             'required' => true,
             'label' => 'Since:',
             'class' => 'span2 datepicker',
@@ -65,9 +72,6 @@ class Form_OfficerEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $this->addElement('text', 'to', array(
             'filters' => array('StringTrim'),
-            'validators' => array(
-                'Date',
-            ),
             'required' => false,
             'class' => 'span2 datepicker',
             'data-date-format' => 'mm/dd/yyyy',
@@ -116,7 +120,7 @@ class Form_OfficerEdit extends Twitter_Bootstrap_Form_Horizontal
         $title = (empty($this->_officer)) ? 'Add an Officer' : 'Edit Officer';
 
         $this->addDisplayGroup(
-            array('user_id', 'position', 'since', 'to', 'weight', 'description'),
+            array('user_id', 'image', 'position', 'since', 'to', 'weight', 'description'),
             'officer_edit_form',
             array(
                 'legend' => $title,

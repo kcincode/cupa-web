@@ -11,6 +11,10 @@ $(document).ready(function() {
         });
     });
 
+    $('#login-dropdown-link').click(function(e){
+        setTimeout('$("#username").focus()', 500);
+    });
+
     // login link handler
     $('#login-link').click(function(e) {
         e.preventDefault();

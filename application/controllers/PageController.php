@@ -250,6 +250,15 @@ class PageController extends Zend_Controller_Action
                 $officer->description = $data['description'];
                 $officer->save();
 
+                if(!empty($data['image'])) {
+                    $destination = APPLICATION_WEBROOT . '/images/officers/' . $officer->user_id . '.jpg';
+
+                    $simpleImage = new Model_SimpleImage();
+                    $simpleImage->load($_FILES['image']['tmp_name']);
+                    $simpleImage->resize(256, 256);
+                    $simpleImage->save($destination);
+                }
+
                 $this->view->message('Officer updated', 'success');
                 $this->_redirect('/officers');
             }
