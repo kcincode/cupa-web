@@ -557,12 +557,7 @@ class PageController extends Zend_Controller_Action
 
     public function pickupAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickup.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/pickup.js');
-
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'pickup');
@@ -577,6 +572,9 @@ class PageController extends Zend_Controller_Action
 
     public function pickupaddAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
 
@@ -588,50 +586,44 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
-        }
-
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $form = new Form_PickupEdit();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $this->_helper->viewRenderer->setNoRender(true);
 
-            $pickupTable = new Model_DbTable_Pickup();
+            if(isset($post['cancel'])) {
+                $this->_redirect('/pickup');
+            }
 
-            if($pickupTable->isUnique($post['pickup'])) {
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $pickupTable = new Model_DbTable_Pickup();
                 $pickup = $pickupTable->createRow();
-                $pickup->title = $post['pickup'];
-                $pickup->day = 'Unknown';
-                $pickup->time = 'Unknown';
-                $pickup->info = '';
-                $pickup->user_id = null;
-                $pickup->email = null;
-                $pickup->location = 'Unknown';
-                $pickup->map = null;
+                $pickup->title = $data['title'];
+                $pickup->day = $data['day'];
+                $pickup->time = $data['time'];
+                $pickup->info = $data['info'];
+                $pickup->user_id = ($data['user_id'] == 0) ? null : $data['user_id'];
+                $pickup->email = (empty($data['email'])) ? null : $data['email'];
+                $pickup->location = $data['location'];
+                $pickup->map = (empty($data['map'])) ? null : $data['map'];
+                $pickup->is_visible = $data['is_visible'];
                 $pickup->weight = $pickupTable->fetchHighestWeight();
-                $pickup->is_visible = 0;
                 $pickup->save();
 
                 $this->view->message('Pickup created', 'success');
-                echo Zend_Json::encode(array('result' => 'success', 'data' => $pickup->id));
-                return;
-            } else {
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Pickup Already Exists'));
-                return;
+                $this->_redirect('/pickup');
             }
         }
+
+        $this->view->form = $form;
     }
 
     public function pickupeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/pickupedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
@@ -645,30 +637,36 @@ class PageController extends Zend_Controller_Action
         }
 
         $pickupTable = new Model_DbTable_Pickup();
-        $form = new Form_PickupEdit();
-        $pickupId = $this->getRequest()->getUserParam('pickup');
-        $pickup = $pickupTable->find($pickupId)->current();
-        $form->loadFromPickup($pickup);
+        $pickup = $pickupTable->find($this->getRequest()->getUserParam('pickup'))->current();
+        $form = new Form_PickupEdit($pickup);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
-            $pickup->title = $post['title'];
-            $pickup->day = $post['day'];
-            $pickup->time = $post['time'];
-            $pickup->info = $post['info'];
-            $pickup->user_id = ($post['user_id'] == 0) ? null : $post['user_id'];
-            $pickup->email = (empty($post['email'])) ? null : $post['email'];
-            $pickup->location = $post['location'];
-            $pickup->map = (empty($post['map'])) ? null : $post['map'];
-            $pickup->is_visible = $post['is_visible'];
-            $pickup->save();
+            if(isset($post['cancel'])) {
+                $this->_redirect('/pickup');
+            }
 
-            $this->view->message('Pickup updated', 'success');
-            $this->_redirect('/pickup');
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $pickup->title = $data['title'];
+                $pickup->day = $data['day'];
+                $pickup->time = $data['time'];
+                $pickup->info = $data['info'];
+                $pickup->user_id = ($data['user_id'] == 0) ? null : $data['user_id'];
+                $pickup->email = (empty($data['email'])) ? null : $data['email'];
+                $pickup->location = $data['location'];
+                $pickup->map = (empty($data['map'])) ? null : $data['map'];
+                $pickup->weight = $data['weight'];
+                $pickup->is_visible = $data['is_visible'];
+                $pickup->save();
+
+                $this->view->message('Pickup updated', 'success');
+                $this->_redirect('/pickup');
+            }
         }
 
-        $this->view->pickup = $pickup;
         $this->view->form = $form;
     }
 
