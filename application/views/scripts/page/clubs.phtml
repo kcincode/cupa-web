@@ -1,73 +1,59 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
-<div id="page-header" class="<?php echo $this->pageClass(); ?>">
-    <span class="title">
+
+<div class="row actions">
+    <div class="span9 pull-left <?php echo $this->pageClass(); ?>">
         <h2><?php echo $this->escape($this->page->title); ?></h2>
-    </span>
-    <?php if(!$this->page->is_visible): ?>
-    <div class="visible">
-        *** This page is not yet visible to the public ***
     </div>
-    <?php endif; ?>
-    <span class="actions">
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" id="add-club" href="<?php echo $this->url(array(), 'page_clubs_add'); ?>">Add Team</a>
-        <div id="add-club-container"></div>
-        <?php endif; ?>
-    </span>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_clubs_add'); ?>"><i class="icon-plus"></i> Add Team</a>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
+<div class="page-content">
+    <div class="row">
+        <div class="span9">
+            <p>&nbsp;</p>
+            <?php foreach($this->activeClubs as $club): ?>
+            <a name="<?php echo $this->escape(strtolower(preg_replace('/\s|\(|\)/', '', $club['name']))); ?>"></a>
+            <div class="well well-small">
+                <div class="pull-right">
+                <?php echo $this->displayClubRostersLink($club->id); ?>
+                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id) or $this->isClubCaptain($club->id)): ?>
+                    <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <a class="btn btn-danger btn-mini" onclick="if(!confirm('Are you sure you want to delete the club <?php echo $club->name; ?>?')) { return false; } " href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_delete'); ?>"><i class="icon-trash icon-white"></i> Delete</a>
+                <?php endif; ?>
+                </div>
+                <p>
+                    <strong style="font-size: 20pt;"><?php echo $this->escape($club->name); ?></strong><br/>
+                    <span class="muted"> A<?php echo ($club->type == 'Open') ? 'n': '';?> <?php echo $this->escape($club->type); ?> Team started in <?php echo $this->escape($club->begin); ?></span><br/>
+                    <strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?><br/>
+                    <?php echo (empty($club->website)) ? '&nbsp;' : '<a href="' . $this->escape($club->website) . '">' . $this->escape($club->website) . '</a>'; ?>
+                    <?php if($club->twitter or $club->facebook): ?>
+                    <div>
+                        <?php if($club->twitter): ?>
+                            <a href="http://twitter.com/<?php echo $club->twitter; ?>">twitter.com/<?php echo $club->twitter; ?></a>
+                        <?php endif; ?>
+                        <?php if($club->twitter && $club->facebook): ?>
+                         |
+                        <?php endif; ?>
+                        <?php if($club->facebook): ?>
+                            <a href="http://facebook.com/<?php echo $club->facebook; ?>">facebook.com/<?php echo $club->facebook; ?></a>
+                        <?php endif; ?>
+                    </div>
+                </p>
+                <?php endif; ?>
+                <p>
+                    <?php echo $club->content; ?>
+                </p>
+            </div>
+            <?php endforeach; ?>
 
-<div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    <h3>Current Active Teams</h3>
-
-    <?php foreach($this->activeClubs as $club): ?>
-    <a name="<?php echo $this->escape(strtolower(preg_replace('/\s|\(|\)/', '', $club['name']))); ?>"></a>
-    <div class="club">
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id) or $this->isClubCaptain($club->id)): ?>
-        <div class="links">
-            <a href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
-            <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
-            <a onclick="if(!confirm('Are you sure you want to delete the club <?php echo $club->name; ?>?')) { return false; } " href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
-            <?php endif; ?>
         </div>
-        <?php endif; ?>
-        <div class="name"><?php echo $this->escape($club->name); ?> <span class="club-type">(<?php echo $this->escape($club->type); ?>)</span></div>
-        <div class="date"><?php echo $this->escape($club->begin); ?> - Current</div>
-        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '( <a class="website-link" href="' . $this->escape($club->website) . '">Website</a> )'; ?></div>
-        <div class="captains"><strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?></div>
-        <?php if($club->email != null): ?><div class="contact"><strong>Contact Email:</strong> <?php echo $this->generateEmailLink($club->email); ?></div><?php endif; ?>
-        <?php if($club->twitter or $club->facebook): ?>
-        <div class="social"><strong>Follow <?php echo $this->escape($club->name); ?>:</strong>
-            <?php if($club->twitter): ?>
-                <a href="http://twitter.com/<?php echo $club->twitter; ?>"><img src="<?php echo $this->baseUrl();?>/images/twitter-icon.png"/></a>
-            <?php endif; ?>
-            <?php if($club->facebook): ?>
-                <a href="http://facebook.com/<?php echo $club->facebook; ?>"><img src="<?php echo $this->baseUrl();?>/images/facebook-icon.png"/></a>
-            <?php endif; ?>
+        <div class="span3 page-links">
+            <?php echo $this->partial('club-page-links.phtml', array('links' => $this->activeClubs, 'page' => $this->page)); ?>
         </div>
-        <?php endif; ?>
-        <div class="roster"><?php echo $this->displayClubRostersLink($club->id); ?></div>
-        <div class="info"><?php echo $club->content; ?></div>
     </div>
-    <?php endforeach; ?>
-
-    <h3>Past Teams</h3>
-
-    <?php foreach($this->pastClubs as $club): ?>
-    <div class="club">
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <div class="links">
-            <a href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
-            <a onclick="if(!confirm('Are you sure you want to delete the club <?php echo $club->name; ?>?')) { return false; } " href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
-        </div>
-        <?php endif; ?>
-        <div class="name"><?php echo $this->escape($club->name); ?> <span class="club-type">(<?php echo $this->escape($club->type); ?>)</span></div>
-        <div class="date"><?php echo $this->escape($club->begin); ?> - <?php echo $this->escape($club->end); ?></div>
-        <div class="website"><?php echo (empty($club->website)) ? '&nbsp;' : '(<a href="' . $this->escape($club->website) . '">Website</a>)'; ?></div>
-        <div class="captains"><strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?></div>
-        <?php if($club->email != null): ?><div class="contact"><strong>Contact Email:</strong> <?php echo $this->generateEmailLink($club->email); ?></div><?php endif; ?>
-        <div class="info"><?php echo $club->content; ?></div>
-    </div>
-    <?php endforeach; ?>
 </div>
-
-<?php echo $this->partial('club-page-links.phtml', array('links' => $this->activeClubs, 'page' => $this->page)); ?>

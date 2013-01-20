@@ -690,11 +690,7 @@ class PageController extends Zend_Controller_Action
 
     public function clubsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubs.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/clubs.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $clubTable = new Model_DbTable_Club();
         $this->view->activeClubs = $clubTable->fetchAllByType('current');
@@ -703,52 +699,58 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'clubs');
         $this->view->links = $pageTable->fetchChildren($this->view->page);
-
     }
 
     public function clubsaddAction()
     {
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
-        }
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
 
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $form = new Form_ClubEdit();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $this->_helper->viewRenderer->setNoRender(true);
 
-            $clubTable = new Model_DbTable_Club();
-            if($clubTable->isUnique($post['name'])) {
+            if(isset($post['cancel'])) {
+                $this->_redirect('/clubs');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $clubTable = new Model_DbTable_Club();
                 $club = $clubTable->createRow();
-                $club->name = $post['name'];
-                $club->type = 'Unknown';
-                $club->begin = 'Unknown';
-                $club->content = '';
-                $club->updated_at = date('Y-m-d H:i:s');
-                $club->last_updated_by = $this->view->user->id;
+                $club->name = $data['name'];
+                $club->type = $data['type'];
+                $club->facebook = (empty($data['facebook'])) ? null : $data['facebook'];
+                $club->twitter = (empty($data['twitter'])) ? null : $data['twitter'];
+                $club->begin = $data['begin'];
+                $club->end = (empty($data['end'])) ? null : $data['end'];
+                $club->email = (empty($data['email'])) ? null : $data['email'];
+                $club->website = (empty($data['website'])) ? null : $data['website'];
+                $club->content = $data['content'];
                 $club->save();
 
+                $clubCaptainTable = new Model_DbTable_ClubCaptain();
+                $clubCaptainTable->updateCaptains($data['captains'], $club->id);
+
                 $this->view->message('Club Team created');
-                echo Zend_Json::encode(array('result' => 'success', 'data' => $club->id));
-            } else {
-                $this->_helper->viewRenderer->setNoRender(true);
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Name Already Exists'));
-                return;
+                $this->_redirect('/clubs');
             }
         }
+
+        $this->view->headScript()->appendScript('$(".select2").select2();');
+        $this->view->form = $form;
     }
 
     public function clubseditAction()
     {
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/clubsedit.js');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/clubsedit.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
 
         $clubTable = new Model_DbTable_Club();
         $pageTable = new Model_DbTable_Page();
@@ -772,8 +774,7 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Form_ClubEdit();
-        $form->loadFromClub($club);
+        $form = new Form_ClubEdit($club);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -796,12 +797,10 @@ class PageController extends Zend_Controller_Action
 
                 $this->view->message('Team ' . $club->name . ' updated', 'success');
                 $this->_redirect('/clubs');
-            } else {
-                $form->populate($post);
             }
         }
 
-        $this->view->club = $club;
+        $this->view->headScript()->appendScript('$(".select2").select2();');
         $this->view->form = $form;
     }
 

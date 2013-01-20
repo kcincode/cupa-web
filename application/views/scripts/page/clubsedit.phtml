@@ -1,45 +1,7 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Edit <?php echo $this->escape($this->club->name); ?></h1>
-<div id="clubs-container">
-    <form method="post">
-        <div class="row">
-            <?php echo $this->form->name; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->type; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->captains; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->facebook; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->twitter; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->begin; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->end; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->email; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->website; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->content; ?>
-        </div>
-        
-        <div id="buttons-container">
-            <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->url(array(), 'page_clubs'); ?>">Cancel</a>
-        </div>
-    </form>
-    
-    <?php echo $this->partial('tinymce.phtml', array('element' => 'content')); ?>
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
+    </div>
 </div>
-
