@@ -297,6 +297,7 @@ class PageController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
+
                 $officerTable = new Model_DbTable_Officer();
                 $officer = $officerTable->createRow();
                 $officer->user_id = $data['user_id'];
@@ -305,6 +306,15 @@ class PageController extends Zend_Controller_Action
                 $officer->to = (empty($data['to'])) ? null : date('Y-m-d', strtotime($data['to']));
                 $officer->weight = $data['weight'];
                 $officer->save();
+
+                if(!empty($data['image'])) {
+                    $destination = APPLICATION_WEBROOT . '/images/officers/' . $officer->user_id . '.jpg';
+
+                    $simpleImage = new Model_SimpleImage();
+                    $simpleImage->load($_FILES['image']['tmp_name']);
+                    $simpleImage->resize(256, 256);
+                    $simpleImage->save($destination);
+                }
 
                 $this->view->message('Officer created');
                 $this->_redirect('officers');
@@ -393,11 +403,7 @@ class PageController extends Zend_Controller_Action
                     $minute->is_visible = $data['is_visible'];
 
                     if(!empty($data['pdf'])) {
-                        if(file_exists($_FILES['pdf']['tmp_name'])) {
-                            $fp = fopen($_FILES['pdf']['tmp_name'], 'r');
-                        } else {
-                            $fp = fopen('/tmp/' . $_FILES['pdf']['name'], 'r');
-                        }
+                        $fp = fopen($_FILES['pdf']['tmp_name'], 'r');
                         if($fp) {
                             $minute->pdf = addslashes(fread($fp, $_FILES['pdf']['size']));
                             fclose($fp);
@@ -407,6 +413,7 @@ class PageController extends Zend_Controller_Action
                     }
 
                     $minute->save();
+
                     $this->view->message('Meeting minutes updated.', 'success');
                     $this->_redirect('/board_meeting_minutes');
                 }
@@ -419,6 +426,10 @@ class PageController extends Zend_Controller_Action
 
     public function minutesaddAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
+
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
 
@@ -430,32 +441,44 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
-        }
-
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $form = new Form_MinuteEdit();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $this->_helper->viewRenderer->setNoRender(true);
 
-            $minuteTable = new Model_DbTable_Minute();
-            $minute = $minuteTable->createRow();
-            $minute->location = $post['location'];
-            $minute->when = date('Y-m-d H:i:s');
-            $minute->pdf = null;
-            $minute->is_visible = 0;
-            $minute->save();
+            if(isset($post['cancel'])) {
+                $this->_redirect('/board_meeting_minutes');
+            }
 
-            $this->view->message('Minutes created', 'success');
-            echo Zend_Json::encode(array('result' => 'success', 'data' => $minute->id));
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $minuteTable = new Model_DbTable_Minute();
+                $minute = $minuteTable->createRow();
+                $minute->location = $data['location'];
+                $minute->when = date('Y-m-d H:i:s', strtotime($data['when']));
+                $minute->pdf = null;
+                $minute->is_visible = $data['is_visible'];
+
+                if(!empty($data['pdf'])) {
+                    $fp = fopen($_FILES['pdf']['tmp_name'], 'r');
+                    if($fp) {
+                        $minute->pdf = addslashes(fread($fp, $_FILES['pdf']['size']));
+                        fclose($fp);
+                    } else {
+                        $this->view->message('Could not upload meeting mintues pdf.', 'error');
+                    }
+                }
+
+                $minute->save();
+
+                $this->view->message('Minutes created', 'success');
+                $this->_redirect('/board_meeting_minutes');
+            }
         }
 
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
+        $this->view->form = $form;
     }
 
     public function minutesdeleteAction()
@@ -519,11 +542,13 @@ class PageController extends Zend_Controller_Action
 
     public function directorsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/directors.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $this->view->directors = $leagueMemberTable->fetchUniqueDirectors();
+        $tournamentTable = new Model_DbTable_Tournament();
+        $this->view->tournaments = $tournamentTable->fetchAllTournamentsWithDirectors();
+
+        $leagueTable = new Model_DbTable_League();
+        $this->view->leagues = $leagueTable->fetchAllLeaguesWithDirectors();
 
         $pageTable = new Model_DbTable_Page();
         $this->view->page = $pageTable->fetchBy('name', 'directors');

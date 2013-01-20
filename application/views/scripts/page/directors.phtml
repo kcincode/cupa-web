@@ -1,55 +1,48 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
-<div id="page-header" class="<?php echo $this->pageClass(); ?>">
-    <span class="title">
+
+<div class="row actions">
+    <div class="span9 pull-left <?php echo $this->pageClass(); ?>">
         <h2><?php echo $this->escape($this->page->title); ?></h2>
-    </span>
-    <?php if(!$this->page->is_visible): ?>
-    <div class="visible">
-        *** This page is not yet visible to the public ***
     </div>
-    <?php endif; ?>
-    <span class="actions">
-        &nbsp;
-    </span>
-
-</div>
-
-<div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    
-    <?php if(count($this->directors['tournament'])): ?>
-    <h3 class="pad">Tournaments</h3>
-    <?php foreach($this->directors['tournament'] as $userId => $tournaments): ?>
-    <div class="director">
-        <div class="name"><?php echo $this->fullname($userId); ?></div>
-        <div class="league">
-            <?php foreach($tournaments as $tournament): ?>
-                <a href="<?php echo $this->baseUrl() . $tournament['link']; ?>"><?php echo $this->escape($tournament['name']); ?></a> |
-            <?php endforeach; ?>
+    <div class="span2">
+        <div class="btn-group pull-right">
         </div>
     </div>
-    <div class="clearfix"></div>
-    <?php endforeach; ?>
-    <?php endif; ?>
-    
-    <hr/>
-
-    <?php if(count($this->directors['league'])): ?>
-    <h3>Leagues</h3>
-    <?php foreach($this->directors['league'] as $userId => $leagues): ?>
-    <div class="director">
-        <div class="name"><?php echo $this->fullname($userId); ?></div>
-        <div class="league">
-            <?php foreach($leagues as $league): ?>
-                <a href="<?php echo $this->baseUrl() . $league['link']; ?>"><?php echo $this->escape($league['name']); ?></a> |
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span9">
+            <?php if(count($this->tournaments) > 0): ?>
+            <h2>Tournaments</h2>
+            <?php foreach($this->tournaments as $tournament): ?>
+            <h4><?php echo $tournament['name']; ?> -
+            <?php $cnt = 0; ?>
+            <?php foreach($tournament['directors'] as $name => $email): ?>
+            <?php if($cnt > 0):?>,<?php endif; ?>
+            <?php echo $this->generateEmailLink($email, $name); ?>
+            <?php $cnt++; ?>
             <?php endforeach; ?>
+            <?php endforeach; ?>
+            <?php endif; ?>
+
+            <hr/>
+
+            <?php if(count($this->leagues) > 0): ?>
+            <h2>Leagues</h2>
+            <?php foreach($this->leagues as $league): ?>
+            <h4><?php echo $league['name']; ?> -
+            <?php $cnt = 0; ?>
+            <?php foreach($league['directors'] as $name => $email): ?>
+            <?php if($cnt > 0):?>,<?php endif; ?>
+            <?php echo $this->generateEmailLink($email, $name); ?>
+            <?php $cnt++; ?>
+            <?php endforeach; ?>
+            <?php endforeach; ?>
+            <?php endif; ?>
 
         </div>
+        <div class="span3 page-links">
+            <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+        </div>
     </div>
-    <div class="clearfix"></div>
-    <?php endforeach; ?>
-    <?php endif; ?>
-
 </div>
-
-
-<?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>

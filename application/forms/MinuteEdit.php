@@ -35,6 +35,11 @@ class Form_MinuteEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('file', 'pdf', array(
             'required' => false,
             'label' => 'PDF File:',
+            'validators' => array(
+                array('Count', false, 1),
+                array('Extension', false, 'pdf'),
+            ),
+            'valueDisabled' => true,
         ));
 
         $this->addElement('checkbox', 'is_visible', array(

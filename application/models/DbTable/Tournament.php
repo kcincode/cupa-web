@@ -118,4 +118,35 @@ class Model_DbTable_Tournament extends Zend_Db_Table
 
         return $data;
     }
+
+    public function fetchAllTournamentsWithDirectors()
+    {
+        $select = $this->getAdapter()->select()
+               ->from(array('t' => $this->_name), array('*'))
+               ->joinLeft(array('tm' => 'tournament_member'), 'tm.tournament_id = t.id', array('type', 'tm.name AS director', 'tm.email AS director_email'))
+               ->joinLeft(array('u' => 'user'), 'u.id = tm.user_id', array("CONCAT(u.first_name, ' ', u.last_name) AS director_user", 'u.email AS director_user_email'))
+               ->where('t.is_visible = ?', 1)
+               ->where('tm.type = ?', 'director')
+               ->where('t.year >= ?', date('Y') - 1)
+               ->order('t.name')
+               ->order('t.year DESC');
+
+        $data = array();
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            if(empty($data[$row['name']])) {
+                $data[$row['name']] = array(
+                    'name' => $row['display_name'],
+                    'year' => $row['year'],
+                    'directors' => array(
+                        (empty($row['director_user'])) ? $row['director'] : $row['director_user'] => (empty($row['director_user_email'])) ? $row['director_email'] : $row['director_user_email'],
+                    ),
+                );
+            } else if($row['year'] == $data[$row['name']]['year']) {
+                $directorName = (empty($row['director_user'])) ? $row['director'] : $row['director_user'];
+                $data[$row['name']]['directors'][$directorName] = (empty($row['director_user_email'])) ? $row['director_email'] : $row['director_user_email'];
+            }
+        }
+
+        return $data;
+    }
 }

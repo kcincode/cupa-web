@@ -191,4 +191,38 @@ class Model_DbTable_League extends Zend_Db_Table
 
         return null;
     }
+
+    public function fetchAllLeaguesWithDirectors()
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('l' => $this->_name), array('day', 'l.name'))
+                       ->joinLeft(array('ls' => 'league_season'), 'l.season = ls.id', array('ls.name AS season'))
+                       ->joinLeft(array('lm' => 'league_member'), 'lm.league_id = l.id', array())
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array("CONCAT(u.first_name, ' ', u.last_name) AS director", 'email'))
+                       ->where('is_archived = ?', 0)
+                       ->where('lm.position = ?', 'director')
+                       ->where('l.year >= ?', date('Y') - 1)
+                       ->order('l.year DESC');
+
+        $data = array();
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            if(!$row['season']) {
+                continue;
+            }
+
+            $key = str_replace('  ', ' ', $row['day'] . ' ' . $row['name'] . ' ' . ucfirst($row['season']));
+            if(empty($data[$key])) {
+                $data[$key] = array(
+                    'name' => $key,
+                    'directors' => array(
+                        $row['director'] => $row['email'],
+                    ),
+                );
+            } else {
+                $data[$key]['directors'][$row['director']] = $row['email'];
+            }
+        }
+
+        return $data;
+    }
 }
