@@ -81,6 +81,9 @@ class PageController extends Zend_Controller_Action
             $this->_redirect('/' . $page->name);
         }
 
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
@@ -104,10 +107,6 @@ class PageController extends Zend_Controller_Action
                 $this->_redirect('/' . $page->name);
             }
        }
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
-        //$this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/edit.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $this->view->form = $form;
     }
@@ -839,17 +838,13 @@ class PageController extends Zend_Controller_Action
 
     public function allnewsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/allnews.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/news.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $category = $this->getRequest()->getUserParam('category');
         $this->view->category = ucwords($category);
 
         $newsTable = new Model_DbTable_News();
-        $this->view->news = $newsTable->fetchNewsByCategory($category, true);
+        $this->view->news = $newsTable->fetchNewsByCategory($category, false, true);
 
         if(!count($this->view->news)) {
             // throw a 404 error there is no news returned
@@ -872,10 +867,8 @@ class PageController extends Zend_Controller_Action
             $session->url = $_SERVER['HTTP_REFERER'];
         }
 
-        $this->view->backUrl = $session->url;
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/news.css');
+        $this->view->backUrl = (empty($session->url)) ? $this->view->baseUrl() . '/allnews' : $session->url;
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $slug = $this->getRequest()->getUserParam('slug');
         $newsTable = new Model_DbTable_News();
@@ -886,6 +879,10 @@ class PageController extends Zend_Controller_Action
             ($this->view->hasRole('reporter') or
              $this->view->hasRole('admin')) or
            $news->is_visible)) {
+                if(!$news->is_visible) {
+                    $this->view->message('*** This news story is not yet visible to the public ***', 'warning');
+                }
+
                 $this->view->news = $news;
         } else {
             // throw a 404 error if the page cannot be found
@@ -901,48 +898,46 @@ class PageController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('News item not found');
         }
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
 
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/allnews');
-        }
-
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $form = new Form_News();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $this->_helper->viewRenderer->setNoRender(true);
-            $newsTable = new Model_DbTable_News();
 
-            if($newsTable->isUnique($post['title'])) {
+            if(isset($post['cancel'])) {
+                $this->_redirect('/allnews');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $newsTable = new Model_DbTable_News();
+
                 $news = $newsTable->createRow();
-                $news->title = $post['title'];
-                $news->category_id = $post['category'];
-                $news->is_visible = 0;
-                $news->slug = $newsTable->slugifyTitle($post['title']);
-                $news->url = null;
-                $news->info = '';
-                $news->content = '';
-                $news->type = 1;
-                $news->posted_at = date('Y-m-d H:i:s');
-                $news->posted_by = $this->view->user->id;
-                $news->last_edited_by = $this->view->user->id;
+                $news->is_visible = $data['is_visible'];
+                $news->category_id = $data['category'];
+                $news->title = $data['title'];
+                $news->slug = $newsTable->slugifyTitle($data['title']);
+                $news->url = (empty($data['url'])) ? null : $data['url'];
+                $news->info = $data['info'];
+                $news->content = $data['content'];
                 $news->edited_at = date('Y-m-d H:i:s');
+                $news->type = $newsTable->getNewsType($data);
+                $news->last_edited_by = $this->view->user->id;
+                $news->posted_at = date('Y-m-d H:i:s');
+                $news->remove_at = (empty($post['remove_at'])) ? null : date('Y-m-d H:i:s', strtotime($post['remove_at']));
                 $news->save();
 
                 $this->view->message('News item created');
-                echo Zend_Json::encode(array('result' => 'success', 'data' => $news->slug));
-            } else {
-                $this->_helper->viewRenderer->setNoRender(true);
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'News Title Already Exists'));
-                return;
+                $this->_redirect('/news/' . $news->slug);
             }
         }
-        $newsCategoryTable = new Model_DbTable_NewsCategory();
-        $this->view->types = $newsCategoryTable->fetchAllCategories();
 
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
+        $this->view->form = $form;
     }
 
     public function newseditAction()
@@ -953,55 +948,48 @@ class PageController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('News item not found');
         }
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
 
         $slug = $this->getRequest()->getUserParam('slug');
         $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
 
-        $form = new Form_News();
+        $form = new Form_News($news);
 
         if($this->getRequest()->isPost()) {
+
             $post = $this->getRequest()->getPost();
-            $news->is_visible = $post['is_visible'];
-            $news->category_id = $post['category'];
-            $news->title = $post['title'];
-            $news->slug = $newsTable->slugifyTitle($post['title']);
-            $news->url = (empty($post['url'])) ? null : $post['url'];
-            $news->info = $post['info'];
-            $news->content = $post['content'];
-            $news->edited_at = date('Y-m-d H:i:s');
-            $news->type = $newsTable->getNewsType($post);
-            $news->last_edited_by = $this->view->user->id;
-            $news->remove_at = (empty($post['remove_at']) or $post['remove_at'] == '0000-00-00 00:00:00') ? null : $post['remove_at'];
-            $news->save();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
 
-            $this->view->message('News item updated', 'success');
-            $this->_redirect('/news/' . $news->slug);
+                $news->is_visible = $data['is_visible'];
+                $news->category_id = $data['category'];
+                $news->title = $data['title'];
+                $news->slug = $newsTable->slugifyTitle($data['title']);
+                $news->url = (empty($data['url'])) ? null : $data['url'];
+                $news->info = $data['info'];
+                $news->content = $data['content'];
+                $news->edited_at = date('Y-m-d H:i:s');
+                $news->type = $newsTable->getNewsType($data);
+                $news->last_edited_by = $this->view->user->id;
+                $news->remove_at = (empty($data['remove_at']) or $data['remove_at'] == '0000-00-00 00:00:00') ? null : date('Y-m-d H:i:s', strtotime($data['remove_at']));
+                $news->save();
+
+                $this->view->message('News item updated', 'success');
+                $this->_redirect('/news/' . $news->slug);
+            }
         }
 
-        if($news) {
-            $form->loadFromNews($news);
-            $this->view->news = $news;
-        } else {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/newsedit.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/news.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
         $this->view->form = $form;
     }
 
     public function formsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/forms.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/page/forms.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $type = $this->getRequest()->getUserParam('type');
         $year = $this->getRequest()->getUserParam('year');
@@ -1043,21 +1031,11 @@ class PageController extends Zend_Controller_Action
             flush();
 
             return;
-        } else {
-
         }
     }
 
     public function formsaddAction()
     {
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('forms');
-        }
-
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
-
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'forms');
 
@@ -1069,41 +1047,63 @@ class PageController extends Zend_Controller_Action
             $this->view->message('You either are not logged in or you do not have permission to add a form.');
             $this->_redirect('forms');
         }
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+
+        $form = new Form_FormEdit();
 
         if($this->getRequest()->isPost()) {
-            $this->_helper->viewRenderer->setNoRender(true);
-            $name = str_replace(' ', '_', $this->getRequest()->getPost('name'));
-            $year = $this->getRequest()->getPost('year');
+            $post = $this->getRequest()->getPost();
 
-            if((empty($name) or empty($year)) and ($name == 'all' or $year == '0')) {
-                // throw a 404 error if the page cannot be found
-                throw new Zend_Controller_Dispatcher_Exception('Page not found');
+            if(isset($post['cancel'])) {
+                $this->_redirect('/forms');
             }
 
-            $formTable = new Model_DbTable_Form();
-            $form = $formTable->fetchForms($name, $year);
+            if($form->isValid($post)) {
+                $data = $form->getValues();
 
-            if($form) {
-                echo Zend_Json::encode(array('message' => 'error'));
-            } else {
-                $form = $formTable->createRow();
-                $form->year = $year;
-                $form->name = $name;
-                $form->type = '';
-                $form->data = '';
-                $form->md5 = md5($year . $name);
-                $form->uploaded_at = date('Y-m-d H:i:s');
-                $form->modified_at = date('Y-m-d H:i:s');
-                $form->modified_by = $this->view->user->id;
-                $form->save();
-                echo Zend_Json::encode(array('message' => 'success', 'formId' => $form->id));
+                if(!empty($data['file'])) {
+                    $fp = fopen($_FILES['file']['tmp_name'], 'r');
+                    $filesize = $_FILES['file']['size'];
+                    $md5 = md5_file($_FILES['file']['tmp_name']);
+
+                    if(!$formTable->isUnique($md5, $formId)) {
+                        $this->view->message('The uploaded file is a duplicate of another file already uploaded.', 'warning');
+                    } else {
+                        if($fp) {
+                            $extension = strtolower(end(explode('.', $data['file'])));
+                            if(in_array($extension, $validForms)) {
+                                $formData->md5 = $md5;
+                                $formData->size = $filesize;
+                                $formData->data = addslashes(fread($fp, $filesize));
+                                $formData->type = $extension;
+                                $formData->save();
+                                $update = 1;
+                            } else {
+                                $this->view->message('The uploaded file is not a valid type.', 'warning');
+                            }
+                            fclose($fp);
+                        }
+                    }
+                }
+
+                $formTable->udpateForm($data['year'], $data['name']);
+
+                $formData->modified_at = date('Y-m-d H:i:s');
+                $formData->uploaded_at = date('Y-m-d H:i:s');
+                $formData->modified_by = $this->view->user->id;
+                $formData->save();
+
+                $this->view->message('Form created', 'success');
+                $this->_redirect('/forms');
             }
         }
+
+        $this->view->form = $form;
     }
 
     public function formseditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/formsedit.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $formId = $this->getRequest()->getUserParam('form_id');
         $year = $this->getRequest()->getUserParam('year');
@@ -1125,9 +1125,9 @@ class PageController extends Zend_Controller_Action
             $this->_redirect('/forms');
         }
 
-        $this->view->page = $page;
-
-        $form = new Form_FormEdit($formId, $this->view->user->id);
+        $formTable = new Model_DbTable_Form();
+        $formData = $formTable->find($formId)->current();
+        $form = new Form_FormEdit($formData, $this->view->user->id);
         $bootstrap = $this->getInvokeArg('bootstrap');
         $validForms = explode(',', $bootstrap->getOption('validForms'));
 
@@ -1135,13 +1135,11 @@ class PageController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
 
             if(isset($post['cancel'])) {
-                $this->_redirect('forms');
+                $this->_redirect('/forms');
             }
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                $formTable = new Model_DbTable_Form();
-                $formData = $formTable->find($formId)->current();
                 $update = 0;
 
                 if(!empty($data['file'])) {
@@ -1179,10 +1177,8 @@ class PageController extends Zend_Controller_Action
                     $formData->modified_by = $this->view->user->id;
                     $formData->save();
                     $this->view->message('Form ' . $formData->year . ' ' . $formData->name . ' updated', 'success');
-                    $this->_redirect('forms');
+                    $this->_redirect('/forms');
                 }
-            } else {
-                $form->populate($post);
             }
         }
 

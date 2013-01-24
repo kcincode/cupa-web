@@ -1,38 +1,40 @@
-<div id="page-banner">&nbsp;</div>
+<div id="page-banner" class="about">&nbsp;</div>
 
-<div class="back">
-    <?php if($this->hasRole("reporter") or $this->hasRole('admin')): ?>
-    <a class="button" href="<?php echo $this->url(array('slug' => $this->news->slug), 'news_edit'); ?>">Edit News</a>
-    <?php endif; ?>
-    <a class="button" href="<?php echo $this->escape($this->backUrl); ?>">Back</a>
+<div class="row actions">
+    <div class="span9 pull-left about">
+        <h2>&nbsp;</h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('reporter')): ?>
+                <a class="btn btn-small btn-info" href="<?php echo $this->url(array('slug' => $this->news->slug), 'news_edit'); ?>"><i class="icon-edit"></i> Edit News</a>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
-
-<div class="title">
-    <?php echo $this->news->title; ?><br/>
+<div class="page-content">
+    <div class="row">
+        <div class="offset1 span10">
+            <div class="pull-right">
+                <a class="btn btn-small" href="<?php echo $this->backUrl; ?>"><i class="icon-edit"></i> Back</a>
+            </div>
+            <h2>
+                <?php echo $this->news->title; ?>
+                <br/>
+                <small>
+                    <?php if($this->news->posted_at == $this->news->edited_at): ?>
+                    Posted by <?php echo $this->fullname($this->news->posted_by); ?> on <?php echo date('m/d/Y @ h:i:s A', strtotime($this->news->posted_at)); ?>
+                    <?php else: ?>
+                    Updated by <?php echo $this->fullname($this->news->last_edited_by); ?> on <?php echo date('m/d/Y @ h:i:s A', strtotime($this->news->edited_at)); ?>
+                    <?php endif; ?>
+                </small>
+            </h2>
+            <p>
+                <?php echo $this->news->info; ?>
+            </p>
+            <p>
+                <?php echo $this->news->content; ?>
+            </p>
+        </div>
+    </div>
 </div>
-
-<?php if(!$this->news->is_visible): ?>
-<div class="visible">
-    *** This news item is not yet visible to the public ***
-</div>
-<?php endif; ?>
-
-<div class="subtitle">
-    <?php if($this->news->posted_at == $this->news->edited_at): ?>
-    Posted by <?php echo $this->fullname($this->news->posted_by); ?> on <?php echo date('m/d/Y @ h:i:s A', strtotime($this->news->posted_at)); ?>
-    <?php else: ?>
-    Updated by <?php echo $this->fullname($this->news->last_edited_by); ?> on <?php echo date('m/d/Y @ h:i:s A', strtotime($this->news->edited_at)); ?>
-    <?php endif; ?>
-
-</div>
-
-<div class="content">
-    <p>
-        <?php echo $this->news->info; ?>
-    </p>
-    <p>
-        <?php echo $this->news->content; ?>
-    </p>
-</div>
-
-<div class="clearfix">&nbsp;</div>

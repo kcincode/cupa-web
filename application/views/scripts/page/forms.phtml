@@ -1,49 +1,119 @@
-<h1>CUPA Forms</h1>
+<div id="page-banner" class="leagues">&nbsp;</div>
 
+<div class="row actions">
+    <div class="span9 pull-left leagues">
+        <h2>CUPA Forms</h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_forms_add'); ?>"><i class="icon-book"></i> Add Form</a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="offset1 span10">
+            <br/>
+            <p>Here is a list of all the forms for CUPA.</p>
 
+            <ul class="nav nav-tabs">
+                <?php $i = 0; ?>
+                <?php foreach($this->forms as $year => $forms): ?>
+                <?php if($year >= date('Y') - 1 || ($this->hasRole('admin') or $this->hasRole('manager'))): ?>
+                <li<?php if($i == 0) { echo ' class="active"'; }?>><a href="#<?php echo $this->escape($year); ?>" data-toggle="tab"><?php echo $this->escape($year); ?></a></li>
+                <?php $i++; ?>
+                <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+            <div class="tab-content">
+                <?php $i = 0; ?>
+                <?php foreach($this->forms as $year => $forms): ?>
+                <?php if($year >= date('Y') - 1 || ($this->hasRole('admin') or $this->hasRole('manager'))): ?>
+                <div class="tab-pane<?php if($i == 0) { echo ' active'; }?>" id="<?php echo $this->escape($year); ?>">
+                    <?php if($year < date('Y') - 1): ?>
+                    <div class="alert alert-warning">These forms are not visible to the public because of age.</div>
+                    <?php endif; ?>
+
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($forms as $form): ?>
+                            <tr>
+                                <td><a href="<?php echo $this->url(array('type' => $form->name, 'year' => 0), 'page_forms'); ?>"><?php echo $this->escape($form->name); ?></a></td>
+                                <td><?php echo $this->escape($form->type); ?></td>
+                                <td><?php echo $this->filesize($form->size); ?></td>
+                                <td>
+                                    <a class="btn btn-mini" href="#"><i class="icon-download"></i> Download</a>
+                                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                                    <a class="btn btn-mini btn-danger" onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>"><i class="icon-trash icon-white"></i> Delete</a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php $i++; ?>
+                <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
 <div class="admin-buttons">
 <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
-	<a class="button" id="add-form" href="#">Add Form</a>
-	<div id="add-form-container"></div>
+    <a class="button" id="add-form" href="#">Add Form</a>
+    <div id="add-form-container"></div>
 <?php endif; ?>
 <p>
-	To download a form, click on the file icon.
+    To download a form, click on the file icon.
 </p>
 </div>
 
 <div id="forms">
-	<?php $this->cycle(array('even', 'odd')); ?>
-	<?php foreach($this->forms as $year => $forms): ?>
-	<h2><a href="<?php echo $this->url(array('type' => 'all', 'year' => $year), 'page_forms'); ?>"><?php echo $this->escape($year); ?> Forms</a></h2>
-	<div class="row header">
-		<div class="name">Name</div>
-		<div class="type">Type</div>
-		<div class="size">Size</div>
-		<div class="actions">&nbsp;</div>
-	</div>
+    <?php $this->cycle(array('even', 'odd')); ?>
+    <?php foreach($this->forms as $year => $forms): ?>
+    <h2><a href="<?php echo $this->url(array('type' => 'all', 'year' => $year), 'page_forms'); ?>"><?php echo $this->escape($year); ?> Forms</a></h2>
+    <div class="row header">
+        <div class="name">Name</div>
+        <div class="type">Type</div>
+        <div class="size">Size</div>
+        <div class="actions">&nbsp;</div>
+    </div>
 
-	<?php foreach($forms as $form): ?>
-	<div class="row <?php echo $this->cycle()->next(); ?>">
-		<div class="name">
-			<a href="<?php echo $this->url(array('type' => $form->name, 'year' => 0), 'page_forms'); ?>"><?php echo $this->escape($form->name); ?></a>
-		</div>
-		<div class="type"><?php echo $this->escape($form->type); ?></div>
-		<div class="size"><?php echo $this->filesize($form->size); ?></div>
-		<div class="actions">
-			<?php if(file_exists(APPLICATION_PATH . '/../public/images/ico-' . $form->type . '.png')): ?>
-			<a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-<?php echo $this->escape($form->type); ?>.png" title="Download"/></a>
-			<?php else: ?>
-			<a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-download.png" title="Download"/></a>
-			<?php endif; ?>
-			<?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
-			<a href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-uparrow.png" title="Re-Upload"/></a>
-			<a onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>">
-				<img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Delete"/>
-			</a>
-			<?php endif; ?>
-		</div>
-	</div>
-	<?php endforeach; ?>
-	<div class="clearfix">&nbsp;</div>
-	<?php endforeach; ?>
+    <?php foreach($forms as $form): ?>
+    <div class="row <?php echo $this->cycle()->next(); ?>">
+        <div class="name">
+            <a href="<?php echo $this->url(array('type' => $form->name, 'year' => 0), 'page_forms'); ?>"><?php echo $this->escape($form->name); ?></a>
+        </div>
+        <div class="type"><?php echo $this->escape($form->type); ?></div>
+        <div class="size"><?php echo $this->filesize($form->size); ?></div>
+        <div class="actions">
+            <?php if(file_exists(APPLICATION_PATH . '/../public/images/ico-' . $form->type . '.png')): ?>
+            <a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-<?php echo $this->escape($form->type); ?>.png" title="Download"/></a>
+            <?php else: ?>
+            <a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-download.png" title="Download"/></a>
+            <?php endif; ?>
+            <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
+            <a href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-uparrow.png" title="Re-Upload"/></a>
+            <a onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>">
+                <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Delete"/>
+            </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endforeach; ?>
+    <div class="clearfix">&nbsp;</div>
+    <?php endforeach; ?>
 </div>
+-->

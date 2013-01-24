@@ -1,32 +1,37 @@
 <?php
 
-class Form_FormEdit extends Zend_Form
+class Form_FormEdit extends Twitter_Bootstrap_Form_Horizontal
 {
-    private $_formId;
+    protected $_form;
 
-    public function __construct($formId)
+    public function __construct($form = null)
     {
-        $this->_formId = $formId;
+        $this->_form = $form;
+
         parent::__construct();
     }
 
     public function init()
     {
-        $this->addElement('text', 'year', array(
-            'filters' => array('digits'),
+        $years = array_combine(range(2010, date('Y') + 1), range(2010, date('Y') + 1));
+        $this->addElement('select', 'year', array(
             'required' => true,
             'validators' => array(
                 array('GreaterThan', true, array('min' => '2010', 'messages' => array('notGreaterThan' => 'Please enter a valid year.'))),
             ),
+            'multiOptions' => $years,
             'label' => 'Year:',
             'description' => 'Enter the year the form is for or the year uploaded.',
+            'value' => (empty($this->_form->year)) ? null : $this->_form->year,
         ));
 
         $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
+            'class' => 'span4',
             'description' => 'Enter the name of the form, should be the same each year.',
+            'value' => (empty($this->_form->name)) ? null : $this->_form->name,
         ));
 
         $this->addElement('file', 'file', array(
@@ -36,27 +41,38 @@ class Form_FormEdit extends Zend_Form
             'valueDisabled' => true,
         ));
 
-        $this->addElement('submit', 'upload', array(
-            'label' => 'Upload',
-            'class' => 'button',
+        $this->addElement('button', 'save', array(
+            'type' => 'submit',
+            'label' => (empty($this->_club)) ? 'Create' : 'Save',
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+            'escape' => false,
+            'icon' => 'hdd',
+            'whiteIcon' => true,
+            'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
         ));
 
         $this->addElement('submit', 'cancel', array(
+            'type' => 'submit',
             'label' => 'Cancel',
-            'class' => 'button',
+            'escape' => false,
         ));
 
-        if(is_numeric($this->_formId)) {
-            $this->addElement('hidden', 'form_id', array(
-                'value' => $this->_formId,
-            ));
+        $title = (empty($this->_club)) ? 'Add a Form' : 'Edit Form';
+        $this->addDisplayGroup(
+            array('year', 'name', 'file'),
+            'form_edit_form',
+            array(
+                'legend' => $title,
+            )
+        );
 
-            $formTable = new Model_DbTable_Form();
-            $form = $formTable->find($this->_formId)->current();
-            $this->getElement('year')->setValue($form->year);
-            $this->getElement('name')->setValue($form->name);
-        }
-
-
+        $this->addDisplayGroup(
+            array('save', 'cancel'),
+            'form_edit_actions',
+            array(
+                'disableLoadDefaultDecorators' => true,
+                'decorators' => array('Actions'),
+            )
+        );
     }
 }

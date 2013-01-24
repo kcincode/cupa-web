@@ -1,15 +1,7 @@
-<form method="post">
-    <div class="row">
-        <dt>Form Name:</dt>
-        <dd>
-            <input id="form-name" type="text" name="name" />
-        </dd>
+<div id="page-banner">&nbsp;</div>
+
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
     </div>
-    <div class="row">
-        <dt>Form Year:</dt>
-        <dd>
-            <input id="form-year" type="text" name="name" value="<?php echo date('Y'); ?>"/>
-        </dd>
-    </div>
-    <div id="error-string"></div>
-</form>
+</div>

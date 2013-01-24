@@ -153,7 +153,7 @@ class Form_ClubEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $title = (empty($this->_club)) ? 'Add Club Team' : 'Edit Club Team';
         $this->addDisplayGroup(
-            array('title', 'day', 'time', 'info', 'user_id', 'email', 'location', 'map', 'weight', 'is_visible'),
+            array('name', 'type', 'captains', 'email', 'facebook', 'twitter', 'begin', 'end', 'website', 'content'),
             'pickup_edit_form',
             array(
                 'legend' => $title,

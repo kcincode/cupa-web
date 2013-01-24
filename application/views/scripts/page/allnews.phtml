@@ -1,27 +1,44 @@
-<div id="page-banner">&nbsp;</div>
-<?php if($this->hasRole('admin') or $this->hasRole('reporter')): ?>
-<div id="page-actions">
-    <a class="button" id="add-news" href="#">Add News</a>
-    <div id="add-news-container"></div>
-</div>
-<?php endif; ?>
+<div id="page-banner" class="about">&nbsp;</div>
 
-<h1>All <?php echo $this->escape($this->category); ?> News</h1>
-<?php foreach($this->news as $news): ?>
-<div class="news-row">
-    <div class="title">
-        <a href="<?php echo $this->url(array('slug' => $news['slug']), 'news_view'); ?>"><?php echo $news['title']; ?></a>
+<div class="row actions">
+    <div class="span9 pull-left about">
+        <h2><?php echo ($this->category == 'All') ? $this->escape($this->category) : 'All ' . $this->escape($this->category); ?> News</h2>
     </div>
-    <div class="date">
-        <?php if($news['posted_at'] == $news['edited_at']): ?>
-        <?php echo date('m/d/Y @ h:i:s A', strtotime($news['posted_at'])); ?>
-        <?php else: ?>
-        <?php echo date('m/d/Y @ h:i:s A', strtotime($news['edited_at'])); ?>
-        <?php endif; ?>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('reporter')): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array(), 'news_add'); ?>"><i class="icon-list"></i> Add News</a>
+            <?php endif; ?>
+        </div>
     </div>
-    <div class="blurb">
-        <?php echo $news['info']; ?>
-    </div>
-    <div class="clearfix">&nbsp;</div>
 </div>
-<?php endforeach; ?>
+<div class="page-content">
+    <div class="row">
+        <div class="span12">
+            <?php foreach($this->news as $news): ?>
+            <?php if($news['is_visible'] == 1 || ($news['is_visible'] == 0 && ($this->hasRole('admin') or $this->hasRole('reporter')))): ?>
+            <div class="well well-small">
+                <?php if($news['is_visible'] == 0): ?>
+                <div class="alert alert-warning">This news story is not yet public.</div>
+                <?php endif; ?>
+                <div class="pull-right">
+                    <a class="btn btn-small btn-info" href="<?php echo $this->url(array('slug' => $news['slug']), 'news_view'); ?>"><i class="icon-list icon-white"></i> View Full Story</a>
+                </div>
+                <h3>
+                    <?php echo $news['title']; ?>
+                    <br/>
+                    <small>
+                        <?php if($news['posted_at'] == $news['edited_at']): ?>
+                        <?php echo date('m/d/Y @ h:i:s A', strtotime($news['posted_at'])); ?>
+                        <?php else: ?>
+                        <?php echo date('m/d/Y @ h:i:s A', strtotime($news['edited_at'])); ?>
+                        <?php endif; ?>
+                    </small>
+                </h3>
+                <p><?php echo $news['info']; ?></p>
+            </div>
+            <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
