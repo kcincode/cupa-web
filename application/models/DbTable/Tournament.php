@@ -19,7 +19,7 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         return false;
     }
 
-    public function createBlankTournament($year, $name, $userId)
+    public function createBlankTournament($year, $name, $directorIds)
     {
         $tournament = $this->createRow();
         $tournament->name = $name;
@@ -44,12 +44,14 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         $tournamentInfo->save();
 
         $tournamentMemberTable = new Model_DbTable_TournamentMember();
-        $tournamentMember = $tournamentMemberTable->createRow();
-        $tournamentMember->tournament_id = $tournament->id;
-        $tournamentMember->user_id = $userId;
-        $tournamentMember->weight = $tournamentMemberTable->getHighestWeight($tournament->id);
-        $tournamentMember->type = 'director';
-        $tournamentMember->save();
+        foreach($directorIds as $directorId) {
+            $tournamentMember = $tournamentMemberTable->createRow();
+            $tournamentMember->tournament_id = $tournament->id;
+            $tournamentMember->user_id = $directorId;
+            $tournamentMember->weight = $tournamentMemberTable->getHighestWeight($tournament->id);
+            $tournamentMember->type = 'director';
+            $tournamentMember->save();
+        }
 
         $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
         $tournamentUpdate = $tournamentUpdateTable->createRow();
@@ -148,5 +150,14 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         }
 
         return $data;
+    }
+
+    public function fetchDistinctTournaments()
+    {
+        $select = $this->select()
+                       ->group('name')
+                       ->order('name');
+
+        return $this->fetchAll($select);
     }
 }

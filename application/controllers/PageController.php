@@ -1229,33 +1229,45 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
+
+        $form = new Form_TournamentCreate();
 
         if($this->getRequest()->isPost()) {
-            $this->_helper->viewRenderer->setNoRender(true);
+            $post = $this->getRequest()->getPost();
 
-            // make sure its an AJAX request
-            if(!$this->getRequest()->isXmlHttpRequest()) {
+            if(isset($post['cancel'])) {
                 $this->_redirect('/pickup');
             }
 
-            $post = $this->getRequest()->getPost();
+            if($post['name'] != 'new' and $post['name'] != 0) {
+                $form->getElement('new_name')->setRequired(false);
+                $post['new_name'] = null;
+            }
 
-            $tournamentTable = new Model_DbTable_Tournament();
+            if($form->isValid($post)) {
+                $data = $form->getValues();
 
-            if($tournamentTable->isUnique($post['year'], $post['tournament'])) {
-                $tournament = $tournamentTable->createBlankTournament($post['year'], $post['tournament'], $this->view->user->id);
-                if($tournament) {
+                if($data['name'] == 'new') {
+                    $data['name'] = $data['new_name'];
 
-                    $this->view->message('Tournament created', 'success');
-                    echo Zend_Json::encode(array('result' => 'success', 'data' => '/tournament/' . $tournament->name . '/' . $tournament->year));
-                    return;
+                    $tournamentTable = new Model_DbTable_Tournament();
+                    $tournament = $tournamentTable->createBlankTournament($data['year'], $data['name'], $data['directors']);
+                    if($tournament) {
+                        $this->view->message('Tournament Created', 'success');
+                        $this->_redirect('/tournament/' .  $data['name'] . '/' . $data['year']);
+                    } else {
+                        $this->view->message('Tournament Already Exists', 'error');
+                    }
+
                 }
-            } else {
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Tournament Already Exists'));
-                return;
+
             }
         }
+
+        $this->view->headScript()->appendScript('$(".select2").select2();');
+        $this->view->form = $form;
     }
 }

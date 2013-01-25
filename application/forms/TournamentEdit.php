@@ -30,6 +30,11 @@ class Form_TournamentEdit extends Zend_Form
         }
     }
 
+    public function create()
+    {
+
+    }
+
     public function home()
     {
         $this->addElement('textarea', 'description', array(

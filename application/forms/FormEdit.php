@@ -17,7 +17,7 @@ class Form_FormEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('select', 'year', array(
             'required' => true,
             'validators' => array(
-                array('GreaterThan', true, array('min' => '2010', 'messages' => array('notGreaterThan' => 'Please enter a valid year.'))),
+                array('GreaterThan', true, array('min' => '2009', 'messages' => array('notGreaterThan' => 'Please enter a valid year.'))),
             ),
             'multiOptions' => $years,
             'label' => 'Year:',
@@ -43,7 +43,7 @@ class Form_FormEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $this->addElement('button', 'save', array(
             'type' => 'submit',
-            'label' => (empty($this->_club)) ? 'Create' : 'Save',
+            'label' => (empty($this->_form)) ? 'Create' : 'Save',
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
             'escape' => false,
             'icon' => 'hdd',
@@ -57,7 +57,7 @@ class Form_FormEdit extends Twitter_Bootstrap_Form_Horizontal
             'escape' => false,
         ));
 
-        $title = (empty($this->_club)) ? 'Add a Form' : 'Edit Form';
+        $title = (empty($this->_form)) ? 'Add a Form' : 'Edit Form';
         $this->addDisplayGroup(
             array('year', 'name', 'file'),
             'form_edit_form',

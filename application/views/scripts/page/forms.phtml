@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+            <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_forms_add'); ?>"><i class="icon-book"></i> Add Form</a>
             <?php endif; ?>
         </div>
@@ -48,13 +48,15 @@
                         <tbody>
                             <?php foreach($forms as $form): ?>
                             <tr>
-                                <td><a href="<?php echo $this->url(array('type' => $form->name, 'year' => 0), 'page_forms'); ?>"><?php echo $this->escape($form->name); ?></a></td>
+                                <td><?php echo $this->escape($form->name); ?></td>
                                 <td><?php echo $this->escape($form->type); ?></td>
                                 <td><?php echo $this->filesize($form->size); ?></td>
                                 <td>
-                                    <a class="btn btn-mini" href="#"><i class="icon-download"></i> Download</a>
+                                    <a class="btn btn-mini" href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><i class="icon-download"></i> Download</a>
+                                    <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
                                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
                                     <a class="btn btn-mini btn-danger" onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>"><i class="icon-trash icon-white"></i> Delete</a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

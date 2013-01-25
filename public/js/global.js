@@ -35,4 +35,11 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('#password').keypress(function(e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            $('#login-link').click();
+        }
+    });
 });
