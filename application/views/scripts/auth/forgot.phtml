@@ -1,28 +1,21 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Forgot your password?</h1>
-
-<p>
-    Use this form to request a password reset.  The form will send an email to the
-    email if it is valid with a link to reset the password for the account.  You
-    can then use that link to reset your password to something you will know.
-</p>
-<p>    
-    If you just need to know your username don't worry.  You no longer need to remember
-    your username since you may now login using your email addresss, which you need
-    to reset your password anyway.  Your username will show up in the email sent if 
-    you would like to know it.  If you have any problems or questions please
-    <a href="<?php echo $this->url(array(), 'page_contact'); ?>">contact the webmaster</a>.
-</p>
-
-<div id="forgot-container">
-    <form method="post">
-        <div class="row">
-            <?php echo $this->form->email; ?>
-        </div>
-        <div class="row">
-            <dt>&nbsp;</dt>
-            <dd><input class="button" type="submit" value="Request Password Reset" /></dd>
-        </div>
-    </form>
+<div class="row">
+    <div class="offset1 span10">
+        <p>
+            Use this form to request a password reset.  The form will send an email to the
+            email if it is valid with a link to reset the password for the account.  You
+            can then use that link to reset your password to something you will know.
+        </p>
+        <p>
+            If you just need to know your username don't worry.  You no longer need to remember
+            your username since you may now login using your email addresss, which you need
+            to reset your password anyway.  Your username will show up in the email sent if
+            you would like to know it.  If you have any problems or questions please
+            <a href="<?php echo $this->url(array(), 'page_contact'); ?>">contact the webmaster</a>.
+        </p>
+    </div>
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
+    </div>
 </div>

@@ -18,9 +18,6 @@ class AuthController extends Zend_Controller_Action
         // disable the layout
         $this->_helper->layout()->disableLayout();
 
-        // load the css for the login page
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/login.css');
-
         // create link to user_access_logs table
         $userAccessLogTable = new Model_DbTable_UserAccessLog();
 
@@ -138,78 +135,47 @@ class AuthController extends Zend_Controller_Action
 
     public function registerAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/register.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/auth/register.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $form = new Form_UserRegister();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $userTable = new Model_DbTable_User();
-            $userId = $userTable->createNewUser($post['first_name'], $post['last_name'], $post['email']);
 
-            if(is_numeric($userId)) {
-                Model_Email::sendActivationEmail($userTable->find($userId)->current());
-                $this->view->message('Created user in the system, please check your email for activation email.', 'success');
-            } else {
-                $this->view->message('Could not create user in the system.', 'error');
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $userTable = new Model_DbTable_User();
+                $userId = $userTable->createNewUser($data['first_name'], $data['last_name'], $data['email']);
+
+                if(is_numeric($userId)) {
+                    Model_Email::sendActivationEmail($userTable->find($userId)->current());
+                    $this->view->message('Created user in the system, please check your email for the activation email.', 'success');
+                } else {
+                    $this->view->message('Could not create user in the system.', 'error');
+                }
             }
         }
 
         $this->view->form = $form;
     }
 
-    public function checkemailAction()
-    {
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
-        }
-
-        // disable the layout and view
-        $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        $email = $this->getRequest()->getUserParam('email');
-        if(isset($email)) {
-            $validateEmail = new Zend_Validate_EmailAddress();
-            if(!$validateEmail->isValid($email)) {
-                echo "invalid";
-                return;
-            }
-
-            $userTable = new Model_DbTable_User();
-            $user = $userTable->fetchUserBy('email', $email);
-            if($user) {
-                echo "error";
-                return;
-            } else {
-                echo "ok";
-                return;
-            }
-
-            echo "unknown";
-        }
-    }
-
     public function activateAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/activate.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $code = $this->getRequest()->getUserParam('code');
-        $form = new Form_UserActivation();
+        $form = new Form_UserActivation('activate');
         if(!empty($code)) {
             $userTable = new Model_DbTable_User();
 
             if($this->getRequest()->isPost()) {
                 $post = $this->getRequest()->getPost();
                 if($form->isValid($post)) {
-                    $user = $userTable->fetchUserBy('email', $post['email']);
+                    $data = $form->getValues();
+                    $user = $userTable->fetchUserBy('email', $data['email']);
                     if($user and $user->activation_code == $code) {
-                        $userId = $userTable->updateUserPasswordFromCode($code, $post['password']);
+                        $userId = $userTable->updateUserPasswordFromCode($code, $data['password']);
                         if($userId) {
                             $user->activated_at = date('Y-m-d H:i:s');
                             $user->last_login = date('Y-m-d H:i:s');
@@ -223,8 +189,6 @@ class AuthController extends Zend_Controller_Action
                     } else {
                         $this->view->message('The email address entered does not match the expected email.', 'error');
                     }
-                } else {
-                    $form->populate($post);
                 }
             }
 
@@ -257,23 +221,25 @@ class AuthController extends Zend_Controller_Action
 
     public function resetAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/reset.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $code = $this->getRequest()->getUserParam('code');
-        $form = new Form_UserActivation();
+        $form = new Form_UserActivation('reset');
 
         $userPasswordResetTable = new Model_DbTable_UserPasswordReset();
         $userTable = new Model_DbTable_User();
         if(!empty($code)) {
             if($this->getRequest()->isPost()) {
                 $post = $this->getRequest()->getPost();
+
                 if($form->isValid($post)) {
+                    $data = $form->getValues();
+
                     $passwordReset = $userPasswordResetTable->fetchByCode($code);
                     if($passwordReset) {
                         $user = $userTable->find($passwordReset->user_id)->current();
-                        if(strtolower($post['email']) == strtolower($user->email)) {
-                            $userId = $userTable->updateUserPasswordFromId($user->id, $post['password']);
+                        if(strtolower($data['email']) == strtolower($user->email)) {
+                            $userId = $userTable->updateUserPasswordFromId($user->id, $data['password']);
                             if($userId) {
                                 $passwordReset->completed_at = date('Y-m-d H:i:s');
                                 $passwordReset->save();
@@ -288,8 +254,6 @@ class AuthController extends Zend_Controller_Action
                     } else {
                         $error = 'Invalid Code, please contact the webmaster if you think this is a problem.';
                     }
-                } else {
-                    $form->populate($post);
                 }
             }
 
@@ -321,15 +285,16 @@ class AuthController extends Zend_Controller_Action
 
     public function forgotAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/auth/forgot.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $form = new Form_UserForgotPassword();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
                 $userTable = new Model_DbTable_User();
-                $user = $userTable->fetchUserBy('email', $post['email']);
+                $data = $form->getValues();
+
+                $user = $userTable->fetchUserBy('email', $data['email']);
                 if($user) {
                     $userPasswordResetTable = new Model_DbTable_UserPasswordReset();
                     $passwordReset = $userPasswordResetTable->createRow();
@@ -340,12 +305,10 @@ class AuthController extends Zend_Controller_Action
                     $passwordReset->completed_at = null;
                     $passwordReset->save();
                     Model_Email::sendPasswordResetEmail($user, $passwordReset);
-                    $this->view->message("An email has been sent to `{$post['email']}` with the password reset link.", 'success');
+                    $this->view->message("An email has been sent to `{$data['email']}` with the password reset link.", 'success');
                 } else {
-                    $this->view->message("The email `{$post['email']}` does not exist in the system.", 'error');
+                    $this->view->message("The email `{$data['email']}` does not exist in the system.", 'error');
                 }
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -359,7 +322,7 @@ class AuthController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
 
         $userRoleTable = new Model_DbTable_UserRole();
-        if(Zend_Auth::getInstance()->hasIdentity() and $this->view->hasRole('admin')) {
+        if($this->view->hasRole('admin')) {
             $user = $this->getRequest()->getUserParam('user');
             $oldUserId = $this->view->user->id;
             $session = new Zend_Session_Namespace('adminuser');
@@ -372,7 +335,6 @@ class AuthController extends Zend_Controller_Action
             }
 
             if(isset($userObj->id)) {
-                Zend_Debug::dump($userObj->toArray());
                 Zend_Auth::getInstance()->getStorage()->write($userObj->id);
                 $this->view->message("Impersonating user `{$userObj->first_name} {$userObj->last_name}` successful.", 'succes');
                 $session->oldUser = $oldUserId;

@@ -4,12 +4,12 @@ class Model_DbTable_UserPasswordReset extends Zend_Db_Table
 {
     protected $_name = 'user_password_reset';
     protected $_primary = 'id';
-    
+
     public function fetchByCode($code)
     {
         $select = $this->select()
                        ->where('code = ?', $code);
-        
+
         return $this->fetchRow($select);
     }
 
@@ -18,15 +18,15 @@ class Model_DbTable_UserPasswordReset extends Zend_Db_Table
         if(empty($code)) {
             return false;
         }
-        
+
         $select = $this->select()
                        ->where('code = ?', $code);
-        
+
         $result = $this->fetchRow($select);
-        if(isset($result->$column)) {
+        if(isset($result->code)) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -40,7 +40,7 @@ class Model_DbTable_UserPasswordReset extends Zend_Db_Table
                 $code .= $characters[mt_rand(0, strlen($characters) - 1)];
             }
         }
-        
+
         return $code;
     }
 }
