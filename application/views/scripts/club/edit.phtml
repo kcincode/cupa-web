@@ -1,33 +1,37 @@
-<h1><?php echo $this->escape($this->year . ' ' . $this->club->name . ' Roster'); ?></h1>
-
-<div class="action">
-	<a class="button" href="<?php echo $this->url(array('club_id' => $this->club->id), 'club_home'); ?>#<?php echo $this->escape($this->year); ?>">Back</a>
+<div id="page-banner"></div>
+<div class="row">
+    <div class="offset1 span10">
+        <h1 style="text-align: center;"><?php echo $this->escape($this->year); ?> <?php echo $this->escape($this->club->name); ?> Roster</h1>
+        <div class="pull-right">
+        	<a class="btn btn-small" href="<?php echo $this->url(array('club_id' => $this->club->id), 'club_home'); ?>#<?php echo $this->escape($this->year); ?>"><i class="icon-arrow-left"></i> Back</a>
+        </div>
+    </div>
 </div>
-<div class="add-member">
-	<?php echo $this->form; ?>
-	<div class="clearfix">&nbsp;<br/>&nbsp;</div>
+<div class="row">
+    <div class="offset3 span6"  style="text-align: center;">
+    	<?php echo $this->form; ?>
+    </div>
 </div>
-
-<div class="view-members">
-	<table>
-		<thead>
-			<tr>
-				<th width="300px">Name</th>
-				<th width="100px">Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach($this->members as $member): ?>
-			<tr>
-				<td><?php echo $this->escape($member['member']); ?></td>
-				<td align="center">
-					<a title="Remove Player" onclick="if(!confirm('Are you sure you want to remove this member?')) { return false; }" href="<?php echo $this->url(array('id' => $member['id']), 'club_member_remove'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
-				</td>
-			</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
-</div>
-<div class="action">
-	<a class="button" href="<?php echo $this->url(array('club_id' => $this->club->id), 'club_home'); ?>#<?php echo $this->escape($this->year); ?>">Back</a>
+<br/><br/>
+<div class="row">
+    <div class="offset1 span10"  style="text-align: center;">
+    	<table class="table table-condensed table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th class="span2">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach($this->members as $member): ?>
+				<tr>
+					<td><?php echo $this->escape($member['member']); ?></td>
+					<td align="center">
+						<a class="btn btn-mini btn-danger" onclick="if(!confirm('Are you sure you want to remove this member?')) { return false; }" href="<?php echo $this->url(array('id' => $member['id']), 'club_member_remove'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+    </div>
 </div>

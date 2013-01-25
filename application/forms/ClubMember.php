@@ -1,6 +1,6 @@
 <?php
 
-class Form_ClubMember extends Zend_Form
+class Form_ClubMember extends Twitter_Bootstrap_Form_Inline
 {
 	protected $_clubId;
 	protected $_year;
@@ -37,7 +37,7 @@ class Form_ClubMember extends Zend_Form
             'validators' => array(
                 array('GreaterThan', true, array('min' => 0))
             ),
-			'class' => 'chosen',
+			'class' => 'select2 span3',
             'required' => true,
     	));
         $this->getElement('user_id')->addErrorMessage('Please select a user.');
@@ -46,5 +46,13 @@ class Form_ClubMember extends Zend_Form
     		'label' => 'Add Member',
     		'class' => 'button',
     	));
+
+        $this->addDisplayGroup(
+            array('club_id', 'year', 'user_id', 'add'),
+            'club_form',
+            array(
+                'legend' => 'Add a Member',
+            )
+        );
    	}
 }

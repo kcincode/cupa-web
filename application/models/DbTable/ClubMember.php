@@ -4,7 +4,7 @@ class Model_DbTable_ClubMember extends Zend_Db_Table
 {
     protected $_name = 'club_member';
     protected $_primary = 'id';
-    
+
     public function isUnique($clubId, $userId, $year, $position = 'player')
     {
         $select = $this->select()
@@ -56,7 +56,7 @@ class Model_DbTable_ClubMember extends Zend_Db_Table
                        ->join(array('c' => 'club'), 'c.id = cm.club_id', array('name'))
                        ->join(array('u' => 'user'), 'u.id = cm.user_id', array('id AS user_id', "CONCAT(first_name, ' ', last_name) AS member"))
                        ->where('club_id = ?', $clubId)
-                       ->order('cm.year')
+                       ->order('cm.year DESC')
                        ->order('u.last_name')
                        ->order('u.first_name');
 
@@ -75,6 +75,6 @@ class Model_DbTable_ClubMember extends Zend_Db_Table
                        ->join(array('u' => 'user'), 'u.id = cm.user_id', array())
                        ->where('user_id = ?', $userId);
 
-        return $this->getAdapter()->fetchAll($select);        
+        return $this->getAdapter()->fetchAll($select);
     }
 }

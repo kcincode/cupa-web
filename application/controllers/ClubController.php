@@ -5,22 +5,17 @@ class ClubController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
     }
 
     public function indexAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-    	$this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/club/index.css');
+        $clubId = $this->getRequest()->getUserParam('club_id');
+        $clubTable = new Model_DbTable_Club();
+        $this->view->club = $clubTable->find($clubId)->current();
 
-    	$this->view->headScript()->appendFile($this->view->baseUrl() . '/js/club/index.js');
-
-    	$clubId = $this->getRequest()->getUserParam('club_id');
-    	$clubTable = new Model_DbTable_Club();
-    	$this->view->club = $clubTable->find($clubId)->current();
-
-    	$clubMemberTable = new Model_DbTable_ClubMember();
-    	$this->view->years = $clubMemberTable->fetchAllMemberByYear($clubId);
+        $clubMemberTable = new Model_DbTable_ClubMember();
+        $this->view->years = $clubMemberTable->fetchAllMemberByYear($clubId);
 
         $session = new Zend_Session_Namespace('previous');
         $session->previousPage = str_replace($this->view->baseUrl() . '/', '', $_SERVER['REQUEST_URI']);
@@ -28,12 +23,8 @@ class ClubController extends Zend_Controller_Action
 
     public function editAction()
     {
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/club/edit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/club/edit.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
 
         $clubId = $this->getRequest()->getUserParam('club_id');
         $this->view->year = $this->getRequest()->getUserParam('year');
@@ -48,7 +39,8 @@ class ClubController extends Zend_Controller_Action
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
             if($form->isValid($post)) {
-                $result = $clubMemberTable->addMember($post['club_id'], $post['user_id'], $post['year']);
+                $data = $form->getValues();
+                $result = $clubMemberTable->addMember($data['club_id'], $data['user_id'], $data['year']);
                 if($result) {
                     $this->view->message('User added.', 'success');
                 } else {
@@ -57,6 +49,7 @@ class ClubController extends Zend_Controller_Action
             }
         }
 
+        $this->view->headScript()->appendScript('$(".select2").select2();');
         $this->view->form = $form;
 
         $clubTable = new Model_DbTable_Club();
