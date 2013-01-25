@@ -1,8 +1,8 @@
-<h1>CUPA Administration</h1>
-<div id="list">
-    <h2>Reports:</h2>
-    <ul>
-        <li><a class="button" id="browser-data" href="<?php echo $this->url(array(), 'admin_browser'); ?>">Browser Data</a></li>
-        <li><a class="button" id="duplicate-users" href="<?php echo $this->url(array(), 'admin_duplicates'); ?>">Duplicate Users</a></li>
-    </ul>
-</div>
+            <div class="row">
+                <br/><br/><br/>
+            </div>
+            <ul class="nav nav-list well well-small">
+                <li class="nav-header">Admin Actions</li>
+                <li<?php echo ($this->active == 'browser') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_browser'); ?>">Browser Data</a></li>
+                <li<?php echo ($this->active == 'duplicates') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_duplicates'); ?>">Duplicate Users</a></li>
+            </ul>

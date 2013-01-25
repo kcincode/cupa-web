@@ -17,12 +17,17 @@ class Model_DbTable_UserAccessLog extends Zend_Db_Table
         ));
     }
 
-    public function fetchReportData()
+    public function fetchReportData($type)
     {
         $select = $this->getAdapter()->select()
                        ->distinct()
                        ->from(array('ual' => $this->_name), array('client'))
                        ->order('client');
+
+        if($type == 'month') {
+            $monthAgo = date('Y-m-d H:i:s', strtotime('-1 month'));
+            $select = $select->where('time > ?', $monthAgo);
+        }
 
         $data = array();
         foreach($this->getAdapter()->fetchAll($select) as $row) {
@@ -116,9 +121,17 @@ class Model_DbTable_UserAccessLog extends Zend_Db_Table
             $data[$key] = (empty($data[$key])) ? 1 : $data[$key] + 1;
         }
         $result = array();
+        $total = 0;
         foreach($data as $key => $value) {
             $result[] = array($key, $value);
+            $total += $value;
         }
+        $result[] = array('total', $total);
+
+        usort($result, function($a, $b) {
+            return($a[1] > $b[1]) ? -1 : 1;
+        });
+
 
         return $result;
     }

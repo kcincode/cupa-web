@@ -270,9 +270,9 @@ class Model_DbTable_User extends Zend_Db_Table
 
         foreach($this->fetchAll($select) as $row) {
             if($excludeMinors == true and is_numeric($row['parent'])) {
-                // do nothing
+                continue;
             } else if(is_numeric($row['parent']) and $row['last_name'] == 'Last' and $row['first_name'] == 'First') {
-                // do nothing
+                continue;
             } else {
                 if($row['last_name'] != 'Southard' and $row['first_name'] != 'Terence') {
                     $key = strtolower($row['last_name']) . '-' . strtolower($row['first_name']);

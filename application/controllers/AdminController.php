@@ -22,15 +22,10 @@ class AdminController extends Zend_Controller_Action
 
     public function browserAction()
     {
+        $userAccessLogTable = new Model_DbTable_UserAccessLog();
+        $this->view->overall = $userAccessLogTable->fetchReportData('all');
+        $this->view->month = $userAccessLogTable->fetchReportData('month');
 
-        if($this->getRequest()->isPost()) {
-            // disable the layout
-            $this->_helper->layout()->disableLayout();
-            $this->_helper->viewRenderer->setNoRender(true);
-
-            $userAccessLogTable = new Model_DbTable_UserAccessLog();
-            echo Zend_Json::encode($userAccessLogTable->fetchReportData(), true);
-        }
     }
 
     public function authAction()
@@ -39,15 +34,13 @@ class AdminController extends Zend_Controller_Action
 
     public function duplicatesAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/admin/duplicates.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/admin/duplicates.js');
-
         $user = $this->getRequest()->getParam('user');
         $userTable = new Model_DbTable_User();
         if($user) {
             // disable the layout
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
+
             $userTable->mergeAccounts($user);
             $this->view->message("User data merged to #$user.", 'success');
             $this->_redirect('admin/duplicates');
@@ -76,7 +69,10 @@ class AdminController extends Zend_Controller_Action
 
             $mail->addBcc('kcin1018@gmail.com');
             foreach($user as $id => $account) {
-                $mail->addTo($account['email']);
+                if(APPLICATION_ENV == 'production') {
+                    $mail->addTo($account['email']);
+                }
+
                 if($id == 0) {
                     $string = "Dear {$account['first_name']} {$account['last_name']}\r\n" . $string;
                 }

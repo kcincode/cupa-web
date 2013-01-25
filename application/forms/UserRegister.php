@@ -20,7 +20,7 @@ class Form_UserRegister extends Twitter_Bootstrap_Form_Horizontal
         ));
 
         $this->addElement('text', 'email', array(
-            'filters' => array('StringTrim'),
+            'filters' => array('StringTrim', 'StringToLower'),
             'validators' => array(
                 'EmailAddress',
                 array('Db_NoRecordExists', false, array('table' => 'user', 'field' => 'email', 'messages' => array('recordFound' => 'Email is already in use.')))

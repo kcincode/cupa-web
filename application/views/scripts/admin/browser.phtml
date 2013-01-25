@@ -1,4 +1,74 @@
-<?php echo $this->partial('admin/menu.phtml', array()); ?>
-<div id="container">
-    <div id="chart"></div>
+<div id="page-banner" class="about">&nbsp;</div>
+
+<div class="row actions">
+    <div class="span9 pull-left about">
+        <h2>&nbsp;</h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            &nbsp;
+        </div>
+    </div>
 </div>
+<div class="page-content">
+    <div class="row">
+        <div class="span2">
+            <?php echo $this->partial('admin/menu.phtml', array('active' => 'browser')); ?>
+        </div>
+        <div class="span9">
+            <h2>Browser Stats</h2>
+            <br/><br/>
+            <h4>Past Month Counts</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="span5">Browser</th>
+                        <th class="span2" style="text-align: center;">Hits</th>
+                        <th class="span2" style="text-align: center;">Percent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $total = 0; ?>
+                    <?php foreach($this->month as $row): ?>
+                    <?php if($row[0] == 'total'): ?>
+                    <?php $total = $row[1]; ?>
+                    <?php else: ?>
+                    <tr>
+                        <td><?php echo $this->escape($row[0]); ?></td>
+                        <td style="text-align: center;"><?php echo $this->escape($row[1]); ?></td>
+                        <td style="text-align: center;"><?php echo $this->escape(number_format(($row[1] / $total) * 100, 2)); ?>%</td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <br/><br/>
+            <h4>Overall Counts</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="span4">Browser</th>
+                        <th class="span2" style="text-align: center;">Hits</th>
+                        <th class="span2" style="text-align: center;">Percent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $total = 0; ?>
+                    <?php foreach($this->overall as $row): ?>
+                    <?php if($row[0] == 'total'): ?>
+                    <?php $total = $row[1]; ?>
+                    <?php else: ?>
+                    <tr>
+                        <td><?php echo $this->escape($row[0]); ?></td>
+                        <td style="text-align: center;"><?php echo $this->escape($row[1]); ?></td>
+                        <td style="text-align: center;"><?php echo $this->escape(number_format(($row[1] / $total) * 100, 2)); ?>%</td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
