@@ -15,7 +15,7 @@
     <div class="row">
         <div class="offset1 span10">
         	<?php echo $this->partial('profile/menu.phtml', array('state' => $this->state));?>
-            <?php echo $this->partial('profile/' . $this->state . '.phtml', array('state' => $this->state, 'data' => $this->data, 'form' => $this->form));?>
+            <?php echo $this->partial('profile/' . $this->state . '.phtml', array('state' => $this->state, 'data' => $this->data, 'form' => $this->form, 'user' => $this->user));?>
         </div>
     </div>
 </div>
