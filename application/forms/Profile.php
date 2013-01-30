@@ -1,23 +1,21 @@
 <?php
 
-class Form_Profile extends Zend_Form
+class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
 {
-    private $_data;
-    private $_state;
-    private $_leagueId;
-    private $_userId;
+    protected $_data;
+    protected $_state;
+    protected $_leagueId;
+    protected $_userId;
+    
+    protected $_questions = array();
 
     public function __construct($user, $state, $leagueId = null)
     {
         $userTable = new Model_DbTable_User();
         $this->_data = $userTable->fetchProfile($user);
         $this->_state = $state;
-
-        if(!empty($leagueId)) {
-            $this->_leagueId = $leagueId;
-            $this->_userId = $user->id;
-        }
-
+        $this->_leagueId = $leagueId;
+        $this->_userId = $user->id;
 
         parent::__construct();
     }
@@ -28,11 +26,29 @@ class Form_Profile extends Zend_Form
         if($state && method_exists($this, $state)) {
             $this->$state();
         }
+        
+        $this->addElement('button', 'save', array(
+            'type' => 'submit',
+            'label' => 'Update',
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+            'escape' => false,
+            'icon' => 'hdd',
+            'whiteIcon' => true,
+            'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+        ));
+        
+        $this->addDisplayGroup(
+            array('save', 'cancel'),
+            'profile_actions',
+            array(
+                'disableLoadDefaultDecorators' => true,
+                'decorators' => array('Actions'),
+            )
+        );
     }
 
     private function personal()
     {
-
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
         $this->addElement('text', 'username', array(
@@ -40,7 +56,10 @@ class Form_Profile extends Zend_Form
             'validators' => array(
                  array('StringLength', true, array('min' => 4, 'max' => 25, 'messages' => array('stringLengthInvalid' => 'Invalid last username, max of 25 characters.'))),
             ),
-            'required' => true,
+            'required' => false,
+            'disabled' => true,
+            'class' => 'span2',
+            'description' => 'This is being phased out, using email instead',
             'label' => 'Username:',
             'value' => (empty($this->_data['username'])) ? null : $this->_data['username'],
         ));
@@ -49,7 +68,10 @@ class Form_Profile extends Zend_Form
             'filters' => array('StringTrim'),
             'validators' => array(
                 'EmailAddress',
+                array('Db_NoRecordExists', false, array('table' => 'user', 'field' => 'email', 'exclude' => array('field' => 'id', 'value' => $this->_data['id']), 'messages' => array('recordFound' => 'Email address is already used.'))),
+
             ),
+            'class' => 'span5',
             'required' => true,
             'label' => 'Email Address:',
             'value' => (empty($this->_data['email'])) ? null : $this->_data['email'],
@@ -62,6 +84,7 @@ class Form_Profile extends Zend_Form
             ),
             'required' => true,
             'label' => 'Firstname:',
+            'class' => 'span3',
             'value' => (empty($this->_data['first_name'])) ? null : $this->_data['first_name'],
         ));
 
@@ -72,6 +95,7 @@ class Form_Profile extends Zend_Form
             ),
             'required' => true,
             'label' => 'Lastname:',
+            'class' => 'span3',
             'value' => (empty($this->_data['last_name'])) ? null : $this->_data['last_name'],
         ));
 
@@ -82,6 +106,7 @@ class Form_Profile extends Zend_Form
             ),
             'required' => false,
             'label' => 'Nickname:',
+            'class' => 'span3',
             'value' => (empty($this->_data['profile']['nickname'])) ? null : $this->_data['profile']['nickname'],
             'description' => '(optional)',
         ));
@@ -93,7 +118,6 @@ class Form_Profile extends Zend_Form
             ),
             'required' => true,
             'multiOptions' => $genders,
-            'separator' => '&nbsp; &nbsp;',
             'label' => 'Gender:',
             'value' => (empty($this->_data['profile']['gender'])) ? null : $this->_data['profile']['gender'],
         ));
@@ -102,8 +126,9 @@ class Form_Profile extends Zend_Form
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Birthday:',
-            'class' => 'datepicker',
-            'value' => (empty($this->_data['profile']['age'])) ? null : $this->_data['profile']['age'],
+            'class' => 'datepicker span2',
+            'style' => 'text-align: center',
+            'value' => (empty($this->_data['profile']['age'])) ? null : date('m/d/Y', strtotime($this->_data['profile']['age'])),
         ));
 
         $this->addElement('text', 'height', array(
@@ -113,6 +138,8 @@ class Form_Profile extends Zend_Form
                 array('Between', false, array('min' => '40', 'max' => '96', 'messages' => array('notBetween' => 'Height is too tall or short.')))
             ),
             'label' => 'Height:',
+            'class' => 'span1',
+            'style' => 'text-align: center',
             'value' => (empty($this->_data['profile']['height'])) ? null : $this->_data['profile']['height'],
             'description' => 'Enter/Check your height in INCHES.',
         ));
@@ -124,6 +151,8 @@ class Form_Profile extends Zend_Form
                 array('Regex', false, array('pattern' => '/^\d\d\d-\d\d\d-\d\d\d\d$/', 'messages' => array('regexNotMatch' => 'Invalid phone number ###-###-####'))),
             ),
             'label' => 'Phone:',
+            'class' => 'span2',
+            'style' => 'text-align: center',
             'value' => (empty($this->_data['profile']['phone'])) ? null : $this->_data['profile']['phone'],
         ));
 
@@ -140,18 +169,21 @@ class Form_Profile extends Zend_Form
             ),
             'required' => true,
             'label' => 'Level of Experience:',
-            'value' => (empty($this->_data['profile']['level'])) ? null : $this->_data['profile']['level'],
+            'value' => (empty($this->_data['profile']['level_id'])) ? null : $this->_data['profile']['level_id'],
             'multiOptions' => $levels,
             'description' => 'Select the level of experience you have in ultimate.',
         ));
 
-        $this->addElement('text', 'experience', array(
+        $years = array_combine(range(date('Y'), date('Y') - 60), range(date('Y'), date('Y') - 60));
+        $this->addElement('select', 'experience', array(
             'filters' => array('digits'),
             'required' => true,
             'validators' => array(
-                array('Between', true, array('min' => 1940, 'max' => date('Y'), 'messages' => array('notBetween' => 'Please enter a valid year.'))),
+                array('InArray', false, array(array_keys($years))),
             ),
             'label' => 'Ultimate Experience:',
+            'multiOptions' => $years,
+            'class' => 'span2',
             'value' => (empty($this->_data['profile']['experience'])) ? null : $this->_data['profile']['experience'],
             'description' => 'Enter the YEAR you started playing ultimate.',
         ));

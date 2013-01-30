@@ -168,6 +168,7 @@ class Model_DbTable_User extends Zend_Db_Table
             'phone' => $userProfile->phone,
             'height' => $userProfile->height,
             'level' => (empty($level)) ? null : $level->name,
+            'level_id' => (empty($level)) ? null : $level->id,
             'experience' => $userProfile->experience,
         );
 

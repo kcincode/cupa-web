@@ -18,7 +18,7 @@ nav ul {
 
 #page-banner {
     background: url('../images/menu_shadow.jpg') no-repeat;
-    height: 25px;
+    height: 70px;
 }
 
 .page-content {
@@ -47,8 +47,7 @@ nav ul {
 /*******************************************************************************
  * About page CSS
  ******************************************************************************/
-#page-banner.about,
-#page-banner {
+#page-banner.about {
     background: url('../images/banners/about.jpg');
     height: 140px;
 }

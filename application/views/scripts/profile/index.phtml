@@ -1,3 +1,20 @@
-<h1>Please login to see your profile</h1>
+<div id="page-banner">&nbsp;</div>
 
-<p class="auth">To view your full private profile you must login using the link in the upper right of the page.  You must do this so we can find all your data in the system.</p>
+<div class="row actions">
+    <div class="offset1 span8 pull-left">
+        <h1><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <a class="btn" href="<?php echo $this->url(array(), 'profile_password'); ?>">Change Password</a>
+        </div>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="offset1 span10">
+        	<?php echo $this->partial('profile/menu.phtml', array('state' => $this->state));?>
+            <?php echo $this->partial('profile/' . $this->state . '.phtml', array('state' => $this->state, 'data' => $this->data, 'form' => $this->form));?>
+        </div>
+    </div>
+</div>

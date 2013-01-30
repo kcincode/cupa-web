@@ -5,17 +5,14 @@ class ProfileController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/common.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
     }
 
     public function indexAction()
     {
         $state = $this->getRequest()->getUserParam('state');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/' . $state . '.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        if(file_exists(APPLICATION_PATH . '/../public/js/profile/' . $state . '.js')) {
-            $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/profile/' . $state . '.js');
-        }
 
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             return;
@@ -32,6 +29,7 @@ class ProfileController extends Zend_Controller_Action
             } else {
                 if($form->isValid($post)) {
                     $data = $form->getValues();
+                    
                     $this->$state($this->view->user, $data);
                 } else {
                     $this->view->message('There are errors with your submission.', 'error');
@@ -42,22 +40,11 @@ class ProfileController extends Zend_Controller_Action
 
         $this->view->form = $form;
         $this->view->state = $state;
-        $this->renderScript('profile/' . $state . '.phtml');
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
     }
 
     private function personal($user, $data)
     {
-        $userTable = new Model_DbTable_User();
-        if($user->email != $data['email']) {
-            $userTest = $userTable->fetchUserBy('email', $data['email']);
-
-            if($userTest) {
-                $this->view->message('Email address already in use', 'error');
-                return;
-            }
-        }
-
-        $user->username = $data['username'];
         $user->first_name = $data['first_name'];
         $user->last_name = $data['last_name'];
         $user->updated_at = date('Y-m-d H:i:s');
@@ -66,7 +53,7 @@ class ProfileController extends Zend_Controller_Action
         $userProfileTable = new Model_DbTable_UserProfile();
         $userProfile = $userProfileTable->find($user->id)->current();
         $userProfile->gender = $data['gender'];
-        $userProfile->birthday = $data['birthday'];
+        $userProfile->birthday = date('Y-m-d', strtotime($data['birthday']));
         $userProfile->phone = $data['phone'];
         $userProfile->nickname = (empty($data['nickname'])) ? null : $data['nickname'];
         $userProfile->height = $data['height'];

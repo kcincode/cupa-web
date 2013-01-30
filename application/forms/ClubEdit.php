@@ -15,7 +15,7 @@ class Form_ClubEdit extends Twitter_Bootstrap_Form_Horizontal
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
-        $name = $this->addElement('text', 'name', array(
+        $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
