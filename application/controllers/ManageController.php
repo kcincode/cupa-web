@@ -8,7 +8,7 @@ class ManageController extends Zend_Controller_Action
             $this->_forward('auth');
         }
 
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/common.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
     }
 
     public function indexAction()

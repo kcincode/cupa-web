@@ -7,8 +7,8 @@ class AdminController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             $this->_forward('auth');
         } else {
-            if(!$this->view->hasRole('admin')) {
-                $this->view->message('You do not have access to the admin featuers.');
+            if(!$this->view->hasRole('admin') and !$this->view->hasRole('manager') and !$this->view->hasRole('volunteer') and !$this->view->isLeagueDirector()) {
+                $this->view->message('You do not have access to the management features.');
                 $this->_redirect('/');
             }
         }
@@ -22,6 +22,10 @@ class AdminController extends Zend_Controller_Action
 
     public function browserAction()
     {
+        if(!$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
         $userAccessLogTable = new Model_DbTable_UserAccessLog();
         $this->view->overall = $userAccessLogTable->fetchReportData('all');
         $this->view->month = $userAccessLogTable->fetchReportData('month');
@@ -34,6 +38,10 @@ class AdminController extends Zend_Controller_Action
 
     public function duplicatesAction()
     {
+        if(!$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
         $user = $this->getRequest()->getParam('user');
         $userTable = new Model_DbTable_User();
         if($user) {
@@ -90,5 +98,96 @@ class AdminController extends Zend_Controller_Action
 
         $this->view->message('Emails sent to all users with duplicate accounts.', 'success');
         $this->_redirect('admin/duplicates');
+    }
+    
+    public function unpaidAction()
+    {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin') and !$this->view->isLeagueDirector()) {
+            $this->_forward('auth');
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/unpaid.css');
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $data = array();
+        foreach($leagueMemberTable->fetchUnpaidPlayers() as $row) {
+            if(!isset($data[$row['user_id']])) {
+                $data[$row['user_id']] = array(
+                    'leagues' => array($row['league']),
+                    'owed' => $row['cost'],
+                );
+            } else {
+                if(!in_array($row['league'], $data[$row['user_id']]['leagues'])) {
+                    $data[$row['user_id']]['leagues'][] = $row['league'];
+                    $data[$row['user_id']]['owed'] += $row['cost'];
+                }
+            }
+        }
+        $this->view->players = $data;
+    }
+
+    public function userAction()
+    {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+        
+        $filter = $this->getRequest()->getPost('filter');
+        if(empty($filter)) {
+            $filter = $this->getRequest()->getParam('filter');
+        }
+        $page = $this->getRequest()->getUserParam('page');
+        $form = new Form_Filter($filter);
+        $this->view->filter = $filter;
+        
+        $reset = $this->getRequest()->getPost('reset');
+        if($reset) {
+            $this->_redirect('admin/user');
+        }
+        
+        $userTable = new Model_DbTable_User();
+        $this->view->users = Zend_Paginator::factory($userTable->fetchAllFilteredUsers($filter));
+        $this->view->users->setCurrentPageNumber($page);
+        $this->view->users->setItemCountPerPage(15);
+        
+        $this->view->form = $form;
+    }
+    
+    public function usereditAction()
+    {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
+        $filter = $this->getRequest()->getParam('filter');
+        $page = $this->getRequest()->getParam('page');
+        
+        $userTable = new Model_DbTable_User();
+        $user = $userTable->find($this->getRequest()->getUserParam('user_id'))->current();
+        $form = new Form_UserManage($user, $page, $filter);
+        
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            if(isset($post['cancel'])) {
+                $this->_redirect('admin/user/filter/' .  $post['filter'] . '/page/' . $post['page']);
+            }
+
+            if($form->isValid($post)) {
+                $user->username = $post['username'];
+                $user->email = $post['email'];
+                $user->first_name = $post['first_name'];
+                $user->last_name = $post['last_name'];
+                $user->is_active = $post['is_active'];
+                $user->updated_at = date('Y-m-d H:i:s');
+                $user->save();
+
+                $this->view->message('User ' . $user->email . ' modified.', 'success');
+                $this->_redirect('admin/user/filter/' .  $post['filter'] . '/page/' . $post['page']);
+            }
+            
+        }
+        
+        $this->view->form = $form;
     }
 }

@@ -1060,13 +1060,21 @@ class PageController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
-
+                
+                $formTable = new Model_DbTable_Form();
+                $formData = $formTable->createRow();
+                $formData->year = $data['year'];
+                $formData->name = $data['name'];
+                
                 if(!empty($data['file'])) {
                     $fp = fopen($_FILES['file']['tmp_name'], 'r');
                     $filesize = $_FILES['file']['size'];
                     $md5 = md5_file($_FILES['file']['tmp_name']);
 
-                    if(!$formTable->isUnique($md5, $formId)) {
+                    $bootstrap = $this->getInvokeArg('bootstrap');
+                    $validForms = explode(',', $bootstrap->getOption('validForms'));
+                    
+                    if(!$formTable->isUnique($md5)) {
                         $this->view->message('The uploaded file is a duplicate of another file already uploaded.', 'warning');
                     } else {
                         if($fp) {
@@ -1077,7 +1085,6 @@ class PageController extends Zend_Controller_Action
                                 $formData->data = addslashes(fread($fp, $filesize));
                                 $formData->type = $extension;
                                 $formData->save();
-                                $update = 1;
                             } else {
                                 $this->view->message('The uploaded file is not a valid type.', 'warning');
                             }
@@ -1085,8 +1092,6 @@ class PageController extends Zend_Controller_Action
                         }
                     }
                 }
-
-                $formTable->udpateForm($data['year'], $data['name']);
 
                 $formData->modified_at = date('Y-m-d H:i:s');
                 $formData->uploaded_at = date('Y-m-d H:i:s');
@@ -1106,7 +1111,6 @@ class PageController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $formId = $this->getRequest()->getUserParam('form_id');
-        $year = $this->getRequest()->getUserParam('year');
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'forms');

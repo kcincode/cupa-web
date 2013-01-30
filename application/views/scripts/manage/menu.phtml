@@ -1,12 +1,12 @@
-<h1>CUPA Management</h1>
-<div id="list">
-    <h2>Management Tasks:</h2>
-    <ul>
-        <li><a class="button" id="unpaid-users" href="<?php echo $this->url(array(), 'manage_unpaid'); ?>">Unpaid Players</a></li>
-        <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
-        <li><a class="button" id="manage-users" href="<?php echo $this->url(array(), 'manage_users'); ?>">Users</a></li>
-        <li><a class="button" id="manage-pages" href="<?php echo $this->url(array(), 'manage_pages'); ?>">Pages</a></li>
-        <li><a class="button" id="volunteers" href="<?php echo $this->url(array(), 'manage_volunteer'); ?>">Volunteers</a></li>
-        <?php endif; ?>
-    </ul>
-</div>
+            <div class="row">
+                <br/><br/><br/>
+            </div>
+            <ul class="nav nav-list well well-small">
+                <li class="nav-header">Manage Actions</li>
+                <li<?php echo ($this->active == 'unpaid') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'manage_unpaid'); ?>">Browser Data</a></li>
+                <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+                <li<?php echo ($this->active == 'users') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'manage_users'); ?>">Duplicate Users</a></li>
+                <li<?php echo ($this->active == 'pages') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'manage_pages'); ?>">Browser Data</a></li>
+                <li<?php echo ($this->active == 'volunteers') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'manage_volunteer'); ?>">Duplicate Users</a></li>
+                <?php endif; ?>
+            </ul>

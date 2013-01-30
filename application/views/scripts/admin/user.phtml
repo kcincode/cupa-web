@@ -1,0 +1,56 @@
+<div id="page-banner" class="about">&nbsp;</div>
+
+<div class="row actions">
+    <div class="span9 pull-left about">
+        <h2>&nbsp;</h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            &nbsp;
+        </div>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span2">
+            <?php echo $this->partial('admin/menu.phtml', array('active' => 'users')); ?>
+        </div>
+        <div class="span9">
+            <h2>User List</h2>
+            <div class="pull-right">
+                <?php echo $this->form; ?>
+            </div>
+            
+            <?php if(count($this->users) > 0): ?>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->users as $user): ?>
+                    <tr<?php echo ($user->is_active == 0) ? 'class="error"' : ''; ?>>
+                        <td><?php echo $this->escape($user->first_name . ' ' . $user->last_name); ?></td>
+                        <td><?php echo $this->escape($user->email); ?></td>
+                        <td>
+                            <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('user_id' => $user->id, 'filter' => $this->filter), 'admin_user_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                            <?php if($this->hasRole('admin')): ?>
+                            <a class="btn btn-mini btn-warning" href="#"><i class="icon-user icon-white"></i> Impersonate</a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php echo $this->paginationControl($this->users,
+                                    'Sliding',
+                                    'admin/pagination.phtml'); ?>
+            <?php else: ?>
+            <p>There are no users in the system right now.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

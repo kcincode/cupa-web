@@ -1,0 +1,50 @@
+<div id="page-banner" class="about">&nbsp;</div>
+
+<div class="row actions">
+    <div class="span9 pull-left about">
+        <h2>&nbsp;</h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            &nbsp;
+        </div>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span2">
+            <?php echo $this->partial('admin/menu.phtml', array('active' => 'unpaid')); ?>
+        </div>
+        <div class="span9">
+            <h2>Un-Paid Player List</h2>
+            <?php if(count($this->players) > 0): ?>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>League(s)</th>
+                        <th>Owed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->players as $playerId => $player): ?>
+                    <tr>
+                        <td><?php echo $this->fullname($playerId); ?></td>
+                        <td>
+                            <?php foreach($player['leagues'] as $i => $league): ?>
+                            <a href="<?php echo $this->url(array('league_id' => $league), 'league_status'); ?>">
+                                <?php echo $this->leaguename($league, true, true, true, true); ?><?php if($i < count($player['leagues']) - 1): ?>,<?php endif; ?>
+                            </a>
+                            <?php endforeach; ?>
+                        </td>
+                        <td><?php echo $this->escape($player['owed']); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php else: ?>
+            <p>There are no un-paid players in the system right now.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

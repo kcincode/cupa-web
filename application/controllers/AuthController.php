@@ -127,7 +127,7 @@ class AuthController extends Zend_Controller_Action
         $userAccessLogTable->log($this->view->user->username, 'logout');
 
         // clear the authentication identity
-        $auth = Zend_Auth::getInstance()->clearIdentity();
+        Zend_Auth::getInstance()->clearIdentity();
 
         // destroy session data
         Zend_Session::destroy();
@@ -321,7 +321,6 @@ class AuthController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
-        $userRoleTable = new Model_DbTable_UserRole();
         if($this->view->hasRole('admin')) {
             $user = $this->getRequest()->getUserParam('user');
             $oldUserId = $this->view->user->id;

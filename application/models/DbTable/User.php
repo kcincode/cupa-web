@@ -409,5 +409,20 @@ class Model_DbTable_User extends Zend_Db_Table
 
         return null;
     }
+    
+    public function fetchAllFilteredUsers($filter = null)
+    {
+        $select = $this->select()
+                       ->where('parent IS NULL')
+                       ->order('last_name')
+                       ->order('first_name');
+        
+        if(!is_null($filter)) {
+            $select = $select->where('first_name LIKE ?', "%$filter%");
+            $select = $select->orWhere('last_name LIKE ?', "%$filter%");
+            $select = $select->orWhere('email LIKE ?', "%$filter%");
+        }
 
+        return $this->fetchAll($select);
+    }
 }
