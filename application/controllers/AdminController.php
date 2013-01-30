@@ -254,12 +254,11 @@ class AdminController extends Zend_Controller_Action
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
             $this->_forward('auth');
         }
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/volunteer.css');
+        
+        $page = $this->getRequest()->getUserParam('page');
 
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
-        $this->view->volunteers = $leagueAnswerTable->fetchAllVolunteers();
-
+        $volunteers = $leagueAnswerTable->fetchAllVolunteers();
         if($this->getRequest()->getParam('export')) {
             // disable the layout
             $this->_helper->layout()->disableLayout();
@@ -284,12 +283,16 @@ class AdminController extends Zend_Controller_Action
             set_time_limit(0);
 
             echo "first_name,last_name,email\n";
-            foreach($this->view->volunteers as $volunteer) {
+            foreach($volunteers as $volunteer) {
                 $email = (empty($volunteer['email'])) ? $volunteer['parent_email'] : $volunteer['email'];
                 echo "{$volunteer['first_name']},{$volunteer['last_name']},{$email}\n";
             }
 
             flush();
         }
+
+        $this->view->volunteers = Zend_Paginator::factory($volunteers);
+        $this->view->volunteers->setCurrentPageNumber($page);
+        $this->view->volunteers->setItemCountPerPage(25);
     }
 }
