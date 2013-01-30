@@ -418,9 +418,9 @@ class Model_DbTable_User extends Zend_Db_Table
                        ->order('first_name');
         
         if(!is_null($filter)) {
-            $select = $select->where('first_name LIKE ?', "%$filter%");
-            $select = $select->orWhere('last_name LIKE ?', "%$filter%");
-            $select = $select->orWhere('email LIKE ?', "%$filter%");
+            $select = $select->where('first_name LIKE ?', "%$filter%")
+                             ->orWhere('last_name LIKE ?', "%$filter%")
+                             ->orWhere('email LIKE ?', "%$filter%");
         }
 
         return $this->fetchAll($select);

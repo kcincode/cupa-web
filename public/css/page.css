@@ -47,7 +47,8 @@ nav ul {
 /*******************************************************************************
  * About page CSS
  ******************************************************************************/
-#page-banner.about {
+#page-banner.about,
+#page-banner {
     background: url('../images/banners/about.jpg');
     height: 140px;
 }

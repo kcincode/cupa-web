@@ -190,4 +190,106 @@ class AdminController extends Zend_Controller_Action
         
         $this->view->form = $form;
     }
+    public function pageAction()
+    {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+        
+        $filter = $this->getRequest()->getPost('filter');
+        if(empty($filter)) {
+            $filter = $this->getRequest()->getParam('filter');
+        }
+        $page = $this->getRequest()->getUserParam('page');
+        $form = new Form_Filter($filter);
+        $this->view->filter = $filter;
+        
+        $reset = $this->getRequest()->getPost('reset');
+        if($reset) {
+            $this->_redirect('admin/page');
+        }
+        
+        $pageTable = new Model_DbTable_Page();
+        $this->view->pages = Zend_Paginator::factory($pageTable->fetchAllPages($filter));
+        $this->view->pages->setCurrentPageNumber($page);
+        $this->view->pages->setItemCountPerPage(15);
+        
+        $this->view->form = $form;
+    }
+    
+    public function pageaddAction()
+    {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
+        $form = new Form_Page();
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+            
+            if(isset($post['cancel'])) {
+                $this->_redirect('admin/page');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $page = $pageTable->createRow();
+                $page->name = $data['name'];
+                $page->title = $data['title'];
+                $page->name = $data['name'];
+                $page->save();
+
+                $this->view->message('User ' . $user->email . ' modified.', 'success');
+                $this->_redirect('admin/user/filter/' .  $post['filter'] . '/page/' . $post['page']);
+            }
+            
+        }
+        
+        $this->view->form = $form;
+    }
+
+    public function volunteerAction()
+    {
+        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
+            $this->_forward('auth');
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/volunteer.css');
+
+        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+        $this->view->volunteers = $leagueAnswerTable->fetchAllVolunteers();
+
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            ////apache_setenv('no-gzip', '1');
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="CUPA-Volunteers.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+
+            echo "first_name,last_name,email\n";
+            foreach($this->view->volunteers as $volunteer) {
+                $email = (empty($volunteer['email'])) ? $volunteer['parent_email'] : $volunteer['email'];
+                echo "{$volunteer['first_name']},{$volunteer['last_name']},{$email}\n";
+            }
+
+            flush();
+        }
+    }
 }

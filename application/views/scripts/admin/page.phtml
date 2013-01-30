@@ -6,14 +6,14 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            &nbsp;
+            <a class="btn btn-small" href="<?php echo $this->url(array(), 'admin_page_add'); ?>"><i class="icon-book"></i> Add Page</a>
         </div>
     </div>
 </div>
 <div class="page-content">
     <div class="row">
         <div class="span2">
-            <?php echo $this->partial('admin/menu.phtml', array('active' => 'users')); ?>
+            <?php echo $this->partial('admin/menu.phtml', array('active' => 'pages')); ?>
         </div>
         <div class="span9">
             <h2>User List</h2>
@@ -21,31 +21,26 @@
                 <?php echo $this->form; ?>
             </div>
             
-            <?php if(count($this->users) > 0): ?>
+            <?php if(count($this->pages) > 0): ?>
             <table class="table table-condensed table-hover">
                 <thead>
                     <tr>
-                        <th>User</th>
-                        <th>Email</th>
+                        <th>Page</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($this->users as $user): ?>
-                    <tr<?php echo ($user->is_active == 0) ? 'class="error"' : ''; ?>>
-                        <td><?php echo $this->escape($user->first_name . ' ' . $user->last_name); ?></td>
-                        <td><?php echo $this->escape($user->email); ?></td>
+                    <?php foreach($this->pages as $page): ?>
+                    <tr<?php echo ($page->is_visible == 0) ? ' class="error"' : ''; ?>>
+                        <td><?php echo $this->escape($page->title); ?></td>
                         <td>
-                            <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('user_id' => $user->id, 'filter' => $this->filter), 'admin_user_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
-                            <?php if($this->hasRole('admin')): ?>
-                            <a class="btn btn-mini btn-warning" href="<?php echo $this->url(array('user' => $user->id), 'auth_impersonate_user'); ?>"><i class="icon-user icon-white"></i> Impersonate</a>
-                            <?php endif; ?>
+                            <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('page' => $page->name), 'page_view'); ?>"><i class="icon-edit icon-white"></i> View</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <?php echo $this->paginationControl($this->users,
+            <?php echo $this->paginationControl($this->pages,
                                     'Sliding',
                                     'admin/pagination.phtml'); ?>
             <?php else: ?>

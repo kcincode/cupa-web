@@ -43,10 +43,15 @@ class Model_DbTable_Page extends Zend_Db_Table
         return $this->fetchAll($select);
     }
     
-    public function fetchAllPages()
+    public function fetchAllPages($filter = null)
     {
         $select = $this->select()
                        ->order('name');
+        
+        if($filter) {
+            $select = $select->where('name LIKE ?', "%$filter%")
+                             ->orWhere('title LIKE ?', "%$filter%");
+        }
         
         return $this->fetchAll($select);
     }
