@@ -231,19 +231,21 @@ class Model_DbTable_User extends Zend_Db_Table
         return $data;
     }
 
-    public function createBlankMinor($parentId)
+    public function createMinor($parentId, $data)
     {
         $select = $this->select()
                        ->where('parent = ?', $parentId)
-                       ->where('first_name = ?', 'First')
-                       ->where('last_name = ?', 'Last');
+                       ->where('first_name = ?', $data['first_name'])
+                       ->where('last_name = ?', $data['last_name']);
 
         $result = $this->fetchRow($select);
         if(!$result) {
             $id = $this->insert(array(
                 'parent' => $parentId,
-                'first_name' => 'First',
-                'last_name' => 'Last',
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'requested_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
                 'is_active' => 1,
             ));
 
@@ -251,12 +253,18 @@ class Model_DbTable_User extends Zend_Db_Table
                 $userProfileTable = new Model_DbTable_UserProfile();
                 $userProfileTable->insert(array(
                     'user_id' => $id,
+                    'nickname' => $data['nickname'],
+                    'gender' => $data['gender'],
+                    'birthday' => date('Y-m-d', strtotime($data['birthday'])),
+                    'height' => $data['height'],
+                    'level' => $data['level'],
+                    'experience' => $data['experience'],
+                    
                 ));
 
                 return $this->find($id)->current();
             }
         }
-
     }
 
     public function fetchAllDuplicates($userId = null, $actives = true, $excludeMinors = false)

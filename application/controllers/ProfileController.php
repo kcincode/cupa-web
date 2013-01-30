@@ -66,30 +66,34 @@ class ProfileController extends Zend_Controller_Action
 
     public function minorsaddAction()
     {
-        // disable the layout and view
-        $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        if(!Zend_Auth::getInstance()->hasIdentity()) {
-            return;
+        $form = new Form_Profile($this->view->user, 'minors_add');
+        
+        $request = $this->getRequest();
+        if($request->isPost()) {
+            $post = $request->getPost();
+            
+            if(isset($post['cancel'])) {
+                $this->_redirect('profile/minors');
+            }
+            
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                
+                $userTable = new Model_DbTable_User();
+                $userTable->createMinor($this->view->user->id, $data);
+                
+                $this->view->message('Created minor', 'success');
+                $this->_redirect('profile/minors');
+            }
         }
 
-        $userTable = new Model_DbTable_User();
-        $minor = $userTable->createBlankMinor($this->view->user->id);
-        if(!$minor) {
-            $this->view->message('Could not create minor, please edit the previously created minor before trying to add another.', 'error');
-        } else {
-            $this->_redirect('profile/minors/' . $minor->id . '/edit');
-        }
-        $this->_redirect('profile/minors');
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
+        $this->view->form = $form;
     }
 
     public function minorseditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/personal.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/profile/personal.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $minorId = $this->getRequest()->getUserParam('minor_id');
 
@@ -120,7 +124,7 @@ class ProfileController extends Zend_Controller_Action
                 $userProfileTable = new Model_DbTable_UserProfile();
                 $userProfile = $userProfileTable->find($minor->id)->current();
                 $userProfile->gender = $data['gender'];
-                $userProfile->birthday = $data['birthday'];
+                $userProfile->birthday = date('Y-m-d', strtotime($data['birthday']));
                 $userProfile->nickname = (empty($data['nickname'])) ? null : $data['nickname'];
                 $userProfile->height = $data['height'];
                 $userProfile->level = $data['level'];
@@ -130,12 +134,10 @@ class ProfileController extends Zend_Controller_Action
                 $this->view->message('Minor information updated.', 'success');
                 $this->_redirect('profile/minors');
 
-            } else {
-                $this->view->message('There are errors with your submission.', 'error');
-                $form->populate($post);
             }
         }
 
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
         $this->view->form = $form;
     }
 
