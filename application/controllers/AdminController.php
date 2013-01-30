@@ -222,6 +222,7 @@ class AdminController extends Zend_Controller_Action
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
             $this->_forward('auth');
         }
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $form = new Form_Page();
         if($this->getRequest()->isPost()) {
@@ -234,16 +235,21 @@ class AdminController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 
+                $pageTable = new Model_DbTable_Page();
                 $page = $pageTable->createRow();
+                $page->parent = (empty($data['parent'])) ? null : $data['parent'];
                 $page->name = $data['name'];
                 $page->title = $data['title'];
-                $page->name = $data['name'];
+                $page->url = (empty($data['url'])) ? null : $data['url'];
+                $page->target = (empty($data['target'])) ? null : $data['target'];
+                $page->weight = (empty($data['weight'])) ? 0 : $data['weight'];
+                $page->content = (empty($data['content'])) ? null : $data['content'];
+                $page->is_visible = (empty($data['is_visible'])) ? null : $data['is_visible'];
                 $page->save();
 
-                $this->view->message('User ' . $user->email . ' modified.', 'success');
-                $this->_redirect('admin/user/filter/' .  $post['filter'] . '/page/' . $post['page']);
+                $this->view->message('Page created', 'success');
+                $this->_redirect('/' . $page->name);
             }
-            
         }
         
         $this->view->form = $form;

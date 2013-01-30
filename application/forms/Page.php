@@ -50,7 +50,6 @@ class Form_Page extends Twitter_Bootstrap_Form_Horizontal
             'description' => 'If set it will ignore the page content.',
         ));
 
-        $pageTable = new Model_DbTable_Page();
         $info = $pageTable->info();
         $tmpTargets = array_values(explode(',', str_replace("'",'', substr($info['metadata']['target']['DATA_TYPE'], 6, -1))));
         $targets = array();
