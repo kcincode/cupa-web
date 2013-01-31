@@ -39,10 +39,6 @@ class TournamentController extends Zend_Controller_Action
 
         $tournamentInformationTable = new Model_DbTable_TournamentInformation();
         $this->view->tournamentInfo = $tournamentInformationTable->find($this->view->tournament->id)->current();
-
-        if(file_exists(APPLICATION_PATH . '/../public/images/tournaments/' . $this->view->tournament->name . '.jpg')) {
-            $this->view->headerImage = $this->view->baseUrl() . '/images/tournaments/' . $this->view->tournament->name . '.jpg';
-        }
     }
 
     public function indexAction()
@@ -52,11 +48,6 @@ class TournamentController extends Zend_Controller_Action
 
     public function homeAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/home.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        if($this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/home.js');
-        }
         $this->view->section = 'home';
 
         if($this->getRequest()->isPost()) {

@@ -1,18 +1,11 @@
 <ul>
-    <?php $active = ($this->section == 'home') ? ' class="active"' : ''; ?>
-    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_home'); ?>">Home</a></li>
+    <li<?php echo ($this->section == 'home') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_home'); ?>">Home</a></li>
     <?php if($this->tournament->use_bid == 1): ?>
-    <?php $active = ($this->section == 'bid') ? ' class="active"' : ''; ?>
-    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid'); ?>">Bid Information</a></li>
+    <li<?php echo ($this->section == 'bid') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid'); ?>">Bid Information</a></li>
     <?php endif; ?>
-    <?php $active = ($this->section == 'teams') ? ' class="active"' : ''; ?>
-    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_teams'); ?>">Teams</a></li>
-    <?php $active = ($this->section == 'schedule') ? ' class="active"' : ''; ?>
-    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_schedule'); ?>">Schedule</a></li>
-    <?php $active = ($this->section == 'location') ? ' class="active"' : ''; ?>
-    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_location'); ?>">Location</a></li>
-    <?php $active = ($this->section == 'lodging') ? ' class="active"' : ''; ?>
-    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_lodging'); ?>">Lodging</a></li>
-    <?php $active = ($this->section == 'contact') ? ' class="active"' : ''; ?>
-    <li><a<?php echo $active; ?> href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">Contact</a></li>
+    <li<?php echo ($this->section == 'teams') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_teams'); ?>">Teams</a></li>
+    <li<?php echo ($this->section == 'schedule') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_schedule'); ?>">Schedule</a></li>
+    <li<?php echo ($this->section == 'location') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_location'); ?>">Location</a></li>
+    <li<?php echo ($this->section == 'lodging') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_lodging'); ?>">Lodging</a></li>
+    <li<?php echo ($this->section == 'contact') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">Contact</a></li>
 </ul>

@@ -9,16 +9,17 @@
         <?php endif; ?>
         <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/ie-fix.css" type="text/css" media="all" />
         <![endif]-->
+        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/bootstrap.min.css" type="text/css" media="all" />
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/tournament.css" type="text/css" media="all" />
         <?php echo $this->headLink() . "\n"; ?>
-        <?php $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-ui-1.8.16.min.js') . "\n"; ?>
-        <?php $this->headScript()->appendFile($this->baseUrl() . '/js/global.js') . "\n"; ?>
-        <?php echo $this->headScript()->prependFile($this->baseUrl() . '/js/jquery-1.7.1.min.js') . "\n"; ?>
-        <script>
-            var BASE_URL = '<?php echo $this->baseUrl(); ?>';
-        </script>
         <link rel="shortcut icon" href="<?php echo $this->baseUrl(); ?>/favicon.ico" />
+        <style>
+            header {
+                background-image: url('<?php echo $this->getTournamentHeaderImage(); ?>');
+            }
+        </style>
     </head>
     <body>
         <header>
@@ -34,25 +35,26 @@
             </div>
             <div class="menu">
                 <?php echo $this->partial('tournament/top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated, 'tournament' => $this->tournament)); ?>
-                <div id="login-container">Login Container</div>
             </div>
         </header>
         <nav>
             <?php echo $this->partial('tournament/menu.phtml', array('user' => $this->user, 'tournament' => $this->tournament, 'section' => $this->section)); ?>
         </nav>
-        <?php echo $this->message(); ?>
         <div id="main-content">
+            <?php echo $this->message(); ?>
             <?php echo $this->layout()->content; ?>
-            <div class="clearfix"></div>
         </div>
         <footer>
+            <!--Hosted by: InMotion Hosting<br/> -->
             &copy;<?php echo date('Y'); ?> Cincinnati Ultimate Players Association<br/>
             If you have any difficulties while visiting our site, please contact: <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a>
         </footer>
+        <script>
+            var BASE_URL = '<?php echo $this->baseUrl(); ?>';
+        </script>
+        <?php echo $this->headScript()
+                        ->prependFile($this->baseUrl() . '/js/global.js')
+                        ->prependFile($this->baseUrl() . '/js/bootstrap.min.js')
+                        ->prependFile($this->baseUrl() . '/js/jquery-1.9.0.min.js') . "\n"; ?>
     </body>
 </html>
-<?php if(!empty($this->headerImage)): ?>
-<script>
-    $('header').css('background-image', "url('<?php echo $this->headerImage; ?>')");
-</script>
-<?php endif; ?>

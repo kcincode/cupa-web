@@ -1,43 +1,30 @@
-<div id="description">
-    <div class="link">
-        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-        <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_home_edit'); ?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit Description"/></a>
-        <?php endif; ?>
-    </div>
-    <?php echo $this->tournamentInfo->description; ?>
-</div>
-
-<div id="updates">
-    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-    <div class="link">
-        <a class="button" id="add-update" href="#">Add Update</a>
-        <div id="add-update-container" title="Add an Update">
-            <div class="row">
-                <input type="hidden" id="tournament-name" value="<?php echo $this->tournament->name; ?>"/>
-                <input type="hidden" id="tournament-year" value="<?php echo $this->tournament->year; ?>"/>
-                Title: <input type="text" id="title" name="title"/>
+<div class="page-content">
+    <div class="row">
+        <div class="span8">
+            <div class="pull-right">
+                <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_home_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
             </div>
-            <div id="error-string">
+            <div class="well">
+                <br/>
+                <?php echo $this->tournamentInfo->description; ?>
             </div>
         </div>
-    </div>
-    <?php endif; ?>
-<?php foreach($this->updates as $update): ?>
-    <div class="update">
-        <div class="title">
-            <?php echo $this->escape($update->title); ?>
-            <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-            <a class="remove" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_delete'); ?>"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete Update"/></a>
-            <?php endif; ?>
-            <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-            <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_edit'); ?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit Update"/></a>
-            <?php endif; ?>
+        <div class="span4">
+            <?php foreach($this->updates as $update): ?>
+            <div class="well well-small">
+                <div class="pull-right">
+                    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <a class="btn btn-mini btn-danger" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+                    <?php endif; ?>
+                </div>
+                <strong><?php echo $this->escape($update->title); ?></strong><br/>
+                <small>Posted at: <?php echo $this->escape($update->posted); ?></small>
+                <p>
+                    <?php echo $update->content; ?>
+                </p>
+            </div>
+            <?php endforeach; ?>
         </div>
-        <div class="when">Posted at: <?php echo $this->escape($update->posted); ?></div>
-        <div class="info">
-            <?php echo $update->content; ?>
-        </div>
     </div>
-<?php endforeach; ?>
 </div>
-
