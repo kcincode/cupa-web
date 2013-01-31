@@ -23,25 +23,17 @@ class Model_DbTable_UserEmergency extends Zend_Db_Table
     	return $this->fetchAll($select);
     }
 
-    public function createBlankContact($userId)
+    public function createContact($userId, $data)
     {
-        $result = $this->fetchContact($userId, 'phone');
+        $id = $this->insert(array(
+            'user_id' => $userId,
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'phone' => $data['phone'],
+            'weight' => count($this->fetchAllContacts($userId)) + 1,
+        ));
 
-        if(count($result) == 0) {
-            $id = $this->insert(array(
-                'user_id' => $userId,
-                'first_name' => 'Contact',
-                'last_name' => 'Name',
-                'phone' => 'phone',
-                'weight' => count($this->fetchAllContacts($userId)) + 1,
-            ));
-
-            if($id) {
-                return $this->find($id)->current();
-            }
-        }
-
-        return null;
+        return ($id) ? $this->find($id)->current() : null;
     }
 
     public function updateContacts($userId, $names, $phones)

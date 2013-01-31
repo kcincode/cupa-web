@@ -6,7 +6,7 @@ class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
     protected $_state;
     protected $_leagueId;
     protected $_userId;
-    
+
     protected $_questions = array();
 
     public function __construct($user, $state, $leagueId = null)
@@ -26,7 +26,7 @@ class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
         if($state && method_exists($this, $state)) {
             $this->$state();
         }
-        
+
         $this->addElement('button', 'save', array(
             'type' => 'submit',
             'label' => 'Update',
@@ -36,14 +36,14 @@ class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
             'whiteIcon' => true,
             'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
         ));
-        
-        if(in_array($state, array('minors_edit', 'minors_add'))) {
+
+        if(in_array($state, array('minors_edit', 'minors_add', 'password'))) {
             $this->addElement('button', 'cancel', array(
                 'type' => 'submit',
                 'label' => 'Cancel',
             ));
         }
-        
+
         $this->addDisplayGroup(
             array('save', 'cancel'),
             'profile_actions',
@@ -296,7 +296,7 @@ class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
             'value' => (empty($this->_data['profile']['experience'])) ? null : $this->_data['profile']['experience'],
             'description' => 'Enter the YEAR you started playing ultimate.',
         ));
-        
+
         $this->addDisplayGroup(
             array('first_name', 'last_name', 'nickname', 'gender', 'birthday', 'height', 'level', 'experience'),
             'pickup_edit_form',
@@ -305,7 +305,7 @@ class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
             )
         );
     }
-    
+
     private function minors_add()
     {
         $this->addElement('text', 'first_name', array(
@@ -398,77 +398,14 @@ class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
             'class' => 'span2',
             'description' => 'Enter the YEAR you started playing ultimate.',
         ));
-        
+
         $this->addDisplayGroup(
             array('first_name', 'last_name', 'nickname', 'gender', 'birthday', 'height', 'level', 'experience'),
             'pickup_edit_form',
             array(
                 'legend' => 'Add Minor',
             )
-        );        
-    }
-
-    private function league_edit()
-    {
-        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-
-        $i = 1;
-        foreach($leagueQuestionTable->fetchAllQuestionsFromLeague($this->_leagueId) as $question) {
-            $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
-            $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
-
-            switch($question['type']) {
-                case 'boolean':
-                    $selection = array('1' => 'Yes', '0' =>'No');
-
-                    $this->addElement('radio', $question['name'], array(
-                        'validators' => array(
-                            array('InArray', false, array(array_keys($selection))),
-                        ),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                        'multiOptions' => $selection,
-                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : 0,
-                    ));
-                    break;
-                case 'text':
-                    $this->addElement('text', $question['name'], array(
-                        'filters' => array('StringTrim'),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                        'description' => ($question['required'] == 0) ? '(optional)' : '',
-                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
-                    ));
-                    break;
-                case 'multiple':
-                    $selection = Zend_Json::decode($question['answers']);
-
-                    $this->addElement('radio', $question['name'], array(
-                        'validators' => array(
-                            array('InArray', false, array(array_keys($selection))),
-                        ),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                        'multiOptions' => $selection,
-                        'description' => ($question['required'] == 0) ? '(optional)' : '',
-                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
-                    ));
-                    break;
-                case 'textarea':
-                    $this->addElement('textarea', $question['name'], array(
-                        'filters' => array('StringTrim'),
-                        'required' => ($question['required'] == 1) ? true : false,
-                        'label' => $i . '.) ' . $question['title'],
-                        'description' => ($question['required'] == 0) ? '(optional)' : '',
-                        'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
-                    ));
-                    break;
-            }
-
-            $i++;
-        }
+        );
     }
 
     private function password()
@@ -494,11 +431,19 @@ class Form_Profile extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('password', 'confirm', array(
            'filters' => array('StringTrim'),
             'validators' => array(
-                array('StringLength', false, array(6,25)),
+                array('Identical', false, array('token' => 'password')),
             ),
             'required' => true,
             'label' => 'Confirm new password:',
         ));
+
+        $this->addDisplayGroup(
+            array('current', 'password', 'confirm'),
+            'pickup_edit_form',
+            array(
+                'legend' => 'Change Password',
+            )
+        );
     }
 
 }

@@ -1,5 +1,6 @@
 <div id="page-banner">&nbsp;</div>
 
+<?php if(Zend_Auth::getInstance()->hasIdentity()): ?>
 <div class="row actions">
     <div class="offset1 span8 pull-left">
         <h1><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
@@ -7,6 +8,7 @@
     <div class="span2">
         <div class="btn-group pull-right">
             <a class="btn" href="<?php echo $this->url(array(), 'profile_add_minor'); ?>">Add Minor</a>
+            <a class="btn" href="<?php echo $this->url(array(), 'profile_add_contact'); ?>">Add Emergency Contact</a>
             <a class="btn" href="<?php echo $this->url(array(), 'profile_password'); ?>">Change Password</a>
         </div>
     </div>
@@ -19,3 +21,11 @@
         </div>
     </div>
 </div>
+<?php else: ?>
+<div class="row">
+    <div class="hero-unit span9 offset1">
+        <h1>Please login</h1>
+        <p>You must be logged in to view this page</p>
+    </div>
+</div>
+<?php endif; ?>

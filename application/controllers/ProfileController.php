@@ -13,7 +13,6 @@ class ProfileController extends Zend_Controller_Action
     public function indexAction()
     {
         $state = $this->getRequest()->getUserParam('state');
-
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             return;
         }
@@ -29,7 +28,7 @@ class ProfileController extends Zend_Controller_Action
             } else {
                 if($form->isValid($post)) {
                     $data = $form->getValues();
-                    
+
                     $this->$state($this->view->user, $data);
                 } else {
                     $this->view->message('There are errors with your submission.', 'error');
@@ -67,21 +66,21 @@ class ProfileController extends Zend_Controller_Action
     public function minorsaddAction()
     {
         $form = new Form_Profile($this->view->user, 'minors_add');
-        
+
         $request = $this->getRequest();
         if($request->isPost()) {
             $post = $request->getPost();
-            
+
             if(isset($post['cancel'])) {
                 $this->_redirect('profile/minors');
             }
-            
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $userTable = new Model_DbTable_User();
                 $userTable->createMinor($this->view->user->id, $data);
-                
+
                 $this->view->message('Created minor', 'success');
                 $this->_redirect('profile/minors');
             }
@@ -163,11 +162,6 @@ class ProfileController extends Zend_Controller_Action
 
     public function leagueeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/register.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/register.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->find($leagueId)->current();
@@ -177,7 +171,7 @@ class ProfileController extends Zend_Controller_Action
             $this->_redirect('profile/leagues');
         }
 
-        $form = new Form_Profile($this->view->user, 'league_edit', $leagueId);
+        $form = new Form_LeagueRegister($leagueId, $this->view->user->id, 'league');
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -188,6 +182,7 @@ class ProfileController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
+
                 $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
                 $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
@@ -202,37 +197,72 @@ class ProfileController extends Zend_Controller_Action
                         }
                     }
 
+                    // update the league member table
+                    $leagueMember->modified_at = date('Y-m-d H:i:s');
+                    $leagueMember->modified_by = $this->view->user->id;
+                    $leagueMember->save();
+
                     $this->view->message('Updated league answers.', 'success');
                     $this->_redirect('profile/leagues');
                 }
-            } else {
-                $this->view->message('There are errors with your submission.', 'error');
-                $form->populate($post);
             }
         }
 
-        $this->view->league = $league;
         $this->view->form = $form;
     }
 
     public function contactsaddAction()
     {
-        // disable the layout and view
-        $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
+        $form = new Form_UserEmergency();
 
-        if(!Zend_Auth::getInstance()->hasIdentity()) {
-            return;
+        $request = $this->getRequest();
+        if($request->isPost()) {
+            $post = $request->getPost();
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $userEmergencyTable = new Model_DbTable_UserEmergency();
+                $userEmergencyTable->createContact($this->view->user->id, $data);
+                $this->view->message('Emergency contact created', 'success');
+                $this->_redirect('profile/contacts');
+            }
         }
 
-        $userEmergencyTable = new Model_DbTable_UserEmergency();
-        $contact = $userEmergencyTable->createBlankContact($this->view->user->id);
-        if(!$contact) {
-            $this->view->message('Could not create contact, please edit the previously created minor before trying to add another.', 'error');
-        }
-
-        $this->_redirect('profile/contacts');
+        $this->view->form = $form;
     }
+
+    public function contactseditAction()
+    {
+        $request = $this->getRequest();
+        $contactId = $request->getUserParam('contact_id');
+        $userEmergencyTable = new Model_DbTable_UserEmergency();
+        $contact = $userEmergencyTable->find($contactId)->current();
+
+        $form = new Form_UserEmergency($contact);
+        if($request->isPost()) {
+            $post = $request->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('profile/contacts');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $contact->first_name = $data['first_name'];
+                $contact->last_name = $data['last_name'];
+                $contact->phone = $data['phone'];
+                $contact->save();
+
+                $this->view->message('Emergency contact updated', 'success');
+                $this->_redirect('profile/contacts');
+            }
+        }
+
+        $this->view->form = $form;
+    }
+
     public function contactsremoveAction()
     {
         // disable the layout and view
@@ -256,70 +286,8 @@ class ProfileController extends Zend_Controller_Action
         }
     }
 
-    public function contacts($user, $data)
-    {
-        $userEmergencyTable = new Model_DbTable_UserEmergency();
-        $results = array();
-        $weight = 0;
-        foreach($data['name'] as $name) {
-            $nameParts = explode(' ', $name);
-
-
-            if($this->isValidContact($name, $data['phone'][$weight])) {
-                $results[] = array(
-                    'first_name' => $nameParts[0],
-                    'last_name' => $nameParts[1],
-                    'phone' => $data['phone'][$weight],
-                    'weight' => $weight,
-                );
-                $weight++;
-            } else {
-                break;
-            }
-        }
-
-        if($weight == count($data['name'])) {
-            $userEmergencyTable->updateContacts($user->id, $data['name'], $data['phone']);
-            $this->view->message('Emergency contacts updated', 'success');
-            $this->_redirect('profile/contacts');
-        }
-    }
-
-    private function isValidContact($name, $phone)
-    {
-        $ignoredPhones = array(
-            '513-555-5555',
-            '555-555-5555',
-            '555-555-1234',
-            '000-000-0000',
-            '111-111-1111',
-        );
-
-
-        $nameParts = explode(' ', $name);
-        if(count($nameParts) != 2) {
-            $this->view->message('You must enter a first AND last name for each contact', 'error');
-            return false;
-        }
-
-        if($nameParts[0] == 'Contact' or $nameParts[1] == 'Name' or empty($name)) {
-            $this->view->message('You must enter a valid contact names.', 'error');
-            return false;
-        }
-
-        if(in_array($phone, $ignoredPhones) or empty($phone) or $phone == 'phone') {
-            $this->view->message('You must enter a valid phone numbers.', 'error');
-            return false;
-        }
-
-        return true;
-    }
-
     public function passwordAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/password.css');
-
         if(!Zend_Auth::getInstance()->hasIdentity()) {
             $this->_redirect('/profile');
         }
@@ -340,24 +308,16 @@ class ProfileController extends Zend_Controller_Action
 
                 // check current password
                 $authentication = new Model_Authenticate($this->view->user);
+
                 // try the password for authentication
                 if(!$authentication->authenticate($data['current'])) {
-                    $this->view->message('Current password entered wrong.', 'error');
-                    $form->populate($post);
+                    $form->getElement('current')->addErrorMessage('Current password incorrect.')->markAsError();
                 } else {
-                    // check that passwords match
-                    if($data['password'] == $data['confirm']) {
-                        $this->view->user->password = sha1($this->view->user->salt . $data['password']);
-                        $this->view->user->save();
-                        $this->view->message('Password updated.', 'success');
-                        $this->_redirect('/profile');
-                    } else {
-                        $this->view->message('New passwords do not match.', 'error');
-                        $form->populate($post);
-                    }
+                    $this->view->user->password = sha1($this->view->user->salt . $data['password']);
+                    $this->view->user->save();
+                    $this->view->message('Password updated.', 'success');
+                    $this->_redirect('/profile');
                 }
-            } else {
-                $form->populate($post);
             }
         }
 

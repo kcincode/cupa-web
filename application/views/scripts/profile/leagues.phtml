@@ -1,4 +1,3 @@
-
             <?php if(count($this->data['leagues'])): ?>
             <table class="table table-condensed table-hover">
                 <thead>
@@ -18,10 +17,10 @@
                         <td><?php if(!empty($league['team'])): ?><a href="<?php echo $this->url(array('league_id' => $league['league_id']), 'league_view'); ?>"><?php echo $this->escape($league['team']); ?></a> <?php else: ?>No Team<?php endif; ?></td>
                         <td><?php echo ($league['paid'] == 1) ? '<span class="text-success">Paid</span>' : '<span class="text-error">Owe $' . $league['cost'] . '</span>'; ?></td>
                         <td><?php echo ($league['release'] == 1) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?></td>
-                        <td><?php echo ($this->hasUserSignedWaiver($this->user->id, $league['year'])) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?></td>
+                        <td><?php echo ($this->hasUserSignedWaiver($this->user->id, $league['year'])) ? '<span class="text-success">Yes</span>' : '<a class="btn btn-mini btn-danger" href="' . $this->url(array('league_id' => $league['league_id']), 'league_waiver') . '">No</a>'; ?></td>
                         <td>
                             <?php if($this->isLeagueRegistrationOpen($league['league_id'])): ?>
-                            <a href="<?php echo $this->url(array('league_id' => $league['league_id']), 'profile_edit_league'); ?>"><img title="Edit League Answers" src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
+                            <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $league['league_id']), 'profile_edit_league'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
                             <?php else: ?>
                             &nbsp;
                             <?php endif; ?>

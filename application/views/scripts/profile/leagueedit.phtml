@@ -1,19 +1,7 @@
-<h1 class="profile">Edit League Answers</h1>
-<h2><?php echo $this->leaguename($this->league->id, true, true, true, true); ?></h2>
+<div id="page-banner">&nbsp;</div>
 
-<div id="register-league">
-    <form method="post">
-    <?php foreach($this->form->getElements() as $element): ?>
-    <div class="row">
-        <?php echo $element; ?>
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
     </div>
-    <?php endforeach; ?>
-    <div class="row">
-        <dt id="update-label"><label for="update">&nbsp;</label></dt>
-        <dd id="update-element">
-            <input class="button" type="submit" value="Update Values"/>
-            <input class="button button-red" type="submit" name="cancel" value="Cancel"/>
-        </dd>
-    </div>
-    </form>
 </div>

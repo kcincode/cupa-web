@@ -1,17 +1,20 @@
 <?php
 
-class Form_LeagueRegister extends Zend_Form
+class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
 {
     private $_session;
     private $_state;
     private $_userId;
     private $_leagueId;
+    protected $_user;
 
     public function __construct($leagueId, $userId, $state)
     {
         $this->_session = new Zend_Session_Namespace('registration' . $leagueId);
         $this->_state = $state;
         $this->_userId = $userId;
+        $usersTable = new Model_DbTable_User();
+        $this->_user = $usersTable->find($userId)->current();
         $this->_leagueId = $leagueId;
         parent::__construct();
     }
@@ -193,8 +196,14 @@ class Form_LeagueRegister extends Zend_Form
         //$leagueInformationTable = new Model_DbTable_LeagueInformation();
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $leagueLimitTable = new Model_DbTable_LeagueLimit();
+        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+
+        $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
+        $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
 
         $i = 1;
+        $questionList = array();
         foreach($leagueQuestionTable->fetchAllQuestionsFromLeague($this->_leagueId) as $question) {
             if($question['name'] == 'user_teams') {
                 //$leagueInformation = $leagueInformationTable->fetchInformation($this->_leagueId);
@@ -207,7 +216,6 @@ class Form_LeagueRegister extends Zend_Form
                     $currentTeams[$team->id] = $team->name;
                     $validTeams[$team->id] = $team->name;
                 }
-
 
                 $this->addElement('radio', 'team_select', array(
                     'required' => true,
@@ -234,17 +242,23 @@ class Form_LeagueRegister extends Zend_Form
                     'description' => 'Enter the team name you would like to create.  First come first serve.',
                 ));
 
+
                 if(count($teams) >= $limits['teams']) {
                     $this->removeElement('team_select');
                     $this->removeElement('user_team_new');
                     $this->getElement('user_team_select')->setLabel('1.) Select the team you would like to join:');
+
                 } else if(count($teams) == 0) {
                     $this->removeElement('team_select');
                     $this->removeElement('user_team_select');
                     $this->getElement('user_team_new')->setLabel('1.) Enter the team name you would like to create:');
+                    $questionList[] = 'user_team_new';
+                } else {
+                    $questionList[] = 'team_select';
+                    $questionList[] = 'user_team_select';
+                    $questionList[] = 'user_team_new';
                 }
             } else {
-
                 switch($question['type']) {
                     case 'boolean':
                         $selection = array('1' => 'Yes', '0' =>'No');
@@ -256,6 +270,7 @@ class Form_LeagueRegister extends Zend_Form
                             'required' => ($question['required'] == 1) ? true : false,
                             'label' => $i . '.) ' . $question['title'],
                             'multiOptions' => $selection,
+                            'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : 0,
                         ));
                         break;
                     case 'text':
@@ -264,6 +279,7 @@ class Form_LeagueRegister extends Zend_Form
                             'required' => ($question['required'] == 1) ? true : false,
                             'label' => $i . '.) ' . $question['title'],
                             'description' => ($question['required'] == 0) ? '(optional)' : '',
+                            'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
                         ));
                         break;
                     case 'multiple':
@@ -277,6 +293,7 @@ class Form_LeagueRegister extends Zend_Form
                             'label' => $i . '.) ' . $question['title'],
                             'multiOptions' => $selection,
                             'description' => ($question['required'] == 0) ? '(optional)' : '',
+                            'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
                         ));
                         break;
                     case 'textarea':
@@ -285,13 +302,66 @@ class Form_LeagueRegister extends Zend_Form
                             'required' => ($question['required'] == 1) ? true : false,
                             'label' => $i . '.) ' . $question['title'],
                             'description' => ($question['required'] == 0) ? '(optional)' : '',
+                            'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
                         ));
                         break;
                 }
+                $questionList[] = $question['name'];
             }
             $i++;
         }
 
+        if(strstr($_SERVER['HTTP_REFERER'], 'profile/leagues') !== false) {
+            $this->addElement('button', 'save', array(
+                'type' => 'submit',
+                'label' => 'Save',
+                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+                'escape' => false,
+                'icon' => 'hdd',
+                'whiteIcon' => true,
+                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+            ));
+
+            $this->addElement('submit', 'cancel', array(
+                'type' => 'submit',
+                'label' => 'Cancel',
+                'escape' => false,
+            ));
+        } else {
+            // TODO FIX THIS
+            $this->addElement('button', 'save', array(
+                'type' => 'submit',
+                'label' => 'NOT CORRECT',
+                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+                'escape' => false,
+                'icon' => 'hdd',
+                'whiteIcon' => true,
+                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+            ));
+
+            $this->addElement('submit', 'cancel', array(
+                'type' => 'submit',
+                'label' => 'Cancel',
+                'escape' => false,
+            ));
+        }
+
+        $this->addDisplayGroup(
+            $questionList,
+            'league_register_form',
+            array(
+                'legend' => 'League Questions',
+            )
+        );
+
+        $this->addDisplayGroup(
+            array('save', 'cancel'),
+            'pickup_edit_actions',
+            array(
+                'disableLoadDefaultDecorators' => true,
+                'decorators' => array('Actions'),
+            )
+        );
     }
 
 }

@@ -139,11 +139,20 @@ nav ul li a.links:hover {
 }
 
 footer {
-  background-color: #f0f0f0;
-  height: 30px;
-  padding: 10px 5px 10px 0;
-  text-align: right;
-  color: #999;
-  border-top: 1px solid #aaa;
-  box-shadow: 0 -1px 5px #aaa;
+    background-color: #f0f0f0;
+    height: 40px;
+    padding: 10px 5px 10px 0;
+    text-align: right;
+    color: #999;
+    border-top: 1px solid #aaa;
+    box-shadow: 0 -1px 5px #aaa;
+}
+
+.control-label {
+    font-weight: bold;
+    margin-top: 25px;
+}
+
+.control-group .control-label {
+    margin-top: 0;
 }
