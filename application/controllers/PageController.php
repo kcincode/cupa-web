@@ -1060,12 +1060,12 @@ class PageController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $formTable = new Model_DbTable_Form();
                 $formData = $formTable->createRow();
                 $formData->year = $data['year'];
                 $formData->name = $data['name'];
-                
+
                 if(!empty($data['file'])) {
                     $fp = fopen($_FILES['file']['tmp_name'], 'r');
                     $filesize = $_FILES['file']['size'];
@@ -1073,7 +1073,7 @@ class PageController extends Zend_Controller_Action
 
                     $bootstrap = $this->getInvokeArg('bootstrap');
                     $validForms = explode(',', $bootstrap->getOption('validForms'));
-                    
+
                     if(!$formTable->isUnique($md5)) {
                         $this->view->message('The uploaded file is a duplicate of another file already uploaded.', 'warning');
                     } else {

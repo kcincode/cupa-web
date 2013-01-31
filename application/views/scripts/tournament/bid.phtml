@@ -1,43 +1,41 @@
-<h1>How to submit a bid</h1>
-<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-<p align="center"><a class="button" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_edit'); ?>">Edit Bid Details</a></p>
-<?php endif; ?>
-
-<?php if($this->tournamentInfo->bid_due > date('Y-m-d H:i:s')): ?>
-<p class="blurb">To submit a bid you must fill out this form with you and your team's information.  Please fill in all information so we can enter you into the correct spot for the tournament.  If you fail to enter in the correct information you risk being bumped by a team that fills out the information correctly.<p>
-
-<p class="blurb">
-    The cost for this tournament is <strong>$<?php echo $this->tournamentInfo->cost; ?></strong>, which you may pay upon successful bid submission with paypal.  If you have already submitted a bid and would just like to pay the tournament fee you may go <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_payment'); ?>">here</a> for payment information.
-</p>
-<div class="bid">
-    <form method="post">
-        <div class="team">
-            <h2>Team Information:</h2>
-            <?php echo $this->form->name; ?>
-            <?php echo $this->form->city; ?>
-            <?php echo $this->form->state; ?>
-            <?php echo $this->form->division; ?>
-        </div>
-        <div class="contact">
-            <h2 class="pad">Team Contact Information:</h2>
-            <?php echo $this->form->contact_name; ?>
-            <?php echo $this->form->contact_email; ?>
-            <?php echo $this->form->contact_phone; ?>
-        </div>
-        <div class="comments">
-            <h2 class="pad">Comments:</h2>
-            <?php echo $this->form->comments; ?>
-            <?php echo $this->form->bid; ?>
-        </div>
-    </form>
+<div class="span11 actions pull-right">
+    <div class="btn-group pull-right">
+        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_edit'); ?>"><i class="icon-book"></i> Edit Bid Information</a>
+        <?php endif; ?>
+    </div>
 </div>
-<?php elseif(empty($this->tournamentInfo->bid_due)): ?>
-<p class="blurb">
-    The bid submission has not been enabled yet.  Please check back at a later time.  You may contact the tournament director(s) <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.
-<p>
+<div class="page-content">
+    <div class="row">
+        <?php if(!empty($this->tournamentInfo->bid_due)): ?>
+        <div class="pull-right">
+            <a class="btn btn-small btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_payment'); ?>">Make Payment</a>
+        </div>
+        <?php endif; ?>
+        <div class="span12">
+            <h2>Bid Information</h2>
 
-<?php else: ?>
-<p class="blurb">
-    The date to submit a bid has passed so you may not submit a bid.  If you want to contact the tournament director you may do so <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.  If you have already submitted a bid and would like to pay for the tournament you may find more information about payments <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_payment'); ?>">here</a>.
-<p>
-<?php endif; ?>
+            <div>
+            <?php if($this->tournamentInfo->bid_due > date('Y-m-d H:i:s')): ?>
+            <p>To submit a bid you must fill out this form with you and your team's information.  Please fill in all information so we can enter you into the correct spot for the tournament.  If you fail to enter in the correct information you risk being bumped by a team that fills out the information correctly.<p>
+
+            <p>
+                The cost for this tournament is <strong>$<?php echo $this->tournamentInfo->cost; ?></strong>, which you may pay upon successful bid submission with paypal.  If you have already submitted a bid and would just like to pay the tournament fee you may go <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_payment'); ?>">here</a> for payment information.
+            </p>
+
+            <div class="offset1 span10">
+                <?php echo $this->form; ?>
+            </div>
+            <?php elseif(empty($this->tournamentInfo->bid_due)): ?>
+            <p>
+                The bid submission has not been enabled yet.  Please check back at a later time.  You may contact the tournament director(s) <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.
+            <p>
+            <?php else: ?>
+            <p>
+                The date to submit a bid has passed so you may not submit a bid.  If you want to contact the tournament director you may do so <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.  If you have already submitted a bid and would like to pay for the tournament you may find more information about payments <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_bid_payment'); ?>">here</a>.
+            <p>
+            <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>

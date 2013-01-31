@@ -1,14 +1,7 @@
-<h1>Edit Tournament Description</h1>
-
-<div id="edit-container">
-    <form method="post">
-        <div class="row">
-            <?php echo $this->form->description; ?>
+<div class="page-content">
+    <div class="row">
+        <div class="offset1 span10">
+            <?php echo $this->form; ?>
         </div>
-        <div id="buttons-container">
-            <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_home'); ?>">Cancel</a>
-        </div>
-    </form>
-</div>
-<?php echo $this->partial('tinymce.phtml', array('element' => 'description', 'css' => '/css/tournament/home.css')); ?>
+    </div>
+<div>

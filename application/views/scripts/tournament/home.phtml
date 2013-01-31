@@ -1,3 +1,10 @@
+<div class="span11 actions pull-right">
+    <div class="btn-group pull-right">
+        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_update_add'); ?>"><i class="icon-book"></i> Add Update</a>
+        <?php endif; ?>
+    </div>
+</div>
 <div class="page-content">
     <div class="row">
         <div class="span8">
@@ -15,7 +22,7 @@
                 <div class="pull-right">
                     <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
-                    <a class="btn btn-mini btn-danger" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+                    <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you would like to delete this update?');" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
                     <?php endif; ?>
                 </div>
                 <strong><?php echo $this->escape($update->title); ?></strong><br/>

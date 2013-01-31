@@ -2,8 +2,8 @@
 
 class TournamentController extends Zend_Controller_Action
 {
-    private $_name;
-    private $_year;
+    protected $_name;
+    protected $_year;
 
     public function init()
     {
@@ -50,49 +50,54 @@ class TournamentController extends Zend_Controller_Action
     {
         $this->view->section = 'home';
 
-        if($this->getRequest()->isPost()) {
-            if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
-            }
-
-            $this->_helper->layout()->disableLayout();
-            $this->_helper->viewRenderer->setNoRender(true);
-
-            $post = $this->getRequest()->getPost();
-            $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
-
-            if($tournamentUpdateTable->isUnique($this->view->tournament->id, $post['title'])) {
-
-                $updateId = $tournamentUpdateTable->insert(array(
-                    'tournament_id' => $this->view->tournament->id,
-                    'title' => $post['title'],
-                    'content' => 'Update text here',
-                    'posted' => date('Y-m-d H:i:s'),
-                ));
-
-                $this->view->message('Tournament update created.', 'success');
-                echo Zend_Json::encode(array('result' => 'success', 'url' => $this->view->baseUrl() . '/tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/updateedit/' . $updateId));
-            } else {
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Name Already Exists'));
-                return;
-            }
-        }
-
         $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
         $this->view->updates = $tournamentUpdateTable->fetchUpdates($this->view->tournament->id);
     }
 
+    public function updateaddAction()
+    {
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+        }
+
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'update');
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
+                $tournamentUpdateTable->insert(array(
+                    'tournament_id' => $this->view->tournament->id,
+                    'title' => $data['title'],
+                    'content' => $data['content'],
+                    'posted' => date('Y-m-d H:i:s'),
+                ));
+
+                $this->view->message('Tournament update created.', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+            }
+        }
+
+        $this->view->form = $form;
+    }
+
     public function homeeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/homeedit.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
         $this->view->section = 'home';
 
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
         }
 
-
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
         $form = new Form_TournamentEdit($this->view->tournament->id, 'home');
 
         if($this->getRequest()->isPost()) {
@@ -120,13 +125,12 @@ class TournamentController extends Zend_Controller_Action
 
     public function updateeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/homeedit.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
         $this->view->section = 'home';
 
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
         }
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $updateId = $this->getRequest()->getUserParam('update_id');
         $form = new Form_TournamentEdit($this->view->tournament->id, 'update', $updateId);
@@ -147,10 +151,8 @@ class TournamentController extends Zend_Controller_Action
                 $update->content = $data['content'];
                 $update->save();
 
-                $this->view->message('Tournament update', 'success');
+                $this->view->message('Tournament update modified', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -174,12 +176,16 @@ class TournamentController extends Zend_Controller_Action
 
     public function bidAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/bid.css');
         $this->view->section = 'bid';
 
         $form = new Form_TournamentEdit($this->view->tournament->id, 'bidsubmit');
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/bid');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
@@ -201,7 +207,6 @@ class TournamentController extends Zend_Controller_Action
                     $team->accepted = 0;
                     $team->paid = 0;
                     $team->save();
-
 
                     $mail = new Zend_Mail();
                     $mail->setFrom('webmaster@cincyultimate.org');
@@ -229,7 +234,15 @@ class TournamentController extends Zend_Controller_Action
                     }
                     $body .= "\r\nTournament Directors,\r\n";
                     $body .= "  A team has submitted a bid to the tournament.  Details below:\r\n\r\n";
-                    $body .= print_r($team->toArray(), true);
+                    foreach($team as $key => $value) {
+                        if(!in_array($key, array('id', 'tournament_id', 'accepted', 'paid'))) {
+                            if($key == 'division') {
+                                $body .= 'Division: ' . $division->name . "\r\n";
+                            } else {
+                                $body .= ucwords(str_replace('_', ' ', $key)) . ': ' . $value . "\r\n";
+                            }
+                        }
+                    }
                     $body .= "\r\n\r\nThanks,\r\nCUPA Tournament System";
                     $mail->setBodyText($body);
 
@@ -241,15 +254,9 @@ class TournamentController extends Zend_Controller_Action
                     } else {
                         Zend_Debug::dump($mail);
                     }
-
-
                 } else {
                     $this->view->message('The team `' . $data['name'] . '` in the `' . $division->name . '` division has already submitted a bid.', 'error');
-                    $form->populate($post);
                 }
-
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -258,66 +265,75 @@ class TournamentController extends Zend_Controller_Action
 
     public function bideditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/bidedit.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/bidedit.js');
         $this->view->section = 'bid';
 
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/bid');
         }
 
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
+
         //edit the cost, due date, mail payment, paypal
         $form = new Form_TournamentEdit($this->view->tournament->id, 'bid');
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/bid');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
                 $this->view->tournamentInfo->cost = $data['cost'];
-                $this->view->tournamentInfo->bid_due = $data['bid_due'];
+                $this->view->tournamentInfo->bid_due = date('Y-m-d H:i:s', strtotime($data['bid_due']));
                 $this->view->tournamentInfo->paypal = (empty($data['paypal'])) ? null : $data['paypal'];
                 $this->view->tournamentInfo->mail_payment = (empty($data['mail_payment'])) ? null : $data['mail_payment'];
                 $this->view->tournamentInfo->save();
 
                 $this->view->message('Bid setting saved', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/bid');
-
-            } else {
-                $form->populate($post);
             }
         }
 
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
         $this->view->form = $form;
     }
 
     public function paymentAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/payment.css');
         $this->view->section = 'bid';
     }
 
     public function teamsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/teams.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/teams.js');
+        $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+        $this->view->teams = $tournamentTeamTable->fetchAllTeams($this->view->tournament->id);
+
+        $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
+        $this->view->divisions = $tournamentDivisionTable->fetchDivisions();
+    }
+
+    public function teamsaddAction()
+    {
         $this->view->section = 'teams';
 
-        if($this->getRequest()->isPost()) {
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'team');
 
+        if($this->getRequest()->isPost()) {
             if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
             }
 
-            // disable the layout
-            $this->_helper->layout()->disableLayout();
-            $this->_helper->viewRenderer->setNoRender(true);
-
             $post = $this->getRequest()->getPost();
 
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                Zend_Debug::dump($data);
+            }
+/*
             if(isset($post['team']) and isset($post['division'])) {
                 $tournamentTeamTable = new Model_DbTable_TournamentTeam();
                 if($tournamentTeamTable->isUnique($this->view->tournament->id, $post['team'], $post['division'])) {
@@ -333,13 +349,11 @@ class TournamentController extends Zend_Controller_Action
             }
 
             echo Zend_Json::encode(array('result' => 'error', 'message' => 'Could not create team'));
+            */
         }
 
-        $tournamentTeamTable = new Model_DbTable_TournamentTeam();
-        $this->view->teams = $tournamentTeamTable->fetchAllTeams($this->view->tournament->id);
+        $this->view->form = $form;
 
-        $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
-        $this->view->divisions = $tournamentDivisionTable->fetchDivisions();
     }
 
     public function teamdeleteAction()
@@ -647,30 +661,48 @@ class TournamentController extends Zend_Controller_Action
 
     public function adminAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/admin.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/admin.js');
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
+
         $form = new Form_TournamentEdit($this->view->tournament->id, 'admin');
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
+
                 $this->view->tournament->display_name = $data['display_name'];
                 $this->view->tournament->is_visible = $data['is_visible'];
+                $this->view->tournament->use_bid = $data['use_bid'];
                 $this->view->tournament->save();
 
-                $this->view->tournamentInfo->start = $data['start'];
-                $this->view->tournamentInfo->end = $data['end'];
+                $this->view->tournamentInfo->start = date('Y-m-d', strtotime($data['start']));
+                $this->view->tournamentInfo->end = date('Y-m-d', strtotime($data['end']));
                 $this->view->tournamentInfo->save();
+
+                if(!empty($data['image'])) {
+                    $destination = APPLICATION_WEBROOT . '/images/tournaments/' . $this->view->tournament->name . '.jpg';
+                    $simpleImage = new Model_SimpleImage();
+                    $simpleImage->load($_FILES['image']['tmp_name']);
+                    $simpleImage->resize(960, 150);
+                    $simpleImage->save($destination);
+                }
 
                 $this->view->message('Tournament settings updated.', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
-            } else {
-                $form->populate($post);
             }
         }
 
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
         $this->view->form = $form;
     }
 }

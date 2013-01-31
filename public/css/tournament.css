@@ -95,8 +95,9 @@ nav ul li.active a {
 
 .messages {
     margin-top: 15px;
-    position: absolute;
+    position: absolute
 }
+
 .messages {
     margin-left: -10px;
 }
@@ -131,3 +132,7 @@ footer {
     margin-top: 0;
 }
 
+.actions {
+    position: absolute;
+    margin-top: -80px;
+}

@@ -1,63 +1,59 @@
-<h1>Current Teams</h1>
- <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
- <div class="actions">
-    <a class="button" id="add-team" href="#">Add Team</a>
-    <div id="add-team-container">
-        <input type="hidden" id="tournament-name" value="<?php echo $this->escape($this->tournament->name); ?>"/>
-        <input type="hidden" id="tournament-year" value="<?php echo $this->escape($this->tournament->year); ?>"/>
-        <div class="row">
-            Division:
-            <select id="team-division">
-                <?php foreach($this->divisions as $division): ?>
-                <option value="<?php echo $this->escape($division->id); ?>"><?php echo $this->escape(ucwords($division->name)); ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="row">
-            Name: <input type="text" id="team-name"/>
-        </div>
-        <div id="error-string"></div>
+<div class="span11 actions pull-right">
+    <div class="btn-group pull-right">
+        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_teamadd'); ?>"><i class="icon-book"></i> Add Team</a>
+        <?php endif; ?>
     </div>
 </div>
-<?php endif; ?>
-<div class="blurb">
-    <p>If you have any questions about your teams status you may contact the tournament director <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact'); ?>">here</a>.</p>
-</div>
-<div id="tabs">
-    <ul>
-        <?php foreach($this->teams as $division => $teams): ?>
-        <li><a href="#division-<?php echo $this->escape(str_replace(' ', '', $division)); ?>"><?php echo $this->escape(ucwords($division)); ?> Division</a></li>
-        <?php endforeach; ?>
-    </ul>
+<div class="page-content">
+    <div class="row">
+        <div class="span12">
+            <h2>Current Teams</h2>
 
-    <?php foreach($this->teams as $division => $teams): ?>
-    <div id="division-<?php echo $this->escape(str_replace(' ', '', $division)); ?>">
-        <div class="team header">
-            <div class="name">Team</div>
-            <div class="location">Location</div>
-            <div class="paid">Paid</div>
-            <div class="accepted">Accepted</div>
-            <div class="remove">&nbsp;</div>
-            <div class="clearfix"></div>
-        </div>
-
-        <?php $this->cycle(array('even', 'odd')); ?>
-        <?php foreach($teams as $team): ?>
-        <div class="team <?php echo $this->cycle()->next(); ?>">
-            <div class="name"><?php echo $this->escape(ucwords($team['name'])); ?></div>
-            <div class="location"><?php echo $this->escape($team['city']); ?>, <?php echo $this->escape($team['state']); ?></div>
-            <div class="paid"><span class="<?php echo ($team['paid'] == 1) ? 'yes' : 'no'; ?>"><?php echo ($team['paid'] == 1) ? 'Yes' : 'No'; ?></span></div>
-            <div class="accepted"><span class="<?php echo ($team['accepted'] == 1) ? 'yes' : 'no'; ?>"><?php echo ($team['accepted'] == 1) ? 'Yes' : 'No'; ?></span></div>
-            <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-            <div class="remove">
-                <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamedit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
-                <a class="remove-link" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamdelete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
+            <div class="tabbable">
+                <ul class="nav nav-tabs">
+                    <?php $i = 0; ?>
+                    <?php foreach($this->teams as $division => $teams): ?>
+                    <li<?php echo ($i == 0) ? ' class="active"' : ''; ?>><a data-toggle="tab" href="#<?php echo $this->escape(str_replace(' ', '', $division)); ?>"><?php echo $this->escape(ucwords($division)); ?> Division</a></li>
+                    <?php $i++; ?>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="tab-content">
+                    <?php $i = 0; ?>
+                    <?php foreach($this->teams as $division => $teams): ?>
+                    <div class="tab-pane<?php echo ($i == 0) ? ' active' : ''; ?>" id="<?php echo $this->escape(str_replace(' ', '', $division)); ?>">
+                        <table class="table table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span4">Team</th>
+                                    <th class="span3">Location</th>
+                                    <th class="span1">Paid</th>
+                                    <th class="span1">Accepted</th>
+                                    <th class="span4">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($teams as $team): ?>
+                                <tr>
+                                    <td><?php echo $this->escape(ucwords($team['name'])); ?></td>
+                                    <td><?php echo $this->escape($team['city']); ?>, <?php echo $this->escape($team['state']); ?></td>
+                                    <td style="text-align: center;"><span class="<?php echo ($team['paid'] == 1) ? 'text-success' : 'text-error'; ?>"><?php echo ($team['paid'] == 1) ? 'Yes' : 'No'; ?></span></td>
+                                    <td style="text-align: center;"><span class="<?php echo ($team['accepted'] == 1) ? 'text-success' : 'text-error'; ?>"><?php echo ($team['accepted'] == 1) ? 'Yes' : 'No'; ?></span></td>
+                                    <td>
+                                        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+                                        <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamedit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                                        <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to delete this team?');" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'team_id' => $team['id']), 'tournament_teamdelete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php $i++; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
-            <?php endif; ?>
-            <div class="clearfix"></div>
         </div>
-       <?php endforeach; ?>
     </div>
-    <?php endforeach; ?>
-    <div class="clearfix">&nbsp;</div>
 </div>

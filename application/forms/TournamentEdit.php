@@ -1,6 +1,6 @@
 <?php
 
-class Form_TournamentEdit extends Zend_Form
+class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
 {
     private $_state;
     private $_tournament;
@@ -28,6 +28,53 @@ class Form_TournamentEdit extends Zend_Form
         if($state && method_exists($this, $state)) {
             $this->$state();
         }
+
+        if(in_array($state, array('update', 'home', 'admin', 'bid'))) {
+            $this->addElement('button', 'save', array(
+                'type' => 'submit',
+                'label' => 'Update',
+                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+                'escape' => false,
+                'icon' => 'hdd',
+                'whiteIcon' => true,
+                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+            ));
+
+
+            $this->addElement('button', 'cancel', array(
+                'type' => 'submit',
+                'label' => 'Cancel',
+            ));
+
+
+            $this->addDisplayGroup(
+                array('save', 'cancel'),
+                'profile_actions',
+                array(
+                    'disableLoadDefaultDecorators' => true,
+                    'decorators' => array('Actions'),
+                )
+            );
+        } else if(in_array($state, array('bidsubmit'))) {
+            $this->addElement('button', 'save', array(
+                'type' => 'submit',
+                'label' => 'Submit Bid',
+                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+                'escape' => false,
+                'icon' => 'hdd',
+                'whiteIcon' => true,
+                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+            ));
+
+            $this->addDisplayGroup(
+                array('save', 'cancel'),
+                'profile_actions',
+                array(
+                    'disableLoadDefaultDecorators' => true,
+                    'decorators' => array('Actions'),
+                )
+            );
+        }
     }
 
     public function home()
@@ -35,7 +82,8 @@ class Form_TournamentEdit extends Zend_Form
         $this->addElement('textarea', 'description', array(
             'required' => true,
             'filters' => array('StringTrim'),
-            'label' => 'Enter the tournament description:',
+            'class' => 'ckeditor',
+            'label' => 'Description:',
             'value' => $this->_tournamentInfo->description,
         ));
     }
@@ -48,16 +96,26 @@ class Form_TournamentEdit extends Zend_Form
         $this->addElement('text', 'title', array(
             'required' => true,
             'filters' => array('StringTrim'),
-            'label' => 'Enter the update title:',
+            'label' => 'Title:',
+            'class' => 'span5',
             'value' => (isset($tournamentUpdate->title)) ? $tournamentUpdate->title : null,
         ));
 
         $this->addElement('textarea', 'content', array(
             'required' => true,
             'filters' => array('StringTrim'),
-            'label' => 'Enter the update text:',
+            'label' => 'Content:',
+            'class' => 'ckeditor',
             'value' => (isset($tournamentUpdate->content)) ? $tournamentUpdate->content : null,
         ));
+
+        $this->addDisplayGroup(
+            array('title', 'content'),
+            'tournament_update_form',
+            array(
+                'legend' => (isset($tournamentUpdate->title)) ? 'Update tournament update' : 'Add tournament update',
+            )
+        );
     }
 
     public function bidsubmit()
@@ -65,6 +123,7 @@ class Form_TournamentEdit extends Zend_Form
         $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
+            'class' => 'span4',
             'label' => 'Name:',
         ));
 
@@ -72,6 +131,7 @@ class Form_TournamentEdit extends Zend_Form
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'City:',
+            'class' => 'span3',
         ));
 
         $states = array(
@@ -164,6 +224,7 @@ class Form_TournamentEdit extends Zend_Form
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
+            'class' => 'span5',
         ));
 
         $this->addElement('text', 'contact_phone', array(
@@ -173,6 +234,8 @@ class Form_TournamentEdit extends Zend_Form
                 array('Regex', false, array('pattern' => '/^\d\d\d-\d\d\d-\d\d\d\d$/')),
             ),
             'label' => 'Phone:',
+            'class' => 'span2',
+            'style' => 'text-align: center',
         ));
         $this->getElement('contact_phone')->addErrorMessage('Invalid phone number ###-###-####.');
 
@@ -183,18 +246,39 @@ class Form_TournamentEdit extends Zend_Form
                 array('EmailAddress'),
             ),
             'label' => 'Email:',
+            'class' => 'span5',
         ));
         $this->getElement('contact_email')->addErrorMessage('Invalid email address.');
 
         $this->addElement('textarea', 'comments', array(
             'filters' => array('StringTrim'),
+            'class' => 'span5',
+            'style' => 'height: 125px;',
         ));
 
-        $this->addElement('submit', 'bid', array(
-            'required' => true,
-            'label' => 'Submit Bid',
-        ));
+        $this->addDisplayGroup(
+            array('name', 'city', 'state', 'division'),
+            'tournament_bid_team_form',
+            array(
+                'legend' => 'Team Information',
+            )
+        );
 
+        $this->addDisplayGroup(
+            array('contact_name', 'contact_phone', 'contact_email'),
+            'tournament_bid_contact_form',
+            array(
+                'legend' => 'Team Contact Information',
+            )
+        );
+
+        $this->addDisplayGroup(
+            array('comments'),
+            'tournament_bid_other_form',
+            array(
+                'legend' => 'Comments',
+            )
+        );
     }
 
     private function bid()
@@ -202,6 +286,9 @@ class Form_TournamentEdit extends Zend_Form
         $this->addElement('text', 'cost', array(
             'required' => true,
             'label' => 'Cost:',
+            'class' => 'span1',
+            'style' => 'text-align: center;',
+            'prepend' => '$',
             'filters' => array('StringTrim'),
             'value' => (isset($this->_tournamentInfo->cost)) ? $this->_tournamentInfo->cost : null,
         ));
@@ -209,14 +296,18 @@ class Form_TournamentEdit extends Zend_Form
         $this->addElement('text', 'bid_due', array(
             'required' => true,
             'label' => 'Bid Due:',
+            'class' => 'datetimepicker span3',
+            'style' => 'text-align: center;',
             'filters' => array('StringTrim'),
-            'value' => (isset($this->_tournamentInfo->bid_due)) ? $this->_tournamentInfo->bid_due : null,
+            'value' => (isset($this->_tournamentInfo->bid_due)) ? date('m/d/Y H:i', strtotime($this->_tournamentInfo->bid_due)) : null,
         ));
 
         $this->addElement('textarea', 'paypal', array(
             'required' => true,
             'label' => 'Paypal Button HTML:',
             'filters' => array('StringTrim'),
+            'class' => 'span7',
+            'style' => 'height: 200px;',
             'value' => (isset($this->_tournamentInfo->paypal)) ? $this->_tournamentInfo->paypal : null,
         ));
 
@@ -224,21 +315,34 @@ class Form_TournamentEdit extends Zend_Form
             'required' => true,
             'label' => 'Mail Payments To:',
             'filters' => array('StringTrim'),
+            'class' => 'span4',
+            'style' => 'height: 100px;',
             'value' => (isset($this->_tournamentInfo->mail_payment)) ? $this->_tournamentInfo->mail_payment : null,
         ));
+
+        $this->addDisplayGroup(
+            array('cost', 'bid_due', 'paypal', 'mail_payment'),
+            'tournament_bid_form',
+            array(
+                'legend' => 'Update bid information',
+            )
+        );
     }
 
     public function team()
     {
         $tournamentTeamTable = new Model_DbTable_TournamentTeam();
-        $team = $tournamentTeamTable->find($this->_id)->current();
 
         $this->bidsubmit();
 
-        foreach($team as $key => $value) {
-            $element = $this->getElement($key);
-            if($element) {
-                $element->setValue($value);
+        $team = null;
+        if($this->_id) {
+            $team = $tournamentTeamTable->find($this->_id)->current();
+            foreach($team as $key => $value) {
+                $element = $this->getElement($key);
+                if($element) {
+                    $element->setValue($value);
+                }
             }
         }
 
@@ -264,6 +368,7 @@ class Form_TournamentEdit extends Zend_Form
             'required' => true,
             'label' => 'Display name:',
             'filters' => array('StringTrim'),
+            'class' => 'span4',
             'description' => 'Enter the name you would like displayed in the header',
             'value' => (isset($this->_tournament->display_name)) ? $this->_tournament->display_name : null,
         ));
@@ -272,16 +377,36 @@ class Form_TournamentEdit extends Zend_Form
             'required' => true,
             'label' => 'Start Date:',
             'description' => 'Tournament start date',
-            'value' => (isset($this->_tournamentInfo->start)) ? $this->_tournamentInfo->start : null,
-            'class' => 'datepicker',
+            'class' => 'span2 datepicker',
+            'style' => 'text-align: center',
+            'value' => (isset($this->_tournamentInfo->start)) ? date('m/d/Y', strtotime($this->_tournamentInfo->start)) : null,
         ));
 
         $this->addElement('text', 'end', array(
             'required' => true,
             'label' => 'End Date:',
             'description' => 'Tournament End date',
-            'value' => (isset($this->_tournamentInfo->end)) ? $this->_tournamentInfo->end : null,
-            'class' => 'datepicker',
+            'class' => 'span2 datepicker',
+            'style' => 'text-align: center',
+            'value' => (isset($this->_tournamentInfo->end)) ? date('m/d/Y', strtotime($this->_tournamentInfo->end)) : null,
+        ));
+
+        $this->addElement('file', 'image', array(
+            'label' => 'Header Image:',
+            'required' => false,
+            'validators' => array(
+                array('Count', false, 1),
+                array('Extension', false, 'jpg,png,gif'),
+            ),
+            'valueDisabled' => true,
+            'description' => '(Not Required)',
+        ));
+
+        $this->addElement('checkbox', 'use_bid', array(
+            'required' => true,
+            'label' => 'Use Bid System:',
+            'description' => 'Check this box to use the build it bid system.',
+            'value' => (isset($this->_tournament->use_bid)) ? $this->_tournament->use_bid : null,
         ));
 
         $this->addElement('checkbox', 'is_visible', array(
@@ -291,6 +416,13 @@ class Form_TournamentEdit extends Zend_Form
             'value' => (isset($this->_tournament->is_visible)) ? $this->_tournament->is_visible : null,
         ));
 
+        $this->addDisplayGroup(
+            array('display_name', 'start', 'end', 'image', 'use_bid', 'is_visible'),
+            'tournament_update_form',
+            array(
+                'legend' => 'Update tournament information',
+            )
+        );
     }
 
     private function contact()
