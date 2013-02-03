@@ -402,28 +402,32 @@ class TournamentController extends Zend_Controller_Action
 
     public function scheduleeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/schedule.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-        $this->view->section = 'schedule';
-
-        $form = new Form_TournamentEdit($this->view->tournament->id, 'schedule');
-
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/schedule');
         }
 
+        $this->view->section = 'schedule';
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'schedule');
+
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/schedule');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
+
                 $this->view->tournamentInfo->scorereporter_link = (!empty($data['scorereporter_link'])) ? $data['scorereporter_link'] : null;
                 $this->view->tournamentInfo->schedule_text = $data['schedule_text'];
                 $this->view->tournamentInfo->save();
 
                 $this->view->message('Schedule updated.', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/schedule');
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -432,22 +436,25 @@ class TournamentController extends Zend_Controller_Action
 
     public function locationAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/location.css');
         $this->view->section = 'location';
     }
 
     public function locationeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/location.css');
-        $this->view->section = 'location';
-
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/location');
         }
 
+        $this->view->section = 'location';
+
         $form = new Form_TournamentEdit($this->view->tournament->id, 'location');
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/location');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $this->view->tournamentInfo->location = $data['location'];
@@ -459,8 +466,6 @@ class TournamentController extends Zend_Controller_Action
 
                 $this->view->message('Location updated', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/location');
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -469,17 +474,55 @@ class TournamentController extends Zend_Controller_Action
 
     public function lodgingAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/lodging.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/lodging.js');
         $this->view->section = 'lodging';
 
         $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
         $this->view->lodging = $tournamentLodgingTable->fetchAllLodgings($this->view->tournament->id);
     }
 
+    public function lodgingaddAction()
+    {
+        $this->view->section = 'lodging';
+
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
+        }
+
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'lodging');
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
+
+                $lodging = $tournamentLodgingTable->createRow();
+                $lodging->tournament_id = $this->view->tournament->id;
+                $lodging->title = $data['title'];
+                $lodging->street = $data['street'];
+                $lodging->city = $data['city'];
+                $lodging->state = $data['state'];
+                $lodging->zip = $data['zip'];
+                $lodging->phone = (empty($data['phone'])) ? null : $data['phone'];
+                $lodging->link = (empty($data['link'])) ? null : $data['link'];
+                $lodging->other = (empty($data['other'])) ? null : $data['other'];
+                $lodging->save();
+
+                $this->view->message('Lodging created.', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
+            }
+        }
+
+        $this->view->form = $form;
+    }
+
     public function lodgingeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/lodging.css');
         $this->view->section = 'lodging';
 
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
@@ -491,6 +534,11 @@ class TournamentController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
@@ -501,13 +549,13 @@ class TournamentController extends Zend_Controller_Action
                 $lodging->city = $data['city'];
                 $lodging->state = $data['state'];
                 $lodging->zip = $data['zip'];
+                $lodging->phone = (empty($data['phone'])) ? null : $data['phone'];
+                $lodging->link = (empty($data['link'])) ? null : $data['link'];
                 $lodging->other = (empty($data['other'])) ? null : $data['other'];
 
                 $lodging->save();
                 $this->view->message('Lodging updated.', 'success');
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -534,14 +582,6 @@ class TournamentController extends Zend_Controller_Action
         }
 
         $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
-    }
-
-    public function lodgingaddAction()
-    {
-        $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
-        $lodgingId = $tournamentLodgingTable->addNewLodging($this->view->tournament->id);
-
-        $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodgingedit/' . $lodgingId);
     }
 
     public function contactAction()

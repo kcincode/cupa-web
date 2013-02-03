@@ -1,28 +1,33 @@
-<h1>Location Information</h1>
-<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-<div class="page-actions">
-    <a class="button" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_location_edit'); ?>">Edit Location Information</a>
+<div class="span11 actions pull-right">
+    <div class="btn-group pull-right">
+        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_location_edit'); ?>"><i class="icon-book"></i> Edit Location</a>
+        <?php endif; ?>
+    </div>
 </div>
-<?php endif; ?>
-
-<div class="map">
-    <div class="title">
-        <a target="_blank" href="<?php echo $this->generateMapSearchUrl($this->tournamentInfo); ?>" style="color:#0000FF;text-align:left"><?php echo $this->escape($this->tournamentInfo->location); ?></a>
+<div class="page-content">
+    <div class="row">
+        <div class="span12">
+            <h2>Location Information</h2>
+        </div>
     </div>
-    <div class="address">
-        <?php echo $this->escape($this->tournamentInfo->location_street); ?><br/>
-        <?php echo $this->escape($this->tournamentInfo->location_city); ?>,
-        <?php echo $this->escape($this->tournamentInfo->location_state); ?>
-        <?php echo $this->escape($this->tournamentInfo->location_zip); ?>
+    <div class="row">
+        <div class="span12">
+            <p style="text-align: center;">
+                <a class="btn btn-mini btn-info" target="_blank" href="<?php echo $this->generateMapSearchUrl($this->tournamentInfo); ?>"><?php echo $this->escape($this->tournamentInfo->location); ?></a><br/>
+                <?php echo $this->escape($this->tournamentInfo->location_street); ?><br/>
+                <?php echo $this->escape($this->tournamentInfo->location_city); ?>, <?php echo $this->escape($this->tournamentInfo->location_state); ?> <?php echo $this->escape($this->tournamentInfo->location_zip); ?><br/>
+            </p>
+            <p style="text-align: center;">
+                <iframe width="725"
+                        height="450"
+                        frameborder="0"
+                        scrolling="no"
+                        marginheight="0"
+                        marginwidth="0"
+                        src="<?php echo $this->generateMapSearchUrl($this->tournamentInfo); ?>&amp;output=embed">
+                </iframe>
+            </p>
+        </div>
     </div>
-
-    <iframe width="725"
-            height="450"
-            frameborder="0"
-            scrolling="no"
-            marginheight="0"
-            marginwidth="0"
-            src="<?php echo $this->generateMapSearchUrl($this->tournamentInfo); ?>&amp;output=embed">
-    </iframe>
-
 </div>

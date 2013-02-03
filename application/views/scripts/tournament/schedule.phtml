@@ -1,17 +1,24 @@
-<h1>Schedule Information</h1>
-<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-<div class="page-actions">
-    <a class="button" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_schedule_edit'); ?>">Edit Schedule Information</a>
+<div class="span11 actions pull-right">
+    <div class="btn-group pull-right">
+        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_schedule_edit'); ?>"><i class="icon-book"></i> Edit Schedule</a>
+        <?php endif; ?>
+    </div>
 </div>
-<?php endif; ?>
-<?php if(!empty($this->tournamentInfo->scorereporter_link)): ?>
-<h2>Score Reporter Link:</h2>
-<div id="score-reporter">
-    <a target="_blank" href="<?php echo $this->tournamentInfo->scorereporter_link; ?>"><?php echo $this->escape($this->tournament->year . ' ' . ucwords($this->tournament->display_name)); ?> on score reporter</a>
-</div>
-<?php endif; ?>
-
-<h2>General information:</h2>
-<div id="schedule-info">
-    <?php echo $this->tournamentInfo->schedule_text; ?>
+<div class="page-content">
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">Schedule Information</h2>
+            <?php if(!empty($this->tournamentInfo->scorereporter_link)): ?>
+            <a class="btn btn-info pull-right" target="_blank" href="<?php echo $this->tournamentInfo->scorereporter_link; ?>"><?php echo $this->escape($this->tournament->year . ' ' . ucwords($this->tournament->display_name)); ?> on score reporter</a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <p>
+                <?php echo $this->tournamentInfo->schedule_text; ?>
+            </p>
+        </div>
+    </div>
 </div>

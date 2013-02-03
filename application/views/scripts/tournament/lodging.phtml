@@ -1,38 +1,47 @@
-<h1>Lodging Information</h1>
-<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-<div class="page-actions">
-    <a class="button" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_lodging_add'); ?>">Add Lodging Information</a>
-</div>
-<?php endif; ?>
-
-<div class="map">
-    <iframe width="425"
-            height="450"
-            frameborder="0"
-            scrolling="no"
-            marginheight="0"
-            marginwidth="0"
-            src="<?php echo $this->generateMapSearchUrl($this->tournamentInfo, true); ?>&amp;output=embed">
-    </iframe>
-    <a target="_blank" href="<?php echo $this->generateMapSearchUrl($this->tournamentInfo, true); ?>" style="color:#0000FF;text-align:left">Map in new window</a>
-</div>
-
-<div id="lodging">
-    <?php foreach($this->lodging as $item): ?>
-    <div class="item">
+<div class="span11 actions pull-right">
+    <div class="btn-group pull-right">
         <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-        <div class="actions">
-            <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png" title="Edit Lodging"/></a>
-            <a class="delete" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Remove Lodging"/></a>
-        </div>
+        <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_lodging_add'); ?>"><i class="icon-book"></i> Add Lodging</a>
         <?php endif; ?>
-        <div class="title">
-            <a href="<?php echo $this->escape($item->link); ?>"><?php echo $this->escape($item->title); ?></a>
-        </div>
-        <div class="street"><?php echo $this->escape($item->street); ?></div>
-        <div class="city"><?php echo $this->escape($item->city . ', ' . $item->state . ' ' . $item->zip); ?></div>
-        <div class="phone"><?php echo $this->escape($item->phone); ?></div>
-        <div class="other"><?php echo $this->escape($item->other); ?></div>
     </div>
-    <?php endforeach; ?>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span12">
+            <h2>Lodging Information</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span6">
+            <?php foreach($this->lodging as $item): ?>
+            <div class="well well-small">
+                <div class="pull-right">
+                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <a onclick="return confirm('Are you sure you would like to delete this lodging?');" class="btn btn-mini btn-danger" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+
+                </div>
+                <h4><a href="<?php echo $this->escape($item->link); ?>"><?php echo $this->escape($item->title); ?></a></h4>
+                <p>
+                    <?php echo $this->escape($item->street); ?><br/>
+                    <?php echo $this->escape($item->city . ', ' . $item->state . ' ' . $item->zip); ?><br/>
+                    <?php if(!empty($item->phone)): ?>
+                    <strong>Ph:</strong> <?php echo $this->escape($item->phone); ?><br/>
+                    <?php endif; ?><br/>
+                    <?php echo $this->escape($item->other); ?>
+                </p>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <div class="span6" style="text-align: center;">
+            <iframe width="425"
+                    height="450"
+                    frameborder="0"
+                    scrolling="no"
+                    marginheight="0"
+                    marginwidth="0"
+                    src="<?php echo $this->generateMapSearchUrl($this->tournamentInfo, true); ?>&amp;output=embed">
+            </iframe>
+            <a class="btn btn-info" target="_blank" href="<?php echo $this->generateMapSearchUrl($this->tournamentInfo, true); ?>">Map in new window</a>
+        </div>
+    </div>
 </div>

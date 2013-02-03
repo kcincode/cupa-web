@@ -29,7 +29,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             $this->$state();
         }
 
-        if(in_array($state, array('update', 'home', 'admin', 'bid', 'team'))) {
+        if(in_array($state, array('update', 'home', 'admin', 'bid', 'team', 'schedule', 'location', 'lodging'))) {
             $this->addElement('button', 'save', array(
                 'type' => 'submit',
                 'label' => 'Update',
@@ -482,15 +482,26 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             'required' => false,
             'description' => 'Leave blank to remove the link',
             'label' => 'Score Reporter Link:',
+            'class' => 'span6',
+            'style' => 'height: 50px;',
             'value' => (isset($this->_tournamentInfo->scorereporter_link)) ? $this->_tournamentInfo->scorereporter_link : null,
         ));
+
         $this->addElement('textarea', 'schedule_text', array(
             'required' => true,
             'description' => 'Enter the schedule information you want displayed on the page.',
             'label' => 'Schedule Information:',
-            'rows' => 28,
+            'class' => 'ckeditor',
             'value' => (isset($this->_tournamentInfo->schedule_text)) ? $this->_tournamentInfo->schedule_text : null,
         ));
+
+        $this->addDisplayGroup(
+            array('scorereporter_link', 'schedule_text'),
+            'tournament_schedule_form',
+            array(
+                'legend' => 'Update tournament schedule',
+            )
+        );
     }
 
     public function location()
@@ -530,6 +541,14 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'value' => (isset($this->_tournamentInfo->location_zip)) ? $this->_tournamentInfo->location_zip : null,
         ));
+
+        $this->addDisplayGroup(
+            array('location', 'location_street', 'location_city', 'location_state', 'location_zip'),
+            'tournament_location_form',
+            array(
+                'legend' => 'Update tournament location',
+            )
+        );
     }
 
     private function lodging()
@@ -626,6 +645,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             'label' => 'State:',
             'value' => (isset($lodging->state)) ? $lodging->state : null,
         ));
+
         $this->addElement('text', 'zip', array(
             'required' => true,
             'label' => 'Zipcode:',
@@ -633,11 +653,43 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             'value' => (isset($lodging->zip)) ? $lodging->zip : null,
         ));
 
+        $this->addElement('text', 'phone', array(
+            'filters' => array('StringTrim'),
+            'required' => false,
+            'validators' => array(
+                array('Regex', false, array('pattern' => '/^\d\d\d-\d\d\d-\d\d\d\d$/')),
+            ),
+            'label' => 'Phone:',
+            'class' => 'span2',
+            'style' => 'text-align: center',
+            'value' => (isset($lodging->phone)) ? $lodging->phone : null,
+        ));
+        $this->getElement('phone')->addErrorMessage('Invalid phone number ###-###-####.');
+
+
+        $this->addElement('textarea', 'link', array(
+            'required' => false,
+            'label' => 'URL Link:',
+            'filters' => array('StringTrim'),
+            'class' => 'span6',
+            'style' => 'height: 125px;',
+            'value' => (isset($lodging->link)) ? $lodging->link : null,
+        ));
         $this->addElement('textarea', 'other', array(
             'required' => false,
             'label' => 'Other infomation:',
             'filters' => array('StringTrim'),
+            'class' => 'span6',
+            'style' => 'height: 125px;',
             'value' => (isset($lodging->other)) ? $lodging->other : null,
         ));
+
+        $this->addDisplayGroup(
+            array('title', 'street', 'city', 'state', 'zip', 'phone', 'link', 'other'),
+            'tournament_lodging_form',
+            array(
+                'legend' => 'Update tournament lodging',
+            )
+        );
     }
 }
