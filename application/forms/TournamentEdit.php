@@ -29,7 +29,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             $this->$state();
         }
 
-        if(in_array($state, array('update', 'home', 'admin', 'bid'))) {
+        if(in_array($state, array('update', 'home', 'admin', 'bid', 'team'))) {
             $this->addElement('button', 'save', array(
                 'type' => 'submit',
                 'label' => 'Update',
@@ -254,6 +254,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'class' => 'span5',
             'style' => 'height: 125px;',
+            'label' => 'Comments',
         ));
 
         $this->addDisplayGroup(
@@ -276,7 +277,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             array('comments'),
             'tournament_bid_other_form',
             array(
-                'legend' => 'Comments',
+                'legend' => 'Other',
             )
         );
     }

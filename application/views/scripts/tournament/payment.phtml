@@ -10,17 +10,16 @@
         <div class="span12">
             <h2>Payment Information</h2>
 
+            <?php if(!empty($this->tournamentInfo->paypal)): ?>
             <div class="well">
-                <?php if(!empty($this->tournamentInfo->paypal)): ?>
                 <p>
                     If you would like to pay via paypal you may do so below.  Just select the type of payment if there is one and click the button.  It will take you to paypal's site to pay for the tournament.
                 </p>
                 <div class="center">
                     <?php echo $this->tournamentInfo->paypal; ?>
                 </div>
-
-                <?php endif; ?>
             </div>
+            <?php endif; ?>
 
             <div>
                 <?php if(!empty($this->tournamentInfo->mail_payment)): ?>
