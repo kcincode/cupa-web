@@ -357,6 +357,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
+            'class' => 'tournament',
             'description' => 'The name of the location for the tournament.',
             'value' => $this->_leagueData['locations']['tournament']['location'],
         ));
@@ -364,7 +365,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'tournament_address_street', array(
             'required' => true,
             'label' => 'Street:',
-            'class' => 'span5',
+            'class' => 'span5 tournament',
             'description' => 'Enter in the Street.',
             'value' => $this->_leagueData['locations']['tournament']['address_street'],
         ));
@@ -372,7 +373,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'tournament_address_city', array(
             'required' => true,
             'label' => 'City:',
-            'class' => 'span2',
+            'class' => 'span2 tournament',
             'description' => 'Enter in the City.',
             'value' => $this->_leagueData['locations']['tournament']['address_city'],
         ));
@@ -380,7 +381,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'tournament_address_state', array(
             'required' => true,
             'label' => 'State:',
-            'class' => 'span1',
+            'class' => 'span1 tournament',
             'style' => 'text-align: center;',
             'description' => 'Select the State',
             'value' => $this->_leagueData['locations']['tournament']['address_state'],
@@ -389,16 +390,18 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'tournament_address_zip', array(
             'required' => true,
             'label' => 'Zipcode:',
-            'class' => 'span1',
+            'class' => 'span1 tournament',
             'style' => 'text-align: center;',
             'description' => 'Enter in the Zipcode.',
             'value' => $this->_leagueData['locations']['tournament']['address_zip'],
         ));
 
-        $this->addElement('text', 'tournament_map_link', array(
+        $this->addElement('textarea', 'tournament_map_link', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Map Link:',
+            'class' => 'span6 tournament',
+            'style' => 'height: 125px;',
             'description' => 'A link to a map of where the fields are.',
             'value' => $this->_leagueData['locations']['tournament']['map_link'],
         ));
@@ -407,6 +410,8 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Start:',
+            'class' => 'span3 datetimepicker tournament',
+            'style' => 'text-align: center;',
             'description' => 'Enter the start date/time for the tournament.',
             'value' => (empty($this->_leagueData['locations']['tournament']['start'])) ? null : date('m/d/Y H:i', strtotime($this->_leagueData['locations']['tournament']['start'])),
         ));
@@ -415,14 +420,18 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'End:',
+            'class' => 'span3 datetimepicker tournament',
+            'style' => 'text-align: center;',
             'description' => 'Enter the end date/time for the tournament.',
             'value' => (empty($this->_leagueData['locations']['tournament']['end'])) ? null : date('m/d/Y H:i', strtotime($this->_leagueData['locations']['tournament']['end'])),
         ));
 
-        $this->addElement('text', 'tournament_photo_link', array(
+        $this->addElement('textarea', 'tournament_photo_link', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Photo Link:',
+            'class' => 'span6 tournament',
+            'style' => 'height: 125px;',
             'description' => 'A link to photos.',
             'value' => $this->_leagueData['locations']['tournament']['photo_link'],
         ));
@@ -451,6 +460,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Name:',
+            'class' => 'draft',
             'description' => 'The name of the location for the draft.',
             'value' => $this->_leagueData['locations']['draft']['location'],
         ));
@@ -458,7 +468,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'draft_address_street', array(
             'required' => true,
             'label' => 'Street:',
-            'class' => 'span5',
+            'class' => 'span5 draft',
             'description' => 'Enter in the Street.',
             'value' => $this->_leagueData['locations']['draft']['address_street'],
         ));
@@ -466,7 +476,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'draft_address_city', array(
             'required' => true,
             'label' => 'City:',
-            'class' => 'span2',
+            'class' => 'span2 draft',
             'description' => 'Enter in the City.',
             'value' => $this->_leagueData['locations']['draft']['address_city'],
         ));
@@ -474,7 +484,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'draft_address_state', array(
             'required' => true,
             'label' => 'State:',
-            'class' => 'span1',
+            'class' => 'span1 draft',
             'style' => 'text-align: center;',
             'description' => 'Select the State',
             'value' => $this->_leagueData['locations']['draft']['address_state'],
@@ -483,16 +493,18 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         $this->addElement('text', 'draft_address_zip', array(
             'required' => true,
             'label' => 'Zipcode:',
-            'class' => 'span1',
+            'class' => 'span1 draft',
             'style' => 'text-align: center;',
             'description' => 'Enter in the Zipcode.',
             'value' => $this->_leagueData['locations']['draft']['address_zip'],
         ));
 
-        $this->addElement('text', 'draft_map_link', array(
+        $this->addElement('textarea', 'draft_map_link', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Map Link:',
+            'class' => 'span6 draft',
+            'style' => 'height: 125px;',
             'description' => 'A link to a map of where the draft is held.',
             'value' => $this->_leagueData['locations']['draft']['map_link'],
         ));
@@ -501,6 +513,8 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Start:',
+            'class' => 'span3 datetimepicker draft',
+            'style' => 'text-align: center;',
             'description' => 'Enter the start date/time for the draft.',
             'value' => (empty($this->_leagueData['locations']['draft']['start'])) ? null : date('m/d/Y H:i', strtotime($this->_leagueData['locations']['draft']['start'])),
         ));
@@ -509,14 +523,18 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'End:',
+            'class' => 'span3 datetimepicker draft',
+            'style' => 'text-align: center;',
             'description' => 'Enter the end date/time for the draft.',
             'value' => (empty($this->_leagueData['locations']['draft']['end'])) ? null : date('m/d/Y H:i', strtotime($this->_leagueData['locations']['draft']['end'])),
         ));
 
-        $this->addElement('text', 'draft_photo_link', array(
+        $this->addElement('textarea', 'draft_photo_link', array(
             'filters' => array('StringTrim'),
             'required' => false,
             'label' => 'Photo Link:',
+            'class' => 'span6 draft',
+            'style' => 'height: 125px;',
             'description' => 'A link to photos.',
             'value' => $this->_leagueData['locations']['draft']['photo_link'],
         ));

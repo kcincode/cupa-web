@@ -398,28 +398,11 @@ class LeagueController extends Zend_Controller_Action
                 $league->end = date('Y-m-d H:i:s', strtotime($data['league_end']));
                 $league->save();
 
-
-                if(!$data['tournament_ignore']) {
-                    $tournament = $leagueLocationTable->fetchByType($leagueId, 'tournament');
-                    if($tournament) {
-                        if($data['tournament_ignore']) {
-                            $tournament->delete();
-                        } else {
-                            $tournament->type = 'tournament';
-                            $tournament->location = $data['tournament_name'];
-                            $tournament->map_link = $data['tournament_map_link'];
-                            $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
-                            $tournament->address_street = $data['tournament_address_street'];
-                            $tournament->address_city = $data['tournament_address_city'];
-                            $tournament->address_state = $data['tournament_address_state'];
-                            $tournament->address_zip = $data['tournament_address_zip'];
-                            $tournament->start = date('Y-m-d H:i:s', strtotime($data['tournament_start']));
-                            $tournament->end = date('Y-m-d H:i:s', strtotime($data['tournament_end']));
-                            $tournament->save();
-                        }
-                    } else if(!$data['tournament_ignore']) {
-                        $tournament = $leagueLocationTable->createRow();
-                        $tournament->league_id = $leagueId;
+                $tournament = $leagueLocationTable->fetchByType($leagueId, 'tournament');
+                if($tournament) {
+                    if($data['tournament_ignore'] == 1) {
+                        $tournament->delete();
+                    } else {
                         $tournament->type = 'tournament';
                         $tournament->location = $data['tournament_name'];
                         $tournament->map_link = $data['tournament_map_link'];
@@ -432,30 +415,28 @@ class LeagueController extends Zend_Controller_Action
                         $tournament->end = date('Y-m-d H:i:s', strtotime($data['tournament_end']));
                         $tournament->save();
                     }
+                } else if($data['tournament_ignore'] == 0) {
+                    $tournament = $leagueLocationTable->createRow();
+                    $tournament->league_id = $leagueId;
+                    $tournament->type = 'tournament';
+                    $tournament->location = $data['tournament_name'];
+                    $tournament->map_link = $data['tournament_map_link'];
+                    $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
+                    $tournament->address_street = $data['tournament_address_street'];
+                    $tournament->address_city = $data['tournament_address_city'];
+                    $tournament->address_state = $data['tournament_address_state'];
+                    $tournament->address_zip = $data['tournament_address_zip'];
+                    $tournament->start = date('Y-m-d H:i:s', strtotime($data['tournament_start']));
+                    $tournament->end = date('Y-m-d H:i:s', strtotime($data['tournament_end']));
+                    $tournament->save();
                 }
 
 
-                if(!$data['draft_ignore']) {
-                    $draft = $leagueLocationTable->fetchByType($leagueId, 'draft');
-                    if($draft) {
-                        if(empty($data['draft_ignore'])) {
-                            $draft->delete();
-                        } else {
-                            $draft->type = 'draft';
-                            $draft->location = $data['draft_name'];
-                            $draft->map_link = $data['draft_map_link'];
-                            $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
-                            $draft->address_street = $data['draft_address_street'];
-                            $draft->address_city = $data['draft_address_city'];
-                            $draft->address_state = $data['draft_address_state'];
-                            $draft->address_zip = $data['draft_address_zip'];
-                            $draft->start = date('Y-m-d H:i:s', strtotime($data['draft_start']));
-                            $draft->end = date('Y-m-d H:i:s', strtotime($data['draft_end']));
-                            $draft->save();
-                        }
-                    } else if(!$data['draft_ignore']) {
-                        $draft = $leagueLocationTable->createRow();
-                        $draft->league_id = $leagueId;
+                $draft = $leagueLocationTable->fetchByType($leagueId, 'draft');
+                if($draft) {
+                    if($data['draft_ignore'] == 1) {
+                        $draft->delete();
+                    } else {
                         $draft->type = 'draft';
                         $draft->location = $data['draft_name'];
                         $draft->map_link = $data['draft_map_link'];
@@ -468,6 +449,20 @@ class LeagueController extends Zend_Controller_Action
                         $draft->end = date('Y-m-d H:i:s', strtotime($data['draft_end']));
                         $draft->save();
                     }
+                } else if($data['draft_ignore'] == 0) {
+                    $draft = $leagueLocationTable->createRow();
+                    $draft->league_id = $leagueId;
+                    $draft->type = 'draft';
+                    $draft->location = $data['draft_name'];
+                    $draft->map_link = $data['draft_map_link'];
+                    $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
+                    $draft->address_street = $data['draft_address_street'];
+                    $draft->address_city = $data['draft_address_city'];
+                    $draft->address_state = $data['draft_address_state'];
+                    $draft->address_zip = $data['draft_address_zip'];
+                    $draft->start = date('Y-m-d H:i:s', strtotime($data['draft_start']));
+                    $draft->end = date('Y-m-d H:i:s', strtotime($data['draft_end']));
+                    $draft->save();
                 }
 
                 $this->view->message('League Information updated', 'success');
@@ -477,6 +472,9 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->headScript()->appendScript('$(".select2").select2();');
         $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, todayBtn: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
+        $this->view->headScript()->appendScript('$(".draft").blur(function(){ if($(this).val() != "") { $("#draft_ignore").prop("checked", false); } });');
+        $this->view->headScript()->appendScript('$(".tournament").blur(function(){ if($(this).val() != "") { $("#tournament_ignore").prop("checked", false); } });');
+
         $this->view->form = $form;
     }
 
