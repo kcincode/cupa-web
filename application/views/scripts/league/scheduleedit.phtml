@@ -1,33 +1,7 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Edit Game</h1>
-<div id="scheduleedit-container">
-    <form method="post">
-        <div class="row">
-            <?php echo $this->form->day; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->week; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->field; ?>
-        </div>
-        <div class="row left">
-            <?php echo $this->form->away_team; ?>
-        </div>
-        <div class="row right">
-            <?php echo $this->form->away_score; ?>
-        </div>
-        <div class="row left">
-            <?php echo $this->form->home_team; ?>
-        </div>
-        <div class="row right">
-            <?php echo $this->form->home_score; ?>
-        </div>
-        <div class="clearfix"></div>
-        <div id="buttons-container">
-            <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_schedule'); ?>">Cancel</a>
-        </div>
-    </form>
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
+    </div>
 </div>

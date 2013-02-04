@@ -18,7 +18,11 @@ class My_View_Helper_IsLeagueRegistrationOpen extends Zend_View_Helper_Abstract
         $end = strtotime($league->registration_end);
         $date = time();
         if($date >= $start and $date < $end) {
-            return true;
+            if($this->view->getLeagueRegistrationMessage($leagueId) === true) {
+                return true;
+            }
+
+            return false;
         }
 
         return false;

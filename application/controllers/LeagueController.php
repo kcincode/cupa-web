@@ -5,7 +5,8 @@ class LeagueController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/common.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         if($leagueId) {
             $leagueInformationTable = new Model_DbTable_LeagueInformation();
@@ -20,14 +21,21 @@ class LeagueController extends Zend_Controller_Action
         }
     }
 
+    private function _isAllowed($page = null)
+    {
+        if(!$this->view->hasRole('admin') and
+           !$this->view->hasRole('manager') and
+           !$this->view->hasRole('editor') and
+           (isset($page) and !$this->view->hasRole('editor', $page->id)) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+
     public function indexAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/index.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/index.js');
-
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $pageTable = new Model_DbTable_Page();
 
@@ -38,6 +46,10 @@ class LeagueController extends Zend_Controller_Action
 
     public function seasonmoveAction()
     {
+        if(!$this->_isAllowed()) {
+            $this->_redirect('leagues');
+        }
+
         // disable the layout and view
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
@@ -53,30 +65,30 @@ class LeagueController extends Zend_Controller_Action
 
     public function seasoneditAction()
     {
-        $pageTable = new Model_DbTable_Page();
-        $page = $pageTable->fetchBy('name', 'leagues');
-        $this->view->page = $page;
-
-        if(!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->hasRole('editor', $page->id) ) {
+        if(!$this->_isAllowed()) {
             $this->_redirect('leagues');
         }
 
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/index.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+        $this->view->page = $page;
 
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
 
         $seasonId = $this->getRequest()->getUserParam('season_id');
         $this->view->season = $leagueSeasonTable->find($seasonId)->current();
 
-        $form = new Form_LeagueSeasonEdit();
-        $form->loadFromSeason($this->view->season);
+        $form = new Form_LeagueSeasonEdit($this->view->season);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
@@ -87,8 +99,6 @@ class LeagueController extends Zend_Controller_Action
 
                 $this->view->message("Season `{$data['name']}` updated", 'success');
                 $this->_redirect('leagues');
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -97,44 +107,42 @@ class LeagueController extends Zend_Controller_Action
 
     public function seasonaddAction()
     {
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
-        }
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
-        $this->view->page = $page;
 
-        if(!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->hasRole('editor', $page->id) ) {
-            return;
+        if(!$this->_isAllowed($page)) {
+            $this->_redirect('leagues');
         }
 
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $this->view->page = $page;
+        $form = new Form_LeagueSeasonEdit();
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $this->_helper->viewRenderer->setNoRender(true);
 
-            $leagueSeasonTable = new Model_DbTable_LeagueSeason();
-            if($leagueSeasonTable->isUnique($post['name'])) {
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $leagueSeasonTable = new Model_DbTable_LeagueSeason();
                 $season = $leagueSeasonTable->createRow();
-                $season->name = $post['name'];
-                $season->when = 'Unknown';
-                $season->information = '';
+                $season->name = $data['name'];
+                $season->when = $data['when'];
+                $season->information = $data['information'];
                 $season->weight = $leagueSeasonTable->fetchNextWeight();
                 $season->save();
 
                 $this->view->message('Season created');
-                echo Zend_Json::encode(array('result' => 'success', 'data' => $season->id));
-            } else {
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Season Already Exists'));
-                return;
+                $this->_redirect('leagues');
             }
         }
+
+        $this->view->form = $form;
     }
 
     public function seasondeleteAction()
@@ -158,12 +166,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function pageAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/page.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/page.js');
-
         $pageTable = new Model_DbTable_Page();
         $leagueTable = new Model_DbTable_League();
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
@@ -171,10 +173,46 @@ class LeagueController extends Zend_Controller_Action
         $season = $this->getRequest()->getUserParam('type');
         $this->view->season = $season;
 
+        $leagueName = $this->getRequest()->getUserParam('name');
+        $this->view->slug = $leagueName;
+
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
         $this->view->links = $leagueSeasonTable->generateLinks();
-        $admin = $this->view->hasRole('admin') || $this->view->hasRole('editor') || $this->view->hasRole('manager');
-        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $admin);
+        $admin = $this->_isAllowed($this->view->page);
+        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $admin, $admin);
+
+        if($leagueName == 'default') {
+            $this->view->league = $this->view->leagues[0];
+        } else {
+            foreach($this->view->leagues as $league) {
+                if($this->view->slugify($this->view->leaguename($league['id'], true, false, false, true)) == $leagueName) {
+                    $this->view->league = $league;
+                    break;
+                }
+            }
+
+            if(empty($this->view->league)) {
+                $this->_redirect('leagues/' . $season);
+            }
+        }
+
+        if($this->view->league['is_archived'] == 1) {
+            $this->view->message('This league page has been archived and therefore is not viewable to users.', 'error');
+        }
+    }
+
+    public function archiveAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
+
+        $league = $leagueTable->find($leagueId)->current();
+        $league->is_archived = 1;
+        $league->save();
+
+        $season = $leagueSeasonTable->fetchName($league->season);
+        $this->_redirect($this->_redirect('leagues/' . $season));
     }
 
     public function pageeditAction()
@@ -195,27 +233,22 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->isLeagueDirector($leagueId) ) {
+        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues/' . $this->view->season);
         }
 
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
-
-        $form = new Form_LeagueEdit();
-        $form->loadSection($leagueId, 'league');
+        $form = new Form_LeagueEdit($leagueId, 'league');
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues/' . $this->view->season);
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
+
                 $league = $leagueTable->find($leagueId)->current();
                 $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
 
@@ -248,8 +281,6 @@ class LeagueController extends Zend_Controller_Action
 
                 $this->view->message('League data saved'. 'success');
                 $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -278,16 +309,6 @@ class LeagueController extends Zend_Controller_Action
            !$this->view->isLeagueDirector($leagueId) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
 
         $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'information');
@@ -469,14 +490,6 @@ class LeagueController extends Zend_Controller_Action
            !$this->view->isLeagueDirector($leagueId) ) {
             $this->_redirect('leagues/' . $this->view->season);
         }
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/pageedit.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
 
         $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'registration');
@@ -700,12 +713,6 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('leagues/' . $this->view->season);
         }
 
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/tinymce/tiny_mce.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
-
         $form = new Form_LeagueEdit();
         $form->loadSection($leagueId, 'description');
 
@@ -767,12 +774,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function teamsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/teams.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -857,19 +858,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function teamseditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/colorpicker/css/layout.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/colorpicker/css/colorpicker.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teamsedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/teamsedit.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/colorpicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/eye.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/utils.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/colorpicker/js/layout.js');
-
         $teamId = $this->getRequest()->getUserParam('team_id');
 
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
@@ -971,15 +959,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function scheduleAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/schedule.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1071,15 +1050,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function scheduleeditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/scheduleedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/jquery-ui-timepicker.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/scheduleedit.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $gameId = $this->getRequest()->getUserParam('game_id');
 
@@ -1181,12 +1151,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function schedulegenerateAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/generate.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/schedule.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/generate.js');
-
         $session = new Zend_Session_Namespace('schedule_generation');
         if($this->getRequest()->isGet()) {
             $session->unsetAll();
@@ -1389,11 +1353,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function emailAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/contact.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/email.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1441,11 +1400,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function rankingsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/teams.css');
-
-        //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankings.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1464,12 +1418,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function rankingseditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/rankingsedit.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/rankingsedit.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1514,11 +1462,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function playersAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/players.css');
-
-        //$this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1590,9 +1533,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function shirtsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/shirts.css');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1649,10 +1589,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function emergencyAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/emergency.css');
-
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1710,11 +1646,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function statusAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/status.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/status.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1798,12 +1729,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function registerAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/register.css');
-
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/register.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -2051,9 +1976,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function registersuccessAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/registersuccess.css');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -2099,12 +2021,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function manageAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/manage.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/manage.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $teamId = $this->getRequest()->getUserParam('team_id');
         if(!$teamId) {
@@ -2219,11 +2135,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function moveAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/move.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/move.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $this->view->state = $this->getRequest()->getUserParam('state');
         $leagueTable = new Model_DbTable_League();
@@ -2303,7 +2214,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function logoAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/logo.css');
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $teamId = $this->getRequest()->getUserParam('team_id');
 
@@ -2339,9 +2249,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function userteamsAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/userteams.css');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -2393,10 +2300,6 @@ class LeagueController extends Zend_Controller_Action
 
     public function waiverAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/waiver.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league/waiver.js');
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();

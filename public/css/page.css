@@ -156,3 +156,16 @@ ul.officers .position {
     margin: -5px 0 0 0;
     line-height: 20px;
 }
+
+.league-menu {
+    margin-top: 2px;
+    text-align: right;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: right;
+}

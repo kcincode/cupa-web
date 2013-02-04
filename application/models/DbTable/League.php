@@ -6,7 +6,7 @@ class Model_DbTable_League extends Zend_Db_Table
     protected $_primary = 'id';
 
 
-    public function fetchCurrentLeaguesBySeason($season, $all = false)
+    public function fetchCurrentLeaguesBySeason($season, $all = false, $showArchived = false)
     {
         $select = $this->getAdapter()->select()
                        ->from(array('l' => $this->_name), array('*'))
@@ -14,12 +14,15 @@ class Model_DbTable_League extends Zend_Db_Table
                        ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array())
                        ->where('ls.name = ?', $season)
                        ->where('li.is_youth = ?', 0)
-                       ->where('is_archived = ?', 0)
                        ->order('l.year DESC')
                        ->order('l.registration_end');
 
         if(!$all) {
             $select->where('l.visible_from <= ?', date('Y-m-d H:i:s'));
+        }
+
+        if(!$showArchived) {
+            $select = $select->where('is_archived = ?', 0);
         }
 
         $stmt = $this->getAdapter()->query($select);

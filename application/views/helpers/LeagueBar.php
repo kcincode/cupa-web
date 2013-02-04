@@ -10,12 +10,21 @@ class My_View_Helper_LeagueBar extends Zend_View_Helper_Abstract
         $number = (int)(($current / $total) * 100);
         $width = (int)($this->_totalWidth * ($number / 100));
 
-        $rHex = dechex(sprintf('%02d', $width));
-        $gHex = dechex(sprintf('%02d', ($this->_totalWidth - $width)));
-        $color = $rHex . $gHex . '00';
+        $ratio = ($current / $total) * 100;
+        if($ratio < 33) {
+            $color = 'success';
+        } else if($ratio < 66) {
+            $color = 'warning';
+        } else {
+            $color = 'danger';
+        }
 
-        $string = '<div class="bar-graph"><h3 class="graph-header">' . $this->view->escape($name) . '</h3><span class="spots">( ' . $this->view->escape(($total - $current)) . ' spots left )</span><br/>';
-        $string .= '<div class="graph"><div class="bar" style="width: ' . $this->view->escape($width) . 'px; background-color: #' . $this->view->escape($color) . ';">&nbsp;</div></div></div>';
+        $string = '<div>' . "\n";
+        $string .= '    <strong>' .  ($total - $current) . '</strong> ' . $name . ' left' . "\n";
+        $string .= '    <div class="progress progress-' . $color . '">' . "\n";
+        $string .= '        <div class="bar" style="width: ' . number_format($ratio) . '%"></div>' . "\n";
+        $string .= '    </div>';
+        $string .= '</div>';
 
         return $string;
     }

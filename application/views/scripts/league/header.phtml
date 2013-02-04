@@ -1,16 +1,17 @@
-<?php if($this->isLeagueDirector($this->league->id)): ?>
-<div class="admin-menu">
-    <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league, 'userTeams' => $this->userTeams));?>
+<div class="row">
+    <div class="span12 league-menu">
+        <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league, 'userTeams' => $this->userTeams));?>
+    </div>
 </div>
-<?php else: ?>
-<div class="admin-menu">
-    <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Emails</a>
+<div class="row">
+    <div class="span12">
+        <h1 class="align-center">
+            <?php echo $this->leaguename($this->league, true, true, true, true); ?>
+        </h1>
+    </div>
 </div>
-<?php endif; ?>
-<h1 class="league">
-    <?php echo $this->leaguename($this->league, true, true, true, true); ?>
-</h1>
-  
-<div class="league-menu">
-    <?php echo $this->partial('league/sub_menu.phtml', array('league' => $this->league));?>
+<div class="row">
+    <div class="span12 align-center">
+        <?php echo $this->partial('league/sub_menu.phtml', array('league' => $this->league));?>
+    </div>
 </div>

@@ -1,47 +1,46 @@
 <div id="page-banner" class="<?php echo $this->pageClass(); ?>">&nbsp;</div>
-<div id="page-header" class="<?php echo $this->pageClass(); ?>">
-    <span class="title">
-        <h2><?php echo $this->page->title; ?></h2>
-    </span>
-    <?php if(!$this->page->is_visible): ?>
-    <div class="visible">
-        *** This page is not yet visible to the public ***
-    </div>
-    <?php endif; ?>
-    <span class="actions">
-        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-        <a class="button" id="add-season" href="#">Add Season</a>
-        <div id="add-season-container"></div>
-        <?php endif; ?>
-    </span>
-  
-</div>
 
-<div id="page-content" class="<?php echo $this->pageClass(); ?>">
-    <?php $i = 0; ?>
-    <?php foreach($this->leagues as $league): ?>
-    <div class="league">
-        <div class="links">
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
-            <?php if($i != 0): ?>
-                <a href="<?php echo $this->url(array('season_id' => $league['id'], 'weight' => $i - 1), 'leagues_move');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-uparrow.png" title="Move Up"/></a>
-            <?php endif; ?>
-            <?php if($i != count($this->leagues) - 1): ?>
-                <a href="<?php echo $this->url(array('season_id' => $league['id'], 'weight' => $i + 1), 'leagues_move');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-downarrow.png" title="Move Down"/></a>
-            <?php endif; ?>
-                <a href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit"/></a>
-            <?php endif; ?>
-            <?php if($this->hasRole('admin')): ?>
-                <a onclick="return confirm('Are you sure you want to delete this season?');" href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_delete');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete"/></a>
-            <?php endif; ?>
-            </form>
-        </div>
-        <div class="name"><a href="<?php echo $this->url(array('type' => $league['name']), 'leagues_view');?>"><?php echo $this->escape(ucwords($league['name']));?> League</a></div>
-        <div class="when">( <span class="when-text"><?php echo $this->escape($league['when']);?></span> )</div>
-        <div class="information"><?php echo $league['information'];?></div>
+<div class="row actions">
+    <div class="span9 pull-left <?php echo $this->pageClass(); ?>">
+        <h2><?php echo $this->escape($this->page->title); ?></h2>
     </div>
-    <?php $i++; ?>
-    <?php endforeach; ?>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array(), 'leagues_add'); ?>"><i class="icon-list"></i> Add Season</a>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
-  
-<?php echo $this->partial('league-page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+<div class="page-content">
+    <div class="row">
+        <div class="span9">
+            <?php foreach($this->leagues as $i => $league): ?>
+            <div class="well well-small">
+                <div class="pull-right">
+                        <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                        <?php if($i != 0): ?>
+                            <a class="btn btn-mini" href="<?php echo $this->url(array('season_id' => $league['id'], 'weight' => $i - 1), 'leagues_move');?>"><i class="icon-arrow-up"></i></a>
+                        <?php endif; ?>
+                        <?php if($i != count($this->leagues) - 1): ?>
+                            <a class="btn btn-mini" href="<?php echo $this->url(array('season_id' => $league['id'], 'weight' => $i + 1), 'leagues_move');?>"><i class="icon-arrow-down"></i></a>
+                        <?php endif; ?>
+                            <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
+                        <?php endif; ?>
+                        <?php if($this->hasRole('admin')): ?>
+                            <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to delete this season?');" href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_delete');?>"><i class="icon-trash icon-white"></i> Remove</a>
+                        <?php endif; ?>
+                </div>
+                <h2>
+                    <a class="leagues" href="<?php echo $this->url(array('type' => $league['name']), 'leagues_view');?>"><?php echo $this->escape(ucwords($league['name']));?> League</a>
+                    <small>( <?php echo $this->escape($league['when']);?> )</small>
+                </h2>
+                <p><?php echo $league['information'];?></p>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <div class="span3 page-links">
+            <?php echo $this->partial('league-page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+        </div>
+    </div>
+</div>

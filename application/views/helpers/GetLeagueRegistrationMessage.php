@@ -52,6 +52,6 @@ class My_View_Helper_GetLeagueRegistrationMessage extends Zend_View_Helper_Abstr
             return 'League registration is full for female players with ' . $leagueLimit->female_players . ' male players.';
         }
 
-        return null;
+        return true;
     }
 }
