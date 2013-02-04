@@ -20,8 +20,12 @@
                 <?php if($this->hasRole('editor') or $this->isLeagueDirector($this->league['id'])): ?>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
                 <?php endif; ?>
-                <?php if($this->hasRole('admin')): ?>
+                <?php if($this->hasRole('admin') ): ?>
+                <?php if($this->league['is_archived'] == 0): ?>
                 <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to archive this league?');" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_archive');?>"><i class="icon-book icon-white"></i> Archive</a>
+                <?php else: ?>
+                <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to un-archive this league?');" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_archive');?>"><i class="icon-book icon-white"></i> Un-Archive</a>
+                <?php endif; ?>
                 <?php endif; ?>
             </div>
             <h2 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], true, false, false, true); ?></h2>

@@ -208,11 +208,11 @@ class LeagueController extends Zend_Controller_Action
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
 
         $league = $leagueTable->find($leagueId)->current();
-        $league->is_archived = 1;
+        $league->is_archived = ($league->is_archived == 1) ? 0 : 1;
         $league->save();
 
         $season = $leagueSeasonTable->fetchName($league->season);
-        $this->_redirect($this->_redirect('leagues/' . $season));
+        $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
     }
 
     public function pageeditAction()
@@ -234,8 +234,11 @@ class LeagueController extends Zend_Controller_Action
         }
 
         if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('leagues/' . $this->view->season);
+            $this->_redirect($this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true))));
         }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
 
         $form = new Form_LeagueEdit($leagueId, 'league');
 
@@ -243,7 +246,7 @@ class LeagueController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
 
             if(isset($post['cancel'])) {
-                $this->_redirect('leagues/' . $this->view->season);
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
             }
 
             if($form->isValid($post)) {
@@ -275,15 +278,16 @@ class LeagueController extends Zend_Controller_Action
                     }
                 }
 
-                $league->visible_from = $data['visible_from'];
+                $league->visible_from = date('Y-m-d H:i:s', strtotime($data['visible_from']));
                 $league->name = $data['name'];
                 $league->save();
 
-                $this->view->message('League data saved'. 'success');
-                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
+                $this->view->message('League data saved', 'success');
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
             }
         }
 
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
         $this->view->form = $form;
     }
 
@@ -304,23 +308,33 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->isLeagueDirector($leagueId) ) {
-            $this->_redirect('leagues/' . $this->view->season);
+        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
         }
 
-        $form = new Form_LeagueEdit();
-        $form->loadSection($leagueId, 'information');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
+
+        $form = new Form_LeagueEdit($leagueId, 'information');
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
+            }
 
             // disable the fields if hidden
             if($post['tournament_ignore']) {
                 $form->getElement('tournament_name')->setRequired(false);
                 $form->getElement('tournament_map_link')->setRequired(false);
-                $form->getElement('tournament_address')->setRequired(false);
+                $form->getElement('tournament_address_street')->setRequired(false);
+                $form->getElement('tournament_address_city')->setRequired(false);
+                $form->getElement('tournament_address_state')->setRequired(false);
+                $form->getElement('tournament_address_zip')->setRequired(false);
                 $form->getElement('tournament_start')->setRequired(false);
                 $form->getElement('tournament_end')->setRequired(false);
             }
@@ -328,7 +342,10 @@ class LeagueController extends Zend_Controller_Action
             if($post['draft_ignore']) {
                     $form->getElement('draft_name')->setRequired(false);
                     $form->getElement('draft_map_link')->setRequired(false);
-                    $form->getElement('draft_address')->setRequired(false);
+                    $form->getElement('draft_address_street')->setRequired(false);
+                    $form->getElement('draft_address_city')->setRequired(false);
+                    $form->getElement('draft_address_state')->setRequired(false);
+                    $form->getElement('draft_address_zip')->setRequired(false);
                     $form->getElement('draft_start')->setRequired(false);
                     $form->getElement('draft_end')->setRequired(false);
             }
@@ -373,14 +390,12 @@ class LeagueController extends Zend_Controller_Action
                 $league->location = $data['league_name'];
                 $league->map_link = $data['league_map_link'];
                 $league->photo_link = (empty($data['league_photo_link'])) ? null : $data['league_photo_link'];
-                $matches = array();
-                preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['league_address'], $matches);
-                $league->address_street = $matches[1];
-                $league->address_city = $matches[2];
-                $league->address_state = $matches[3];
-                $league->address_zip = $matches[4];
-                $league->start = $data['league_start'];
-                $league->end = $data['league_end'];
+                $league->address_street = $data['league_address_street'];
+                $league->address_city = $data['league_address_city'];
+                $league->address_state = $data['league_address_state'];
+                $league->address_zip = $data['league_address_zip'];
+                $league->start = date('Y-m-d H:i:s', strtotime($data['league_start']));
+                $league->end = date('Y-m-d H:i:s', strtotime($data['league_end']));
                 $league->save();
 
 
@@ -390,32 +405,31 @@ class LeagueController extends Zend_Controller_Action
                         if($data['tournament_ignore']) {
                             $tournament->delete();
                         } else {
+                            $tournament->type = 'tournament';
                             $tournament->location = $data['tournament_name'];
                             $tournament->map_link = $data['tournament_map_link'];
                             $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
-                            $matches = array();
-                            preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['tournament_address'], $matches);
-                            $tournament->address_street = $matches[1];
-                            $tournament->address_city = $matches[2];
-                            $tournament->address_state = $matches[3];
-                            $tournament->address_zip = $matches[4];
-                            $tournament->start = $data['tournament_start'];
-                            $tournament->end = $data['tournament_end'];
+                            $tournament->address_street = $data['tournament_address_street'];
+                            $tournament->address_city = $data['tournament_address_city'];
+                            $tournament->address_state = $data['tournament_address_state'];
+                            $tournament->address_zip = $data['tournament_address_zip'];
+                            $tournament->start = date('Y-m-d H:i:s', strtotime($data['tournament_start']));
+                            $tournament->end = date('Y-m-d H:i:s', strtotime($data['tournament_end']));
                             $tournament->save();
                         }
                     } else if(!$data['tournament_ignore']) {
                         $tournament = $leagueLocationTable->createRow();
+                        $tournament->league_id = $leagueId;
+                        $tournament->type = 'tournament';
                         $tournament->location = $data['tournament_name'];
                         $tournament->map_link = $data['tournament_map_link'];
                         $tournament->photo_link = (empty($data['tournament_photo_link'])) ? null : $data['tournament_photo_link'];
-                        $matches = array();
-                        preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['tournament_address'], $matches);
-                        $tournament->address_street = $matches[1];
-                        $tournament->address_city = $matches[2];
-                        $tournament->address_state = $matches[3];
-                        $tournament->address_zip = $matches[4];
-                        $tournament->start = $data['tournament_start'];
-                        $tournament->end = $data['tournament_end'];
+                        $tournament->address_street = $data['tournament_address_street'];
+                        $tournament->address_city = $data['tournament_address_city'];
+                        $tournament->address_state = $data['tournament_address_state'];
+                        $tournament->address_zip = $data['tournament_address_zip'];
+                        $tournament->start = date('Y-m-d H:i:s', strtotime($data['tournament_start']));
+                        $tournament->end = date('Y-m-d H:i:s', strtotime($data['tournament_end']));
                         $tournament->save();
                     }
                 }
@@ -427,43 +441,42 @@ class LeagueController extends Zend_Controller_Action
                         if(empty($data['draft_ignore'])) {
                             $draft->delete();
                         } else {
+                            $draft->type = 'draft';
                             $draft->location = $data['draft_name'];
                             $draft->map_link = $data['draft_map_link'];
                             $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
-                            $matches = array();
-                            preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['draft_address'], $matches);
-                            $draft->address_street = $matches[1];
-                            $draft->address_city = $matches[2];
-                            $draft->address_state = $matches[3];
-                            $draft->address_zip = $matches[4];
-                            $draft->start = $data['draft_start'];
-                            $draft->end = $data['draft_end'];
+                            $draft->address_street = $data['draft_address_street'];
+                            $draft->address_city = $data['draft_address_city'];
+                            $draft->address_state = $data['draft_address_state'];
+                            $draft->address_zip = $data['draft_address_zip'];
+                            $draft->start = date('Y-m-d H:i:s', strtotime($data['draft_start']));
+                            $draft->end = date('Y-m-d H:i:s', strtotime($data['draft_end']));
                             $draft->save();
                         }
                     } else if(!$data['draft_ignore']) {
                         $draft = $leagueLocationTable->createRow();
+                        $draft->league_id = $leagueId;
+                        $draft->type = 'draft';
                         $draft->location = $data['draft_name'];
                         $draft->map_link = $data['draft_map_link'];
                         $draft->photo_link = (empty($data['draft_photo_link'])) ? null : $data['draft_photo_link'];
-                        $matches = array();
-                        preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $data['draft_address'], $matches);
-                        $draft->address_street = $matches[1];
-                        $draft->address_city = $matches[2];
-                        $draft->address_state = $matches[3];
-                        $draft->address_zip = $matches[4];
-                        $draft->start = $data['draft_start'];
-                        $draft->end = $data['draft_end'];
+                        $draft->address_street = $data['draft_address_street'];
+                        $draft->address_city = $data['draft_address_city'];
+                        $draft->address_state = $data['draft_address_state'];
+                        $draft->address_zip = $data['draft_address_zip'];
+                        $draft->start = date('Y-m-d H:i:s', strtotime($data['draft_start']));
+                        $draft->end = date('Y-m-d H:i:s', strtotime($data['draft_end']));
                         $draft->save();
                     }
                 }
 
                 $this->view->message('League Information updated', 'success');
-                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
-            } else {
-                $form->populate($post);
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
             }
         }
 
+        $this->view->headScript()->appendScript('$(".select2").select2();');
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, todayBtn: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
         $this->view->form = $form;
     }
 

@@ -67,7 +67,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             ));
 
             $this->addDisplayGroup(
-                array('save', 'cancel'),
+                array('save'),
                 'profile_actions',
                 array(
                     'disableLoadDefaultDecorators' => true,

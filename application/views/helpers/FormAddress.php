@@ -6,14 +6,14 @@ class My_View_Helper_FormAddress extends Zend_View_Helper_FormElement
     {
         $info = $this->_getInfo($name, $value, $attribs);
         extract($info);
-        
+
         $disabled = '';
         if($disabled) {
             $disabled = ' disabled="disabled"';
         }
-        
+
         $endTag = '/>';
-        
+
         if(trim($value) != ', ,') {
             $matches = array();
             preg_match('/^(.*), (.*), ([A-Z][A-Z]) (\d\d\d\d\d)$/', $value, $matches);
@@ -21,15 +21,16 @@ class My_View_Helper_FormAddress extends Zend_View_Helper_FormElement
             $city = $matches[2];
             $state = $matches[3];
             $zip = $matches[4];
-            
+
         } else {
             $street = null;
             $city = null;
             $state = null;
             $zip = null;
         }
-        
-        $attribs['class'] = 'street';
+
+        $attribs['class'] = 'street span5';
+        $xhtml = '<div class="control-group>';
         $xhtml = '<input type="text"'
                . ' name="' . $this->view->escape($name) . '_street"'
                . ' id="' . $this->view->escape($id) . '_street"'
@@ -37,8 +38,8 @@ class My_View_Helper_FormAddress extends Zend_View_Helper_FormElement
                . $disabled
                . $this->_htmlAttribs($attribs)
                . $endTag . '<br/>';
-        
-        $attribs['class'] = 'city';
+
+        $attribs['class'] = 'city span2';
         $xhtml .= '<input type="text"'
                . ' name="' . $this->view->escape($name) . '_city"'
                . ' id="' . $this->view->escape($id) . '_city"'
@@ -47,7 +48,8 @@ class My_View_Helper_FormAddress extends Zend_View_Helper_FormElement
                . $this->_htmlAttribs($attribs)
                . $endTag . ', ';
 
-        $attribs['class'] = 'state';
+        $attribs['class'] = 'state span1';
+        $attribs['style'] = 'text-align: center;';
         $xhtml .= '<input type="text"'
                . ' name="' . $this->view->escape($name) . '_state"'
                . ' id="' . $this->view->escape($id) . '_state"'
@@ -56,8 +58,9 @@ class My_View_Helper_FormAddress extends Zend_View_Helper_FormElement
                . $disabled
                . $this->_htmlAttribs($attribs)
                . $endTag . ' ';
-        
-        $attribs['class'] = 'zip';
+
+        $attribs['class'] = 'zip span1';
+        $attribs['style'] = 'text-align: center;';
         $xhtml .= '<input type="text"'
                . ' name="' . $this->view->escape($name) . '_zip"'
                . ' id="' . $this->view->escape($id) . '_zip"'

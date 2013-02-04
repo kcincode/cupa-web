@@ -1,51 +1,7 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Edit <?php echo $this->leaguename($this->league['id'], true, true, true, true); ?></h1>
-<div id="leagueedit-container">
-    <form method="post">
-        <div class="row">
-            <h2>League Data</h2>
-        </div>
-        <div class="row">
-            <?php echo $this->form->year; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->season; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->day; ?>
-        </div>
-        <div class="row radio">
-            <?php echo $this->form->is_youth; ?>
-        </div>
-        <div class="row radio">
-            <?php echo $this->form->user_teams; ?>
-        </div>
-        <div class="row radio">
-            <?php echo $this->form->is_pods; ?>
-        </div>
-        <div class="row radio">
-            <?php echo $this->form->is_hat; ?>
-        </div>
-        <div class="row radio">
-            <?php echo $this->form->is_clinic; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->contact_email; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->name; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->visible_from; ?>
-        </div>
-        <div class="row radio">
-            <?php echo $this->form->is_archived; ?>
-        </div>
-        <div id="buttons-container">
-            <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->baseUrl(); ?>/leagues/<?php echo $this->escape($this->season); ?>#leagues-<?php echo $this->escape($this->league['id']); ?>">Cancel</a>
-        </div>
-    </form>
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
+    </div>
 </div>
-

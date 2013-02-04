@@ -1,50 +1,7 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Edit <?php echo $this->leaguename($this->league['id'], true, true, true, true); ?></h1>
-<div id="leagueedit-container">
-    <form method="post">
-        <div class="row">
-            <h2>League Information</h2>
-        </div>
-        <div class="row">
-            <?php echo $this->form->directors; ?>
-        </div>
-        <div class="row">
-            <?php echo $this->form->info; ?>
-        </div>
-        <div class="row">
-            <h2>League Location</h2>
-            <?php echo $this->form->league_name; ?>
-            <?php echo $this->form->league_address; ?>
-            <?php echo $this->form->league_start; ?>
-            <?php echo $this->form->league_end; ?>
-            <?php echo $this->form->league_map_link; ?>
-            <?php echo $this->form->league_photo_link; ?>
-        </div>
-        <div class="row">
-            <h2>Tournament Location</h2><div class="exists"><?php echo $this->form->tournament_ignore; ?><br/><button type="button" id="copy_league">Copy From League</button></div>
-            <?php echo $this->form->tournament_name; ?>
-            <?php echo $this->form->tournament_address; ?>
-            <?php echo $this->form->tournament_start; ?>
-            <?php echo $this->form->tournament_end; ?>
-            <?php echo $this->form->tournament_map_link; ?>
-            <?php echo $this->form->tournament_photo_link; ?>
-        </div>
-        <div class="row">
-            <h2>Draft Location</h2><div class="exists"><?php echo $this->form->draft_ignore; ?></div>
-            <?php echo $this->form->draft_name; ?>
-            <?php echo $this->form->draft_address; ?>
-            <?php echo $this->form->draft_start; ?>
-            <?php echo $this->form->draft_end; ?>
-            <?php echo $this->form->draft_map_link; ?>
-            <?php echo $this->form->draft_photo_link; ?>
-        </div>
-        
-        <div id="buttons-container">
-            <input class="button" type="submit" value="Save"/>
-            <a class="button button-red" href="<?php echo $this->baseUrl(); ?>/leagues/<?php echo $this->escape($this->season); ?>#leagues-<?php echo $this->escape($this->league['id']); ?>">Cancel</a>
-        </div>
-        <?php echo $this->partial('tinymce.phtml', array('element' => 'info')); ?>
-    </form>
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
+    </div>
 </div>
-
