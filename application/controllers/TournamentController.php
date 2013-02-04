@@ -586,55 +586,76 @@ class TournamentController extends Zend_Controller_Action
 
     public function contactAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/smoothness/smoothness.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/contact.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/contact.js');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
         $this->view->section = 'contact';
         $tournamentMemberTable = new Model_DbTable_TournamentMember();
+        $this->view->members = $tournamentMemberTable->fetchAllMembers($this->view->tournament->id);
+    }
+
+    public function contactaddAction()
+    {
+        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
+            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
+        }
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
+        $this->view->section = 'contact';
+
+        $form = new Form_TournamentEdit($this->view->tournament->id, 'contact');
 
         if($this->getRequest()->isPost()) {
-            // disable the layout
-            $this->_helper->layout()->disableLayout();
-            $this->_helper->viewRenderer->setNoRender(true);
-
             $post = $this->getRequest()->getPost();
 
-            if(isset($post['user_id'])) {
-                $userTable = new Model_DbTable_User();
-                $user = $userTable->find($post['user_id'])->current();
-                if($user) {
-                    $contactId = $tournamentMemberTable->addMember($this->view->tournament->id, $post['user_id']);
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
+            }
 
-                    $this->view->message('Contact created.', 'success');
-                    echo Zend_Json::encode(array('result' => 'success', 'url' => $this->view->baseUrl() . '/tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contactedit/' . $contactId));
-                    return;
+            if($post['user_id'] == 0 && empty($post['name']) || empty($post['email'])) {
+                $form->getElement('user_id')->addErrorMessage('You must select a user or enter user information.')->markAsError();
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $tournamentMemberTable = new Model_DbTable_TournamentMember();
+                $member = $tournamentMemberTable->createRow();
+                $member->tournament_id = $this->view->tournament->id;
+
+                if($data['user_id'] != 0) {
+                    $member->user_id = $data['user_id'];
+                    $member->name = null;
+                    $member->email = (isset($data['email'])) ? $data['email'] : null;
                 } else {
-                    echo Zend_Json::encode(array('result' => 'error', 'message' => 'User not valid'));
-                    return;
+                    $member->user_id = null;
+                    $member->name = $data['name'];
+                    $member->email = $data['email'];
                 }
+
+                $member->weight = $data['weight'];
+                $member->type = $data['type'];
+                $member->save();
+
+                $this->view->message('Tournament contact added', 'success');
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
             }
         }
 
-        $userTable = new Model_DbTable_User();
-        $this->view->users = $userTable->fetchAllUsers();
-        $this->view->members = $tournamentMemberTable->fetchAllMembers($this->view->tournament->id);
+        $this->view->headScript()->appendScript('$(".select2").select2();');
+        $this->view->form = $form;
     }
 
     public function contacteditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/tournament/contact.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/tournament/contactedit.js');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/chosen.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/chosen.jquery.min.js');
-        $this->view->section = 'contact';
-
-        $contactId = $this->getRequest()->getUserParam('contact_id');
-
         if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
             $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
         }
+
+        $this->view->section = 'contact';
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
+
+        $contactId = $this->getRequest()->getUserParam('contact_id');
+
 
         $tournamentMemberTable = new Model_DbTable_TournamentMember();
         $member = $tournamentMemberTable->find($contactId)->current();
@@ -650,8 +671,10 @@ class TournamentController extends Zend_Controller_Action
                     $member->user_id = $data['user_id'];
                     $member->name = null;
                     $member->email = (isset($data['email'])) ? $data['email'] : null;
-                    $member->save()
-                            ;
+                    $member->type = $data['type'];
+                    $member->weight = $data['weight'];
+                    $member->save();
+
                     $this->view->message('Tournament contact updated', 'success');
                     $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
                 } else if($data['user_id'] == 0 and (!empty($data['name']) and !empty($data['email']))) {
@@ -659,6 +682,8 @@ class TournamentController extends Zend_Controller_Action
                     $member->user_id = null;
                     $member->name = $data['name'];
                     $member->email = $data['email'];
+                    $member->type = $data['type'];
+                    $member->weight = $data['weight'];
                     $member->save();
 
                     $this->view->message('Tournament contact updated', 'success');
@@ -666,11 +691,10 @@ class TournamentController extends Zend_Controller_Action
                 } else {
                     $this->view->message('You must either select a user or enter BOTH name and email.', 'error');
                 }
-            } else {
-                $form->populate($post);
             }
         }
 
+        $this->view->headScript()->appendScript('$(".select2").select2();');
         $this->view->form = $form;
     }
 

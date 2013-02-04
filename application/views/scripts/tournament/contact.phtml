@@ -1,50 +1,46 @@
-<h1>Tournament Contacts</h1>
-
-<?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-<div class="page-actions">
-    <a class="button" id="add-person" href="#">Add Person</a>
-    <div id="add-person-container">
-        <div class="row">
-            <input type="hidden" id="tournament-name" value="<?php echo $this->escape($this->tournament->name); ?>"/>
-            <input type="hidden" id="tournament-year" value="<?php echo $this->escape($this->tournament->year); ?>"/>
-            <br/>
-            Select User:
-            <select id="contact-user">
-                <option value="0">Select a user</option>
-                <?php foreach($this->users as $user): ?>
-                <option value="<?php echo $this->escape($user->id); ?>"><?php echo $this->escape($user->first_name . ' ' . $user->last_name); ?></option>
-                <?php endforeach; ?>
-            </select>
+<div class="span11 actions pull-right">
+    <div class="btn-group pull-right">
+        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact_add'); ?>"><i class="icon-book"></i> Add a Contact</a>
+        <?php endif; ?>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span12">
+            <h2>Tournament Contacts</h2>
+            <p>
+                This is a list of people associated with the tournament and role in case you need to know who to contact or get a hold of someone for more questions.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <?php foreach($this->members as $member): ?>
+            <div class="offset2 span8">
+                <div class="pull-right">
+                    <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <a onclick="return confirm('Are you sure you want to delete this contact?');"class="btn btn-danger btn-mini" class="delete" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+                </div>
+                <h3>
+                <?php if(empty($member->user_id)): ?>
+                <?php echo $this->generateEmailLink($member->email, $member->name); ?>
+                <?php else: ?>
+                <?php $userTable = new Model_DbTable_User(); $user = $userTable->find($member->user_id)->current(); ?>
+                    <?php if(!empty($this->tournament->email) and $member->type == 'director'): ?>
+                    <?php echo $this->generateEmailLink($this->tournament->email, $this->fullname($user->id)); ?>
+                    <?php elseif(empty($member->email)): ?>
+                    <?php echo $this->generateEmailLink($user->email, $this->fullname($user->id)); ?>
+                    <?php else: ?>
+                    <?php echo $this->generateEmailLink($member->email, $this->fullname($user->id)); ?>
+                    <?php endif; ?>
+                <?php endif; ?>
+                    <small>
+                        ( <?php echo $this->escape(ucwords(str_replace('-', ' ', $member->type))); ?> )
+                    </small>
+                </h3>
+            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>
-<?php endif; ?>
-<p class="blurb">
-    This is a list of people associated with the tournament and role in case you need to know who to contact or get a hold of someone for more questions.
-</p>
-
-<?php foreach($this->members as $member): ?>
-<div class="contact">
-    <div class="label"><?php echo $this->escape(ucwords(str_replace('-', ' ', $member->type))); ?>:</div>
-    <?php if(empty($member->user_id)): ?>
-        <div class="value"><?php echo $this->generateEmailLink($member->email, $member->name); ?></a></div>
-    <?php else: ?>
-    <?php $userTable = new Model_DbTable_User(); $user = $userTable->find($member->user_id)->current(); ?>
-        <?php if(!empty($this->tournament->email) and $member->type == 'director'): ?>
-        <div class="value"><?php echo $this->generateEmailLink($this->tournament->email, $this->fullname($user->id)); ?></div>
-        <?php elseif(empty($member->email)): ?>
-        <div class="value"><?php echo $this->generateEmailLink($user->email, $this->fullname($user->id)); ?></div>
-        <?php else: ?>
-        <div class="value"><?php echo $this->generateEmailLink($member->email, $this->fullname($user->id)); ?></a></div>
-        <?php endif; ?>
-    <?php endif; ?>
-
-    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
-    <div class="actions">
-        <a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-edit.png"/></a>
-        <a class="delete" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_delete'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></a>
-    </div>
-    <?php endif; ?>
-    <div class="clearfix"></div>
-</div>
-<?php endforeach; ?>

@@ -29,7 +29,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             $this->$state();
         }
 
-        if(in_array($state, array('update', 'home', 'admin', 'bid', 'team', 'schedule', 'location', 'lodging'))) {
+        if(in_array($state, array('update', 'home', 'admin', 'bid', 'team', 'schedule', 'location', 'lodging', 'contact'))) {
             $this->addElement('button', 'save', array(
                 'type' => 'submit',
                 'label' => 'Update',
@@ -444,6 +444,7 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
                 array('InArray', false, array(array_keys($users), 'messages' => array('notInArray' => 'Please select a user'))),
             ),
             'required' => false,
+            'class' => 'select2 span3',
             'label' => 'Select a User:',
             'value' => (isset($member->user_id)) ? $member->user_id : 0,
         ));
@@ -474,6 +475,25 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
             'description' => 'Use `director` for admin access',
             'value' => (isset($member->type)) ? $member->type : null,
         ));
+
+
+        $this->addElement('text', 'weight', array(
+            'required' => true,
+            'label' => 'Weight:',
+            'class' => 'span1',
+            'style' => 'text-align: center;',
+            'filters' => array('StringTrim'),
+            'description' => 'Lower numbers first',
+            'value' => (isset($member->weight)) ? $member->weight : $tournamentMemberTable->getHighestWeight($this->_tournament->id),
+        ));
+
+        $this->addDisplayGroup(
+            array('user_id', 'name', 'email', 'type', 'weight'),
+            'tournament_contact_form',
+            array(
+                'legend' => 'Update tournament contact',
+            )
+        );
     }
 
     private function schedule()
