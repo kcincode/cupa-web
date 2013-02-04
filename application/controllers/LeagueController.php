@@ -496,44 +496,20 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->isLeagueDirector($leagueId) ) {
-            $this->_redirect('leagues/' . $this->view->season);
+        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
         }
 
-        $form = new Form_LeagueEdit();
-        $form->loadSection($leagueId, 'registration');
+        $form = new Form_LeagueEdit($leagueId, 'registration');
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
-            if(isset($post['new_question'])) {
-                if($post['id'] != 0) {
-                    $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
-                    $leagueQuestionListTable->addQuestionToLeague($leagueId, $post['id'], 1);
-                    // disable the layout
-                    $this->_helper->layout()->disableLayout();
-                    $this->_helper->viewRenderer->setNoRender(true);
-                    echo $this->view->baseUrl() . '/league/' . $leagueId . '/edit_registration';
-                    return;
-                } else {
-                    $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-                    $questionId = $leagueQuestionTable->createQuestion($post['name'], 'Placeholder title', $post['type'], null);
-
-                    $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
-                    $leagueQuestionListTable->addQuestionToLeague($leagueId, $questionId, 1);
-
-                    // disable the layout
-                    $this->_helper->layout()->disableLayout();
-                    $this->_helper->viewRenderer->setNoRender(true);
-                    echo $this->view->baseUrl() . '/league_question/' . $leagueId . '/' . $questionId;
-                    return;
-                }
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
             }
 
-
-            if($post['limit_select'] == 1) {
+            if(empty($post['total_players'])) {
                 $form->getElement('total_players')->setRequired(false);
                 $form->getElement('male_players')->setRequired(true);
                 $form->getElement('female_players')->setRequired(true);
@@ -575,31 +551,78 @@ class LeagueController extends Zend_Controller_Action
                 $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
                 $leagueInformation->paypal_code = (empty($data['paypal_code'])) ? null : $data['paypal_code'];
                 $leagueInformation->cost = $data['cost'];
-
                 $leagueInformation->save();
 
-                $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-                $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
-
-                foreach($post['question'] as $weight => $questionName) {
-                    $leagueQuestion = $leagueQuestionTable->fetchQuestion($questionName);
-                    $required = (isset($post['required'][$questionName])) ? 1 : 0;
-                    $leagueQuestionListTable->updateQuestionList($leagueId, $leagueQuestion->id, $required, $weight);
-                }
-
                 $this->view->message('League registration updated', 'success');
-                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
 
-            } else {
-                $form->populate($post);
+            }
+        }
+
+        $this->view->form = $form;
+    }
+
+    public function pageregistrationquestionseditAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
+        $this->view->league = $leagueTable->fetchLeagueData($leagueId);
+        $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
+
+        $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
+        }
+
+        $form = new Form_LeagueRegister($leagueId, $this->view->user->id, 'league');
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+
+                $leagueMember = $leagueMemberTable->fetchMember($leagueId, $this->view->user->id);
+                if($leagueMember) {
+                    foreach($data as $key => $value) {
+                        $leagueQuestion = $leagueQuestionTable->fetchQuestion($key);
+
+                        if($leagueQuestion) {
+                            $leagueAnswerTable->addAnswer($leagueMember->id, $leagueQuestion->id, $value);
+                        }
+                    }
+
+                    // update the league member table
+                    $leagueMember->modified_at = date('Y-m-d H:i:s');
+                    $leagueMember->modified_by = $this->view->user->id;
+                    $leagueMember->save();
+
+                    $this->view->message('Updated league registration questions.', 'success');
+                    $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
+                }
             }
         }
 
         $this->view->form = $form;
 
-        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-        $this->view->leagueQuestions = $leagueQuestionTable->fetchAllQuestionsFromLeague($leagueId);
-        $this->view->allQuestions = $leagueQuestionTable->fetchAllRemainingQuestions($this->view->leagueQuestions);
     }
 
     public function questioneditAction()

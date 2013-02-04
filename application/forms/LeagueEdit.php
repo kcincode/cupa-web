@@ -578,6 +578,8 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Registration Begin:',
+            'class' => 'span3 datetimepicker',
+            'style' => 'text-align: center;',
             'description' => 'Enter a date/time when registration should begin.',
             'value' => $this->_leagueData['registration_begin'],
         ));
@@ -586,6 +588,8 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Registration End:',
+            'class' => 'span3 datetimepicker',
+            'style' => 'text-align: center;',
             'description' => 'Enter a date/time when registration should end.',
             'value' => $this->_leagueData['registration_end'],
         ));
@@ -594,6 +598,9 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Cost:',
+            'class' => 'span1',
+            'style' => 'text-align: center;',
+            'prepend' => '$',
             'description' => 'Enter the amount the league costs to register.',
             'value' => $this->_leagueData['information']['cost'],
         ));
@@ -602,44 +609,39 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Paypal Button:',
+            'class' => 'span7',
+            'style' => 'height: 200px;',
             'description' => 'Enter the paypal button HTML code.',
             'value' => $this->_leagueData['information']['paypal_code'],
-        ));
-
-        $limitGenders = 0;
-        if(!empty($this->_leagueData['limits']['male_players']) and
-           !empty($this->_leagueData['limits']['female_players']) and
-           empty($this->_leagueData['limits']['total_players'])) {
-           $limitGenders = 1;
-        }
-
-        $this->addElement('checkbox', 'limit_select', array(
-            'required' => false,
-            'label' => 'Enter specific gender limits',
-            'value' => $limitGenders,
         ));
 
         $this->addElement('text', 'male_players', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Male Players:',
+            'class' => 'span1',
+            'style' => 'text-align: center;',
             'description' => 'Enter the max # of male players. (optional)',
-            'value' => (empty($this->_leagueData['limits']['male_players'])) ? 0 : $this->_leagueData['limits']['male_players'],
+            'value' => (empty($this->_leagueData['limits']['male_players'])) ? null : $this->_leagueData['limits']['male_players'],
         ));
 
         $this->addElement('text', 'female_players', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Female Players:',
+            'class' => 'span1',
+            'style' => 'text-align: center;',
             'description' => 'Enter the max # of female players. (optional)',
-            'value' => (empty($this->_leagueData['limits']['female_players'])) ? 0 : $this->_leagueData['limits']['female_players'],
+            'value' => (empty($this->_leagueData['limits']['female_players'])) ? null : $this->_leagueData['limits']['female_players'],
         ));
 
         $this->addElement('text', 'total_players', array(
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Total Players:',
-            'description' => 'Enter the max # of total players.',
+            'class' => 'span1',
+            'style' => 'text-align: center;',
+            'description' => 'Enter the max # of total players. (overwrites the gender counts)',
             'value' => (empty($this->_leagueData['limits']['total_players'])) ? 0 : $this->_leagueData['limits']['total_players'],
         ));
 
@@ -647,9 +649,27 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('digits'),
             'required' => true,
             'label' => 'Max Teams:',
+            'class' => 'span1',
+            'style' => 'text-align: center;',
             'description' => 'Enter the max # of teams.',
             'value' => $this->_leagueData['limits']['teams'],
         ));
+
+        $this->addDisplayGroup(
+            array('registration_begin', 'registration_end', 'cost', 'paypal_code'),
+            'registration_edit_form',
+            array(
+                'legend' => 'League Registration',
+            )
+        );
+
+        $this->addDisplayGroup(
+            array('male_players', 'female_players', 'total_players', 'teams'),
+            'limits_edit_form',
+            array(
+                'legend' => 'League Limits',
+            )
+        );
     }
 
     private function description()

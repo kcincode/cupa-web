@@ -101,6 +101,7 @@
                 <div class="pull-right">
                     <?php if($this->hasRole('editor') or $this->isLeagueDirector($this->league['id'])): ?>
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_registration_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_registration_questions_edit');?>"><i class="icon-list icon-white"></i> Edit Registration Questions</a>
                     <?php endif; ?>
                 </div>
                 <dl class="dl-horizontal">
@@ -109,13 +110,13 @@
                         <?php echo $this->getLeagueRegistrationStatus($this->league['id']); ?><br/>
                         <?php if($this->isLeagueRegistrationOpen($this->league['id'])): ?>
                             <?php if($this->league['limits']['male_players'] !== null and $this->league['limits']['female_players'] !== null): ?>
-                                <?php echo $this->leagueBar('Male players', $this->league['male_players'], $this->league['limits']['male_players']); ?>
-                                <?php echo $this->leagueBar('Female players', $this->league['female_players'], $this->league['limits']['female_players']); ?>
+                                <?php echo $this->leagueBar('male player spots', $this->league['male_players'], $this->league['limits']['male_players']); ?>
+                                <?php echo $this->leagueBar('female player sopts', $this->league['female_players'], $this->league['limits']['female_players']); ?>
                             <?php elseif($this->league['limits']['total_players'] !== null): ?>
-                                <?php echo $this->leagueBar('player spot', $this->league['total_players'], $this->league['limits']['total_players']); ?>
+                                <?php echo $this->leagueBar('player spots', $this->league['total_players'], $this->league['limits']['total_players']); ?>
                             <?php endif; ?>
                             <?php if($this->league['information']['user_teams'] and $this->league['teams'] < $this->league['limits']['teams']): ?>
-                                <?php echo $this->leagueBar('Teams', $this->league['teams'], $this->league['limits']['teams']); ?>
+                                <?php echo $this->leagueBar('team spots', $this->league['teams'], $this->league['limits']['teams']); ?>
                             <?php endif; ?>
 
                             <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Register</a> for the league now!<br/><br/>
