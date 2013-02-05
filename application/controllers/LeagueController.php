@@ -584,45 +584,18 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
         }
 
-        $form = new Form_LeagueRegister($leagueId, $this->view->user->id, 'league');
-
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
             if(isset($post['cancel'])) {
                 $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
             }
-
-            if($form->isValid($post)) {
-                $data = $form->getValues();
-
-                $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
-                $leagueMemberTable = new Model_DbTable_LeagueMember();
-                $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-
-                $leagueMember = $leagueMemberTable->fetchMember($leagueId, $this->view->user->id);
-                if($leagueMember) {
-                    foreach($data as $key => $value) {
-                        $leagueQuestion = $leagueQuestionTable->fetchQuestion($key);
-
-                        if($leagueQuestion) {
-                            $leagueAnswerTable->addAnswer($leagueMember->id, $leagueQuestion->id, $value);
-                        }
-                    }
-
-                    // update the league member table
-                    $leagueMember->modified_at = date('Y-m-d H:i:s');
-                    $leagueMember->modified_by = $this->view->user->id;
-                    $leagueMember->save();
-
-                    $this->view->message('Updated league registration questions.', 'success');
-                    $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
-                }
-            }
         }
 
-        $this->view->form = $form;
 
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+
+        $this->view->questions = $leagueQuestionTable->fetchAllQuestionsFromLeague($leagueId);
     }
 
     public function questioneditAction()

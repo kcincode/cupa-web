@@ -678,6 +678,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'League Description:',
+            'class' => 'ckeditor',
             'description' => 'Enter the information you want displayed for the league here.',
             'value' => $this->_leagueData['information']['description'],
         ));

@@ -364,4 +364,15 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
         );
     }
 
+    private function leaguequestions()
+    {
+        $this->league();
+
+        foreach($this->getElements() as $element) {
+            $element->setAttrib('disabled', true);
+            $element->setAttrib('class', 'leagues');
+        }
+
+    }
+
 }
