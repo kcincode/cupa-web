@@ -1,19 +1,7 @@
-<form method="post">
-    <div class="row">
-        <dt>Year:</dt>
-        <dd>
-            <input id="league-year" type="text" name="year" value="<?php echo $this->escape(date('Y')); ?>"/>
-        </dd> 
+<div id="page-banner">&nbsp;</div>
+
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
     </div>
-    <div class="row">
-        <dt>Day:</dt>
-        <dd>
-            <select name="day" id="league-day">
-                <?php foreach(array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday') as $day): ?>
-                <option value="<?php echo $this->escape($day);?>"><?php echo $this->escape($day);?></option>
-                <?php endforeach; ?>
-            </select>
-        </dd> 
-    </div>
-    <div id="error-string"></div>
-</form>
+</div>

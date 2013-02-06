@@ -212,7 +212,7 @@ class LeagueController extends Zend_Controller_Action
         $league->save();
 
         $season = $leagueSeasonTable->fetchName($league->season);
-        $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
+        $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($league->id, true, false, false, true)));
     }
 
     public function pageeditAction()
@@ -747,36 +747,36 @@ class LeagueController extends Zend_Controller_Action
 
     public function pageaddAction()
     {
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
-        }
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
 
-        $this->view->season = $this->getRequest()->getUserParam('season');
+        $season = $this->getRequest()->getUserParam('season');
 
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $form = new Form_LeagueCreate($season);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            $this->_helper->viewRenderer->setNoRender(true);
 
-            $leagueTable = new Model_DbTable_League();
-            if($leagueTable->isUnique($post['year'], $post['season'], $post['day'])) {
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues/' . $season);
+            }
 
-                $id = $leagueTable->createBlankLeague($post['year'], $post['season'], $post['day'], null, $this->view->user->id);
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $leagueTable = new Model_DbTable_League();
+                $id = $leagueTable->createLeague($data);
+
                 if(is_numeric($id)) {
                     $this->view->message('League created');
-                    echo Zend_Json::encode(array('result' => 'success', 'data' => strtolower($post['season'])));
-                } else {
-                    echo Zend_Json::encode(array('result' => 'error', 'message' => 'Error Creating League'));
-                    return;
+                    $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($id, true, false, false, true)));
                 }
-            } else {
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'League Already Exists'));
-                return;
+                $this->view->message('Could not create the league', 'error');
             }
         }
+
+        $this->view->headScript()->appendScript('$(".select2").select2();');
+        $this->view->form = $form;
     }
 
     public function teamsAction()

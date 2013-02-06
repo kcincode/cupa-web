@@ -14,6 +14,7 @@ class Model_DbTable_League extends Zend_Db_Table
                        ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array())
                        ->where('ls.name = ?', $season)
                        ->where('li.is_youth = ?', 0)
+                       ->order('l.is_archived ASC')
                        ->order('l.year DESC')
                        ->order('l.registration_end');
 
@@ -83,14 +84,14 @@ class Model_DbTable_League extends Zend_Db_Table
         return true;
     }
 
-    public function createBlankLeague($year, $season, $day, $name, $userId)
+    public function createLeague($data)
     {
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $leagueId = $this->insert(array(
-            'year' => $year,
-            'season' => $leagueSeasonTable->fetchId($season),
-            'day' => $day,
-            'name' => (empty($name)) ? null : $name,
+            'year' => $data['year'],
+            'season' => $data['season'],
+            'day' => $data['day'],
+            'name' => (empty($data['name'])) ? null : $data['name'],
             'info' => 'Enter a quick description of the league here or remove.',
             'registration_begin' => '2010-01-01 00:00:00',
             'registration_end' => '2010-01-01 00:00:00',
@@ -138,17 +139,19 @@ class Model_DbTable_League extends Zend_Db_Table
             ));
 
             $leagueMemberTable = new Model_DbTable_LeagueMember();
-            $leagueMemberTable->insert(array(
-                'league_id' => $leagueId,
-                'user_id' => $userId,
-                'position' => 'director',
-                'league_team_id' => null,
-                'paid' => 0,
-                'release' => 0,
-                'created_at' => date('Y-m-d H:i:s'),
-                'modified_at' => date('Y-m-d H:i:s'),
-                'modified_by' => $userId,
-            ));
+            foreach($data['directors'] as $director) {
+                $leagueMemberTable->insert(array(
+                    'league_id' => $leagueId,
+                    'user_id' => $director,
+                    'position' => 'director',
+                    'league_team_id' => null,
+                    'paid' => 0,
+                    'release' => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'modified_at' => date('Y-m-d H:i:s'),
+                    'modified_by' => Zend_Auth::getInstance()->getIdentity()->id,
+                ));
+            }
 
             $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
             $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
