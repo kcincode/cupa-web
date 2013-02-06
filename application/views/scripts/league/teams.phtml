@@ -1,57 +1,71 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="teams">
-  <h1>League Teams</h1>
-    <?php if($this->isLeagueDirector($this->league->id)): ?>
-    <div class="admin-buttons">
-        <a id="add-team" class="button" href="#">Add a Team</a>
-        <div id="add-team-container"></div>
-    </div>
-    <?php endif; ?>
-  <p>Click on the teams to show the players for that team.</p>
-  <?php if(count($this->teams)): ?>
-  <?php foreach($this->teams as $team): ?>
-  <div class="team">
+<div id="page-banner">&nbsp;</div>
 
-    <?php if($team->color_code): ?>
-    <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>;">
-    <?php else: ?>
-    <div class="logo">
-    <?php endif; ?>
-        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team->id); ?>" alt="<?php echo $this->escape($team->name); ?>"/>
-        <?php if($this->isLeagueCaptain($this->league->id, $team->id) or $this->isLeagueDirector($this->league->id)): ?>
-        <div class="overlay" data-link="<?php echo $this->url(array('league_id' => $this->league->id, 'team_id' => $team->id), 'league_logo'); ?>">Upload<br/>Logo</div>
-        <?php endif; ?>
-    </div>
-    <div class="info" onclick="loadPlayers('<?php echo $this->escape($team->id); ?>')">
-        <div class="links">
-            <?php if($this->isLeagueDirector($this->league->id)): ?>
-            <a href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_edit');?>"><img src="<?php echo $this->baseUrl();?>/images/ico-edit.png" title="Edit Team"/></a>
-            <a href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_delete');?>" onclick="return confirm('Are you sure you want to delete this team, it will reset ALL DATA associated with this team.');" href="#"><img src="<?php echo $this->baseUrl();?>/images/ico-delete.png" title="Delete Team"/></a>
-            <?php endif; ?>
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
         </div>
-        <span class="team-name"><?php echo $this->escape($team->name);?></span><br/>
-        <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team->color));?></span><br/>
-        <span class="captains"><strong>Captain(s):</strong>
-        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team->league_id, $team->id); ?>
-        <?php foreach($captains as $captain): ?>
-            <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
-        <?php endforeach; ?>
-        </span><br/>
-        <span class="captains">
-        <strong>Record:</strong> <?php echo $this->getLeagueTeamRecord($team->league_id, $team->id); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)<br/>
-        </span>
     </div>
-    <div class="clearfix"></div>
-    <div class="player-container team-<?php echo $this->escape($team->id); ?>">
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">League Teams</h2>
+            <div class="pull-right">
+                <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_team_add'); ?>"><i class="icon-plus icon-white"></i>Add a Team</a>
+            </div>
+        </div>
     </div>
-  </div>
-  <?php endforeach; ?>
-  <div class="clearfix"></div>
-  <?php else: ?>
-  <p align="center">There are no teams defined yet for this league.  Stay tuned...</p>
-  <?php endif; ?>
-  </div>
+    <div class="row">
+        <div class="span12">
+            <?php foreach($this->teams as $i => $team): ?>
+            <div class="well well-small clearfix">
+                <div class="pull-right">
+                    <button type="button" onclick="loadPlayers('<?php echo $this->escape($team->id); ?>');"class="btn btn-mini" data-toggle="collapse" data-target="#team<?php echo $this->escape($team->id); ?>"><i class="icon-list icon-white"></i> Show Players</button>
+                    <?php if($this->isLeagueDirector($this->league->id)): ?>
+                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <a class="btn btn-mini btn-danger" href="<?php echo $this->url(array('team_id' => $this->escape($team->id)), 'league_team_delete');?>" onclick="return confirm('Are you sure you want to delete this team, it will reset ALL DATA associated with this team.');" href="#"><i class="icon-trash icon-white"></i> Remove</a>
+                    <?php endif; ?>
+                </div>
+                <img style="width: 85; height: 85px;" class="pull-left img-polaroid" src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team->id); ?>" alt="<?php echo $this->escape($team->name); ?>"/>
+                <div class="span7">
+                    <h1 style="color: <?php echo ($team->color_code) ? $team->color_code : '#222'; ?>">
+                        <?php echo $this->escape($team->name); ?>
+                    </h1>
+                    <strong>Color:</strong> <?php echo $this->escape($team->color); ?><br/>
+                    <strong>Captain(s):</strong>
+                    <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team->league_id, $team->id); ?>
+                    <?php foreach($captains as $captain): ?>
+                        <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <div class="span3" style="text-align: center;">
+                    <h1><small>
+                        <?php echo $this->getLeagueTeamRecord($team->league_id, $team->id); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
+                    </small><h1>
+                </div>
+                <div class="clearfix">&nbsp;</div>
+                <div id="team<?php echo $this->escape($team->id); ?>" class="collapse">
+                    <div class="clearfix">&nbsp;</div>
+                    <div id="team<?php echo $this->escape($team->id);?>-players" class="offset1 span9">
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 </div>
+
 <script>
-    var league = '<?php echo $this->league->id; ?>';
+function loadPlayers(teamId)
+{
+    $.ajax({
+        url: '<?php echo $this->baseUrl(); ?>/league/load_players/' + teamId,
+        type: 'get',
+        success: function(resp) {
+            $('#team' + teamId + '-players').html(resp);
+        },
+        error: function() {
+            alert('Could not load players');
+        }
+    });
+}
 </script>

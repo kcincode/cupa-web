@@ -1,24 +1,18 @@
-<?php if($this->team->color_code): ?>
-<h3 style="color: <?php echo $this->escape($this->team->text_code); ?>; background-color: <?php echo $this->escape($this->team->color_code); ?>;">Players</h3>
-<?php else: ?>
-<h3 onclick="loadPlayers('<?php echo $this->escape($this->team->id); ?>')">Players</h3>
-<?php endif; ?>
-  
-<div class="players <?php echo str_replace(' ', '_', $this->escape($this->team->name)); ?>">
-    <?php foreach($this->players as $player): ?>
-    <div class="row">
-        <div class="name">
-            <a href="<?php echo $this->url(array('user_id' => $player['id']), 'page_profile_public'); ?>">
-                <?php echo $this->fullname($player['id']); ?>
-            </a>
-        </div>
-        <div class="gender">
-        <?php echo (empty($player['gender'])) ? 'Unknown' : $this->escape($player['gender']); ?>
-        </div>
-        <div class="height">
-        <?php echo (empty($player['height'])) ? 'Unknown' : $this->escape(floor($player['height'] / 12)) . "'" . $this->escape($player['height'] % 12) .'"'; ?>
-        </div>
-    </div>
-    <?php endforeach; ?>
-    <div class="clearfix">&nbsp;</div>
-</div>
+                        <table class="table table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th class="span1">Gender</th>
+                                    <th class="span1">Height</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($this->players as $player): ?>
+                                <tr>
+                                    <td><a href="<?php echo $this->url(array('user_id' => $player['id']), 'page_profile_public'); ?>"><?php echo $this->fullname($player['id']); ?></a></td>
+                                    <td style="text-align: center;"><?php echo (empty($player['gender'])) ? 'Unknown' : $this->escape($player['gender']); ?></td>
+                                    <td style="text-align: center;"><?php echo (empty($player['height'])) ? 'Unknown' : $this->escape(floor($player['height'] / 12)) . "'" . $this->escape($player['height'] % 12) .'"'; ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>

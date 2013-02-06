@@ -818,49 +818,52 @@ class LeagueController extends Zend_Controller_Action
 
     public function teamsaddAction()
     {
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+
+        // make sure the user should be able to add a team
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
         }
 
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-colorpicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-colorpicker.js');
+
+        $form = new Form_LeagueTeamEdit($leagueId);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
-            // make sure the user should be able to add a team
-            if(!$this->view->isLeagueDirector($post['league'])) {
-                $this->_redirect('league/' . $post['league']);
+            if(isset($post['cancel'])) {
+                $this->_redirect('league/' . $leagueId);
             }
 
-            $this->_helper->viewRenderer->setNoRender(true);
+            if($form->isValid($post)) {
+                $data = $form->getValues();
 
-            $leagueTeamTable = new Model_DbTable_LeagueTeam();
-            if($leagueTeamTable->isUnique($post['league'], $post['name'])) {
-                $id = $leagueTeamTable->insert(array(
-                    'name' => $post['name'],
-                    'league_id' => $post['league'],
-                    'color' => 'white',
-                    'color_code' => '#ffffff',
-                    'text_code' => '#000000',
-                    'final_rank' => null,
-                ));
+                $leagueTeamTable = new Model_DbTable_LeagueTeam();
+                if($leagueTeamTable->isUnique($leagueId, $data['name'])) {
+                    $id = $leagueTeamTable->insert(array(
+                        'name' => $data['name'],
+                        'league_id' => $leagueId,
+                        'color' => $data['color'],
+                        'color_code' => $data['color_code'],
+                        'text_code' => '#000000',
+                        'final_rank' => null,
+                    ));
 
-                if($id) {
-                    echo Zend_Json::encode(array('result' => 'success', 'data' => $id));
-
-                    $this->view->message("Created the team `{$post['name']}`", 'success');
-                    return;
+                    if(is_numeric($id)) {
+                        $this->view->message('Team created', 'success');
+                        $this->_redirect('league/' . $leagueId);
+                    }
                 }
-
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Error creating team.'));
-                return;
-            } else {
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Team Already Exists'));
-                return;
             }
         }
+
+        $this->view->headScript()->appendScript('$(".select2").select2();');
+        $this->view->headScript()->appendScript('$(".colorpicker").colorpicker();');
+        $this->view->form = $form;
     }
 
     public function teamseditAction()
@@ -879,10 +882,20 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $team->league_id);
         }
 
-        $form = new Form_LeagueTeamEdit($team);
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-colorpicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-colorpicker.js');
+
+        $form = new Form_LeagueTeamEdit($team->league_id, $team);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('league/' . $team->league_id);
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
@@ -923,12 +936,11 @@ class LeagueController extends Zend_Controller_Action
 
                 $this->view->message("Team `{$team->name}` updated", 'success');
                 $this->_redirect('league/' . $team->league_id);
-            } else {
-                $form->populate($post);
             }
         }
 
-
+        $this->view->headScript()->appendScript('$(".select2").select2();');
+        $this->view->headScript()->appendScript('$(".colorpicker").colorpicker();');
         $this->view->form = $form;
         $this->view->team = $team;
     }

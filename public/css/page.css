@@ -174,3 +174,7 @@ ul.officers .position {
 .align-right {
     text-align: right;
 }
+
+.league-team-player-list {
+    margin-top: 0;
+}

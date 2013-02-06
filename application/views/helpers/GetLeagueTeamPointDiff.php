@@ -17,6 +17,6 @@ class My_View_Helper_GetLeagueTeamPointDiff extends Zend_View_Helper_Abstract
     public function getLeagueTeamPointDiff($leagueId, $teamId)
     {
         $leagueGameTable = new Model_DbTable_LeagueGame();
-        return $leagueGameTable->fetchTeamPointDiff($leagueId, $teamId) . ' point diff';
+        return $leagueGameTable->fetchTeamPointDiff($leagueId, $teamId);
     }
 }
