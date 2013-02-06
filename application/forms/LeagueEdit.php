@@ -672,6 +672,15 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         );
     }
 
+    private function questions()
+    {
+        $form = new Form_LeagueRegister($this->_leagueData['id'], 1, 'league');
+        foreach($form->getElements() as $element) {
+            $element->setAttrib('disabled', true);
+            $this->addElement($element);
+        }
+    }
+
     private function description()
     {
         $this->addElement('textarea', 'description', array(

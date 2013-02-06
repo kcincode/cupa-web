@@ -199,8 +199,10 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
         $leagueMemberTable = new Model_DbTable_LeagueMember();
 
-        $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
-        $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
+        if(empty($this->_userId)) {
+            $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
+            $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
+        }
 
         $i = 1;
         $questionList = array();
@@ -301,6 +303,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
                             'filters' => array('StringTrim'),
                             'required' => ($question['required'] == 1) ? true : false,
                             'label' => $i . '.) ' . $question['title'],
+                            'class' => 'span6',
                             'description' => ($question['required'] == 0) ? '(optional)' : '',
                             'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
                         ));
@@ -311,7 +314,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             $i++;
         }
 
-        if(strstr($_SERVER['HTTP_REFERER'], 'profile/leagues') !== false) {
+        if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'], 'profile/leagues') !== false) {
             $this->addElement('button', 'save', array(
                 'type' => 'submit',
                 'label' => 'Save',

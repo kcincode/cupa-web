@@ -2,6 +2,16 @@
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
+    protected function _initAutoload()
+    {
+        $moduleLoader = new Zend_Application_Module_Autoloader(array(
+            'namespace' => '',
+            'basePath' => APPLICATION_PATH,
+        ));
+
+        return $moduleLoader;
+    }
+
     /**
      * Initializes the routes from the routes.ini config file
      * @return Zend_Controller_Router_Rewrite

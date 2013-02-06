@@ -156,3 +156,7 @@ footer {
 .control-group .control-label {
     margin-top: 0;
 }
+
+textarea {
+    height: 125px;
+}

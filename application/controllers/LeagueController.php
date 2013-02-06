@@ -564,6 +564,8 @@ class LeagueController extends Zend_Controller_Action
 
     public function pageregistrationquestionseditAction()
     {
+        $this->view->requiredQuestions = array('new_player', 'comments');
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $pageTable = new Model_DbTable_Page();
@@ -574,6 +576,9 @@ class LeagueController extends Zend_Controller_Action
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
         $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
+
+        $form = new Form_LeagueEdit($leagueId, 'questions');
+        $addQuestionForm = new Form_LeagueQuestionAdd($leagueId);
 
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
@@ -590,82 +595,53 @@ class LeagueController extends Zend_Controller_Action
             if(isset($post['cancel'])) {
                 $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
             }
-        }
 
+            if($addQuestionForm->isValid($post)) {
+                $data = $addQuestionForm->getValues();
+
+                $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
+                $leagueQuestionListTable->addQuestionToLeague($leagueId, $data['question'], 1);
+
+                $this->view->message('Question added', 'success');
+                $this->_redirect('league/' . $this->view->league['id'] . '/edit_registration_questions');
+            } else {
+                $this->view->message('You must select a valid question to add', 'error');
+            }
+
+        }
 
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
 
         $this->view->questions = $leagueQuestionTable->fetchAllQuestionsFromLeague($leagueId);
+        $this->view->form = $form;
+        $this->view->addQuestionForm = $addQuestionForm;
     }
 
-    public function questioneditAction()
+    public function togglequestionrequiredAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/questionedit.css');
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $questionId = $this->getRequest()->getUserParam('question_id');
 
-        $this->view->headScript()->appendFile($this->view->baseUrl(). '/js/league/questionedit.js');
+        $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
+        $leagueQuestionListTable->toggleRequired($leagueId, $questionId);
+
+        $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
+    }
+
+    public function movequestionAction()
+    {
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
-        $leagueTable = new Model_DbTable_League();
-        $league = $leagueTable->fetchLeagueData($leagueId);
+        $direction = $this->getRequest()->getUserParam('direction');
 
-        if(!$league) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-        $this->view->leagueId = $league['id'];
+        $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
+        $leagueQuestionListTable->move($leagueId, $questionId, $direction);
 
-        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-        $question = $leagueQuestionTable->find($questionId)->current();
-        if(!$question) {
-            $this->_redirect('league/' . $leagueId . '/page_registration');
-        }
-
-        if(!$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('leagues');
-        }
-
-        $form = new Form_LeagueQuestionEdit($question);
-        if($this->getRequest()->isPost()) {
-            $post = $this->getRequest()->getPost();
-
-            if(isset($post['cancel'])) {
-                $this->_redirect('league/' . $leagueId . '/edit_registration');
-            }
-
-            if($form->isValid($post)) {
-                $data = $form->getValues();
-                $question->name = $data['name'];
-                $question->title = $data['title'];
-                $question->type = $data['type'];
-                $question->answers = (empty($data['answers'])) ? null : $this->convertQuestionAnswers($data['answers']);
-                $question->save();
-
-                $this->view->message('Question `' . $question->name . '` updated', 'success');
-                $this->_redirect('league/' . $leagueId . '/edit_registration');
-            } else {
-                $form->populate($post);
-            }
-        }
-
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/league/pageedit.css');
-
-        $this->view->form = $form;
-    }
-
-    public function convertQuestionAnswers($answers)
-    {
-        $lines = explode("\r\n", $answers);
-
-        $data = array();
-        foreach($lines as $line) {
-            list($key, $value) = explode('::', $line);
-            $data[trim($key)] = trim($value);
-        }
-
-        return Zend_Json::encode($data);
+        $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
     }
 
     public function questionremoveAction()
@@ -674,27 +650,30 @@ class LeagueController extends Zend_Controller_Action
         $questionId = $this->getRequest()->getUserParam('question_id');
         $leagueTable = new Model_DbTable_League();
         $league = $leagueTable->fetchLeagueData($leagueId);
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
+        $season = $leagueSeasonTable->fetchName($league['season']);
 
         if(!$league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($league['id'], true, false, false, true)));
+        }
+
+
         $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
         $question = $leagueQuestionTable->find($questionId)->current();
         if(!$question) {
-            $this->_redirect('league/' . $leagueId . '/page_registration');
-        }
-
-        if(!$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('leagues');
+            $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
         }
 
         $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
         $leagueQuestionListTable->removeQuestionFromLeague($leagueId, $questionId);
 
         $this->view->message('Question `' . $question->name . '` removed from the league.', 'success');
-        $this->_redirect('league/' . $leagueId . '/edit_registration');
+        $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
     }
 
     public function pagedescriptioneditAction()
