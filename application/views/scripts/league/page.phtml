@@ -2,7 +2,7 @@
 
 <div class="row actions">
     <div class="span9 pull-left <?php echo $this->pageClass(); ?>">
-        <h3><?php echo $this->escape($this->page->title); ?>s</h3>
+        <h2><?php echo $this->leaguename($this->league['id'], true, false, false, true); ?></h2>
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
@@ -28,13 +28,13 @@
                 <?php endif; ?>
                 <?php endif; ?>
             </div>
-            <h2 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], true, false, false, true); ?></h2>
+            <br/>
             <?php if($this->league['visible_from'] > date('Y-m-d H:i:s')): ?>
-
             <div class="alert">
                 *** This page is not yet viewable, it is only viewable to those that can edit it. ***
             </div>
             <?php endif; ?>
+
             <div>
                 <?php if($this->league['teams'] > 0): ?>
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule'); ?>">Schedule</a>

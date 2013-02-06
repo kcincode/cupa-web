@@ -622,6 +622,17 @@ class LeagueController extends Zend_Controller_Action
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
 
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+
+        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
+        }
+
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
         $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
         $leagueQuestionListTable->toggleRequired($leagueId, $questionId);
 
@@ -630,13 +641,20 @@ class LeagueController extends Zend_Controller_Action
 
     public function movequestionAction()
     {
-        // disable the layout and view
-        $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $questionId = $this->getRequest()->getUserParam('question_id');
         $direction = $this->getRequest()->getUserParam('direction');
+
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+
+        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
+        }
+
+        // disable the layout and view
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
 
         $leagueQuestionListTable = new Model_DbTable_LeagueQuestionList();
         $leagueQuestionListTable->move($leagueId, $questionId, $direction);
@@ -653,13 +671,16 @@ class LeagueController extends Zend_Controller_Action
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $season = $leagueSeasonTable->fetchName($league['season']);
 
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'leagues');
+
         if(!$league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($league['id'], true, false, false, true)));
+        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
         }
 
 
@@ -693,17 +714,21 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->isLeagueDirector($leagueId) ) {
-            $this->_redirect('leagues/' . $this->view->season);
+        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
         }
 
-        $form = new Form_LeagueEdit();
-        $form->loadSection($leagueId, 'description');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
+
+        $form = new Form_LeagueEdit($leagueId, 'description');
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
@@ -713,15 +738,11 @@ class LeagueController extends Zend_Controller_Action
                 $leagueInformation->save();
 
                 $this->view->message('League description updated', 'success');
-                $this->_redirect('leagues/' . $this->view->season . '#leagues-' . $leagueId);
-
-            } else {
-                $form->populate($post);
+                $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
             }
         }
 
         $this->view->form = $form;
-
     }
 
     public function pageaddAction()

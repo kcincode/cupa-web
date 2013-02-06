@@ -29,6 +29,11 @@ nav ul {
     margin: -55px 0 0 5px;
 }
 
+.actions h2 {
+    font-size: 28pt;
+    text-shadow: 0 0 1px #888;
+}
+
 .page-links ul {
     margin-top: 10px;
     list-style: none;
