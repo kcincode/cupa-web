@@ -1,43 +1,57 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="statuses">
-    <h1>Player Statuses</h1>
-    <div id="admin-buttons">
-        <input type="radio" id="need-action" name="selection"<?php echo ($this->all == '') ? ' checked="checked"' : '';?>/> <label for="need-action">Incomplete Players</label>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="radio" id="all" name="selection"<?php echo ($this->all == 'all') ? ' checked="checked"' : '';?>/> <label for="all">All Players</label>
-        <br/><br/>
-        <span class="unpaid">** Players in red have unpaid balances. **</span>
-        <a class="button" href="<?php echo $this->url(array(), 'manage_unpaid'); ?>">Unpaid Details</a>
-        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
-    </div>
-    
-    <div class="row header">
-        <div class="name header">Name</div>
-        <div class="waiver header">Waiver?</div>
-        <div class="release header">Release?</div>
-        <div class="paid header">Paid?</div>
-        <div class="paid header">Balance</div>
-    </div>
-    <?php $i = 0; ?>
-    <?php $this->cycle(array('odd', 'even')); ?>
-    <?php foreach($this->statuses as $status): ?>
-    <?php if((!$this->completeStatus($status) and $this->all == '') or $this->all == 'all'): ?>
-    <?php $i++; ?>
-    <div class="row <?php echo $this->cycle()->next(); ?><?php echo (!empty($status['balance'])) ? ' unpaid' : ''; ?>">
-        <div class="name"><?php echo $this->fullname($status['user_id']); ?></div>
-        <div class="waiver"><input class="update" type="checkbox" name="waiver-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['waiver'] == $this->league->year) ? ' checked="checked"' : ''; ?>/></div>
-        <div class="release"><input class="update" type="checkbox" name="release-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['release'] == 1) ? ' checked="checked"' : ''; ?>/></div>
-        <div class="paid"><input class="update" type="checkbox" name="paid-<?php echo $this->escape($status['user_id']); ?>"<?php echo ($status['paid'] == 1) ? ' checked="checked"' : ''; ?>/></div>
-        <div class="balance"><?php echo ($status['balance'] == NULL) ? 0 : $status['balance']; ?></div>
-    </div>
-    <?php endif; ?>
-    <?php endforeach; ?>
-    <?php if($i == 0): ?>
+<div id="page-banner">&nbsp;</div>
+
+<div class="page-content">
     <div class="row">
-        <p>There are no outstanding waivers/paid/release statuses.</p>
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
+        </div>
     </div>
-    <?php endif; ?>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">
+                Player Statuses
+                <small>
+                    ** Players in red have unpaid balances. **
+                </small>
+            </h2>
+            <div class="pull-right">
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(array(), 'admin_unpaid'); ?>">Unpaid Details</a>
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
+            </div>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="span7">Player</th>
+                        <th class="span1" style="text-align: center;">Wavier</th>
+                        <th class="span1" style="text-align: center;">Release</th>
+                        <th class="span1" style="text-align: center;">Paid</th>
+                        <th class="span1" style="text-align: center;">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->statuses as $status): ?>
+                    <tr<?php echo ($status['balance'] == NULL) ? '' : ' class="error"'; ?>>
+                        <td><?php echo ($status['balance'] == NULL) ? '' : '<span class="text-error">'; ?><?php echo $this->fullname($status['user_id']); ?><?php echo ($status['balance'] == NULL) ? '' : '</span>'; ?></td>
+                        <td style="text-align: center;"><?php echo ($status['waiver'] == $this->league->year) ? '<button class="btn btn-mini btn-success" type="button" onclick="toggle(\'waiver\', ' . $status['user_id'] . ', ' . $this->league->year . ');"> <i class="icon-check icon-white"></i> </button>' : '<button class="btn btn-mini btn-danger" type="button" onclick="toggle(\'waiver\', ' . $status['user_id'] . ', ' . $this->league->year . ');"><i class="icon-remove icon-white"></i></button>'; ?></td>
+                        <td style="text-align: center;"><?php echo ($status['release'] == 1) ? '<button class="btn btn-mini btn-success" type="button" onclick="toggle(\'release\', ' . $status['user_id'] . ', ' . $this->league->id . ');"><i class="icon-check icon-white"></i></button>' : '<button class="btn btn-mini btn-danger" type="button" onclick="toggle(\'release\', ' . $status['user_id'] . ', ' . $this->league->id . ');"><i class="icon-remove icon-white"></i></button>'; ?></td>
+                        <td style="text-align: center;"><?php echo ($status['paid'] == 1) ? '<button class="btn btn-mini btn-success" type="button" onclick="toggle(\'paid\', ' . $status['user_id'] . ', ' . $this->league->id . ');"><i class="icon-check icon-white"></i></button>' : '<button class="btn btn-mini btn-danger" type="button" onclick="toggle(\'paid\', ' . $status['user_id'] . ', ' . $this->league->id . ');"><i class="icon-remove icon-white"></i></button>'; ?></td>
+                        <td style="text-align: center;"><?php echo ($status['balance'] == NULL) ? '<span class="text-success">0</span>': '<span class="text-error">' . $status['balance'] . '</span>'; ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+
+        </div>
+    </div>
 </div>
+
 <script>
-    var leagueId = '<?php echo $this->escape($this->league->id);?>';
+function toggle(type, userId, $leagueId)
+{
+
+}
 </script>
