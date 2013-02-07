@@ -1,29 +1,46 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="emergency">
-    <h1>Emergency Contacts</h1>
+<div id="page-banner">&nbsp;</div>
 
-    <div id="admin-buttons">
-        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export List</a>
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
+        </div>
     </div>
-
-    <div class="row header">
-    	<div class="player">Player</div>
-    	<div class="data">Name (Phone)</div>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">
+                Emergency Contacts
+            </h2>
+            <div class="pull-right">
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1">Export Complete Data</a>
+            </div>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="span4">Player</th>
+                        <th class="span6">Contact (Phone)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->contacts as $userId => $data): ?>
+                    <?php if($userId): ?>
+                    <tr>
+                        <td><?php echo $this->fullname($userId); ?></td>
+                        <td>
+                            <?php foreach($data as $contact): ?>
+                            <?php echo $this->escape($contact['name']); ?> (<?php echo $this->escape($contact['phone']); ?>)<br/>
+                            <?php endforeach; ?>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <?php $this->cycle(array('even', 'odd')); ?>
-    <?php foreach($this->contacts as $userId => $data): ?>
-        <?php if($userId): ?>
-            <?php $i = 0; ?>
-            <?php $this->cycle()->next(); ?>
-        	<?php foreach($data as $contact): ?>
+    <div class="row">
+        <div class="span12">
 
-    	    <div class="row <?php echo $this->cycle(); ?>">
-    	    	<div class="player"><?php echo ($i == 0) ? $this->fullname($userId) : '&nbsp;'; ?></div>
-    	    	<div class="data"><?php echo $this->escape($contact['name']); ?> (<?php echo $this->escape($contact['phone']); ?>)</div>
-    	    </div>
-    	    <?php $i++; ?>
-        	<?php endforeach; ?>
-        <?php endif; ?>
-    <?php endforeach; ?>
-    <div class="clearfix">&nbsp;</div>
+        </div>
+    </div>
 </div>
