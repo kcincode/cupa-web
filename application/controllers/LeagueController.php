@@ -996,74 +996,73 @@ class LeagueController extends Zend_Controller_Action
 
     public function scheduleaddAction()
     {
-        // make sure its an AJAX request
-        if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
-        }
-
-        // disable the layout
-        $this->_helper->layout()->disableLayout();
-
         $leagueId = $this->getRequest()->getUserParam('league_id');
 
         if(!$this->view->isLeagueDirector($leagueId)) {
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $form = new Form_LeagueScheduleEdit(null, $leagueId);
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
 
+        $form = new Form_LeagueScheduleEdit(null, $leagueId);
         if($this->getRequest()->isPost()) {
-            $this->_helper->viewRenderer->setNoRender(true);
             $post = $this->getRequest()->getPost();
 
-            $leagueGameTable = new Model_DbTable_LeagueGame();
-            $leagueGameDataTable = new Model_DbTable_LeagueGameData();
-            $game = $leagueGameTable->fetchGame($leagueId, $post['day'], $post['week'], $post['field']);
+            if(isset($post['cancel'])) {
+                $this->_redirect('league/' . $leagueId . '/schedule');
+            }
 
-            if($leagueGameDataTable->isUnique($game, $post['home_team'], $post['away_team'])) {
-                // TODO: Remove this??
-                $game = $leagueGameTable->fetchGame($leagueId, $post['day'], $post['week'], $post['field']);
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $data['day'] = date('Y-m-d H:i:s', strtotime($data['day']));
 
-                if(!$game) {
-                    $game = $leagueGameTable->createRow();
-                    $game->league_id = $leagueId;
+                $leagueGameTable = new Model_DbTable_LeagueGame();
+                $leagueGameDataTable = new Model_DbTable_LeagueGameData();
+                $game = $leagueGameTable->fetchGame($leagueId, $data['day'], $data['week'], $data['field']);
+
+                if($leagueGameDataTable->isUnique($game, $data['home_team'], $data['away_team'])) {
+                    $game = $leagueGameTable->fetchGame($leagueId, $data['day'], $data['week'], $data['field']);
+
+                    if(!$game) {
+                        $game = $leagueGameTable->createRow();
+                        $game->league_id = $leagueId;
+                    }
+
+                    $game->day = $data['day'];
+                    $game->week = $data['week'];
+                    $game->field = $data['field'];
+                    $game->save();
+
+                    $homeTeam = $leagueGameDataTable->fetchGameData($game->id, 'home');
+                    $awayTeam = $leagueGameDataTable->fetchGameData($game->id, 'away');
+
+                    if(!$homeTeam) {
+                        $homeTeam = $leagueGameDataTable->createRow();
+                        $awayTeam = $leagueGameDataTable->createRow();
+
+                        $homeTeam->league_game_id = $game->id;
+                        $awayTeam->league_game_id = $game->id;
+                        $homeTeam->type = 'home';
+                        $awayTeam->type = 'away';
+                    }
+
+                    $homeTeam->league_team_id = $data['home_team'];
+                    $awayTeam->league_team_id = $data['away_team'];
+
+                    $homeTeam->score = 0;
+                    $awayTeam->score = 0;
+
+                    $homeTeam->save();
+                    $awayTeam->save();
+
+                    $this->view->message('Created game.', 'success');
+                    $this->_redirect('league/' . $leagueId . '/schedule');
                 }
-
-                $game->day = $post['day'];
-                $game->week = $post['week'];
-                $game->field = $post['field'];
-                $game->save();
-
-                $homeTeam = $leagueGameDataTable->fetchGameData($game->id, 'home');
-                $awayTeam = $leagueGameDataTable->fetchGameData($game->id, 'away');
-
-                if(!$homeTeam) {
-                    $homeTeam = $leagueGameDataTable->createRow();
-                    $awayTeam = $leagueGameDataTable->createRow();
-
-                    $homeTeam->league_game_id = $game->id;
-                    $awayTeam->league_game_id = $game->id;
-                    $homeTeam->type = 'home';
-                    $awayTeam->type = 'away';
-                }
-
-                $homeTeam->league_team_id = $post['home_team'];
-                $awayTeam->league_team_id = $post['away_team'];
-
-                $homeTeam->score = 0;
-                $awayTeam->score = 0;
-
-                $homeTeam->save();
-                $awayTeam->save();
-
-                echo Zend_Json::encode(array('result' => 'success', 'data' => $game->id));
-                return;
-            } else {
-                echo Zend_Json::encode(array('result' => 'error', 'message' => 'Game Already Exists'));
-                return;
             }
         }
 
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, todayBtn: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
         $this->view->form = $form;
     }
 
@@ -1096,8 +1095,15 @@ class LeagueController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('league/' . $leagueId . '/schedule');
+            }
+
             if($form->isValid(($post))) {
                 $data = $form->getValues();
+                $data['day'] = date('Y-m-d H:i:s', strtotime($data['day']));
+
                 $leagueGameDataTable = new Model_DbTable_LeagueGameData();
                 $homeGameData = $leagueGameDataTable->fetchGameData($gameId, 'home');
                 $awayGameData = $leagueGameDataTable->fetchGameData($gameId, 'away');
@@ -1119,8 +1125,6 @@ class LeagueController extends Zend_Controller_Action
 
                 $this->view->message('Game data updated', 'success');
                 $this->_redirect('league/' . $leagueId . '/schedule');
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -1195,25 +1199,13 @@ class LeagueController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            if(isset($post['save'])) {
-                $leagueGameDataTable = new Model_DbTable_LeagueGameData();
 
-                // remove all of the current games for the league
-                $leagueGameTable->getAdapter()->query('DELETE FROM league_game WHERE league_id = ' . $leagueId);
-
-                // save the new schedule
-                foreach($session->schedule as $week => $tmp) {
-                    foreach($tmp as $data) {
-                        $gameId = $leagueGameTable->createGame($leagueId, $data['date'], $week, $data['field']);
-                        $leagueGameDataTable->addGameData($gameId, 'home', $data['home_team']);
-                        $leagueGameDataTable->addGameData($gameId, 'away', $data['away_team']);
-                    }
-                }
-
-                $this->view->message('League schedule generated', 'success');
+            if(isset($post['cancel'])) {
                 $this->_redirect('league/' . $leagueId . '/schedule');
             }
+
             if($form->isValid($post)) {
+                $leagueGameDataTable = new Model_DbTable_LeagueGameData();
 
                 // get start time from the league locations
                 $leagueLocationTable = new Model_DbTable_LeagueLocation();
@@ -1348,11 +1340,20 @@ class LeagueController extends Zend_Controller_Action
                     }
                 }
 
-                $session->schedule = $results;
-                $this->view->schedule = $results;
+                // remove all of the current games for the league
+                $leagueGameTable->getAdapter()->query('DELETE FROM league_game WHERE league_id = ' . $leagueId);
 
-            } else {
-                $form->populate($post);
+                // save the new schedule
+                foreach($results as $week => $tmp) {
+                    foreach($tmp as $data) {
+                        $gameId = $leagueGameTable->createGame($leagueId, $data['date'], $week, $data['field']);
+                        $leagueGameDataTable->addGameData($gameId, 'home', $data['home_team']);
+                        $leagueGameDataTable->addGameData($gameId, 'away', $data['away_team']);
+                    }
+                }
+
+                $this->view->message('League schedule generated', 'success');
+                $this->_redirect('league/' . $leagueId . '/schedule');
             }
         }
 

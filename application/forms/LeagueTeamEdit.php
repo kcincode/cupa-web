@@ -71,6 +71,7 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
             'label' => 'Select the color:',
         ));
 
+/*
         if(!empty($this->_team)) {
             $this->addElement('text', 'final_rank', array(
                 'filters' => array('digits'),
@@ -82,6 +83,7 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                 'description' => 'Enter the ranking when the league is done.',
             ));
         }
+*/
 
         $this->addElement('button', 'save', array(
             'type' => 'submit',
@@ -99,7 +101,8 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
             'escape' => false,
         ));
 
-        $questions = (empty($this->_team)) ? array('name', 'captains', 'color', 'color_code') : array('name', 'captains', 'color', 'color_code', 'final_rank');
+        //$questions = (empty($this->_team)) ? array('name', 'captains', 'color', 'color_code') : array('name', 'captains', 'color', 'color_code', 'final_rank');
+        $questions = array('name', 'captains', 'color', 'color_code');
         $title = (empty($this->_team)) ? 'Add a Team' : 'Edit Team';
         $this->addDisplayGroup(
             $questions,
@@ -116,6 +119,7 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                 'disableLoadDefaultDecorators' => true,
                 'decorators' => array('Actions'),
             )
-        );    }
+        );
+    }
 }
 

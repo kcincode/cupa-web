@@ -37,8 +37,8 @@
 
             <div>
                 <?php if($this->league['teams'] > 0): ?>
-                    <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule'); ?>">Schedule</a>
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Teams</a>
+                    <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule'); ?>">Schedule</a>
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_rankings'); ?>">Rankings</a>
                     <?php elseif($this->isLeagueDirector($this->league['id'])): ?>
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Event Page</a>

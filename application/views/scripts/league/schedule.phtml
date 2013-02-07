@@ -1,68 +1,82 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="schedule">
-    <h1>League Schedule</h1>
-    <div class="weeks">
-    <?php if(count($this->games)): ?>
-        <div class="week">Jump to a week:</div>
-        <?php foreach($this->games as $week => $tmp): ?>
-        <div class="week"><a class="button" href="#week-<?php echo $this->escape($week); ?>"><?php echo $this->escape($week); ?></a></div>
-        <?php endforeach;?>
-        <div class="clearfix"></div>
-    <?php endif; ?>
-    </div>
-    <?php if($this->isLeagueDirector($this->league->id) and count($this->teams) > 1): ?>
-    <div id="admin-buttons">
-        <a class="button" id="add-game" href="#">Add a Game</a>
-        <a class="button" id="generate-schedule" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_schedule_generate'); ?>">Auto Generate Schedule</a>
-        <div id="add-game-container"></div>
-    </div>
-    <?php endif; ?>
+<div id="page-banner">&nbsp;</div>
 
-    <div class="clearfix">&nbsp;<br/>&nbsp;</div>
-
-    <div class="games">
-    <?php foreach($this->games as $week => $tmp): ?>
-
-        <a class="title" name="week-<?php echo $this->escape($week); ?>"><h2>Week <?php echo $this->escape($week); ?></h2></a>
-        <div class="week">
-        <?php foreach($tmp as $data): ?>
-            <div class="field">Field #<?php echo $this->escape($data['field']); ?></div>
-            <div class="day"><?php echo date('m/d/Y h:i A', strtotime($this->escape($data['day']))); ?></div>
-            <div class="team">
-                <span class="<?php echo $this->displayLeagueGameOutcome($data['id'], $data['away_team_id']);?>">
-                    <?php echo $this->escape($data['away_team']); ?>
-                </span>
-                at
-                <span class="<?php echo $this->displayLeagueGameOutcome($data['id'], $data['home_team_id']);?>">
-                    <?php echo $this->escape($data['home_team']); ?>
-                </span>
-            </div>
-            <div class="result">
-                <?php $result = $this->escape($data['away_score']) . ' - ' . $this->escape($data['home_score']); ?>
-                <?php if($result == '0 - 0'): ?>
-                <?php $result = 'No Result'; ?>
-                <?php endif; ?>
-                <?php if($this->isLeagueDirector($this->league->id)): ?>
-                <a title="Edit Score" href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $data['id']), 'league_schedule_edit'); ?>">
-                    <?php echo $result; ?>
-                </a>
-                <?php else: ?>
-                <?php echo $result; ?>
-                <?php endif; ?>
-            </div>
-            <div class="delete">
-                <?php if($this->isLeagueDirector($this->league->id)): ?>
-                <a href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $data['id']), 'league_schedule_delete'); ?>">
-                    <img title="Delete Game" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/>
-                </a>
-                <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
-            <div class="clearfix"></div>
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
         </div>
-    <?php endforeach; ?>
     </div>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">League Schedule</h2>
+            <div class="pull-right">
+                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule_add'); ?>"><i class="icon-plus icon-white"></i>Add a Game</a>
+                <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_schedule_generate'); ?>">Auto Generate Schedule</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <ul class="nav nav-pills">
+                <li><a>Weeks:</a></li>
+            <?php foreach($this->games as $week => $tmp): ?>
+                <li class="active"><a href="#week<?php echo $this->escape($week); ?>"><?php echo $this->escape($week); ?></a></li>
+            <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+    <?php foreach($this->games as $week => $games): ?>
+    <div class="row">
+        <div class="span12">
+            <a name="week<?php echo $this->escape($week); ?>"></a>
+            <div class="clearfix">
+                <h3 class="pull-left">Week <?php echo $this->escape($week); ?></h3>
+                <div class="pull-right">
+                    <a class="btn btn-mini" href=""><i class="icon-arrow-up"></i> Top</a>
+                </div>
+            </div>
+            <div class="well well-small clearfix">
+                <?php foreach($games as $game): ?>
+                    <div class="span1">
+                        Field #<?php echo $this->escape($game['field']); ?>
+                    </div>
+                    <div class="span2">
+                        <?php echo date('m/d/Y h:i A', strtotime($this->escape($game['day']))); ?>
+                    </div>
+                    <div class="<?php echo ($this->isLeagueDirector($this->league->id)) ? 'span5' : 'span7'; ?>">
+                        <span class="<?php echo $this->displayLeagueGameOutcome($game['id'], $game['away_team_id']);?>">
+                            <?php echo $this->escape($game['away_team']); ?>
+                        </span>
+                        at
+                        <span class="<?php echo $this->displayLeagueGameOutcome($game['id'], $game['home_team_id']);?>">
+                            <?php echo $this->escape($game['home_team']); ?>
+                        </span>
+                    </div>
+                    <div class="span1 align-center">
+                        <?php $result = $this->escape($game['away_score']) . ' - ' . $this->escape($game['home_score']); ?>
+                        <?php if($result == '0 - 0'): ?>
+                        <?php $result = 'N/A'; ?>
+                        <?php endif; ?>
+                        <?php if($this->isLeagueDirector($this->league->id)): ?>
+                        <a title="Edit Score" href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $game['id']), 'league_schedule_edit'); ?>">
+                            <?php echo $result; ?>
+                        </a>
+                        <?php else: ?>
+                        <?php echo $result; ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php if($this->isLeagueDirector($this->league->id)): ?>
+                    <div class="span2 align-center">
+                        <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you would like to remove this game?');" href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $game['id']), 'league_schedule_delete'); ?>">
+                            <i class="icon-trash icon-white"></i> Remove
+                        </a>
+                    </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
 </div>
-<script>
-    var league_id = '<?php echo $this->league->id; ?>';
-</script>

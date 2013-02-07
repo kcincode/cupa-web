@@ -10,7 +10,9 @@
         <div class="span12">
             <h2 class="pull-left">League Teams</h2>
             <div class="pull-right">
+                <?php if($this->isLeagueDirector($this->league->id)): ?>
                 <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_team_add'); ?>"><i class="icon-plus icon-white"></i>Add a Team</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -27,7 +29,7 @@
                 </div>
                 <img style="width: 85; height: 85px;" class="pull-left img-polaroid" src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team->id); ?>" alt="<?php echo $this->escape($team->name); ?>"/>
                 <div class="span7">
-                    <h1 style="color: <?php echo ($team->color_code) ? $team->color_code : '#222'; ?>">
+                    <h1 style="text-shadow: 0 0 1px #444; color: <?php echo ($team->color_code) ? $team->color_code : '#222'; ?>">
                         <?php echo $this->escape($team->name); ?>
                     </h1>
                     <strong>Color:</strong> <?php echo $this->escape($team->color); ?><br/>
