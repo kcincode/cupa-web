@@ -1,30 +1,29 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user));?>
-<h1>Contact Directors, Captains, and Players</h1>
+<div id="page-banner">&nbsp;</div>
 
-<p>
-    You can use this form to contact for information or questions about this
-    league.  If you only have the selection of contacting the directors then you
-    must be a member of the league and be assigned a team to email your team and
-    your captain.
-</p>
-
-<div id="contact-container">
-    <form id="email-form" method="post">
-        <div class="row">
-            <?php echo $this->form->from; ?>
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
         </div>
-        <div class="row">
-            <?php echo $this->form->to; ?>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">Contact Directors, Captains, and Players</h2>
+            <div class="pull-right">
+                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="row">
-            <?php echo $this->form->subject; ?>
+    </div>
+    <div class="row">
+        <div class="offset1 span10">
+            <p>
+                You can use this form to contact for information or questions about this
+                league.  If you only have the selection of contacting the directors then you
+                must be a member of the league and be assigned a team to email your team and
+                your captain.
+            </p>
+            <?php echo $this->form; ?>
         </div>
-        <div class="row">
-            <?php echo $this->form->content; ?>
-        </div>
-        <div class="row">
-            <dt>&nbsp;</dt>
-            <dd><input id="send-button" class="button" type="submit" value="Send Email" /></dd>
-        </div>
-    </form>
+    </div>
 </div>

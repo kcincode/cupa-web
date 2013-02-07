@@ -1387,6 +1387,7 @@ class LeagueController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
             if($form->isValid($post)) {
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
                 $data = $leagueMemberTable->fetchAllEmails($leagueId, $this->view->user, $this->view->isLeagueDirector($leagueId));
@@ -1410,8 +1411,6 @@ class LeagueController extends Zend_Controller_Action
 
                 $this->view->message('Email sent.', 'success');
                 $this->_redirect('league/' . $leagueId . '/email');
-            } else {
-                $form->populate($post);
             }
         }
 
@@ -1454,19 +1453,20 @@ class LeagueController extends Zend_Controller_Action
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            if(isset($post['clear'])) {
+
+            if(isset($post['reset'])) {
                 $leagueTeamTable->clearFinalResults($leagueId);
                 $this->view->message('League final rankings cleared', 'success');
                 $this->_redirect('league/' . $leagueId . '/rankings');
+            } else if(isset($post['cancel'])) {
+                $this->_redirect('league/' . $leagueId . '/rankings');
             } else {
-                $rank = 1;
-                foreach($post['ranks'] as $item) {
-                    $team = $leagueTeamTable->find($item)->current();
+                foreach($post['rank'] as $teamId => $rank) {
+                    $team = $leagueTeamTable->find($teamId)->current();
                     if($team) {
                         $team->final_rank = $rank;
                         $team->save();
                     }
-                    $rank++;
                 }
             }
 
@@ -1504,7 +1504,6 @@ class LeagueController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
 
-            ////apache_setenv('no-gzip', '1');
             ob_end_clean();
 
             header('Pragma: public');
@@ -1546,8 +1545,7 @@ class LeagueController extends Zend_Controller_Action
 
                 $i++;
             }
-
-            flush();
+            exit();
         }
     }
 
@@ -1592,18 +1590,17 @@ class LeagueController extends Zend_Controller_Action
 
             set_time_limit(0);
 
-            echo "color,XS,S,M,L,XL,XXL\n";
+            echo "color,Youth Small,Youth Medium,Youth Large,Small,Medium,Large,Extra Large,2X Extra Large\n";
 
             foreach($this->view->shirts as $color => $shirt) {
-                foreach(array('XS', 'S', 'M', 'L', 'XL', 'XXL') as $size) {
+                foreach(array('YS', 'YM', 'YL', 'S', 'M', 'L', 'XL', 'XXL') as $size) {
                     $lowSize = strtolower($size);
                     $$lowSize = (isset($shirt[$size])) ? $shirt[$size] : 0;
 
                 }
-                echo "{$color},{$xs},{$s},{$m},{$l},{$xl},{$xxl}\n";
+                echo "{$color},{$ys},{$ym},{$yl},{$s},{$m},{$l},{$xl},{$xxl}\n";
             }
-
-            flush();
+            exit();
         }
     }
 

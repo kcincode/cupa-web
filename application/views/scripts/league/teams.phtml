@@ -32,7 +32,7 @@
                     <h1 style="text-shadow: 0 0 1px #444; color: <?php echo ($team->color_code) ? $team->color_code : '#222'; ?>">
                         <?php echo $this->escape($team->name); ?>
                     </h1>
-                    <strong>Color:</strong> <?php echo $this->escape($team->color); ?><br/>
+                    <strong>Color:</strong> <?php echo $this->escape(ucwords($team->color)); ?><br/>
                     <strong>Captain(s):</strong>
                     <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team->league_id, $team->id); ?>
                     <?php foreach($captains as $captain): ?>

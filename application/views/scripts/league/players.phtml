@@ -1,39 +1,55 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="players-list">
-    <h1>League Players</h1>
+<div id="page-banner">&nbsp;</div>
 
-    <?php if($this->isLeagueDirector($this->league->id) and count($this->players) > 1): ?>
-    <div id="admin-buttons">
-        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Complete Data</a><br/><br/>
-        Players registered: <?php echo $this->escape($this->genderCounts['male_players'] + $this->genderCounts['female_players']); ?>
-        (<?php echo $this->escape($this->genderCounts['male_players']); ?> Males,
-        <?php echo $this->escape($this->genderCounts['female_players']); ?> Females)
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
+        </div>
     </div>
-    <?php endif; ?>
-
-    <div class="clearfix"></div>
-
-    <div id="players">
-        <div class="row header">
-            <div class="name padtop">Player</div>
-            <div class="team padtop">Team</div>
-            <div class="gender padtop">Gender</div>
-            <div class="age padtop">Age</div>
-            <div class="height padtop">Height</div>
-            <div class="experience">Years Played</div>
-            <div class="level padtop">Highest Level</div>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">
+                League Players
+                <small>
+                    Players registered: <?php echo $this->escape($this->genderCounts['male_players'] + $this->genderCounts['female_players']); ?>
+                    (<?php echo $this->escape($this->genderCounts['male_players']); ?> Males,
+                    <?php echo $this->escape($this->genderCounts['female_players']); ?> Females)
+                </small>
+            </h2>
+            <div class="pull-right">
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1">Export Complete Data</a>
+            </div>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="span3">Player</th>
+                        <th class="span3">Team</th>
+                        <th class="span1" style="text-align: center;">Gender</th>
+                        <th class="span1" style="text-align: center;">Age</th>
+                        <th class="span1" style="text-align: center;">Height</th>
+                        <th class="span1" style="text-align: center;">Years Played</th>
+                        <th class="span2">Highest Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->players as $player): ?>
+                    <tr>
+                        <td><?php echo $this->generateEmailLink($player['email'], $this->fullname($player['user_id'])); ?></td>
+                        <td><?php echo (empty($player['team'])) ? 'Not on a team yet.' : $this->escape($player['team']); ?></td>
+                        <td style="text-align: center;"><?php echo $this->escape($player['profile']['gender']); ?></td>
+                        <td style="text-align: center;"><?php echo $this->displayAge($player['profile']['birthday']); ?></td>
+                        <td style="text-align: center;"><?php echo $this->displayHeight($player['profile']['height']); ?></td>
+                        <td style="text-align: center;"><?php echo (empty($player['profile']['experience'])) ? 'Unknown' : date('Y') - $player['profile']['experience'] . ' years'; ?></td>
+                        <td><?php echo (empty($player['profile']['level']))? 'Unknown' : $this->escape($player['profile']['level']); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
-        <?php $this->cycle(array('even', 'odd')); ?>
-        <?php foreach($this->players as $player): ?>
-        <div class="row <?php echo $this->cycle()->next(); ?>">
-            <div class="name"><?php echo $this->generateEmailLink($player['email'], $this->fullname($player['user_id'])); ?></div>
-            <div class="team"><?php echo (empty($player['team'])) ? 'Not on a team yet.' : $this->escape($player['team']); ?></div>
-            <div class="gender"><?php echo $this->escape($player['profile']['gender']); ?></div>
-            <div class="age"><?php echo $this->displayAge($player['profile']['birthday']); ?></div>
-            <div class="height"><?php echo $this->displayHeight($player['profile']['height']); ?></div>
-            <div class="experience"><?php echo (empty($player['profile']['experience'])) ? 'Unknown' : date('Y') - $player['profile']['experience'] . ' years'; ?></div>
-            <div class="level"><?php echo (empty($player['profile']['level']))? 'Unknown' : $this->escape($player['profile']['level']); ?></div>
+    </div>
+    <div class="row">
+        <div class="span12">
+
         </div>
-        <?php endforeach; ?>
     </div>
 </div>

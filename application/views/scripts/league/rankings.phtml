@@ -1,82 +1,52 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="teams">
-  <?php if(count($this->teams['final'])): ?>
-  <h1>Final Team Rankings</h1>
-    <?php if($this->isLeagueDirector($this->league->id)): ?>
-    <div id="admin-buttons">
-        <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_rankings_edit'); ?>">Update Final Rankings</a>
-    </div>
-    <?php endif; ?>
+<div id="page-banner">&nbsp;</div>
 
-  <?php foreach($this->teams['final'] as $team): ?>
-  <div class="team">
-    <?php if($team['color_code']): ?>
-    <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team->color_code); ?>;">
-    <?php else: ?>
-    <div class="logo">
-    <?php endif; ?>
-        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
+        </div>
     </div>
-    <div class="info">
-        <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>
-        <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team['color']));?></span><br/>
-        <span class="captains"><strong>Captain(s):</strong>
-        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team['league_id'], $team['id']); ?>
-        <?php foreach($captains as $captain): ?>
-            <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
-        <?php endforeach; ?>
-        </span><br/>
-        <span class="captains">
-        <strong>League Record:</strong> <?php echo $this->escape($team['record']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)<br/>
-        </span>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left"><?php echo (count($this->teams['final'])) ? 'Final' : 'Current'; ?> Team Rankings</h2>
+            <div class="pull-right">
+                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_rankings_edit'); ?>"><i class="icon-edit icon-white"></i> Edit Rankings</a>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
-    <div class="clearfix"></div>
-    <div class="player-container team-<?php echo $this->escape($team['id']); ?>">
+    <div class="row">
+        <div class="span12">
+            <?php $teams = (count($this->teams['final'])) ? $this->teams['final'] : $this->teams['current']; ?>
+            <?php $num = count($teams) - 1; ?>
+            <?php foreach($teams as $i => $team): ?>
+            <div class="well well-small clearfix">
+                <img style="width: 85; height: 85px;" class="pull-left img-polaroid" src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
+                <div class="span7">
+                    <h1 style="text-shadow: 0 0 1px #444; color: <?php echo ($team['color_code']) ? $team['color_code'] : '#222'; ?>">
+                        <?php echo $this->escape($team['name']); ?>
+                    </h1>
+                    <strong>Color:</strong> <?php echo $this->escape(ucwords($team['color'])); ?><br/>
+                    <strong>Captain(s):</strong>
+                    <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team['league_id'], $team['id']); ?>
+                    <?php foreach($captains as $captain): ?>
+                        <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <div class="span3" style="text-align: center;">
+                    <h1><small>
+                        <?php echo $this->getLeagueTeamRecord($this->league->id, $team['id']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
+                    </small><h1>
+                </div>
+                <div class="clearfix">&nbsp;</div>
+                <div id="team<?php echo $this->escape($team['id']); ?>" class="collapse">
+                    <div class="clearfix">&nbsp;</div>
+                    <div id="team<?php echo $this->escape($team['id']);?>-players" class="offset1 span9">
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
     </div>
-  </div>
-  <?php endforeach; ?>
-  <div class="clearfix"></div>
-  <?php elseif(count($this->teams['current'])): ?>
-  <h1>Current Team Rankings</h1>
-    <?php if($this->isLeagueDirector($this->league->id)): ?>
-    <div id="admin-buttons">
-        <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_rankings_edit'); ?>">Update Final Rankings</a>
-    </div>
-    <?php endif; ?>
-  <?php foreach($this->teams['current'] as $team): ?>
-  <div class="team">
-    <?php if($team['color_code']): ?>
-    <div class="logo" style="-webkit-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; -moz-box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>; box-shadow: 0 0 10px <?php echo $this->escape($team['color_code']); ?>;">
-    <?php else: ?>
-    <div class="logo">
-    <?php endif; ?>
-        <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
-    </div>
-    <div class="info">
-        <span class="team-name"><?php echo $this->escape($team['name']);?></span><br/>
-        <span class="team-color"><strong>Color:</strong> <?php echo $this->escape(ucwords($team['color']));?></span><br/>
-        <span class="captains"><strong>Captain(s):</strong>
-        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team['league_id'], $team['id']); ?>
-        <?php foreach($captains as $captain): ?>
-            <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
-        <?php endforeach; ?>
-        </span><br/>
-        <span class="captains">
-        <strong>Record:</strong> <?php echo $this->escape($team['record']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)<br/>
-        </span>
-    </div>
-    <div class="clearfix"></div>
-    <div class="player-container team-<?php echo $this->escape($team['id']); ?>">
-    </div>
-  </div>
-  <?php endforeach; ?>
-  <div class="clearfix"></div>
-
-  <?php else: ?>
-  <p align="center">There are no teams defined yet for this league.  Stay tuned...</p>
-  <?php endif; ?>
-  </div>
 </div>
-<script>
-    var league = '<?php echo $this->league->id; ?>';
-</script>

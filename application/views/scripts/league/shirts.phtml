@@ -1,48 +1,76 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="shirts">
-    <h1>League Jersey/T-Shirt Counts</h1>
-    
-    <?php if($this->isLeagueDirector($this->league->id) and count($this->shirts) > 1): ?>
-    <div id="admin-buttons">
-        <a class="button" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
-    </div>
-    <?php endif; ?>
+<div id="page-banner">&nbsp;</div>
 
-    <div class="clearfix">&nbsp;<br/>&nbsp;</div>
-    
-    <?php foreach($this->shirts as $color => $shirt): ?>
-    <?php $total = 0; ?>
-    <?php foreach($shirt as $count): ?>
-    <?php if(is_numeric($count)): ?>
-    <?php $total += $count; ?>
-    <?php endif; ?>
-    <?php endforeach; ?>
-    <div class="section">
-        <div class="color" style="color: <?php echo $this->escape($shirt['text_code']); ?>; background-color: <?php echo $this->escape($shirt['color_code']); ?>"><?php echo $this->escape($color); ?></div>
-        <div class="counts">
-            <div class="label">Youth Small:</div>
-            <div class="value"><?php echo (isset($shirt['YS'])) ? $this->escape($shirt['YS']) : 0; ?></div>
-            <div class="label">Youth Medium:</div>
-            <div class="value"><?php echo (isset($shirt['YM'])) ? $this->escape($shirt['YM']) : 0; ?></div>
-            <div class="label">Youth Large:</div>
-            <div class="value"><?php echo (isset($shirt['YL'])) ? $this->escape($shirt['YL']) : 0; ?></div>
-            <div class="label">Small:</div>
-            <div class="value"><?php echo (isset($shirt['S'])) ? $this->escape($shirt['S']) : 0; ?></div>
-            <div class="label">Medium:</div>
-            <div class="value"><?php echo (isset($shirt['M'])) ? $this->escape($shirt['M']) : 0; ?></div>
-            <div class="label">Large:</div>
-            <div class="value"><?php echo (isset($shirt['L'])) ? $this->escape($shirt['L']) : 0; ?></div>
-            <div class="label">Extra Large:</div>
-            <div class="value"><?php echo (isset($shirt['XL'])) ? $this->escape($shirt['XL']) : 0; ?></div>
-            <div class="label">2x Extra Large:</div>
-            <div class="value"><?php echo (isset($shirt['XXL'])) ? $this->escape($shirt['XXL']) : 0; ?></div>
-            <div class="label total">Total:</div>
-            <div class="value total"><?php echo $this->escape($total); ?></div>
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
         </div>
     </div>
-    <?php endforeach; ?>
-    <?php if(count($this->shirts) == 0): ?>
-    <p class="blurb">There are no teams defined so there is no shirt sizes to list.</p>
-    <?php endif; ?>
-    <div class="clearfix">&nbsp;</div>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">
+                League Jersey/T-Shirt Counts
+            </h2>
+            <div class="pull-right">
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
+            </div>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="span2">Color</th>
+                        <th class="span1" style="text-align: center;">Youth Small</th>
+                        <th class="span1" style="text-align: center;">Youth Medium</th>
+                        <th class="span1" style="text-align: center;">Youth Large</th>
+                        <th class="span1" style="text-align: center;">Small</th>
+                        <th class="span1" style="text-align: center;">Medium</th>
+                        <th class="span1" style="text-align: center;">Large</th>
+                        <th class="span1" style="text-align: center;">Extra Large</th>
+                        <th class="span1" style="text-align: center;">2x Extra Large</th>
+                        <th class="span1" style="text-align: center;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $totals = array(); ?>
+                    <?php foreach($this->shirts as $color => $shirt): ?>
+                        <?php $total = 0; ?>
+                        <?php foreach($shirt as $size => $count): ?>
+                        <?php if(is_numeric($count)): ?>
+                        <?php if(!isset($totals[$size])) { $totals[$size] = $count; } else { $totals[$size] += $count; } ?>
+                        <?php $total += $count; ?>
+                        <?php endif; ?>
+                        <?php endforeach; ?>
+                    <tr>
+                        <th class="span2"><span style="font-size: 12pt; color: <?php echo $this->escape(($shirt['color_code'] == '#ffffff') ? '#000000' : $shirt['color_code']); ?>;"><?php echo $this->escape($color); ?></span></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['YS'])) ? '<span class="badge badge-info">' . $this->escape($shirt['YS']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['YM'])) ? '<span class="badge badge-info">' . $this->escape($shirt['YM']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['YL'])) ? '<span class="badge badge-info">' . $this->escape($shirt['YL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['S'])) ? '<span class="badge badge-info">' . $this->escape($shirt['S']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['M'])) ? '<span class="badge badge-info">' . $this->escape($shirt['M']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['L'])) ? '<span class="badge badge-info">' . $this->escape($shirt['L']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['XL'])) ? '<span class="badge badge-info">' . $this->escape($shirt['XL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($shirt['XXL'])) ? '<span class="badge badge-info">' . $this->escape($shirt['XXL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><span class="badge badge-info"><?php echo $this->escape($total); ?></span></th>
+                    </tr>
+                    <?php endforeach; ?>
+                    <tr>
+                        <th class="span2" style="text-align: right; font-size: 12pt;">Totals:</th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['YS'])) ? '<span class="badge badge-warning">' . $this->escape($totals['YS']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['YM'])) ? '<span class="badge badge-warning">' . $this->escape($totals['YM']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['YL'])) ? '<span class="badge badge-warning">' . $this->escape($totals['YL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['S'])) ? '<span class="badge badge-warning">' . $this->escape($totals['S']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['M'])) ? '<span class="badge badge-warning">' . $this->escape($totals['M']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['L'])) ? '<span class="badge badge-warning">' . $this->escape($totals['L']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['XL'])) ? '<span class="badge badge-warning">' . $this->escape($totals['XL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><?php echo (isset($totals['XXL'])) ? '<span class="badge badge-warning">' . $this->escape($totals['XXL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
+                        <th class="span1" style="text-align: center;"><span class="badge badge-warning"><?php echo $this->escape($total); ?></span></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+
+        </div>
+    </div>
 </div>

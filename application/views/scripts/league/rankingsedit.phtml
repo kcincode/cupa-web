@@ -1,24 +1,33 @@
 <div id="page-banner">&nbsp;</div>
 
-<h1>Edit Final Rankings</h1>
-<div id="leaguerankings-container">
-    <form method="post">
-        <ol id="sortable">
-            <?php foreach($this->teams as $team): ?>
-            <li data-id="<?php echo $this->escape($team['id']); ?>" style="background-color: <?php echo $this->escape($team['color_code']); ?>;">
-                <img src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" title="<?php echo $this->escape($team['name']); ?> logo"/>
-                <span class="text" style="color: <?php echo $this->escape($team['text_code']); ?>;"><?php echo $this->escape($team['name']); ?></span>
-                <input type="hidden" name="ranks[]" value="<?php echo $this->escape($team['id']); ?>"/>
-            </li>
-            <?php endforeach; ?>
-        </ol>
+<div class="page-content">
+    <div class="row">
+        <div class="offset1 span10">
+            <h2>League Final Rankings</h2>
 
-
-        <div id="buttons-container">
-            <input class="button" type="submit" value="Save"/>
-            <input class="button" type="submit" name="clear" value="Clear Rankings"/>
-            <a class="button button-red" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_rankings'); ?>">Cancel</a>
+            <form method="post">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="span5">Team</th>
+                            <th class="span1" style="text-align: center;">Rank</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($this->teams as $i => $team): ?>
+                        <tr>
+                            <td><?php echo $this->escape($team['name']); ?></td>
+                            <td style="text-align: center;"><input class="span1" style="text-align: center;" type="text" name="rank[<?php echo $this->escape($team['id']); ?>]" value="<?php echo $this->escape($team['final_rank']); ?>"/></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" name="save">Save</button>
+                    <button type="submit" onclick="return confirm('This will clear the current rankings, are you sure?');" class="btn btn-danger" name="reset">Reset</button>
+                    <button type="submit" class="btn" name="cancel">Cancel</button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
-
