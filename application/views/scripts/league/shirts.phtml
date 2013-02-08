@@ -31,11 +31,12 @@
                 </thead>
                 <tbody>
                     <?php $totals = array(); ?>
+                    <?php $overallTotal = 0; ?>
                     <?php foreach($this->shirts as $color => $shirt): ?>
                         <?php $total = 0; ?>
                         <?php foreach($shirt as $size => $count): ?>
                         <?php if(is_numeric($count)): ?>
-                        <?php if(!isset($totals[$size])) { $totals[$size] = $count; } else { $totals[$size] += $count; } ?>
+                        <?php if(!isset($totals[$size])) { $totals[$size] = $count; $overallTotal += $count; } else { $totals[$size] += $count; $overallTotal += $count;} ?>
                         <?php $total += $count; ?>
                         <?php endif; ?>
                         <?php endforeach; ?>
@@ -62,7 +63,7 @@
                         <th class="span1" style="text-align: center;"><?php echo (isset($totals['L'])) ? '<span class="badge badge-warning">' . $this->escape($totals['L']) . '</span>' : '<span class="badge">0</span>'; ?></th>
                         <th class="span1" style="text-align: center;"><?php echo (isset($totals['XL'])) ? '<span class="badge badge-warning">' . $this->escape($totals['XL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
                         <th class="span1" style="text-align: center;"><?php echo (isset($totals['XXL'])) ? '<span class="badge badge-warning">' . $this->escape($totals['XXL']) . '</span>' : '<span class="badge">0</span>'; ?></th>
-                        <th class="span1" style="text-align: center;"><span class="badge badge-warning"><?php echo $this->escape($total); ?></span></th>
+                        <th class="span1" style="text-align: center;"><span class="badge badge-warning"><?php echo $this->escape($overallTotal); ?></span></th>
                     </tr>
                 </tbody>
             </table>

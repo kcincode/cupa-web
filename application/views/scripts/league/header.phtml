@@ -1,6 +1,8 @@
 <div class="row">
     <div class="span11 league-menu">
+        <?php if($this->isLeagueDirector($this->league->id)): ?>
         <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league, 'userTeams' => $this->userTeams));?>
+        <?php endif; ?>
     </div>
 </div>
 <div class="row">
