@@ -33,7 +33,6 @@ class LeagueController extends Zend_Controller_Action
         return true;
     }
 
-
     public function indexAction()
     {
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
@@ -1596,7 +1595,6 @@ class LeagueController extends Zend_Controller_Action
                 foreach(array('YS', 'YM', 'YL', 'S', 'M', 'L', 'XL', 'XXL') as $size) {
                     $lowSize = strtolower($size);
                     $$lowSize = (isset($shirt[$size])) ? $shirt[$size] : 0;
-
                 }
                 echo "{$color},{$ys},{$ym},{$yl},{$s},{$m},{$l},{$xl},{$xxl}\n";
             }
@@ -1686,7 +1684,6 @@ class LeagueController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
 
-            //apache_setenv('no-gzip', '1');
             ob_end_clean();
 
             header('Pragma: public');
@@ -1713,13 +1710,16 @@ class LeagueController extends Zend_Controller_Action
                 $balance = (empty($status['balance'])) ? 0 : $status['balance'];
                 echo "{$this->view->fullname($status['user_id'])},{$waiver},{$release},{$paid},{$balance}\n";
             }
-
-            flush();
+            exit();
         }
     }
 
     public function statustoggleAction()
     {
+        if(!$this->isXmlHttpRequest()) {
+            return;
+        }
+
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
@@ -1760,8 +1760,12 @@ class LeagueController extends Zend_Controller_Action
     public function registerAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
+
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
+        
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
+        $this->view->season = $leagueSeasonTable->fetchName($this->view->league->season);
 
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
@@ -1770,8 +1774,9 @@ class LeagueController extends Zend_Controller_Action
 
         // do registration checks to make sure a user is able to register
         $this->view->registrationMessage = $this->view->getLeagueRegistrationMessage($leagueId);
-        if($this->view->registrationMessage) {
-            $this->view->message($this->view->registrationMessage, 'error');
+        if($this->view->registrationMessage !== true) {
+            //$this->view->message($this->view->registrationMessage, 'error');
+            $this->renderScript('league/registration-error.phtml');
             return;
         }
 
@@ -1782,9 +1787,10 @@ class LeagueController extends Zend_Controller_Action
 
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $state = $this->getRequest()->getUserParam('state');
-        $userTable = new Model_DbTable_User();
 
         $form = new Form_LeagueRegister($leagueId, $this->view->user->id, $state);
+        $this->{'register' . $state}($leagueId, $form);
+        /*
         if($state == 'user') {
             // reset registration data
             $session->unsetAll();
@@ -1984,7 +1990,7 @@ class LeagueController extends Zend_Controller_Action
                     $form->populate($post);
                 }
             }
-        }
+        }*/
 
         switch($state) {
             case 'user':
@@ -2002,6 +2008,14 @@ class LeagueController extends Zend_Controller_Action
         $this->view->state = $state;
         $this->view->form = $form;
 
+    }
+    
+    private function registerUser($leagueId, $form)
+    {
+        $session = new Zend_Session_Namespace('registration' . $leagueId);
+        $leagueTable = new Model_DbTable_League();
+
+        $league = $leagueTable->find($leagueId)->current();
     }
 
     public function registersuccessAction()

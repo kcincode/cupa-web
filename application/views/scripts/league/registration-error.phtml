@@ -1,0 +1,25 @@
+<div id="page-banner">&nbsp;</div>
+
+<div class="page-content">
+    <div class="row">
+        <div class="span2 actions pull-right">
+            <a class="btn btn-mini" href="<?php echo $this->url(array('type' => $this->season, 'name' => $this->slugify($this->leaguename($this->league->id, true, false, false, true))), 'leagues_view'); ?>">Back to League</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span9">
+            <h2><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h2>
+            <div class="alert alert-error">
+                <?php echo $this->escape($this->registrationMessage); ?>
+            </div>
+
+            <p>
+                You may be put on a waiting list, and if there is enough interest another team might be created to incorporate some of the players on the waiting list.  If you would like to be put on this waiting list please email the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a> and ask to be put on the waiting list.
+            </p>
+            <p>
+                If you have any other troubles, please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a>
+            </p>
+
+        </div>
+    </div>
+</div>

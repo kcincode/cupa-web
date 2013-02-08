@@ -1,3 +1,23 @@
+<div id="page-banner">&nbsp;</div>
+
+<div class="page-content">
+    <div class="row">
+        <div class="span2 actions pull-right">
+            <a class="btn btn-mini" href="<?php echo $this->url(array('type' => $this->season, 'name' => $this->slugify($this->leaguename($this->league->id, true, false, false, true))), 'leagues_view'); ?>">Back to League</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span9">
+            <h2><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h2>
+            <?php echo $this->partial('league/register_steps.phtml', array('state' => $this->state));?>
+            <?php echo $this->form; ?>
+        </div>
+    </div>
+</div>
+
+
+
+<!--
 <div id="register-<?php echo $this->escape($this->state); ?>">
     <h1><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h1>
 
@@ -80,3 +100,4 @@
 
     <?php endif; ?>
 </div>
+-->

@@ -31,11 +31,11 @@ class My_View_Helper_GetLeagueRegistrationMessage extends Zend_View_Helper_Abstr
         }
 
         if(strtotime(date('Y-m-d H:i:s')) > strtotime($league->registration_end)) {
-            return 'League registration has closed.  It closed at ' . date('l, F dS, Y h:i:s A', strtotime($league->registration_end));
+            return 'League registration has closed.  It closed on ' . date('l, F dS, Y h:i:s A', strtotime($league->registration_end));
         }
 
         if(strtotime(date('Y-m-d H:i:s')) < strtotime($league->registration_begin)) {
-            return 'League registration has not yet begun.  It will open at ' . date('l, F dS, Y h:i:s A', strtotime($league->registration_begin));
+            return 'League registration has not yet begun.  It will open on ' . date('l, F dS, Y h:i:s A', strtotime($league->registration_begin));
         }
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
