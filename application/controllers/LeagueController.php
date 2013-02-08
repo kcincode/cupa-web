@@ -1676,32 +1676,6 @@ class LeagueController extends Zend_Controller_Action
             $this->_redirect('league/' . $leagueId);
         }
 
-        if($this->getRequest()->isPost()) {
-            // make sure its an AJAX request
-            if(!$this->getRequest()->isXmlHttpRequest()) {
-                $this->_redirect('league/' . $leagueId . '/status');
-            }
-
-            // disable the layout
-            $this->_helper->layout()->disableLayout();
-            $this->_helper->viewRenderer->setNoRender(true);
-            $post = $this->getRequest()->getPost();
-
-            list($field, $userId, $checked) = explode('-', $post['data']);
-
-            $leagueMemberTable = new Model_DbTable_LeagueMember();
-            $member = $leagueMemberTable->fetchMember($leagueId, $userId);
-
-            if($field != 'waiver') {
-                $member->$field = ($checked == 'true') ? 1 : 0;
-                $member->save();
-            } else {
-                $userWaiverTable = new Model_DbTable_UserWaiver();
-                $userWaiverTable->updateWaiver($userId, $this->view->league->year, $checked, $this->view->user->id);
-            }
-
-        }
-
         $this->view->all = $this->getRequest()->getUserParam('all');
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
@@ -1742,6 +1716,45 @@ class LeagueController extends Zend_Controller_Action
 
             flush();
         }
+    }
+
+    public function statustoggleAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $userId = $this->getRequest()->getUserParam('user_id');
+        $type = $this->getRequest()->getUserParam('type');
+
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
+        }
+
+        $leagueTable = new Model_DbTable_League();
+        $league = $leagueTable->find($leagueId)->current();
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $member = $leagueMemberTable->fetchMember($leagueId, $userId);
+
+        if($type == 'waiver') {
+            $userWaiverTable = new Model_DbTable_UserWaiver();
+            $checked = ($userWaiverTable->hasWaiver($userId, $league->year)) ? 'false' : 'true';
+
+            $userWaiverTable->updateWaiver($userId, $league->year, $checked , $this->view->user->id);
+            $result = ($checked == 'true') ? $league->year : null;
+        } else {
+            $member->$type = ($member->$type == 1) ? 0 : 1;
+            $member->save();
+            $result = $member->$type;
+        }
+
+        $status = array(
+            $type => $result,
+            'user_id' => $userId,
+        );
+
+        echo $this->view->generateStatusButton($type, $status, $league);
     }
 
     public function registerAction()
