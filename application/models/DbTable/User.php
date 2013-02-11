@@ -461,4 +461,18 @@ class Model_DbTable_User extends Zend_Db_Table
 
         return $data;
     }
+
+    public function fetchAllUsersNotInLeague($leagueId)
+    {
+        $select = $this->getAdapter()
+                       ->select()
+                       ->from(array('u' => $this->_name), array('*'))
+                       ->joinLeft(array('lm' => 'league_member'), 'lm.user_id <> u.id', array())
+                       ->where('lm.position = ?', 'player')
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->order('last_name')
+                       ->order('first_name');
+
+        return $this->getAdapter()->fetchAll($select);
+    }
 }

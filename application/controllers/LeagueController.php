@@ -2079,13 +2079,75 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
+
+        $addForm = new Form_LeagueManage($leagueId, 'add');
+        $removeForm = new Form_LeagueManage($leagueId, 'remove');
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            if(empty($post['teams-select'])) {
-                $this->view->message('You must select a team before adding/removing players', 'warning');
-            } else {
-                $leagueMemberTable = new Model_DbTable_LeagueMember();
-                if(isset($post['clear'])) {
+
+            if(isset($post['add'])) {
+                if($addForm->isValid($post)) {
+                    $data = $addForm->getValues();
+
+                    foreach($data['user'] as $user) {
+                        $leagueMemberTable->addNewPlayer($leagueId, $user);
+                    }
+
+                    $this->view->message('Players added to league.', 'success');
+                    $this->_redirect('league/' . $leagueId . '/manage');
+                }
+            } else if(isset($post['remove'])) {
+                if($removeForm->isValid($post)) {
+                    $data = $removeForm->getValues();
+
+                    foreach($data['user'] as $user) {
+                        $leagueMemberTable->removePlayer($user);
+                    }
+
+                    $this->view->message('Players removed from league.', 'success');
+                    $this->_redirect('league/' . $leagueId . '/manage');
+                }
+            } else if(isset($post['manage-add'])) {
+                unset($post['players']);
+                unset($post['manage-clear-team']);
+
+                if(empty($post['available'])) {
+                    $this->view->message('You must select at least on player to add', 'error');
+                } else {
+                    foreach($post['available'] as $leagueMemberId) {
+                        $leagueMember = $leagueMemberTable->find($leagueMemberId)->current();
+                        $leagueMember->league_team_id = $teamId;
+                        $leagueMember->modified_at = date('Y-m-d H:i:s');
+                        $leagueMember->modified_by = $this->view->user->id;
+                        $leagueMember->save();
+                    }
+                    $this->view->message('Player(s) added', 'success');
+                }
+            } else if(isset($post['manage-remove'])) {
+                unset($post['available']);
+                unset($post['manage-clear-team']);
+
+                if(empty($post['players'])) {
+                    $this->view->message('You must select at least on player to remove', 'error');
+                } else {
+                    foreach($post['players'] as $leagueMemberId) {
+                        $leagueMember = $leagueMemberTable->find($leagueMemberId)->current();
+                        $leagueMember->league_team_id = null;
+                        $leagueMember->modified_at = date('Y-m-d H:i:s');
+                        $leagueMember->modified_by = $this->view->user->id;
+                        $leagueMember->save();
+                    }
+                    $this->view->message('Player(s) removed', 'success');
+                }
+            } else if(isset($post['manage-clear'])) {
+                if(empty($teamId)) {
+                    $this->view->message('You must select a team to clear first', 'error');
+                } else {
                     $teamMembers = $leagueMemberTable->fetchAllByType($leagueId, 'player', $teamId);
                     foreach($teamMembers as $member) {
                         $leagueMember = $leagueMemberTable->find($member->id)->current();
@@ -2094,87 +2156,20 @@ class LeagueController extends Zend_Controller_Action
                         $leagueMember->modified_by = $this->view->user->id;
                         $leagueMember->save();
                     }
-                } else if(isset($post['add'])) {
-                    if(isset($post['available-select']) and count($post['available-select'])) {
-                        foreach($post['available-select'] as $leagueMemberId) {
-                            $leagueMember = $leagueMemberTable->find($leagueMemberId)->current();
-                            $leagueMember->league_team_id = $post['teams-select'];
-                            $leagueMember->modified_at = date('Y-m-d H:i:s');
-                            $leagueMember->modified_by = $this->view->user->id;
-                            $leagueMember->save();
-                        }
-                    } else {
-                        $this->view->message('You must select at least one available player before adding.', 'warning');
-                    }
-                } else if(isset($post['remove'])) {
-                    if(isset($post['players-select']) and count($post['players-select'])) {
-                        foreach($post['players-select'] as $leagueMemberId) {
-                            $leagueMember = $leagueMemberTable->find($leagueMemberId)->current();
-                            $leagueMember->league_team_id = null;
-                            $leagueMember->modified_at = date('Y-m-d H:i:s');
-                            $leagueMember->modified_by = $this->view->user->id;
-                            $leagueMember->save();
-                        }
-                    } else {
-                        $this->view->message('You must select at least one team player before removing.', 'warning');
-                    }
+                    $this->view->message('Team cleared', 'success');
                 }
             }
         }
 
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
         $this->view->available = $leagueMemberTable->fetchPlayersByTeam($leagueId, null);
         $this->view->teamPlayers = $leagueMemberTable->fetchPlayersByTeam($leagueId, $teamId);
 
-        $userTable = new Model_DbTable_User();
-        $this->view->users = $userTable->fetchAllUsers();
-        $this->view->leaguePlayers = $leagueMemberTable->fetchPlayersByLeague($leagueId);
+        $this->view->addForm = $addForm;
+        $this->view->removeForm = $removeForm;
+
+        $this->view->headScript()->appendScript('$(".select2").select2();');
     }
-
-    public function addplayerAction()
-    {
-        $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        $leagueId = $this->getRequest()->getUserParam('league_id');
-        $players = $this->getRequest()->getParam('players');
-
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $flag = 0;
-        if($players) {
-            foreach(explode(',', $players) as $playerId) {
-                $ret = $leagueMemberTable->addNewPlayer($leagueId, $playerId);
-                if($ret == 'duplicate') {
-                    if($flag < 1) {
-                        $this->view->message('Some players were already members of the league', 'info');
-                    }
-                    $flag++;
-                }
-            }
-        }
-        if($flag != count(explode(',', $players))) {
-            $this->view->message('Player(s) added', 'success');
-        }
-    }
-
-    public function removeplayerAction()
-    {
-        $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        $players = $this->getRequest()->getParam('players');
-
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        if($players) {
-            foreach(explode(',', $players) as $playerId) {
-                $leagueMemberTable->removePlayer($playerId);
-            }
-        }
-        $this->view->message('Player(s) removed', 'success');
-    }
-
 
     public function moveAction()
     {

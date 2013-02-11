@@ -1,12 +1,87 @@
+<div id="page-banner">&nbsp;</div>
+
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span11">
+            <h2 class="pull-left">Manage League Players</h2>
+            <div class="pull-right">
+                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span10 well well-small">
+            <?php echo $this->addForm; ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span10 well well-small">
+            <?php echo $this->removeForm; ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span7">
+            <h2>Manage Team Rosters</h2>
+        </div>
+        <div class="span4 align-right">
+            <select name="team" onchange="window.location = '<?php echo $this->baseUrl(); ?>/league/<?php echo $this->escape($this->league->id); ?>/manage/' + $(this).val();">
+                <option value="0"<?php echo ($this->teamId == 0) ? ' selected' : ''; ?>>Select Team</option>
+            <?php foreach($this->teams as $team): ?>
+                <option value="<?php echo $this->escape($team->id); ?>"<?php echo ($this->teamId == $team->id) ? ' selected' : ''; ?>><?php echo $this->escape($team->name); ?></option>
+            <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <form method="post">
+            <div class="span4 well well-small">
+                <select class="span4" style="height: 350px;" name="available[]" multiple>
+                    <?php foreach($this->available as $data): ?>
+                    <option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="span3 align-center">
+                <br/><br/><br/><br/><br/><br/>
+                <button class="btn btn-mini btn-info" type="submit" name="manage-add">Add <i class="icon-arrow-right icon-white"></i></button>
+                <br/><br/>
+                <button class="btn btn-mini btn-info" type="submit" name="manage-remove"><i class="icon-arrow-left icon-white"></i> Remove</button>
+                <br/><br/>
+                <input type="hidden" name="manage-clear-team" value="<?php echo $this->escape($this->teamId); ?>"/>
+                <button class="btn btn-mini btn-warning" type="submit" name="manage-clear"><i class="icon-remove icon-white"></i> Clear Team</button>
+            </div>
+            <div class="span4 well well-small">
+                <select class="span4" style="height: 350px;" name="players[]" multiple>
+                <?php foreach($this->teamPlayers as $data): ?>
+                    <option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+                <?php endforeach; ?>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--
 <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
 <div id="manage">
     <h1>Manage League Players</h1>
 
     <form method="post">
-	    <div id="team-select-div">
-			<p>
-				<a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_move'); ?>">Move Players to Another League</a>
-			</p>
+        <div id="team-select-div">
+            <p>
+                <a class="button" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_move'); ?>">Move Players to Another League</a>
+            </p>
             <p>
             <fieldset>
                 <legend>Add Players</legend>
@@ -27,43 +102,44 @@
                 <button id="remove-players-button" class="button" type="button">Remove Players</button>
             </fieldset>
             </p>
-	    	Select a team:
-	    	<select id="teams-select" name="teams-select">
-	    		<?php if($this->teamId == 0) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>
-	    	    <option value="0"<?php echo $this->escape($selected); ?>>Select a team</option>
-	    	<?php foreach($this->teams as $team): ?>
-	    		<?php if($this->teamId == $team->id) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>
-	    		<option value="<?php echo $this->escape($team->id); ?>"<?php echo $this->escape($selected); ?>><?php echo $this->escape($team->name); ?></option>
-	    	<?php endforeach; ?>
-	    	</select>
-	    </div>
-	    <div id="available">
+            Select a team:
+            <select id="teams-select" name="teams-select">
+                <?php if($this->teamId == 0) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>
+                <option value="0"<?php echo $this->escape($selected); ?>>Select a team</option>
+            <?php foreach($this->teams as $team): ?>
+                <?php if($this->teamId == $team->id) { $selected = ' selected="selected"'; } else { $selected = ''; } ?>
+                <option value="<?php echo $this->escape($team->id); ?>"<?php echo $this->escape($selected); ?>><?php echo $this->escape($team->name); ?></option>
+            <?php endforeach; ?>
+            </select>
+        </div>
+        <div id="available">
 
-		    <h3>Available Players</h3>
-		    <select id="available-select" name="available-select[]" multiple>
-		    	<?php foreach($this->available as $data): ?>
-		    		<option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
-		    	<?php endforeach; ?>
-		   	</select>
-		</div>
-		    
-	    <div id="buttons">
-	    	<p><input class="button" type="submit" name="add" value="Add =>" /></p>
-	    	<p><input class="button" type="submit" name="remove" value="<= Remove" /></p>
-	    	<p><input class="button" type="submit" name="clear" value="Clear Team" /></p>
-	    </div>
+            <h3>Available Players</h3>
+            <select id="available-select" name="available-select[]" multiple>
+                <?php foreach($this->available as $data): ?>
+                    <option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-	    <div id="players">
-	    	<h3>Team Players</h3>
-	    	<select id="players-select" name="players-select[]" multiple>
-	    	<?php foreach($this->teamPlayers as $data): ?>
-	    		<option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
-	    	<?php endforeach; ?>
-	    	</select>
-	    </div>
+        <div id="buttons">
+            <p><input class="button" type="submit" name="add" value="Add =>" /></p>
+            <p><input class="button" type="submit" name="remove" value="<= Remove" /></p>
+            <p><input class="button" type="submit" name="clear" value="Clear Team" /></p>
+        </div>
+
+        <div id="players">
+            <h3>Team Players</h3>
+            <select id="players-select" name="players-select[]" multiple>
+            <?php foreach($this->teamPlayers as $data): ?>
+                <option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+            <?php endforeach; ?>
+            </select>
+        </div>
     </form>
 </div>
 
 <script>
-	var leagueId = '<?php echo $this->league->id; ?>';
+    var leagueId = '<?php echo $this->league->id; ?>';
 </script>
+-->
