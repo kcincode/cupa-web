@@ -1,0 +1,12 @@
+<div class="row">
+    <div class="offset1">
+        <dl class="dl-horizontal">
+            <dt>Current Waiver:</dt>
+            <dd><?php echo ($this->data['status']['waiver'] === true) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?></dd>
+            <dt>Profile Complete:</dt>
+            <dd><?php echo ($this->data['status']['profile'] === true) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span> ( <a href="' . $this->url(array('state' => 'personal'), 'profile') . '">Update Profile</a> )'; ?></dd>
+            <dt>Money Owed:</dt>
+            <dd><?php echo ($this->data['status']['owe'] == 0) ? '<span class="text-success">$ 0</span>' : '<span class="text-error">$ ' . $this->data['status']['owe'] . '</span> ( <a href="' . $this->url(array('state' => 'leagues'), 'profile') . '">View Details</a> )'; ?></dd>
+        </dl>
+    </div>
+</div>

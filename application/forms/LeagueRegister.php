@@ -16,6 +16,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
         $usersTable = new Model_DbTable_User();
         $this->_user = $usersTable->find($userId)->current();
         $this->_leagueId = $leagueId;
+
         parent::__construct();
     }
 
@@ -23,6 +24,89 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
     {
         $section = $this->_state;
         $this->$section();
+
+        if(!isset($_SERVER['HTTP_REFERER']) || strstr($_SERVER['HTTP_REFERER'], 'profile/leagues') === false) {
+            $this->addElement('button', 'next', array(
+                'type' => 'submit',
+                'label' => 'Next',
+                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+                'escape' => false,
+                'icon' => 'arrow-right',
+                'whiteIcon' => true,
+                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_RIGHT,
+            ));
+
+            $this->addElement('button', 'back', array(
+                'type' => 'submit',
+                'label' => 'Back',
+                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+                'escape' => false,
+                'icon' => 'arrow-left',
+                'whiteIcon' => true,
+                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+            ));
+
+            $this->addElement('button', 'cancel', array(
+                'type' => 'submit',
+                'label' => 'Cancel',
+            ));
+
+            if($section == 'user') {
+                $this->removeElement('back');
+                $actions = array('cancel', 'next');
+            } else if($section == 'done') {
+                $this->removeElement('next');
+                $this->removeElement('cancel');
+
+                $this->addElement('button', 'finish', array(
+                    'type' => 'submit',
+                    'label' => 'Register',
+                    'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
+                    'escape' => false,
+                    'icon' => 'hdd',
+                    'whiteIcon' => true,
+                    'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+                ));
+                $actions = array('back', 'finish');
+            } else {
+                $this->removeElement('cancel');
+                $actions = array('back', 'next');
+            }
+
+            $this->addDisplayGroup(
+                $actions,
+                'league_actions',
+                array(
+                    'disableLoadDefaultDecorators' => true,
+                    'decorators' => array('Actions'),
+                )
+            );
+        } else {
+            $this->addElement('button', 'save', array(
+                'type' => 'submit',
+                'label' => 'Save',
+                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+                'escape' => false,
+                'icon' => 'hdd',
+                'whiteIcon' => true,
+                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
+            ));
+
+            $this->addElement('submit', 'cancel', array(
+                'type' => 'submit',
+                'label' => 'Cancel',
+                'escape' => false,
+            ));
+
+            $this->addDisplayGroup(
+                array('save', 'cancel'),
+                'league_actions',
+                array(
+                    'disableLoadDefaultDecorators' => true,
+                    'decorators' => array('Actions'),
+                )
+            );
+        }
     }
 
     private function user()
@@ -44,6 +128,14 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'value' => $this->_userId,
             'multiOptions' => $users,
         ));
+
+        $this->addDisplayGroup(
+            array('user'),
+            'register_user_edit_form',
+            array(
+                'legend' => 'Register As',
+            )
+        );
     }
 
     private function personal()
@@ -188,6 +280,50 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'description' => 'Enter the YEAR you started playing ultimate.',
         ));
 
+        $questions = array();
+        $userEmergencyTable = new Model_DbTable_UserEmergency();
+        $contacts = $userEmergencyTable->fetchAllContacts($userProfile->user_id);
+        foreach(range(1,2) as $i) {
+            $this->addElement('text', 'contactName' . $i, array(
+                'filters' => array('StringTrim'),
+                'required' => true,
+                'label' => 'Name',
+                'value' => (empty($contacts[$i - 1])) ? null : $contacts[$i - 1]->first_name . ' ' . $contacts[$i - 1]->last_name,
+                'description' => 'Name of contact',
+            ));
+
+            $this->addElement('text', 'contactPhone' . $i, array(
+                'filters' => array('StringTrim'),
+                'required' => true,
+                'validators' => array(
+                    array('Regex', false, array('pattern' => '/^\d\d\d-\d\d\d-\d\d\d\d$/')),
+                ),
+                'label' => 'Phone:',
+                'value' => (empty($contacts[$i - 1])) ? null : $contacts[$i - 1]->phone,
+                'errorMessage' => 'Invalid phone number.',
+                'description' => 'Phone # of contact.',
+            ));
+
+            $questions[] = 'contactName' . $i;
+            $questions[] = 'contactPhone' . $i;
+        }
+
+        $this->addDisplayGroup(
+            array('first_name', 'last_name', 'email', 'phone', 'gender', 'birthday', 'nickname', 'height', 'experience', 'level'),
+            'register_personal_edit_form',
+            array(
+                'legend' => 'Personal Information',
+            )
+        );
+
+        $this->addDisplayGroup(
+            $questions,
+            'register_contact_edit_form',
+            array(
+                'legend' => 'Emergency Contacts',
+            )
+        );
+
     }
 
     private function league()
@@ -199,7 +335,8 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
         $leagueMemberTable = new Model_DbTable_LeagueMember();
 
-        if(empty($this->_userId)) {
+
+        if(!empty($this->_userId)) {
             $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
             $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
         }
@@ -314,41 +451,6 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             $i++;
         }
 
-        if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'], 'profile/leagues') !== false) {
-            $this->addElement('button', 'save', array(
-                'type' => 'submit',
-                'label' => 'Save',
-                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
-                'escape' => false,
-                'icon' => 'hdd',
-                'whiteIcon' => true,
-                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
-            ));
-
-            $this->addElement('submit', 'cancel', array(
-                'type' => 'submit',
-                'label' => 'Cancel',
-                'escape' => false,
-            ));
-        } else {
-            // TODO FIX THIS
-            $this->addElement('button', 'save', array(
-                'type' => 'submit',
-                'label' => 'NOT CORRECT',
-                'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
-                'escape' => false,
-                'icon' => 'hdd',
-                'whiteIcon' => true,
-                'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
-            ));
-
-            $this->addElement('submit', 'cancel', array(
-                'type' => 'submit',
-                'label' => 'Cancel',
-                'escape' => false,
-            ));
-        }
-
         $this->addDisplayGroup(
             $questionList,
             'league_register_form',
@@ -357,12 +459,56 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             )
         );
 
+    }
+
+    private function done()
+    {
+        $userTable = new Model_DbTable_User();
+        $userProfileTable = new Model_DbTable_UserProfile();
+
+        $user = $userTable->find($this->_session->registrantId)->current();
+        $userProfile = $userProfileTable->find($this->_session->registrantId)->current();
+
+        if(!empty($user->parent)) {
+            $parent = $userTable->find($user->parent)->current();
+            $parentProfile = $userProfileTable->find($user->parent)->current();
+
+            $user->email = $parent->email;
+            $userProfile->phone = $parentProfile->phone;
+        }
+
+        $this->addElement('text', 'first_name', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'First name:',
+            'value' => $user->first_name,
+            'disabled' => true,
+            'description' => 'Check your first name.',
+        ));
+
+        $this->addElement('text', 'last_name', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Last name:',
+            'value' => $user->last_name,
+            'disabled' => true,
+            'description' => 'Check your last name.',
+        ));
+
+        $this->addElement('text', 'email', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Email Address:',
+            'value' => $user->email,
+            'disabled' => true,
+            'description' => 'Check your email address.',
+        ));
+
         $this->addDisplayGroup(
-            array('save', 'cancel'),
-            'pickup_edit_actions',
+            array('first_name', 'last_name', 'email'),
+            'league_register_confirm_form',
             array(
-                'disableLoadDefaultDecorators' => true,
-                'decorators' => array('Actions'),
+                'legend' => 'Confrm Registration',
             )
         );
     }

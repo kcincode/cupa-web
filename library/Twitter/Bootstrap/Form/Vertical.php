@@ -34,6 +34,7 @@ class Twitter_Bootstrap_Form_Vertical extends Twitter_Bootstrap_Form
             array('Description', array('tag' => 'p', 'class' => 'help-block')),
             array('Addon'),
             array('Label', array('class' => 'control-label')),
+            array('Wrapper'),
         ));
 
         parent::__construct($options);

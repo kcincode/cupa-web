@@ -4,6 +4,7 @@ class Model_DbTable_UserProfile extends Zend_Db_Table
 {
     protected $_name = 'user_profile';
     protected $_primary = 'user_id';
+    protected $_completenessColumns = array('gender', 'birthday', 'phone', 'height', 'level', 'experience');
 
     public function isEighteenOrOver($userId, $date = null)
     {
@@ -36,4 +37,16 @@ class Model_DbTable_UserProfile extends Zend_Db_Table
         $profile->save();
     }
 
+    public function isComplete($userId)
+    {
+        $data = $this->find($userId)->current();
+
+        foreach($this->_completenessColumns as $column) {
+            if(empty($data->$column)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

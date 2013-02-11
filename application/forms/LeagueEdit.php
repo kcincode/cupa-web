@@ -25,7 +25,6 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             $this->$section();
         }
 
-
         $this->addElement('button', 'save', array(
             'type' => 'submit',
             'label' => 'Update',
@@ -36,12 +35,10 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
         ));
 
-
         $this->addElement('button', 'cancel', array(
             'type' => 'submit',
             'label' => 'Cancel',
         ));
-
 
         $this->addDisplayGroup(
             array('save', 'cancel'),
@@ -240,15 +237,6 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'class' => 'select2 span7',
             'description' => 'Please select one or more directors.',
             'value' => $directors,
-        ));
-
-        $this->addElement('textarea', 'info', array(
-            'filters' => array('StringTrim'),
-            'required' => false,
-            'label' => 'League Information:',
-            'class' => 'ckeditor',
-            'description' => 'Enter a quick description of the league (optional)',
-            'value' => $this->_leagueData['info'],
         ));
 
         $this->addElement('text', 'league_name', array(
@@ -683,12 +671,21 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
 
     private function description()
     {
+        $this->addElement('textarea', 'info', array(
+            'filters' => array('StringTrim'),
+            'required' => false,
+            'label' => 'League Information:',
+            'class' => 'ckeditor',
+            'description' => 'Enter a quick description of the league (optional)',
+            'value' => $this->_leagueData['info'],
+        ));
+
         $this->addElement('textarea', 'description', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'League Description:',
             'class' => 'ckeditor',
-            'description' => 'Enter the information you want displayed for the league here.',
+            'description' => 'Enter the long description for the league here.',
             'value' => $this->_leagueData['information']['description'],
         ));
 

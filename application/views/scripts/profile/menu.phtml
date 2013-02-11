@@ -1,5 +1,6 @@
             <ul class="nav nav-tabs">
                   <li<?php echo ($this->state == 'personal') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('state' => 'personal'), 'profile'); ?>">Personal Info</a></li>
+                  <li<?php echo ($this->state == 'status') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('state' => 'status'), 'profile'); ?>">Status</a></li>
                   <li<?php echo ($this->state == 'minors') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('state' => 'minors'), 'profile'); ?>">Minors</a></li>
                   <li<?php echo ($this->state == 'leagues') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('state' => 'leagues'), 'profile'); ?>">League Info</a></li>
                   <li<?php echo ($this->state == 'contacts') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('state' => 'contacts'), 'profile'); ?>">Emergency Contacts</a></li>

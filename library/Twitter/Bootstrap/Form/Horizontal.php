@@ -32,7 +32,7 @@ class Twitter_Bootstrap_Form_Horizontal extends Twitter_Bootstrap_Form
             array('Description', array('tag' => 'p', 'class' => 'help-block')),
             array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
             array('Label', array('class' => 'control-label')),
-            array('Wrapper')
+            array('Wrapper'),
         ));
 
         parent::__construct($options);

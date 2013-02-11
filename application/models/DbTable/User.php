@@ -259,7 +259,7 @@ class Model_DbTable_User extends Zend_Db_Table
                     'height' => $data['height'],
                     'level' => $data['level'],
                     'experience' => $data['experience'],
-                    
+
                 ));
 
                 return $this->find($id)->current();
@@ -418,14 +418,14 @@ class Model_DbTable_User extends Zend_Db_Table
 
         return null;
     }
-    
+
     public function fetchAllFilteredUsers($filter = null)
     {
         $select = $this->select()
                        ->where('parent IS NULL')
                        ->order('last_name')
                        ->order('first_name');
-        
+
         if(!is_null($filter)) {
             $select = $select->where('first_name LIKE ?', "%$filter%")
                              ->orWhere('last_name LIKE ?', "%$filter%")
@@ -433,5 +433,32 @@ class Model_DbTable_User extends Zend_Db_Table
         }
 
         return $this->fetchAll($select);
+    }
+
+    public function fetchStatuses($userId)
+    {
+        $select = $this->getAdapter()
+                       ->select()
+                       ->from(array('u' => $this->_name), array())
+                       ->joinLeft(array('lm' => 'league_member'), 'lm.user_id = u.id', array('paid'))
+                       ->joinLeft(array('li' => 'league_information'), 'li.league_id = lm.league_id', array('cost'))
+                       ->where('lm.position = ?', 'player')
+                       ->where('u.id = ?', $userId);
+
+        $userProfileTable = new Model_DbTable_UserProfile();
+        $userWaiverTable = new Model_DbTable_UserWaiver();
+        $data = array(
+            'owe' => 0,
+            'waiver' => $userWaiverTable->hasWaiver($userId, date('Y')),
+            'profile' => $userProfileTable->isComplete($userId),
+        );
+
+        foreach($this->getAdapter()->fetchAll($select) as $row) {
+            if($row['paid'] == 0) {
+                $data['owe'] += $row['cost'];
+            }
+        }
+
+        return $data;
     }
 }

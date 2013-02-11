@@ -1,50 +1,72 @@
-<div id="register-success">
-	<h1>Registration Successful</h1>
-	<h1><?php echo $this->leaguename($this->league->id, true, true, true, true); ?></h1>
+<div id="page-banner">&nbsp;</div>
 
-	<h2>Players Registered</h2>
+<div class="page-content">
+    <div class="row">
+        <div class="offset1 span10">
+            <h2><?php echo $this->leaguename($this->league->id, true, true, true, true); ?></h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span10">
+            <div class="alert alert-success">
+                <h4>Registration Successful</h4>
+                <p>You have been registered, you can check your statuses and pay or sign your waiver from this page.</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span10">
+            <h3>Players Registered</h3>
+            <p>You may click on the waiver 'no' to sign the online wavier</p>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th class="span2" style="text-align: center;">Waiver</th>
+                        <th class="span2" style="text-align: center;">Release</th>
+                        <th class="span2" style="text-align: center;">Paid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->players as $player): ?>
+                    <tr>
+                        <td><?php echo $this->fullname($player['user_id']); ?></td>
+                        <td style="text-align: center;"><?php echo ($this->hasUserSignedWaiver($player['user_id'], $this->league->year)) ? '<span class="text-success">Yes</span>' : '<span ><a class="text-error" href="' . $this->url(array('league_id' => $this->league->id), 'league_waiver') . '">Sign Waiver</a></span>'; ?></td>
+                        <td style="text-align: center;"><?php echo ($player['release'] == 1) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?></td>
+                        <td style="text-align: center;"><?php echo ($player['paid'] == 1) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span9">
+            <h2>Payment Information</h2>
+            <p>The cost of this league is: <strong><span class="text-info">$ <?php echo $this->escape($this->cost); ?></span></strong></p>
+            <?php if(!empty($this->paypal)): ?>
+            <p>If you are not paying online, bring your payment with you on the first night or you risk being removed from the league.</p>
 
-	<div class="players">
-		<?php if($this->hasMinors): ?>
-		<a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_registration'); ?>">Register</a> as another player.<br/><br/>
-		<?php endif; ?>
-		<div class="row header">
-			<div class="name">Player</div>
-			<div class="paid">Paid</div>
-			<div class="release">Release</div>
-			<div class="waiver">Waiver</div>
-		</div>
-	<?php $this->cycle(array('even', 'odd')); ?>
-	<?php foreach($this->players as $player): ?>
-		<div class="row <?php echo $this->cycle()->next(); ?>">
-			<div class="name"><?php echo $this->fullname($player['user_id']); ?></div>
-			<div class="paid"><?php echo ($player['paid'] == 1) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
-			<div class="release"><?php echo ($player['release'] == 1) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
-			<div class="waiver"><?php echo ($this->hasUserSignedWaiver($player['user_id'], $this->league->year)) ? '<span class="yes">Yes</span>' : '<span class="no">No</span>'; ?></div>
-		</div>
-	<?php endforeach; ?>
-	</div>
-	<div class="clearfix">&nbsp;</div>
+            <p>
+                    Use this button to make a payment via paypal:
+                    <?php echo $this->paypal; ?>
+            </p>
+            <?php else: ?>
+            <p>Please bring your payment with you on the first night or you risk being removed from the league.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span9">
+            <h2>Liability Forms</h2>
+            <p>Waivers are only required for the first CUPA event you participate in for <?php echo $this->escape($this->league->year); ?>. If you haven't participated yet this year, please fill out the form below and bring it with you on the first night.</p>
+            <p>If you are registering for a player <span class="highlight">18 or over</span> please click <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_waiver');?>">here</a> to sign an online waiver.</p>
 
-	<h2>Payment Information</h2>
-	<p>The cost of this league is: $<?php echo $this->escape($this->cost); ?></p>
-	<?php if(!empty($this->paypal)): ?>
-	<p>If you are not paying online, bring your payment with you on the first night or you risk being removed from the league.</p>
+            <p>If you are registering for a player between <span class="highlight">16 and 18</span> please click <a href="<?php echo $this->url(array('type' => 'all', 'year' => $this->league->year), 'page_forms'); ?>">here</a> to download the forms for your parent to sign.  There may be more than one form to sign for certain leagues.</p>
 
-	<p>
-            Use this button to make a payment via paypal:
-            <?php echo $this->paypal; ?>
-	</p>
-	<?php else: ?>
-	<p>Please bring your payment with you on the first night or you risk being removed from the league.</p>
-	<?php endif; ?>
+            <p>If you have trouble downloading these forms you may need Adobe Acrobat Reader.  To get it free <a href="http://get.adobe.com/reader/">click here</a>.</p>
+            <p>If you have other trouble please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a></p>
 
-	<h2>Liability Forms</h2>
-        <p>Waivers are only required for the first CUPA event you participate in for <?php echo $this->escape($this->league->year); ?>. If you haven't participated yet this year, please fill out the form below and bring it with you on the first night.</p>
-        <p>If you are registering for a player <span class="highlight">18 or over</span> please click <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_waiver');?>">here</a> to sign an online waiver.</p>
-
-	<p>If you are registering for a player between <span class="highlight">16 and 18</span> please click <a href="<?php echo $this->url(array('type' => 'youth_waiver', 'year' => $this->league->year), 'page_forms'); ?>">here</a> to download the waiver form for your parent to sign.  Also you must click <a href="<?php echo $this->url(array('type' => 'release', 'year' => $this->league->year), 'page_forms'); ?>">here</a> to download the medical release form and have your parents sign that as well.</p>
-
-	<p>If you have trouble downloading these forms you may need Adobe Acrobat Reader.  To get it free <a href="http://get.adobe.com/reader/">click here</a>.</p>
-	<p>If you have other trouble please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a></p>
+        </div>
+    </div>
 </div>

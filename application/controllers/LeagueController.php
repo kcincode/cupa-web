@@ -380,10 +380,6 @@ class LeagueController extends Zend_Controller_Action
                     }
                 }
 
-                $league = $leagueTable->find($leagueId)->current();
-                $league->info = (empty($data['info'])) ? null : $data['info'];
-                $league->save();
-
                 $leagueLocationTable = new Model_DbTable_LeagueLocation();
                 $league = $leagueLocationTable->fetchByType($leagueId, 'league');
                 $league->location = $data['league_name'];
@@ -730,6 +726,10 @@ class LeagueController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
+
+                $league = $leagueTable->find($leagueId)->current();
+                $league->info = (empty($data['info'])) ? null : $data['info'];
+                $league->save();
 
                 $leagueInformationTable = new Model_DbTable_LeagueInformation();
                 $leagueInformation = $leagueInformationTable->fetchInformation($leagueId);
@@ -1763,7 +1763,7 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
-        
+
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league->season);
 
@@ -1775,6 +1775,10 @@ class LeagueController extends Zend_Controller_Action
         // do registration checks to make sure a user is able to register
         $this->view->registrationMessage = $this->view->getLeagueRegistrationMessage($leagueId);
         if($this->view->registrationMessage !== true) {
+            if($this->view->isRegistered($leagueId, $this->view->user->id)) {
+                $this->_redirect('/league/' . $leagueId . '/register_success');
+            }
+
             //$this->view->message($this->view->registrationMessage, 'error');
             $this->renderScript('league/registration-error.phtml');
             return;
@@ -1782,240 +1786,235 @@ class LeagueController extends Zend_Controller_Action
 
         // stop if user not logged in
         if(!Zend_Auth::getInstance()->hasIdentity()) {
+            $this->renderScript('league/auth.phtml');
             return;
         }
+
+        // TODO: reset session if referer is unset or coming from league page
+        // $session->unsetAll();
 
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $state = $this->getRequest()->getUserParam('state');
 
-        $form = new Form_LeagueRegister($leagueId, $this->view->user->id, $state);
-        $this->{'register' . $state}($leagueId, $form);
-        /*
-        if($state == 'user') {
-            // reset registration data
-            $session->unsetAll();
-
-            if(!$userTable->hasMinors($this->view->user->id)) {
-                $session->registrantId = $this->view->user->id;
-                $this->_redirect('league/' . $leagueId . '/register/personal');
-            }
-
-            // handle post request
-            if($this->getRequest()->isPost()) {
-                $post = $this->getRequest()->getPost();
-
-                if(isset($post['back'])) {
-                    $this->_redirect('league/' . $leagueId . '/register/user');
-                }
-
-                if($form->isValid($post)) {
-                    $session->registrantId = $post['user'];
-                    $this->_redirect('league/' . $leagueId . '/register/personal');
-                } else {
-                    $form->populate($post);
-                }
-            }
-
-        } else if($state == 'personal') {
-            // user has already registered redirect to success
+        if($state != 'user') {
             if($this->view->isRegistered($leagueId, $session->registrantId)) {
                 $this->view->message('You have already registered as this user.', 'warning');
                 $this->_redirect('/league/' . $leagueId . '/register_success');
             }
-
-            $userEmergencyTable = new Model_DbTable_UserEmergency();
-            $this->view->contacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
-            unset($session->personal);
-            // handle post request
-            if($this->getRequest()->isPost()) {
-                $post = $this->getRequest()->getPost();
-
-                if(isset($post['back'])) {
-                    $this->_redirect('league/' . $leagueId . '/register/user');
-                }
-
-                if($form->isValid($post)) {
-                    unset($post['next']);
-                    //store the data in the session
-                    $session->personal = $post;
-
-                    $this->_redirect('league/' . $leagueId . '/register/league');
-                } else {
-                    $this->view->message('There are errors with the infromation you have entered, please correct them.', 'error');
-                    $form->populate($post);
-
-                    $userTable = new Model_DbTable_User();
-                    $userProfileTable = new Model_DbTable_UserProfile();
-
-                    $user = $userTable->find($session->registrantId)->current();
-                    $userProfile = $userProfileTable->find($session->registrantId)->current();
-                    if(!empty($user->parent)) {
-                        $parent = $userTable->find($user->parent)->current();
-                        $parentProfile = $userProfileTable->find($user->parent)->current();
-
-                        $user->email = $parent->email;
-                        $userProfile->phone = $parentProfile->phone;
-                    }
-
-                    $form->getElement('email')->setValue($user->email);
-                    $form->getElement('phone')->setValue($userProfile->phone);
-                }
-            }
-
-        } else  if($state == 'league') {
-            unset($session->league);
-
-            if(empty($session->personal)) {
-                $this->_redirect('league/' . $leagueId . '/register/personal');
-            }
-
-            if($this->getRequest()->isPost()) {
-                $post = $this->getRequest()->getPost();
-
-                if(isset($post['back'])) {
-                    $this->_redirect('league/' . $leagueId . '/register/personal');
-                }
-
-                if($form->isValid($post)) {
-                    unset($post['save']);
-                    foreach(array('user_team_new', 'user_team_select') as $key) {
-                        if(isset($post[$key])) {
-                            $post['user_teams'] = $post[$key];
-                            unset($post[$key]);
-                        }
-                    }
-
-                    $session->league = $post;
-
-                    // all data entered save the registrant
-                    $userTable = new Model_DbTable_User();
-                    $userProfileTable = new Model_DbTable_UserProfile();
-
-                    $user = $userTable->find($session->registrantId)->current();
-                    $userProfile = $userProfileTable->find($session->registrantId)->current();
-                    $user->first_name = $session->personal['first_name'];
-                    $user->last_name = $session->personal['last_name'];
-
-                    // only update the user email/phone if they are not a minor
-                    if(!empty($user->parent)) {
-                        $user->email = $session->personal['email'];
-                        $userProfile->phone = $session->personal['phone'];
-                    }
-
-                    $userProfile->gender = $session->personal['gender'];
-                    $userProfile->birthday = $session->personal['birthday'];
-                    $userProfile->nickname = $session->personal['nickname'];
-                    $userProfile->height = $session->personal['height'];
-                    $userProfile->level = $session->personal['level'];
-                    $userProfile->experience = $session->personal['experience'];
-
-                    $userEmergencyTable = new Model_DbTable_UserEmergency();
-                    $i = 0;
-                    foreach($session->personal['contactNames'] as $contactName) {
-                        $contactPhone = $session->personal['contactPhones'][$i];
-
-                        $allContacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
-
-                        // remove contacts that are no longer in db
-                        foreach($allContacts as $contact) {
-                            if(!in_array($contact->phone, $session->personal['contactPhones'])) {
-                                $contact->delete();
-                            }
-                        }
-
-                        $contact = $userEmergencyTable->fetchContact($session->registrantId, $contactPhone);
-                        if(!$contact) {
-                            $nameData = explode(' ', $contactName);
-                            if(count($nameData) == 1) {
-                                $first = $nameData[0];
-                                $last = '';
-                            } else if(count($nameData) == 2) {
-                                $first = $nameData[0];
-                                $last = $nameData[1];
-                            }
-
-                            $userEmergencyTable->insert(array(
-                                'user_id' => $session->registrantId,
-                                'first_name' => ucwords(trim($first)),
-                                'last_name' => ucwords(trim($last)),
-                                'phone' => $contactPhone,
-                                'weight' => $i,
-                            ));
-                        }
-
-                        $i++;
-                    }
-
-                    $leagueMemberTable = new Model_DbTable_LeagueMember();
-                    $leagueMember = $leagueMemberTable->fetchMember($leagueId, $session->registrantId);
-                    if(!$leagueMember) {
-                        $leagueMemberId = $leagueMemberTable->insert(array(
-                            'league_id' => $leagueId,
-                            'user_id' => $session->registrantId,
-                            'position' => 'player',
-                            'league_team_id' => null,
-                            'paid' => 0,
-                            'release' => ($this->view->displayAge($session->personal['birthday']) >= 18) ? 1 :0,
-                            'created_at' => date('Y-m-d H:i:s'),
-                            'modified_at' => date('Y-m-d H:i:s'),
-                            'modified_by' => $this->view->user->id,
-                        ));
-                    } else {
-                        $leagueMemberId = $leagueMember->id;
-                    }
-
-                    $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-                    $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
-                    foreach($session->league as $questionName => $answer) {
-                        $question = $leagueQuestionTable->fetchQuestion($questionName);
-                        if($question) {
-                            $leagueAnswerTable->addAnswer($leagueMemberId, $question->id, $answer);
-                        }
-                    }
-
-                    // redirect to success/payment screen
-                    $this->view->message('You have successfully registered for ' . $this->view->leaguename($leagueId, true, true, true, true));
-
-                    $session->unsetAll();
-
-                    // if the user has not signed a waiver redirect to online waiver
-                    if($userProfileTable->isEighteenOrOver($userProfile->birthday) and !$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
-                        $this->_redirect('league/' . $leagueId . '/waiver');
-                    }
-
-                    $this->_redirect('league/' . $leagueId . '/register_success');
-
-                } else {
-                    $this->view->message('There are errors with the infromation you have entered, please correct them.', 'error');
-                    $form->populate($post);
-                }
-            }
-        }*/
-
-        switch($state) {
-            case 'user':
-                $title = 'Select a user to register as';
-                break;
-            case 'personal':
-                $title = 'Enter or check your personal data';
-                break;
-            case 'league':
-                $title = 'Answer the league questions';
-                break;
         }
 
-        $this->view->title = $title;
+        $form = new Form_LeagueRegister($leagueId, $this->view->user->id, $state);
+        $this->{'register' . $state}($leagueId, $form);
+
         $this->view->state = $state;
         $this->view->form = $form;
-
     }
-    
-    private function registerUser($leagueId, $form)
+
+    private function registerUser($leagueId, &$form)
     {
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $leagueTable = new Model_DbTable_League();
 
         $league = $leagueTable->find($leagueId)->current();
+
+        $userTable = new Model_DbTable_User();
+        if(!$userTable->hasMinors($this->view->user->id)) {
+            $session->registrantId = $this->view->user->id;
+
+            $this->_redirect('league/' . $leagueId . '/register/personal');
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['back'])) {
+                $this->_redirect('league/' . $leagueId . '/register/user');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $session->registrantId = $data['user'];
+                $this->_redirect('league/' . $leagueId . '/register/personal');
+            }
+        }
+    }
+
+    private function registerPersonal($leagueId, &$form)
+    {
+        $session = new Zend_Session_Namespace('registration' . $leagueId);
+
+        $userEmergencyTable = new Model_DbTable_UserEmergency();
+        $this->view->contacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
+        unset($session->personal);
+
+        // handle post request
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['back'])) {
+                $this->_redirect('league/' . $leagueId . '/register/user');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+                $session->personal = $data;
+                $this->_redirect('league/' . $leagueId . '/register/league');
+            }
+        }
+    }
+
+    private function registerLeague($leagueId, &$form)
+    {
+        $session = new Zend_Session_Namespace('registration' . $leagueId);
+        unset($session->league);
+
+        if(empty($session->personal)) {
+            $this->_redirect('league/' . $leagueId . '/register/personal');
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['back'])) {
+                $this->_redirect('league/' . $leagueId . '/register/personal');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                foreach(array('user_team_new', 'user_team_select') as $key) {
+                    if(isset($data[$key])) {
+                        $data['user_teams'] = $data[$key];
+                        unset($data[$key]);
+                    }
+                }
+
+                $session->league = $data;
+                $this->_redirect('league/' . $leagueId . '/register/done');
+            }
+        }
+    }
+
+    private function registerDone($leagueId, &$form)
+    {
+        $session = new Zend_Session_Namespace('registration' . $leagueId);
+        unset($session->done);
+
+        if(empty($session->league)) {
+            $this->_redirect('league/' . $leagueId . '/register/league');
+        }
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['back'])) {
+                $this->_redirect('league/' . $leagueId . '/register/league');
+            } else {
+
+                $this->saveRegistrationData($leagueId, $session);
+
+                Zend_Debug::dump($session->registrantId);
+                Zend_Debug::dump($session->personal);
+                Zend_Debug::dump($session->league);
+            }
+        }
+    }
+
+    private function saveRegistrationData($leagueId, $session)
+    {
+        // all data entered save the registrant
+        $userTable = new Model_DbTable_User();
+        $userProfileTable = new Model_DbTable_UserProfile();
+
+        $user = $userTable->find($session->registrantId)->current();
+        $userProfile = $userProfileTable->find($session->registrantId)->current();
+        $user->first_name = $session->personal['first_name'];
+        $user->last_name = $session->personal['last_name'];
+
+        // only update the user email/phone if they are not a minor
+        if(!empty($user->parent)) {
+            $user->email = $session->personal['email'];
+            $userProfile->phone = $session->personal['phone'];
+        }
+
+        $userProfile->gender = $session->personal['gender'];
+        $userProfile->birthday = $session->personal['birthday'];
+        $userProfile->nickname = $session->personal['nickname'];
+        $userProfile->height = $session->personal['height'];
+        $userProfile->level = $session->personal['level'];
+        $userProfile->experience = $session->personal['experience'];
+
+        $userEmergencyTable = new Model_DbTable_UserEmergency();
+        for($i = 1; $i < 3; $i++) {
+            $contactPhone = $session->personal['contactPhone' . $i];
+            $contactName = $session->personal['contactName' . $i];
+
+            $contact = $userEmergencyTable->fetchContact($session->registrantId, $contactPhone);
+            $nameData = explode(' ', $contactName);
+            if(count($nameData) == 1) {
+                $first = $nameData[0];
+                $last = '';
+            } else if(count($nameData) == 2) {
+                $first = $nameData[0];
+                $last = $nameData[1];
+            }
+
+            if(!$contact) {
+                $userEmergencyTable->insert(array(
+                    'user_id' => $session->registrantId,
+                    'first_name' => ucwords(trim($first)),
+                    'last_name' => ucwords(trim($last)),
+                    'phone' => $contactPhone,
+                    'weight' => $i,
+                ));
+            } else {
+                $contact->first_name = ucwords(trim($first));
+                $contact->last_name = ucwords(trim($last));
+                $contact->save();
+            }
+        }
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $leagueMember = $leagueMemberTable->fetchMember($leagueId, $session->registrantId);
+        if(!$leagueMember) {
+            $leagueMemberId = $leagueMemberTable->insert(array(
+                'league_id' => $leagueId,
+                'user_id' => $session->registrantId,
+                'position' => 'player',
+                'league_team_id' => null,
+                'paid' => 0,
+                'release' => ($this->view->displayAge($session->personal['birthday']) >= 18) ? 1 :0,
+                'created_at' => date('Y-m-d H:i:s'),
+                'modified_at' => date('Y-m-d H:i:s'),
+                'modified_by' => $this->view->user->id,
+            ));
+        } else {
+            $leagueMemberId = $leagueMember->id;
+        }
+
+        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+        foreach($session->league as $questionName => $answer) {
+            $question = $leagueQuestionTable->fetchQuestion($questionName);
+            if($question) {
+                $leagueAnswerTable->addAnswer($leagueMemberId, $question->id, $answer);
+            }
+        }
+
+        // redirect to success/payment screen
+        $this->view->message('You have successfully registered for ' . $this->view->leaguename($leagueId, true, true, true, true));
+
+        $session->unsetAll();
+
+        // if the user has not signed a waiver redirect to online waiver
+        if($userProfileTable->isEighteenOrOver($userProfile->birthday) and !$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
+            $this->_redirect('league/' . $leagueId . '/waiver');
+        } else if(!$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
+            $this->view->message('You are not old enough to sign the online waiver.  If this is not true please check your birthday in the system under the MY PROFILE link and update it.', 'warning');
+        }
+
+        $this->_redirect('league/' . $leagueId . '/register_success');
     }
 
     public function registersuccessAction()
@@ -2337,8 +2336,7 @@ class LeagueController extends Zend_Controller_Action
             foreach($this->view->players as $player) {
                 echo "{$player['first_name']},{$player['last_name']},{$player['team']}\n";
             }
-
-            flush();
+            exit();
         }
     }
 
@@ -2371,6 +2369,8 @@ class LeagueController extends Zend_Controller_Action
            $this->_redirect('league/' . $leagueId . '/register_success');
         }
 
+        $form = new Form_LeagueWaiver($this->view->user);
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
@@ -2379,14 +2379,15 @@ class LeagueController extends Zend_Controller_Action
                 $this->_redirect('league/' . $leagueId . '/register_success');
             }
 
-            if(strstr($post['name'], $this->view->user->first_name) === false or strstr($post['name'], $this->view->user->last_name) === false or empty($post['name'])) {
-                $this->view->message('You must type your name into the name box to confirm that you read the waiver.', 'error');
-            } else {
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
                 $userWaiverTable->updateWaiver($this->view->user->id, $this->view->league->year, 1, $this->view->user->id);
                 $this->view->message('User waiver signed', 'success');
                 $this->_redirect('league/' . $leagueId . '/register_success');
             }
-
         }
+
+        $this->view->form = $form;
     }
 }

@@ -37,6 +37,10 @@ class ProfileController extends Zend_Controller_Action
             }
         }
 
+        if($state == 'status') {
+            $this->view->data['status'] = $userTable->fetchStatuses($this->view->user->id);
+        }
+
         $this->view->form = $form;
         $this->view->state = $state;
         $this->view->headScript()->appendScript('$(".datepicker").datepicker();');

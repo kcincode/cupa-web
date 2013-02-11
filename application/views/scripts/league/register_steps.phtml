@@ -1,11 +1,11 @@
-<ul id="breadcrumbs">
-<?php foreach(array('user' => '1. Register As', 'personal' => '2. Personal Information', 'league' => '3. League Questions') as $state => $title): ?>
-<?php if($this->state == $state): ?>
-	<li class="active"><span class="text"><?php echo $this->escape($title); ?></span></li>
-<?php else: ?>
-	<li><span class="text"><?php echo $this->escape($title); ?></span></li>
-<?php endif; ?>
-<?php endforeach; ?>
-	<li><span class="text">4. Done</span></li>
-</ul>
-<div class="clearfix">&nbsp;</div>
+<div class="pagination">
+    <ul>
+    <?php foreach(array('user' => '1. Register As', 'personal' => '2. Personal Information', 'league' => '3. League Questions', 'done' => '4. Done') as $state => $title): ?>
+    <?php if($this->state == $state): ?>
+    	<li class="active"><span class="text"><?php echo $this->escape($title); ?></span></li>
+    <?php else: ?>
+    	<li><span class="text"><?php echo $this->escape($title); ?></span></li>
+    <?php endif; ?>
+    <?php endforeach; ?>
+    </ul>
+</div>

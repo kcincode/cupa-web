@@ -34,15 +34,22 @@
                 *** This page is not yet viewable, it is only viewable to those that can edit it. ***
             </div>
             <?php endif; ?>
+            <h3 class="<?php echo $this->pageClass(); ?>">Description</h3>
+            <div class="well well-small">
+                <div class="pull-right">
+                    <?php if($this->hasRole('editor') or $this->isLeagueDirector($this->league['id'])): ?>
+                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_description_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <?php endif; ?>
+                </div>
+                <?php if(!empty($this->league['info'])): ?>
+                <p class="leagues"><?php echo $this->league['info']; ?></p>
+                <?php endif; ?>
+                <p>
+                    <?php echo $this->league['information']['description']; ?>
+                </p>
+            </div>
 
             <div>
-                <?php if($this->league['teams'] > 0): ?>
-                    <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Teams</a>
-                    <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule'); ?>">Schedule</a>
-                    <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_rankings'); ?>">Rankings</a>
-                    <?php elseif($this->isLeagueDirector($this->league['id'])): ?>
-                    <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Event Page</a>
-                <?php endif; ?>
             </div>
 
             <h3 class="<?php echo $this->pageClass(); ?>">Information</h3>
@@ -52,10 +59,18 @@
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_information_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
                     <?php endif; ?>
                 </div>
-                <?php if(!empty($this->league['info'])): ?>
-                <p class="leagues"><?php echo $this->league['info']; ?></p>
-                <?php endif; ?>
                 <dl class="dl-horizontal">
+                    <dt>&nbsp;</dt>
+                    <dd>
+                        <?php if($this->league['teams'] > 0): ?>
+                        <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Teams</a>
+                        <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule'); ?>">Schedule</a>
+                        <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_rankings'); ?>">Rankings</a>
+                        <?php elseif($this->isLeagueDirector($this->league['id'])): ?>
+                        <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Event Page</a>
+                        <?php endif; ?>
+                        <br/><br/>
+                    </dd>
                     <dt>League Director(s):</dt>
                     <dd>
                         <?php $i = 1; foreach($this->league['directors'] as $director): ?>
@@ -140,17 +155,6 @@
                         <a href="<?php echo $this->url(array('state' => 'status'), 'profile'); ?>">here</a>.
                     </dd>
                 </dl>
-            </div>
-            <h3 class="<?php echo $this->pageClass(); ?>">Description</h3>
-            <div class="well well-small">
-                <div class="pull-right">
-                    <?php if($this->hasRole('editor') or $this->isLeagueDirector($this->league['id'])): ?>
-                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_description_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
-                    <?php endif; ?>
-                </div>
-                <p>
-                    <?php echo $this->league['information']['description']; ?>
-                </p>
             </div>
         </div>
     </div>

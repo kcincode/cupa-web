@@ -2,102 +2,23 @@
 
 <div class="page-content">
     <div class="row">
-        <div class="span2 actions pull-right">
+        <div class="offset1 span8 pull-left">
+            <h3 class="pull-left"><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h3>
+        </div>
+        <div class="span3 pull-right">
             <a class="btn btn-mini" href="<?php echo $this->url(array('type' => $this->season, 'name' => $this->slugify($this->leaguename($this->league->id, true, false, false, true))), 'leagues_view'); ?>">Back to League</a>
         </div>
     </div>
     <div class="row">
         <div class="offset1 span9">
-            <h2><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h2>
+            <?php if($this->state == 'done'): ?>
+            <div class="alert alert-warning">
+                <h4>Please check your name and email</h4>
+                <p>If it is not correct you may go back to change it as well as any other questions.  Once you click 'Register' you will be registered for the league.</p>
+            </div>
+            <?php endif; ?>
             <?php echo $this->partial('league/register_steps.phtml', array('state' => $this->state));?>
             <?php echo $this->form; ?>
         </div>
     </div>
 </div>
-
-
-
-<!--
-<div id="register-<?php echo $this->escape($this->state); ?>">
-    <h1><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h1>
-
-    <?php if(!empty($this->registrationMessage)): ?>
-        <h3><?php echo $this->escape($this->registrationMessage); ?></h3>
-        <p class="blurb">
-            <?php if(!Zend_Auth::getInstance()->hasIdentity()): ?>
-            If you would like to get to the payment and/or waivers page you must login.
-            <?php elseif($this->isRegistered($this->league->id, $this->user->id)): ?>
-            You can goto the payment/waivers page <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_registration_success'); ?>">here</a>
-            <?php endif; ?>
-        </p>
-        <p class="blurb">
-            You may be put on a waiting list, and if there is enough interest another team might be created to incorporate some of the players on the waiting list.  If you would like to be put on this waiting list please email the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a> and ask to be put on the waiting list.
-        </p>
-        <p class="blurb">
-            If you have any other troubles, please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a>
-        </p>
-    <?php elseif(!Zend_Auth::getInstance()->hasIdentity()): ?>
-        <p class="blurb">
-            In order to properly register you for this league you will have to have a user account.  You may login in the upper right
-            of the page.  You may also recover your username and/or reset your password if you have forgotten them.
-        </p>
-        <p class="blurb">
-            You may also register for a new account if you do not already have one with the link in the upper
-            right of this page as well.
-        </p>
-        <p class="blurb">
-            If you have any other troubles, please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a>
-        </p>
-    <?php else: ?>
-
-    <?php echo $this->partial('league/register_steps.phtml', array('state' => $this->state));?>
-
-    <h2><?php echo $this->title; ?></h2>
-    <form method="post">
-
-        <?php foreach($this->form->getElements() as $element): ?>
-        <div id="<?php echo $element->getName(); ?>-div">
-            <?php echo $element; ?>
-        </div>
-        <?php endforeach; ?>
-
-        <?php if($this->state == 'personal'): ?>
-        <h2>Emergency Contacts</h2>
-        <div id="contacts">
-            <i>You must have at least 2 emergency contacts</i><br/><br/>
-            <a class="button" id="add-contact" href="#">Add Contact</a><br/><br/>
-            <?php if(count($this->contacts)): ?>
-            <div class="row header">
-                <div class="name">Name</div>
-                <div class="phone">Phone</div>
-                <div class="action">&nbsp;</div>
-            </div>
-            <?php foreach($this->contacts as $contact): ?>
-            <div class="row">
-                <div class="name"><input type="text" name="contactNames[]" value="<?php echo $this->escape($contact['first_name']) . ' ' . $this->escape($contact['last_name']); ?>"/></div>
-                <div class="phone"><input type="text" name="contactPhones[]" value="<?php echo $this->escape($contact['phone']); ?>"/></div>
-                <div class="action"><img class="remove-contact" title="Remove Contact" src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png"/></div>
-            </div>
-            <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-        <div class="clearfix">&nbsp;</div>
-        <?php endif; ?>
-        <div class="form-buttons">
-            <?php if($this->state != 'user'): ?>
-            <input class="button" type="submit" name="back" value="Back"/>
-            <?php endif; ?>
-
-            <?php if($this->state != 'league'): ?>
-            <input class="button" type="submit" id="next-<?php echo $this->escape($this->state); ?>" name="next" value="Next"/>
-            <?php endif; ?>
-
-            <?php if($this->state == 'league'): ?>
-            <input class="button" type="submit" name="save" value="Finish Registration"/>
-            <?php endif; ?>
-        </div>
-    </form>
-
-    <?php endif; ?>
-</div>
--->
