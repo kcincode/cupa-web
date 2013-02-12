@@ -777,6 +777,11 @@ class PageController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('/clubs');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 

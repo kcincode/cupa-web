@@ -40,6 +40,7 @@ class ClubController extends Zend_Controller_Action
         $form = new Form_ClubMember($clubId, $this->view->year);
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $result = $clubMemberTable->addMember($data['club_id'], $data['user_id'], $data['year']);
