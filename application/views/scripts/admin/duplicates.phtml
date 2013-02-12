@@ -40,7 +40,7 @@
                             <td style="text-align: center;"><?php echo $this->escape($item['requested_at']); ?></td>
                             <td style="text-align: center;"><?php echo $this->escape($item['activated_at']); ?></td>
                             <td style="text-align: center;"><?php echo $this->escape($item['last_login']); ?></td>
-                            <td><a class="btn btn-mini btn-warning" onclick="return confirm('Are you sure you would like to merge all user data to this account?');" href="<?php echo $this->url(array(), 'admin_duplicates'); ?>?user=<?php echo $item['id']; ?>"><i class="icon-user"></i><br/>Merge This</a></td>
+                            <td><a class="btn btn-mini btn-warning" onclick="return confirm('Are you sure you would like to merge all user data to this account?');" href="<?php echo $this->url(array(), 'admin_duplicates'); ?>?user=<?php echo $item['id']; ?>"><i class="icon-user icon-white"></i><br/>Merge This</a></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
