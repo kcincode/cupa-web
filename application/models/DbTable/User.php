@@ -462,16 +462,21 @@ class Model_DbTable_User extends Zend_Db_Table
         return $data;
     }
 
-    public function fetchAllUsersNotInLeague($leagueId)
+    public function fetchAllUsersNotInLeague($leagueId, $filter = null)
     {
         $select = $this->getAdapter()
                        ->select()
+                       ->distinct()
                        ->from(array('u' => $this->_name), array('*'))
                        ->joinLeft(array('lm' => 'league_member'), 'lm.user_id <> u.id', array())
                        ->where('lm.position = ?', 'player')
                        ->where('lm.league_id = ?', $leagueId)
                        ->order('last_name')
                        ->order('first_name');
+
+        if($filter) {
+            $select = $select->where("u.first_name LIKE '%{$filter}%' OR u.last_name LIKE '%{$filter}%'");
+        }
 
         return $this->getAdapter()->fetchAll($select);
     }
