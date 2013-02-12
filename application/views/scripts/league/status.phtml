@@ -16,7 +16,7 @@
             </h2>
             <div class="pull-right">
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(array(), 'admin_unpaid'); ?>">Unpaid Details</a>
-                <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1">Export Data</a>
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1"><i class="icon-list icon-white"></i> Export Data</a>
             </div>
             <div class="offset4 span4 btn-group">
                 <button class="btn btn-mini<?php echo ($this->all == 'all') ? ' btn-info' : ''; ?>" type="button" onclick="window.location = '<?php echo $this->url(array('league_id' => $this->league->id, 'all' => 'all'), 'league_status'); ?>';">&nbsp; View All &nbsp;</button>
