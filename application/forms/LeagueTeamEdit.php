@@ -4,11 +4,13 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
 {
     protected $_team;
     protected $_leagueId;
+    protected $_justLogo;
 
-    public function __construct($leagueId, $team = null)
+    public function __construct($leagueId, $team = null, $justLogo = false)
     {
         $this->_leagueId = $leagueId;
         $this->_team = $team;
+        $this->_justLogo = $justLogo;
 
         parent::__construct();
     }
@@ -17,58 +19,70 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
-        $this->addElement('text', 'name', array(
-            'filters' => array('StringTrim'),
-            'required' => true,
-            'value' => (empty($this->_team)) ? null : $this->_team->name,
-            'label' => 'Name:',
-            'class' => 'span5',
-        ));
+        if(!$this->_justLogo) {
+            $this->addElement('text', 'name', array(
+                'filters' => array('StringTrim'),
+                'required' => true,
+                'value' => (empty($this->_team)) ? null : $this->_team->name,
+                'label' => 'Name:',
+                'class' => 'span5',
+            ));
 
-        $userTable = new Model_DbTable_User();
-        $users = array();
-        foreach($userTable->fetchAllUsers() as $user) {
-            $users[$user->id] = $user->first_name . ' ' . $user->last_name;
-        }
-
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $captains = array();
-        if($this->_team) {
-            foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'captain', $this->_team->id) as $member) {
-                $user = $userTable->find($member['user_id'])->current();
-                $captains[] = $user->id;
+            $userTable = new Model_DbTable_User();
+            $users = array();
+            foreach($userTable->fetchAllUsers() as $user) {
+                $users[$user->id] = $user->first_name . ' ' . $user->last_name;
             }
+
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            $captains = array();
+            if($this->_team) {
+                foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'captain', $this->_team->id) as $member) {
+                    $user = $userTable->find($member['user_id'])->current();
+                    $captains[] = $user->id;
+                }
+            }
+
+            $this->addElement('multiselect', 'captains', array(
+                'validators' => array(
+                    array('InArray', false, array(array_keys($users))),
+                ),
+                'required' => true,
+                'label' => 'Captains:',
+                'class' => 'span6 select2',
+                'multiOptions' => $users,
+                'value' => (empty($captains)) ? null : $captains,
+                'data-placeholder' => 'Select one or more captains'
+            ));
+
+            $this->addElement('text', 'color', array(
+                'filters' => array('StringTrim'),
+                'required' => true,
+                'label' => 'Color:',
+                'class' => 'span3',
+                'value' => (empty($this->_team)) ? null : $this->_team->color,
+                'description' => 'Enter the color of the team.',
+            ));
+
+            $this->addElement('text', 'color_code', array(
+                'filters' => array('StringTrim'),
+                'required' => true,
+                'value' => (empty($this->_team)) ? null : $this->_team->color_code,
+                'class' => 'span2 colorpicker',
+                'data-color-format' => 'hex',
+                'style' => 'text-align: center;',
+                'label' => 'Select the color:',
+            ));
         }
 
-        $this->addElement('multiselect', 'captains', array(
+        $this->addElement('file', 'logo', array(
+            'label' => 'Team Logo:',
+            'required' => false,
             'validators' => array(
-                array('InArray', false, array(array_keys($users))),
+                array('Count', false, 1),
+                array('Extension', false, 'jpg,png,gif'),
             ),
-            'required' => true,
-            'label' => 'Captains:',
-            'class' => 'span6 select2',
-            'multiOptions' => $users,
-            'value' => (empty($captains)) ? null : $captains,
-            'data-placeholder' => 'Select one or more captains'
-        ));
-
-        $this->addElement('text', 'color', array(
-            'filters' => array('StringTrim'),
-            'required' => true,
-            'label' => 'Color:',
-            'class' => 'span3',
-            'value' => (empty($this->_team)) ? null : $this->_team->color,
-            'description' => 'Enter the color of the team.',
-        ));
-
-        $this->addElement('text', 'color_code', array(
-            'filters' => array('StringTrim'),
-            'required' => true,
-            'value' => (empty($this->_team)) ? null : $this->_team->color_code,
-            'class' => 'span2 colorpicker',
-            'data-color-format' => 'hex',
-            'style' => 'text-align: center;',
-            'label' => 'Select the color:',
+            'valueDisabled' => true,
         ));
 
 /*
@@ -101,8 +115,11 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
             'escape' => false,
         ));
 
-        //$questions = (empty($this->_team)) ? array('name', 'captains', 'color', 'color_code') : array('name', 'captains', 'color', 'color_code', 'final_rank');
-        $questions = array('name', 'captains', 'color', 'color_code');
+        if($this->_justLogo) {
+            $questions = array('logo');
+        } else {
+            $questions = array('name', 'captains', 'color', 'color_code', 'logo');
+        }
         $title = (empty($this->_team)) ? 'Add a Team' : 'Edit Team';
         $this->addDisplayGroup(
             $questions,

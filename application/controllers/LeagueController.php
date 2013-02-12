@@ -877,16 +877,18 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->view->isLeagueDirector($team->league_id)) {
+        if(!$this->view->isLeagueDirector($team->league_id) && !$this->view->isLeagueCaptain($team->league_id, $teamId)) {
             $this->_redirect('league/' . $team->league_id);
         }
+
+        $isCaptain = ($this->view->isLeagueCaptain($team->league_id, $teamId) && !$this->view->isLeagueDirector($team->league_id)) ? true : false;
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-colorpicker.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-colorpicker.js');
 
-        $form = new Form_LeagueTeamEdit($team->league_id, $team);
+        $form = new Form_LeagueTeamEdit($team->league_id, $team, $isCaptain);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -898,40 +900,49 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
-                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                if(!$isCaptain) {
+                    $leagueMemberTable = new Model_DbTable_LeagueMember();
 
-                // remove all of the directors that are not in the list
-                $dbCaptains = array();
-                foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
-                    if(!in_array($captain->user_id, array_values($data['captains']))) {
-                        $captain->delete();
-                    } else {
-                        $dbCaptains[] = $captain->user_id;
+                    // remove all of the directors that are not in the list
+                    $dbCaptains = array();
+                    foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
+                        if(!in_array($captain->user_id, array_values($data['captains']))) {
+                            $captain->delete();
+                        } else {
+                            $dbCaptains[] = $captain->user_id;
+                        }
                     }
+
+                    // add the directors that are not in the DB
+                    foreach($data['captains'] as $captainId) {
+                        if(!in_array($captainId, $dbCaptains)) {
+                            $leagueMember = $leagueMemberTable->createRow();
+                            $leagueMember->league_id = $team->league_id;
+                            $leagueMember->user_id = $captainId;
+                            $leagueMember->position = 'captain';
+                            $leagueMember->league_team_id = $team->id;
+                            $leagueMember->paid = 0;
+                            $leagueMember->release = 0;
+                            $leagueMember->created_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_by = $this->view->user->id;
+                            $leagueMember->save();
+                        }
+                    }
+
+                    $team->name = $data['name'];
+                    $team->color = $data['color'];
+                    $team->color_code = $data['color_code'];
+                    $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
+                    $team->save();
                 }
 
-                // add the directors that are not in the DB
-                foreach($data['captains'] as $captainId) {
-                    if(!in_array($captainId, $dbCaptains)) {
-                        $leagueMember = $leagueMemberTable->createRow();
-                        $leagueMember->league_id = $team->league_id;
-                        $leagueMember->user_id = $captainId;
-                        $leagueMember->position = 'captain';
-                        $leagueMember->league_team_id = $team->id;
-                        $leagueMember->paid = 0;
-                        $leagueMember->release = 0;
-                        $leagueMember->created_at = date('Y-m-d H:i:s');
-                        $leagueMember->modified_at = date('Y-m-d H:i:s');
-                        $leagueMember->modified_by = $this->view->user->id;
-                        $leagueMember->save();
-                    }
+                if(!empty($_FILES['logo']['tmp_name'])) {
+                    $image = new Model_SimpleImage();
+                    $image->load($_FILES['logo']['tmp_name']);
+                    $image->resize(85,85);
+                    $image->save(APPLICATION_WEBROOT . '/images/team_logos/' . $teamId . '.jpg');
                 }
-
-                $team->name = $data['name'];
-                $team->color = $data['color'];
-                $team->color_code = $data['color_code'];
-                $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
-                $team->save();
 
                 $this->view->message("Team `{$team->name}` updated", 'success');
                 $this->_redirect('league/' . $team->league_id);
@@ -2251,41 +2262,6 @@ class LeagueController extends Zend_Controller_Action
         }
     }
     */
-
-    public function logoAction()
-    {
-        $leagueId = $this->getRequest()->getUserParam('league_id');
-        $teamId = $this->getRequest()->getUserParam('team_id');
-
-        $leagueTeamTable = new Model_DbTable_LeagueTeam();
-        $team = $leagueTeamTable->find($teamId)->current();
-
-        $leagueTable = new Model_DbTable_League();
-        $league = $leagueTable->find($leagueId)->current();
-        if(!$team or !$league) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
-        if(!$this->view->isLeagueCaptain($leagueId, $teamId) and !$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('league/' . $leagueId);
-        }
-
-        if($this->getRequest()->isPost()) {
-            if(!empty($_FILES['file']['tmp_name'])) {
-                $image = new Model_SimpleImage();
-                $image->load($_FILES['file']['tmp_name']);
-                $image->resize(85,85);
-                $image->save(APPLICATION_WEBROOT . '/images/team_logos/' . $teamId . '.jpg');
-
-                $this->view->message('Logo updated.', 'success');
-                $this->_redirect('league/' . $leagueId);
-            }
-        }
-
-        $this->view->league = $league;
-        $this->view->team = $team;
-    }
 
     public function userteamsAction()
     {
