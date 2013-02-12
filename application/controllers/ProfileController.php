@@ -96,8 +96,6 @@ class ProfileController extends Zend_Controller_Action
 
     public function minorseditAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
-
         $minorId = $this->getRequest()->getUserParam('minor_id');
 
         $userTable = new Model_DbTable_User();
@@ -149,8 +147,7 @@ class ProfileController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace('previous');
         $this->view->previousPage = $session->previousPage;
 
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/profile/public.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $userId = $this->getRequest()->getUserParam('user_id');
         $userTable = new Model_DbTable_User();

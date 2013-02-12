@@ -16,8 +16,8 @@ class My_View_Helper_DisplayClubRostersLink extends Zend_View_Helper_Abstract
             $members = $clubMemberTable->fetchAllMemberByYear($clubId);
             if(count($members)) {
                 $keys = array_keys($members);
-                $year = $keys[sizeof($keys) - 1];
-                return '<a class="btn btn-mini" href="' . $this->view->url(array('club_id' => $clubId), 'club_home') . '#' . $year . '"><i class="icon-list"></i> View Rosters</a>';
+                $year = $keys[0];
+                return '<a class="btn btn-mini" href="' . $this->view->url(array('club_id' => $clubId, 'year' => $year), 'club_home') . '"><i class="icon-list"></i> View Rosters</a>';
             }
             return '';
         }

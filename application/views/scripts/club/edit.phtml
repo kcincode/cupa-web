@@ -3,7 +3,7 @@
     <div class="offset1 span10">
         <h1 style="text-align: center;"><?php echo $this->escape($this->year); ?> <?php echo $this->escape($this->club->name); ?> Roster</h1>
         <div class="pull-right">
-        	<a class="btn btn-small" href="<?php echo $this->url(array('club_id' => $this->club->id), 'club_home'); ?>#<?php echo $this->escape($this->year); ?>"><i class="icon-arrow-left"></i> Back</a>
+        	<a class="btn btn-small" href="<?php echo $this->url(array('club_id' => $this->club->id, 'year' => $this->year), 'club_home'); ?>"><i class="icon-arrow-left"></i> Back</a>
         </div>
     </div>
 </div>

@@ -33,7 +33,7 @@ class ClubController extends Zend_Controller_Action
 
         if(!$this->view->isClubCaptain($clubId)) {
             $this->view->message('You must have access to edit the roster', 'error');
-            $this->_redirect('club/' . $clubId . '#' . $this->view->year);
+            $this->_redirect('club/' . $clubId . '/' . $this->view->year);
         }
 
         $clubMemberTable = new Model_DbTable_ClubMember();
@@ -71,7 +71,7 @@ class ClubController extends Zend_Controller_Action
 
             if(!$this->view->isClubCaptain($member->club_id)) {
                 $this->view->message('You must have access to remove from the roster', 'error');
-                $this->_redirect('club/' . $member->club_id . '#' . $member->year);
+                $this->_redirect('club/' . $member->club_id . '/' . $member->year);
             }
 
             $member->delete();
