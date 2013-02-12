@@ -691,4 +691,17 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
 
     }
 
+    private function logo()
+    {
+        $this->addElement('file', 'logo', array(
+            'label' => 'Team Logo:',
+            'required' => true,
+            'validators' => array(
+                array('Count', false, 1),
+                array('Extension', false, 'jpg,png,gif'),
+            ),
+            'valueDisabled' => true,
+        ));
+    }
+
 }

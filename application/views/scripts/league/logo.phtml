@@ -1,11 +1,7 @@
-<?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
-<div id="logo">
-    <h1>Update Logo for <?php echo $this->escape($this->team->name); ?></h1>
+<div id="page-banner">&nbsp;</div>
 
-    <form method="post" enctype="multipart/form-data">
-    	<p>Select a file to upload for the team logo.  It will be scaled to 85px x 85px</p>
-    	<p><input type="file" name="file"/></p>
-    	<p><input type="submit" name="upload" value="Upload File"/></p>
-	</form>
-
+<div class="row">
+    <div class="offset1 span10">
+        <?php echo $this->form; ?>
+    </div>
 </div>

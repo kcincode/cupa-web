@@ -2171,6 +2171,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendScript('$(".select2").select2();');
     }
 
+/*
     public function moveAction()
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
@@ -2249,6 +2250,7 @@ class LeagueController extends Zend_Controller_Action
             $this->view->target = $session->target;
         }
     }
+    */
 
     public function logoAction()
     {
