@@ -11,6 +11,8 @@ class ClubController extends Zend_Controller_Action
     public function indexAction()
     {
         $clubId = $this->getRequest()->getUserParam('club_id');
+        $this->view->year = $this->getRequest()->getUserParam('year');
+
         $clubTable = new Model_DbTable_Club();
         $this->view->club = $clubTable->find($clubId)->current();
 

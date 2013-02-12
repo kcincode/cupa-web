@@ -42,27 +42,19 @@
 <div class="row">
     <div class="offset1 span10" style="text-align: justify;">
         <ul class="nav nav-tabs">
-            <?php $i = 0; ?>
             <?php foreach($this->years as $year => $members): ?>
-            <li<?php echo ($i == 0) ? ' class="active"' : ''; ?>><a href="#<?php echo $this->escape($year); ?>" data-toggle="tab"><?php echo $this->escape($year); ?></a></li>
-            <?php $i++; ?>
+            <li<?php echo ($this->year == $year) ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('club_id' => $this->club->id, 'year' => $year), 'club_home'); ?>"><?php echo $this->escape($year); ?></a></li>
             <?php endforeach; ?>
         </ul>
-        <div class="tab-content">
-            <?php $i = 0; ?>
-            <?php foreach($this->years as $year => $members): ?>
-            <div class="tab-pane<?php echo ($i == 0) ? ' active' : ''; ?>" id="<?php echo $this->escape($year); ?>">
-                <div class="pull-right">
-                    <a class="btn btn-info" href="<?php echo $this->url(array('club_id' => $this->club->id, 'year' => $year), 'club_edit'); ?>"><i class="icon-edit icon-white"></i> Edit Roster</a>
-                </div>
-                <ul class="nav well">
-                    <?php foreach($members as $member): ?>
-                    <li><a href="<?php echo $this->url(array('user_id' => $member['user_id']), 'page_profile_public'); ?>"><h4><?php echo $this->escape($member['member']); ?></h4></a></li>
-                    <?php endforeach; ?>
-                </ul>
+        <div class="tab-content well">
+            <div class="pull-right">
+                <a class="btn btn-info" href="<?php echo $this->url(array('club_id' => $this->club->id, 'year' => $year), 'club_edit'); ?>"><i class="icon-edit icon-white"></i> Edit Roster</a>
             </div>
-            <?php $i++; ?>
+            <ul class="nav">
+            <?php foreach($this->years[$this->year] as $member): ?>
+                <li><a href="<?php echo $this->url(array('user_id' => $member['user_id']), 'page_profile_public'); ?>"><h4><?php echo $this->escape($member['member']); ?></h4></a></li>
             <?php endforeach; ?>
+            </ul>
         </div>
     </div>
 </div>
