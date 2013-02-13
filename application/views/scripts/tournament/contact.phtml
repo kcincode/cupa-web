@@ -19,8 +19,10 @@
             <?php foreach($this->members as $member): ?>
             <div class="offset2 span8">
                 <div class="pull-right">
+                    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
                     <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
                     <a onclick="return confirm('Are you sure you want to delete this contact?');"class="btn btn-danger btn-mini" class="delete" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+                    <?php endif; ?>
                 </div>
                 <h3>
                 <?php if(empty($member->user_id)): ?>
