@@ -1,0 +1,11 @@
+<div class="pagination">
+    <ul>
+    <?php foreach(array('src_league' => '1. Source League', 'src_player' => '2. Source Player', 'target_league' => '3. Target League', 'target_team' => '4. Target Team', 'done' => '5. Done') as $state => $title): ?>
+    <?php if($this->state == $state): ?>
+        <li class="active"><span class="text"><?php echo $this->escape($title); ?></span></li>
+    <?php else: ?>
+        <li><span class="text"><?php echo $this->escape($title); ?></span></li>
+    <?php endif; ?>
+    <?php endforeach; ?>
+    </ul>
+</div>

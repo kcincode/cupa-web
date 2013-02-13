@@ -99,7 +99,7 @@ class AdminController extends Zend_Controller_Action
         $this->view->message('Emails sent to all users with duplicate accounts.', 'success');
         $this->_redirect('admin/duplicates');
     }
-    
+
     public function unpaidAction()
     {
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin') and !$this->view->isLeagueDirector()) {
@@ -131,7 +131,7 @@ class AdminController extends Zend_Controller_Action
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
             $this->_forward('auth');
         }
-        
+
         $filter = $this->getRequest()->getPost('filter');
         if(empty($filter)) {
             $filter = $this->getRequest()->getParam('filter');
@@ -139,20 +139,20 @@ class AdminController extends Zend_Controller_Action
         $page = $this->getRequest()->getUserParam('page');
         $form = new Form_Filter($filter);
         $this->view->filter = $filter;
-        
+
         $reset = $this->getRequest()->getPost('reset');
         if($reset) {
             $this->_redirect('admin/user');
         }
-        
+
         $userTable = new Model_DbTable_User();
         $this->view->users = Zend_Paginator::factory($userTable->fetchAllFilteredUsers($filter));
         $this->view->users->setCurrentPageNumber($page);
         $this->view->users->setItemCountPerPage(15);
-        
+
         $this->view->form = $form;
     }
-    
+
     public function usereditAction()
     {
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
@@ -161,14 +161,14 @@ class AdminController extends Zend_Controller_Action
 
         $filter = $this->getRequest()->getParam('filter');
         $page = $this->getRequest()->getParam('page');
-        
+
         $userTable = new Model_DbTable_User();
         $user = $userTable->find($this->getRequest()->getUserParam('user_id'))->current();
         $form = new Form_UserManage($user, $page, $filter);
-        
+
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             if(isset($post['cancel'])) {
                 $this->_redirect('admin/user/filter/' .  $post['filter'] . '/page/' . $post['page']);
             }
@@ -185,9 +185,9 @@ class AdminController extends Zend_Controller_Action
                 $this->view->message('User ' . $user->email . ' modified.', 'success');
                 $this->_redirect('admin/user/filter/' .  $post['filter'] . '/page/' . $post['page']);
             }
-            
+
         }
-        
+
         $this->view->form = $form;
     }
     public function pageAction()
@@ -195,7 +195,7 @@ class AdminController extends Zend_Controller_Action
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
             $this->_forward('auth');
         }
-        
+
         $filter = $this->getRequest()->getPost('filter');
         if(empty($filter)) {
             $filter = $this->getRequest()->getParam('filter');
@@ -203,20 +203,20 @@ class AdminController extends Zend_Controller_Action
         $page = $this->getRequest()->getUserParam('page');
         $form = new Form_Filter($filter);
         $this->view->filter = $filter;
-        
+
         $reset = $this->getRequest()->getPost('reset');
         if($reset) {
             $this->_redirect('admin/page');
         }
-        
+
         $pageTable = new Model_DbTable_Page();
         $this->view->pages = Zend_Paginator::factory($pageTable->fetchAllPages($filter));
         $this->view->pages->setCurrentPageNumber($page);
         $this->view->pages->setItemCountPerPage(15);
-        
+
         $this->view->form = $form;
     }
-    
+
     public function pageaddAction()
     {
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
@@ -227,14 +227,14 @@ class AdminController extends Zend_Controller_Action
         $form = new Form_Page();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
-            
+
             if(isset($post['cancel'])) {
                 $this->_redirect('admin/page');
             }
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                
+
                 $pageTable = new Model_DbTable_Page();
                 $page = $pageTable->createRow();
                 $page->parent = (empty($data['parent'])) ? null : $data['parent'];
@@ -251,7 +251,7 @@ class AdminController extends Zend_Controller_Action
                 $this->_redirect('/' . $page->name);
             }
         }
-        
+
         $this->view->form = $form;
     }
 
@@ -260,7 +260,7 @@ class AdminController extends Zend_Controller_Action
         if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
             $this->_forward('auth');
         }
-        
+
         $page = $this->getRequest()->getUserParam('page');
 
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
@@ -293,12 +293,173 @@ class AdminController extends Zend_Controller_Action
                 $email = (empty($volunteer['email'])) ? $volunteer['parent_email'] : $volunteer['email'];
                 echo "{$volunteer['first_name']},{$volunteer['last_name']},{$email}\n";
             }
-
-            flush();
+            exit();
         }
 
         $this->view->volunteers = Zend_Paginator::factory($volunteers);
         $this->view->volunteers->setCurrentPageNumber($page);
         $this->view->volunteers->setItemCountPerPage(25);
     }
+
+    public function leagueplayersAction()
+    {
+        $session = new Zend_Session_Namespace('admin_league_move');
+        $state = $this->getRequest()->getUserParam('state');
+
+        unset($session->$state);
+        $prevState = $this->getPrev($state);
+        if(empty($session->$prevState) && $prevState != $state) {
+            $this->_redirect('admin/league_players/' . $prevState);
+        }
+
+        $form = new Form_LeagueMove($state);
+
+        $request = $this->getRequest();
+        if($request->isPost()) {
+            $post = $request->getPost();
+
+            if(isset($post['back'])) {
+                $this->_redirect('admin/league_players/' . $prevState);
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                if($state == 'done') {
+                    $leagueMemberTable = new Model_DbTable_LeagueMember();
+                    $member = $leagueMemberTable->find($session->src_player['league_member_id'])->current();
+                    if($member) {
+                        $member->league_id = $session->target_league['league_id'];
+                        $member->league_team_id = (empty($session->target_team['league_team_id'])) ? null : $session->target_team['league_team_id'];
+                        $member->save();
+                    }
+
+                    $session->unsetAll();
+                    $this->view->message('Player moved', 'success');
+                    $this->_redirect('admin/league_players/src_league');
+
+                } else {
+                    $session->$state = $data;
+                }
+
+                $this->_redirect('admin/league_players/' . $this->getNext($state));
+            }
+        }
+
+        $this->view->state = $state;
+        $this->view->form = $form;
+        $this->view->session = $session;
+    }
+
+    private function getPrev($state)
+    {
+        switch($state) {
+            case 'src_player':
+                return 'src_league';
+            case 'target_league':
+                return 'src_player';
+            case 'target_team':
+                return 'target_league';
+            case 'done':
+                return 'target_team';
+            default:
+                return 'src_league';
+        }
+    }
+
+    private function getNext($state)
+    {
+        switch($state) {
+            case 'src_league':
+                return 'src_player';
+            case 'src_player':
+                return 'target_league';
+            case 'target_league':
+                return 'target_team';
+            case 'target_team':
+                return 'done';
+            default:
+                return 'done';
+        }
+    }
+    /*
+
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $this->view->state = $this->getRequest()->getUserParam('state');
+
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
+        }
+
+        $session = new Zend_Session_Namespace('move_players');
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+
+        if($this->view->state == 'players') {
+            unset($session->players);
+            $this->view->players = $leagueMemberTable->fetchPlayersByLeague($leagueId);
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+
+                if(!isset($post['players'])) {
+                    $this->view->message('You must select at least one player to move.', 'warning');
+                } else {
+                    $session->players = $post['players'];
+                    $this->_redirect('league/' . $leagueId . '/move/target');
+                }
+            }
+        } else if($this->view->state == 'target') {
+            if(!isset($session->players)) {
+                $this->_redirect('league/' . $leagueId . '/move/players');
+            }
+
+            unset($session->target);
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+                if(!isset($post['target']) or $post['target'] == 0) {
+                    $this->view->message('You must select a league to move the players to.', 'warning');
+                } else {
+                    $session->target = $post['target'];
+                    $this->_redirect('league/' . $leagueId . '/move/confirm');
+                }
+            }
+
+            $this->view->leagues = $leagueTable->fetchAllCurrentLeagues();
+
+        } else if($this->view->state == 'confirm') {
+            if(!isset($session->target)) {
+                $this->_redirect('league/' . $leagueId . '/move/target');
+            }
+
+            if($this->getRequest()->isPost()) {
+                $post = $this->getRequest()->getPost();
+                if(isset($post['confirm'])) {
+                    foreach($session->players as $player) {
+                        $member = $leagueMemberTable->find($player)->current();
+                        $member->league_team_id = null;
+                        $member->league_id = $session->target;
+                        $member->modified_at = date('Y-m-d H:i:s');
+                        $member->modified_by = $this->view->user->id;
+                        $member->save();
+                    }
+                    $this->view->message('Players moved', 'success');
+                    $session->unsetAll();
+                    $this->_redirect('league/' . $leagueId . '/move');
+                }
+            }
+
+            $this->view->players = $session->players;
+            $this->view->target = $session->target;
+        }
+        */
+
 }
