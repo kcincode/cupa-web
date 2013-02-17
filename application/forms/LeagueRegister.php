@@ -335,7 +335,6 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
         $leagueMemberTable = new Model_DbTable_LeagueMember();
 
-
         if(!empty($this->_userId)) {
             $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
             $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);

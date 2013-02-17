@@ -178,25 +178,27 @@ class LeagueController extends Zend_Controller_Action
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
         $this->view->links = $leagueSeasonTable->generateLinks();
         $admin = $this->_isAllowed($this->view->page);
-        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $admin, $admin);
+        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $admin, $this->view->hasRole('admin'));
 
-        if($leagueName == 'default') {
-            $this->view->league = $this->view->leagues[0];
-        } else {
-            foreach($this->view->leagues as $league) {
-                if($this->view->slugify($this->view->leaguename($league['id'], true, false, false, true)) == $leagueName) {
-                    $this->view->league = $league;
-                    break;
+        if(count($this->view->leagues) != 0) {
+            if($leagueName == 'default') {
+                $this->view->league = $this->view->leagues[0];
+            } else {
+                foreach($this->view->leagues as $league) {
+                    if($this->view->slugify($this->view->leaguename($league['id'], true, false, false, true)) == $leagueName) {
+                        $this->view->league = $league;
+                        break;
+                    }
+                }
+
+                if(empty($this->view->league)) {
+                    $this->_redirect('leagues/' . $season);
                 }
             }
 
-            if(empty($this->view->league)) {
-                $this->_redirect('leagues/' . $season);
+            if($this->view->league['is_archived'] == 1) {
+                $this->view->message('This league page has been archived and therefore is not viewable to users.', 'error');
             }
-        }
-
-        if($this->view->league['is_archived'] == 1) {
-            $this->view->message('This league page has been archived and therefore is not viewable to users.', 'error');
         }
     }
 
@@ -227,12 +229,12 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
 
-        if(!$this->view->league) {
+        if(empty($this->view->league)) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($this->view->page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect($this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true))));
         }
 
@@ -307,7 +309,7 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($this->view->page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
         }
 
@@ -491,7 +493,7 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($this->view->page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
         }
 
@@ -570,19 +572,17 @@ class LeagueController extends Zend_Controller_Action
         $this->view->league = $leagueTable->fetchLeagueData($leagueId);
         $this->view->season = $leagueSeasonTable->fetchName($this->view->league['season']);
 
-        $this->view->page = $pageTable->fetchBy('name', $this->view->season . '_league');
-
-        $form = new Form_LeagueEdit($leagueId, 'questions');
-        $addQuestionForm = new Form_LeagueQuestionAdd($leagueId);
-
         if(!$this->view->league) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->_isAllowed($this->view->page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
         }
+
+        $form = new Form_LeagueEdit($leagueId, 'questions');
+        $addQuestionForm = new Form_LeagueQuestionAdd($leagueId);
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -620,7 +620,7 @@ class LeagueController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
 
-        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
         }
 
@@ -643,7 +643,7 @@ class LeagueController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'leagues');
 
-        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('league/' . $leagueId . '/edit_registration_questions');
         }
 
@@ -674,7 +674,7 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
         }
 
@@ -709,7 +709,7 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!$this->_isAllowed($page) || !$this->view->isLeagueDirector($leagueId)) {
+        if(!$this->_isAllowed($page) && !$this->view->isLeagueDirector($leagueId)) {
             $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
         }
 

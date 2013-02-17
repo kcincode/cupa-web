@@ -26,10 +26,10 @@ class Model_DbTable_League extends Zend_Db_Table
             $select = $select->where('is_archived = ?', 0);
         }
 
-        $stmt = $this->getAdapter()->query($select);
+        $results = $this->getAdapter()->fetchAll($select);
 
         $data = array();
-        foreach($stmt->fetchAll() as $row) {
+        foreach($results as $row) {
             $data[] = $this->fetchLeagueData($row['id']);
         }
 

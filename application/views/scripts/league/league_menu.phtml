@@ -1,6 +1,10 @@
 <ul class="nav nav-list well well-small">
     <li class="nav-header"><?php echo $this->escape($this->season); ?> Leagues</li>
+    <?php if(count($this->leagues) == 0): ?>
+    <li>No Leagues</li>
+    <?php else: ?>
     <?php foreach($this->leagues as $i => $league): ?>
-    <li<?php echo (($this->slugify($this->leaguename($league['id'], true, false, false, true)) == $this->slug) || ($i == 0 && $this->slug == 'default') ) ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array('type' => $this->season, 'name' => $this->slugify($this->leaguename($league['id'], true, false, false, true))), 'leagues_view'); ?>"><?php echo $this->leaguename($league['id'], true, false, false, true); ?></a></li>
+    <li<?php echo (($this->slugify($this->leaguename($league['id'], true, false, false, true)) == $this->slug) || ($i == 0 && $this->slug == 'default') ) ? ' class="active"' : ''; ?>><a<?php echo ($league['is_archived'] == 1) ? ' class="text-error"' : ''; ?> href="<?php echo $this->url(array('type' => $this->season, 'name' => $this->slugify($this->leaguename($league['id'], true, false, false, true))), 'leagues_view'); ?>"><?php echo $this->leaguename($league['id'], true, false, false, true); ?></a></li>
     <?php endforeach; ?>
+    <?php endif; ?>
 </ul>

@@ -50,16 +50,6 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
         );
     }
 
-    public function loadSection($leagueId, $section)
-    {
-        $leagueTable = new Model_DbTable_League();
-        $this->_leagueData = $leagueTable->fetchLeagueData($leagueId);
-
-        if($section && method_exists($this, $section)) {
-            $this->$section();
-        }
-    }
-
     private function league()
     {
         $years = array_combine(range(date('Y') - 5, date('Y') + 1), range(date('Y') - 5, date('Y') + 1));
@@ -194,18 +184,8 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
             'value' => date('m/d/Y H:i', strtotime($this->_leagueData['visible_from'])),
         ));
 
-        $this->addElement('radio', 'is_archived', array(
-            'validators' => array(
-                array('InArray', false, array(array_keys($radioSelect))),
-            ),
-            'required' => true,
-            'label' => 'Is this league archived (not viewable)?',
-            'value' => $this->_leagueData['is_archived'],
-            'multiOptions' => $radioSelect,
-        ));
-
         $this->addDisplayGroup(
-            array('year', 'season', 'day', 'name', 'is_youth', 'user_teams', 'is_pods', 'is_hat', 'is_clinic', 'contact_email', 'visible_from', 'is_archived'),
+            array('year', 'season', 'day', 'name', 'is_youth', 'user_teams', 'is_pods', 'is_hat', 'is_clinic', 'contact_email', 'visible_from'),
             'pickup_edit_form',
             array(
                 'legend' => 'Update League Settings',
@@ -662,7 +642,7 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
 
     private function questions()
     {
-        $form = new Form_LeagueRegister($this->_leagueData['id'], 1, 'league');
+        $form = new Form_LeagueRegister($this->_leagueData['id'], null, 'league');
         foreach($form->getElements() as $element) {
             $element->setAttrib('disabled', true);
             $this->addElement($element);

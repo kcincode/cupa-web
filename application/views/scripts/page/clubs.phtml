@@ -18,7 +18,6 @@
             <p>&nbsp;</p>
             <?php foreach($this->activeClubs as $club): ?>
             <a name="<?php echo $this->escape(strtolower(preg_replace('/\s|\(|\)/', '', $club['name']))); ?>"></a>
-            <div class="well well-small">
                 <div class="pull-right">
                 <?php echo $this->displayClubRostersLink($club->id); ?>
                 <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id) or $this->isClubCaptain($club->id)): ?>
@@ -30,27 +29,27 @@
                     <strong style="font-size: 20pt;"><?php echo $this->escape($club->name); ?></strong><br/>
                     <span class="muted"> A<?php echo ($club->type == 'Open') ? 'n': '';?> <?php echo $this->escape($club->type); ?> Team started in <?php echo $this->escape($club->begin); ?></span><br/>
                     <strong>Captains:</strong> <?php echo (strlen($this->getClubCaptains($club->id)) > 0) ? $this->getClubCaptains($club->id) : 'Unknown'; ?><br/>
-                    <?php echo (empty($club->website)) ? '&nbsp;' : '<a href="' . $this->escape($club->website) . '">' . $this->escape($club->website) . '</a>'; ?>
+                    <?php echo (empty($club->website)) ? '&nbsp;' : 'Web: <a href="' . $this->escape($club->website) . '">' . $this->escape($club->website) . '</a><br/>'; ?>
                     <?php if($club->twitter or $club->facebook): ?>
-                    <div>
+                        Social:
                         <?php if($club->twitter): ?>
                             <a href="http://twitter.com/<?php echo $club->twitter; ?>">twitter.com/<?php echo $club->twitter; ?></a>
                         <?php endif; ?>
                         <?php if($club->twitter && $club->facebook): ?>
-                         |
+                         ,
                         <?php endif; ?>
                         <?php if($club->facebook): ?>
                             <a href="http://facebook.com/<?php echo $club->facebook; ?>">facebook.com/<?php echo $club->facebook; ?></a>
                         <?php endif; ?>
-                    </div>
                 </p>
                 <?php endif; ?>
                 <p>
                     <?php echo $club->content; ?>
                 </p>
-            </div>
+            <br/>
+            <hr/>
+            <br/>
             <?php endforeach; ?>
-
         </div>
         <div class="span3 page-links">
             <?php echo $this->partial('club-page-links.phtml', array('links' => $this->activeClubs, 'page' => $this->page)); ?>
