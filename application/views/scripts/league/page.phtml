@@ -9,6 +9,7 @@
             <?php if($this->hasRole('manager')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array('season' => $this->season), 'league_add'); ?>"><i class="icon-book"></i> Add League</a>
             <?php endif; ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array('page' => 'leagues'), 'page_view'); ?>"><i class="icon-list"></i> Back to Leagues</a>
         </div>
     </div>
 </div>
