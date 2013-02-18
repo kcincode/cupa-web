@@ -447,10 +447,12 @@ class Model_DbTable_User extends Zend_Db_Table
 
         $userProfileTable = new Model_DbTable_UserProfile();
         $userWaiverTable = new Model_DbTable_UserWaiver();
+        $userRoleTable = new Model_DbTable_UserRole();
         $data = array(
             'owe' => 0,
             'waiver' => $userWaiverTable->hasWaiver($userId, date('Y')),
             'profile' => $userProfileTable->isComplete($userId),
+            'roles' => $userRoleTable->fetchRoles($userId),
         );
 
         foreach($this->getAdapter()->fetchAll($select) as $row) {
