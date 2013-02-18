@@ -21,30 +21,26 @@
             <?php $teams = (count($this->teams['final'])) ? $this->teams['final'] : $this->teams['current']; ?>
             <?php $num = count($teams) - 1; ?>
             <?php foreach($teams as $i => $team): ?>
-            <div class="well well-small clearfix">
-                <img style="width: 85; height: 85px;" class="pull-left img-polaroid" src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
-                <div class="span7">
-                    <h1 style="text-shadow: 0 0 1px #444; color: <?php echo ($team['color_code']) ? $team['color_code'] : '#222'; ?>">
-                        <?php echo $this->escape($team['name']); ?>
-                    </h1>
-                    <strong>Color:</strong> <?php echo $this->escape(ucwords($team['color'])); ?><br/>
-                    <strong>Captain(s):</strong>
-                    <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team['league_id'], $team['id']); ?>
-                    <?php foreach($captains as $captain): ?>
-                        <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
-                    <?php endforeach; ?>
-                </div>
-                <div class="span3" style="text-align: center;">
-                    <h1><small>
-                        <?php echo $this->getLeagueTeamRecord($this->league->id, $team['id']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
+            <div class="media">
+                <img style="width: 85; height: 85px;" class="pull-left media-object img-polaroid" src="<?php echo $this->baseUrl() . '/images/team_logos/' . $this->getLeagueTeamImage($team['id']); ?>" alt="<?php echo $this->escape($team['name']); ?>"/>
+                <div class="media-body">
+                    <div class="span8">
+                        <h3 class="media-heading" style="text-shadow: 0 0 1px #444; color: <?php echo ($team['color_code']) ? $team['color_code'] : '#222'; ?>"><?php echo $this->escape($team['name']); ?></h3>
+                        <strong>Color:</strong> <?php echo $this->escape(ucwords($team['color'])); ?><br/>
+                        <strong>Captain(s):</strong>
+                        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team['league_id'], $team['id']); ?>
+                        <?php foreach($captains as $captain): ?>
+                            <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="span2">
+                        <h1><small>
+                        <?php echo $this->getLeagueTeamRecord($team['league_id'], $team['id']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
                     </small><h1>
-                </div>
-                <div class="clearfix">&nbsp;</div>
-                <div id="team<?php echo $this->escape($team['id']); ?>" class="collapse">
-                    <div class="clearfix">&nbsp;</div>
-                    <div id="team<?php echo $this->escape($team['id']);?>-players" class="offset1 span9">
                     </div>
                 </div>
+                <br/>
+                <hr/>
             </div>
             <?php endforeach; ?>
         </div>
