@@ -7,7 +7,7 @@
     <div class="span2">
         <div class="btn-group pull-right">
             <?php if($this->hasRole('admin') or $this->hasRole('reporter')): ?>
-            <a class="btn btn-small btn-info" href="<?php echo $this->url(array('slug' => $this->news->slug), 'news_edit'); ?>"><i class="icon-edit"></i> Edit News</a>
+            <a class="btn btn-small" href="<?php echo $this->url(array('slug' => $this->news->slug), 'news_edit'); ?>"><i class="icon-edit"></i> Edit News</a>
             <?php endif; ?>
         </div>
     </div>

@@ -921,8 +921,8 @@ class PageController extends Zend_Controller_Action
         }
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
 
         $form = new Form_News();
 
@@ -945,6 +945,7 @@ class PageController extends Zend_Controller_Action
                 $news->url = (empty($data['url'])) ? null : $data['url'];
                 $news->info = $data['info'];
                 $news->content = $data['content'];
+                $news->posted_by = $this->view->user->id;
                 $news->edited_at = date('Y-m-d H:i:s');
                 $news->type = $newsTable->getNewsType($data);
                 $news->last_edited_by = $this->view->user->id;
