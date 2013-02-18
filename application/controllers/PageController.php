@@ -579,6 +579,7 @@ class PageController extends Zend_Controller_Action
 
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('manager') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id)))) {
             // throw a 404 error if the page cannot be found
@@ -629,6 +630,7 @@ class PageController extends Zend_Controller_Action
 
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('manager') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id)))) {
             // throw a 404 error if the page cannot be found
@@ -702,6 +704,19 @@ class PageController extends Zend_Controller_Action
 
     public function clubsaddAction()
     {
+        $pageTable = new Model_DbTable_Page();
+        $page = $pageTable->fetchBy('name', 'clubs');
+
+        if(!Zend_Auth::getInstance()->hasIdentity() or
+           Zend_Auth::getInstance()->hasIdentity() and
+           (!$this->view->hasRole('admin') and
+            !$this->view->hasRole('manager') and
+            !$this->view->hasRole('editor') and
+            !$this->view->hasRole('editor', $page->id))) {
+            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
+            $this->_redirect('/clubs');
+        }
+
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
@@ -821,6 +836,7 @@ class PageController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
+            !$this->view->hasRole('manager') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this team.');
@@ -1047,6 +1063,7 @@ class PageController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
+            !$this->view->hasRole('manager') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to add a form.');
@@ -1128,6 +1145,7 @@ class PageController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
+            !$this->view->hasRole('manager') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit forms.');
@@ -1214,6 +1232,7 @@ class PageController extends Zend_Controller_Action
         if(!Zend_Auth::getInstance()->hasIdentity() or
            Zend_Auth::getInstance()->hasIdentity() and
            (!$this->view->hasRole('admin') and
+            !$this->view->hasRole('manager') and
             !$this->view->hasRole('editor') and
             !$this->view->hasRole('editor', $page->id))) {
             $this->view->message('You either are not logged in or you do not have permission to edit this team.');
@@ -1232,6 +1251,7 @@ class PageController extends Zend_Controller_Action
 
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
+             !$this->view->hasRole('manager') and
              !$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id)))) {
             // throw a 404 error if the page cannot be found

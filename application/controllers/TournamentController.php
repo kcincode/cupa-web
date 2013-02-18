@@ -331,6 +331,10 @@ class TournamentController extends Zend_Controller_Action
 
             $post = $this->getRequest()->getPost();
 
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
@@ -663,6 +667,11 @@ class TournamentController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 

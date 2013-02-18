@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+            <?php if($this->hasRole('admin') or $this->hasRole('manager') or$this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_clubs_add'); ?>"><i class="icon-plus"></i> Add Team</a>
             <?php endif; ?>
         </div>

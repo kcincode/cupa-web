@@ -15,7 +15,7 @@ class My_View_Helper_IsClubCaptain extends Zend_View_Helper_Abstract
             return false;
         }
 
-        if($this->view->hasRole('admin') or $this->view->hasRole('manager')) {
+        if($this->view->hasRole('admin') || $this->view->hasRole('manager')) {
             return true;
         }
 
