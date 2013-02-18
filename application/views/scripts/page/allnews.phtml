@@ -9,6 +9,9 @@
             <?php if($this->hasRole('admin') or $this->hasRole('reporter')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'news_add'); ?>"><i class="icon-list"></i> Add News</a>
             <?php endif; ?>
+            <?php if($this->category != 'All'): ?>
+            <a class="btn btn-small" href="<?php echo $this->url(array('category' => 'all'), 'news'); ?>"><i class="icon-edit"></i> View All News</a>
+            <?php endif; ?>
         </div>
     </div>
 </div>

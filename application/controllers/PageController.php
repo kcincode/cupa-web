@@ -899,7 +899,7 @@ class PageController extends Zend_Controller_Action
            (Zend_Auth::getInstance()->hasIdentity() and
             ($this->view->hasRole('reporter') or
              $this->view->hasRole('admin')) or
-           $news->is_visible)) {
+             $news->is_visible)) {
                 if(!$news->is_visible) {
                     $this->view->message('*** This news story is not yet visible to the public ***', 'warning');
                 }
