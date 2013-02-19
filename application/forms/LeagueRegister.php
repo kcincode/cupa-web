@@ -60,7 +60,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
 
                 $this->addElement('button', 'finish', array(
                     'type' => 'submit',
-                    'label' => 'Register',
+                    'label' => ($this->_session->waitlist) ? 'Waitlist' : 'Register',
                     'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
                     'escape' => false,
                     'icon' => 'hdd',
@@ -336,8 +336,10 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
         $leagueMemberTable = new Model_DbTable_LeagueMember();
 
         if(!empty($this->_userId)) {
-            $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId);
-            $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
+            $leagueMember = $leagueMemberTable->fetchMember($this->_leagueId, $this->_userId, null, 'player');
+            if($leagueMember) {
+                $answers = $leagueAnswerTable->fetchAllAnswers($leagueMember->id);
+            }
         }
 
         $i = 1;
@@ -408,7 +410,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
                             'required' => ($question['required'] == 1) ? true : false,
                             'label' => $i . '.) ' . $question['title'],
                             'multiOptions' => $selection,
-                            'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : 0,
+                            'value' => (isset($answers[$question['name']])) ? $answers[$question['name']] : null,
                         ));
                         break;
                     case 'text':
@@ -503,11 +505,29 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'description' => 'Check your email address.',
         ));
 
+        $this->addElement('text', 'phone', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Phone:',
+            'value' => $userProfile->phone,
+            'disabled' => true,
+            'description' => 'Check your phone number.',
+        ));
+
+        $this->addElement('text', 'birthday', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'label' => 'Birthday:',
+            'value' => date('m/d/Y', strtotime($userProfile->birthday)),
+            'disabled' => true,
+            'description' => 'Check your phone number.',
+        ));
+
         $this->addDisplayGroup(
-            array('first_name', 'last_name', 'email'),
+            array('first_name', 'last_name', 'email', 'phone', 'birthday'),
             'league_register_confirm_form',
             array(
-                'legend' => 'Confrm Registration',
+                'legend' => 'Confirm Registration',
             )
         );
     }

@@ -3,7 +3,7 @@
 <div class="page-content">
     <div class="row">
         <div class="offset1 span8 pull-left">
-            <h3 class="pull-left"><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> Registration</h3>
+            <h3 class="pull-left"><?php echo $this->leaguename($this->league->id, true, true, true, true); ?> <?php echo ($this->waitlist) ? 'Waitlist' : 'Registration'; ?></h3>
         </div>
         <div class="span3 pull-right">
             <a class="btn btn-mini" href="<?php echo $this->url(array('type' => $this->season, 'name' => $this->slugify($this->leaguename($this->league->id, true, false, false, true))), 'leagues_view'); ?>">Back to League</a>
@@ -14,7 +14,7 @@
             <?php if($this->state == 'done'): ?>
             <div class="alert alert-warning">
                 <h4>Please check your name and email</h4>
-                <p>If it is not correct you may go back to change it as well as any other questions.  Once you click 'Register' you will be registered for the league.</p>
+                <p>If it is not correct you may go back to change it as well as any other questions.  Once you click '<?php echo ($this->waitlist) ? 'Waitlist' : 'Register'; ?>' you will be <?php echo ($this->waitlist) ? 'waitlisted' : 'registered'; ?> for the league.</p>
             </div>
             <?php endif; ?>
             <?php echo $this->partial('league/register_steps.phtml', array('state' => $this->state));?>

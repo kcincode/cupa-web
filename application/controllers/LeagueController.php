@@ -1782,17 +1782,21 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
+        $this->view->waitlist = ($this->view->isLeagueRegistrationFull($leagueId)) ? true : false;
 
         // do registration checks to make sure a user is able to register
         $this->view->registrationMessage = $this->view->getLeagueRegistrationMessage($leagueId);
         if($this->view->registrationMessage !== true) {
-            if($this->view->isRegistered($leagueId, $this->view->user->id)) {
+            $userTable = new Model_DbTable_User();
+            if($this->view->isRegistered($leagueId, $this->view->user->id) && !$userTable->hasMinors($this->view->user->id)) {
                 $this->_redirect('/league/' . $leagueId . '/register_success');
             }
 
-            //$this->view->message($this->view->registrationMessage, 'error');
-            $this->renderScript('league/registration-error.phtml');
-            return;
+            if(!$this->view->waitlist) {
+                //$this->view->message($this->view->registrationMessage, 'error');
+                $this->renderScript('league/registration-error.phtml');
+                return;
+            }
         }
 
         // stop if user not logged in
@@ -1806,6 +1810,7 @@ class LeagueController extends Zend_Controller_Action
 
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $state = $this->getRequest()->getUserParam('state');
+        $session->waitlist = $this->view->waitlist;
 
         if($state != 'user') {
             if($this->view->isRegistered($leagueId, $session->registrantId)) {
@@ -1827,6 +1832,8 @@ class LeagueController extends Zend_Controller_Action
         $leagueTable = new Model_DbTable_League();
 
         $league = $leagueTable->find($leagueId)->current();
+        $leagueSeasonTable = new Model_DbTable_LeagueSeason();
+        $season  = $leagueSeasonTable->fetchName($league->season);
 
         $userTable = new Model_DbTable_User();
         if(!$userTable->hasMinors($this->view->user->id)) {
@@ -1838,8 +1845,8 @@ class LeagueController extends Zend_Controller_Action
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
-            if(isset($post['back'])) {
-                $this->_redirect('league/' . $leagueId . '/register/user');
+            if(isset($post['cancel'])) {
+                $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
             }
 
             if($form->isValid($post)) {
@@ -1922,109 +1929,110 @@ class LeagueController extends Zend_Controller_Action
             if(isset($post['back'])) {
                 $this->_redirect('league/' . $leagueId . '/register/league');
             } else {
-
                 $this->saveRegistrationData($leagueId, $session);
-
-                Zend_Debug::dump($session->registrantId);
-                Zend_Debug::dump($session->personal);
-                Zend_Debug::dump($session->league);
             }
         }
     }
 
     private function saveRegistrationData($leagueId, $session)
     {
-        // all data entered save the registrant
-        $userTable = new Model_DbTable_User();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
         $userProfileTable = new Model_DbTable_UserProfile();
-
-        $user = $userTable->find($session->registrantId)->current();
         $userProfile = $userProfileTable->find($session->registrantId)->current();
-        $user->first_name = $session->personal['first_name'];
-        $user->last_name = $session->personal['last_name'];
 
-        // only update the user email/phone if they are not a minor
-        if(!empty($user->parent)) {
-            $user->email = $session->personal['email'];
-            $userProfile->phone = $session->personal['phone'];
-        }
+        $member = $leagueMemberTable->fetchMember($leagueId, $session->registrantId, null, ($session->waitlist) ? 'waitlist' : 'player');
+        if(!$member) {
+            // all data entered save the registrant
+            $userTable = new Model_DbTable_User();
 
-        $userProfile->gender = $session->personal['gender'];
-        $userProfile->birthday = $session->personal['birthday'];
-        $userProfile->nickname = $session->personal['nickname'];
-        $userProfile->height = $session->personal['height'];
-        $userProfile->level = $session->personal['level'];
-        $userProfile->experience = $session->personal['experience'];
+            $user = $userTable->find($session->registrantId)->current();
+            $user->first_name = $session->personal['first_name'];
+            $user->last_name = $session->personal['last_name'];
 
-        $userEmergencyTable = new Model_DbTable_UserEmergency();
-        for($i = 1; $i < 3; $i++) {
-            $contactPhone = $session->personal['contactPhone' . $i];
-            $contactName = $session->personal['contactName' . $i];
-
-            $contact = $userEmergencyTable->fetchContact($session->registrantId, $contactPhone);
-            $nameData = explode(' ', $contactName);
-            if(count($nameData) == 1) {
-                $first = $nameData[0];
-                $last = '';
-            } else if(count($nameData) == 2) {
-                $first = $nameData[0];
-                $last = $nameData[1];
+            // only update the user email/phone if they are not a minor
+            if(!empty($user->parent)) {
+                $user->email = $session->personal['email'];
+                $userProfile->phone = $session->personal['phone'];
             }
 
-            if(!$contact) {
-                $userEmergencyTable->insert(array(
+            $userProfile->gender = $session->personal['gender'];
+            $userProfile->birthday = $session->personal['birthday'];
+            $userProfile->nickname = $session->personal['nickname'];
+            $userProfile->height = $session->personal['height'];
+            $userProfile->level = $session->personal['level'];
+            $userProfile->experience = $session->personal['experience'];
+
+            $userEmergencyTable = new Model_DbTable_UserEmergency();
+            for($i = 1; $i < 3; $i++) {
+                $contactPhone = $session->personal['contactPhone' . $i];
+                $contactName = $session->personal['contactName' . $i];
+
+                $contact = $userEmergencyTable->fetchContact($session->registrantId, $contactPhone);
+                $nameData = explode(' ', $contactName);
+                if(count($nameData) == 1) {
+                    $first = $nameData[0];
+                    $last = '';
+                } else if(count($nameData) == 2) {
+                    $first = $nameData[0];
+                    $last = $nameData[1];
+                }
+
+                if(!$contact) {
+                    $userEmergencyTable->insert(array(
+                        'user_id' => $session->registrantId,
+                        'first_name' => ucwords(trim($first)),
+                        'last_name' => ucwords(trim($last)),
+                        'phone' => $contactPhone,
+                        'weight' => $i,
+                    ));
+                } else {
+                    $contact->first_name = ucwords(trim($first));
+                    $contact->last_name = ucwords(trim($last));
+                    $contact->save();
+                }
+            }
+
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            $leagueMember = $leagueMemberTable->fetchMember($leagueId, $session->registrantId);
+            if(!$leagueMember) {
+                $leagueMemberId = $leagueMemberTable->insert(array(
+                    'league_id' => $leagueId,
                     'user_id' => $session->registrantId,
-                    'first_name' => ucwords(trim($first)),
-                    'last_name' => ucwords(trim($last)),
-                    'phone' => $contactPhone,
-                    'weight' => $i,
+                    'position' => ($session->waitlist) ? 'waitlist' : 'player',
+                    'league_team_id' => null,
+                    'paid' => 0,
+                    'release' => ($this->view->displayAge($session->personal['birthday']) >= 18) ? 1 :0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'modified_at' => date('Y-m-d H:i:s'),
+                    'modified_by' => $this->view->user->id,
                 ));
             } else {
-                $contact->first_name = ucwords(trim($first));
-                $contact->last_name = ucwords(trim($last));
-                $contact->save();
+                $leagueMemberId = $leagueMember->id;
             }
-        }
 
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $leagueMember = $leagueMemberTable->fetchMember($leagueId, $session->registrantId);
-        if(!$leagueMember) {
-            $leagueMemberId = $leagueMemberTable->insert(array(
-                'league_id' => $leagueId,
-                'user_id' => $session->registrantId,
-                'position' => 'player',
-                'league_team_id' => null,
-                'paid' => 0,
-                'release' => ($this->view->displayAge($session->personal['birthday']) >= 18) ? 1 :0,
-                'created_at' => date('Y-m-d H:i:s'),
-                'modified_at' => date('Y-m-d H:i:s'),
-                'modified_by' => $this->view->user->id,
-            ));
-        } else {
-            $leagueMemberId = $leagueMember->id;
-        }
-
-        $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
-        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
-        foreach($session->league as $questionName => $answer) {
-            $question = $leagueQuestionTable->fetchQuestion($questionName);
-            if($question) {
-                $leagueAnswerTable->addAnswer($leagueMemberId, $question->id, $answer);
+            $leagueQuestionTable = new Model_DbTable_LeagueQuestion();
+            $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+            foreach($session->league as $questionName => $answer) {
+                $question = $leagueQuestionTable->fetchQuestion($questionName);
+                if($question) {
+                    $leagueAnswerTable->addAnswer($leagueMemberId, $question->id, $answer);
+                }
             }
+
+            // redirect to success/payment screen
+            $this->view->message('You have successfully ' . ($session->waitlist) ? 'waitlisted' : 'registered' . ' for ' . $this->view->leaguename($leagueId, true, true, true, true));
         }
 
-        // redirect to success/payment screen
-        $this->view->message('You have successfully registered for ' . $this->view->leaguename($leagueId, true, true, true, true));
-
-        $session->unsetAll();
-
+        $userWaiverTable = new Model_DbTable_UserWaiver();
         // if the user has not signed a waiver redirect to online waiver
-        if($userProfileTable->isEighteenOrOver($userProfile->birthday) and !$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
+        if($userProfileTable->isEighteenOrOver($session->registrantId) and !$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
+            $session->unsetAll();
             $this->_redirect('league/' . $leagueId . '/waiver');
         } else if(!$userWaiverTable->hasWaiver($session->registrantId, $leagueId)) {
             $this->view->message('You are not old enough to sign the online waiver.  If this is not true please check your birthday in the system under the MY PROFILE link and update it.', 'warning');
         }
 
+        $session->unsetAll();
         $this->_redirect('league/' . $leagueId . '/register_success');
     }
 
@@ -2069,7 +2077,14 @@ class LeagueController extends Zend_Controller_Action
         }
 
         if(count($this->view->players) == 0) {
-            $this->_redirect('league/' . $leagueId . '/register');
+            $this->view->players = $leagueMemberTable->fetchUserWaitlists($leagueId, $userIds);
+            if(count($this->view->players) == count($userIds)) {
+                $this->view->hasMinors = false;
+            }
+
+            if(count($this->view->players) == 0) {
+                $this->_redirect('league/' . $leagueId . '/register');
+            }
         }
     }
 
@@ -2281,5 +2296,73 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $this->view->form = $form;
+    }
+
+    public function waitlistAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+
+        if(!$this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('league/' . $leagueId);
+        }
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $this->view->players = $leagueMemberTable->fetchPlayerInformation($leagueId, 'waitlist');
+
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . str_replace(' ', '-', $this->view->leaguename($this->view->league, true, true, true, true)) . '_waitlist.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+
+            echo "first_name,last_name,email";
+            $i = 1;
+            foreach($this->view->players as $player) {
+                if($i == 1) {
+                    foreach($player['profile'] as $key => $value) {
+                        echo ",$key";
+                    }
+                    foreach($player['answers'] as $key => $value) {
+                        echo ",$key";
+                    }
+                    echo "\n";
+                }
+
+                echo "{$player['first_name']},{$player['last_name']},{$player['email']}";
+                foreach($player['profile'] as $key => $value) {
+                    echo "," . str_replace(',', ' ', $value);
+                }
+                foreach($player['answers'] as $key => $value) {
+                    echo "," . str_replace("\r\n", '  ', str_replace(',', ' ', $value));
+                }
+                echo "\n";
+
+                $i++;
+            }
+            exit();
+        }
     }
 }

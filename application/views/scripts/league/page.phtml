@@ -141,6 +141,10 @@
                         <?php endif; ?>
 
                         <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Register</a> for the league now!<br/><br/>
+                    <?php elseif(strstr($this->getLeagueRegistrationMessage($this->league['id']), 'League registration is full with') !== false): ?>
+                        <p>You may still register for the waitlist if you like</p>
+                        <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Waitlist Registration</a>
+                        <br/><br/>
                     <?php endif; ?>
 
                 </dd>

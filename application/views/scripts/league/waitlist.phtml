@@ -1,0 +1,44 @@
+<div id="page-banner">&nbsp;</div>
+
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams));?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">
+                League Waitlist
+            </h2>
+            <div class="pull-right">
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1"><i class="icon-list icon-white"></i> Export Complete Data</a>
+            </div>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="span4">Player</th>
+                        <th class="span4">Email</th>
+                        <th class="span1" style="text-align: center;">Gender</th>
+                        <th class="span3" style="text-align: center;">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->players as $player): ?>
+                    <tr>
+                        <td><?php echo $this->fullname($player['user_id']); ?></td>
+                        <td><?php echo $this->generateEmailLink($player['user_id']); ?></td>
+                        <td style="text-align: center;"><?php echo $this->escape($player['profile']['gender']); ?></td>
+                        <td style="text-align: center;"><?php echo date('m/d/y h:i:s A', strtotime($player['created_at'])); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+
+        </div>
+    </div>
+</div>

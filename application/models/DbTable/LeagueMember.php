@@ -225,9 +225,9 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         return $stmt->fetchAll();
     }
 
-    public function fetchPlayerInformation($leagueId)
+    public function fetchPlayerInformation($leagueId, $status = 'player')
     {
-        $sql = "SELECT lm.id, lm.user_id, u.first_name, u.last_name, u.email, up.gender, up.birthday, up.phone, up.nickname, up.height, ul.name AS user_level, lt.name AS team, up.experience, lq.name, la.answer
+        $sql = "SELECT lm.id, lm.user_id, lm.created_at, u.first_name, u.last_name, u.email, up.gender, up.birthday, up.phone, up.nickname, up.height, ul.name AS user_level, lt.name AS team, up.experience, lq.name, la.answer
 FROM league_member lm
 LEFT JOIN user u ON u.id = lm.user_id
 LEFT JOIN league_question_list lql ON lql.league_id = lm.league_id
@@ -237,11 +237,16 @@ LEFT JOIN league_team lt ON lt.id = lm.league_team_id
 LEFT JOIN user_profile up ON up.user_id = lm.user_id
 LEFT JOIN user_level ul ON ul.id = up.level
 WHERE lm.league_id = ? AND
-lm.position = ?
-ORDER BY u.last_name, u.first_name, lql.weight ASC";
+lm.position = ?";
+        if($status == 'player') {
+            $sql .= " ORDER BY u.last_name, u.first_name, lql.weight ASC";
+        } else {
+            $sql .= " ORDER BY lm.created_at, u.last_name, u.first_name, lql.weight ASC";
+        }
+
 
         $stmt = $this->getAdapter()->prepare($sql);
-        $stmt->execute(array($leagueId, 'player'));
+        $stmt->execute(array($leagueId, $status));
 
         $data = array();
         foreach($stmt->fetchAll() as $row) {
@@ -249,6 +254,7 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
                 $data[$row['user_id']]['answers'][$row['name']] = $row['answer'];
             } else {
                 $data[$row['user_id']] = array(
+                    'created_at' => $row['created_at'],
                     'user_id' => $row['user_id'],
                     'first_name' => $row['first_name'],
                     'last_name' => $row['last_name'],
@@ -298,6 +304,25 @@ ORDER BY u.last_name, u.first_name, lql.weight ASC";
     {
         $select = $this->select()
                        ->where('position = ?', 'player')
+                       ->where('league_id = ?', $leagueId);
+
+        if(is_array($userIds)) {
+            $select->where('user_id IN (' . implode(',', $userIds) . ')');
+        } else if(is_numeric($userIds)) {
+            $select->where('user_id = ?', $userIds);
+        }
+
+        if(is_array($userIds)) {
+            return $this->fetchAll($select);
+        } else if(is_numeric($userIds)) {
+            return $this->fetchRow($select);
+        }
+    }
+
+    public function fetchUserWaitlists($leagueId, $userIds)
+    {
+        $select = $this->select()
+                       ->where('position = ?', 'waitlist')
                        ->where('league_id = ?', $leagueId);
 
         if(is_array($userIds)) {
