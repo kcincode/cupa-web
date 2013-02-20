@@ -20,7 +20,7 @@
         </div>
         <div class="span4">
             <?php foreach($this->updates as $update): ?>
-            <div class="well well-small">
+            <div class="well well-small" style="word-wrap: break-word;">
                 <div class="pull-right">
                     <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
@@ -28,7 +28,8 @@
                     <?php endif; ?>
                 </div>
                 <strong><?php echo $this->escape($update->title); ?></strong><br/>
-                <small>Posted at: <?php echo $this->escape($update->posted); ?></small>
+                <small class="muted">Posted at: <?php echo $this->escape($update->posted); ?></small>
+                <hr class="small"/>
                 <p>
                     <?php echo $update->content; ?>
                 </p>

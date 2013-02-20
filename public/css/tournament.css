@@ -136,3 +136,10 @@ footer {
     position: absolute;
     margin-top: -80px;
 }
+
+hr.small {
+    padding: 0;
+    margin: 0;
+    border-top: 1px dashed #fff;
+    border-bottom: 1px dashed #ddd;
+}
