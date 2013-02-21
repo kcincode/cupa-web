@@ -2020,7 +2020,8 @@ class LeagueController extends Zend_Controller_Action
             }
 
             // redirect to success/payment screen
-            $this->view->message('You have successfully ' . ($session->waitlist) ? 'waitlisted' : 'registered' . ' for ' . $this->view->leaguename($leagueId, true, true, true, true));
+            $type = ($session->waitlist) ? 'waitlisted' : 'registered';
+            $this->view->message('You have successfully ' . $type . ' for ' . $this->view->leaguename($leagueId, true, true, true, true));
         }
 
         $userWaiverTable = new Model_DbTable_UserWaiver();

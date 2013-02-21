@@ -14,7 +14,15 @@
                     <?php foreach($this->data['leagues'] as $league): ?>
                     <tr>
                         <td><?php echo $this->leaguename($league['league_id'], true, true, true, true); ?></td>
-                        <td><?php if(!empty($league['team'])): ?><a href="<?php echo $this->url(array('league_id' => $league['league_id']), 'league_view'); ?>"><?php echo $this->escape($league['team']); ?></a> <?php else: ?>No Team<?php endif; ?></td>
+                        <td>
+                            <?php if(!empty($league['team'])): ?>
+                            <a href="<?php echo $this->url(array('league_id' => $league['league_id']), 'league_view'); ?>"><?php echo $this->escape($league['team']); ?></a>
+                            <?php elseif($league['position'] == 'waitlist'): ?>
+                            On Waitlist
+                            <?php else: ?>
+                            No Team
+                            <?php endif; ?>
+                        </td>
                         <td><?php echo ($league['paid'] == 1) ? '<span class="text-success">Paid</span>' : '<a href="' . $this->url(array('league_id' => $league['league_id']), 'league_registration_success') . '" class="text-error">Owe $' . $league['cost'] . '</a>'; ?></td>
                         <td><?php echo ($league['release'] == 1) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?></td>
                         <td><?php echo ($this->hasUserSignedWaiver($this->user->id, $league['year'])) ? '<span class="text-success">Yes</span>' : '<a class="btn btn-mini btn-danger" href="' . $this->url(array('league_id' => $league['league_id']), 'league_waiver') . '">No</a>'; ?></td>
