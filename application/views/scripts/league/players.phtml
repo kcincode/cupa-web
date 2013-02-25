@@ -11,9 +11,13 @@
             <h2 class="pull-left">
                 League Players
                 <small>
-                    Players registered: <?php echo $this->escape($this->genderCounts['male_players'] + $this->genderCounts['female_players']); ?>
-                    (<?php echo $this->escape($this->genderCounts['male_players']); ?> Males,
-                    <?php echo $this->escape($this->genderCounts['female_players']); ?> Females)
+                    Players registered: <?php echo $this->escape($this->genderCounts['male_players'] + $this->genderCounts['female_players'] + $this->genderCounts['unknown']); ?>
+                    (<?php echo $this->escape($this->genderCounts['male_players']); ?> Males ,
+                    <?php echo $this->escape($this->genderCounts['female_players']); ?> Females
+                    <?php if(!empty($this->genderCounts['unknown'])): ?>
+                    , <?php echo $this->escape($this->genderCounts['unknown']); ?> Unknown
+                    <?php endif; ?>
+                    )
                 </small>
             </h2>
             <div class="pull-right">
@@ -36,7 +40,7 @@
                     <tr>
                         <td><?php echo $this->generateEmailLink($player['email'], $this->fullname($player['user_id'])); ?></td>
                         <td><?php echo (empty($player['team'])) ? 'Not on a team yet.' : $this->escape($player['team']); ?></td>
-                        <td style="text-align: center;"><?php echo $this->escape($player['profile']['gender']); ?></td>
+                        <td style="text-align: center;"><?php echo (empty($player['profile']['gender'])) ? 'Unknown' : $this->escape($player['profile']['gender']); ?></td>
                         <td style="text-align: center;"><?php echo $this->displayAge($player['profile']['birthday']); ?></td>
                         <td style="text-align: center;"><?php echo $this->displayHeight($player['profile']['height']); ?></td>
                         <td style="text-align: center;"><?php echo (empty($player['profile']['experience'])) ? 'Unknown' : date('Y') - $player['profile']['experience'] . ' years'; ?></td>

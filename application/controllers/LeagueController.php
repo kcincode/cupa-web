@@ -1531,6 +1531,7 @@ class LeagueController extends Zend_Controller_Action
 
             set_time_limit(0);
 
+
             echo "first_name,last_name,email";
             $i = 1;
             foreach($this->view->players as $player) {
@@ -1546,10 +1547,11 @@ class LeagueController extends Zend_Controller_Action
 
                 echo "{$player['first_name']},{$player['last_name']},{$player['email']}";
                 foreach($player['profile'] as $key => $value) {
-                    echo "," . str_replace(',', ' ', $value);
+                    echo "," . str_replace(',', ' ', addslashes($value));
                 }
+
                 foreach($player['answers'] as $key => $value) {
-                    echo "," . str_replace("\r\n", '  ', str_replace(',', ' ', $value));
+                    echo "," . str_replace("\r\n", '  ', str_replace(',', ' ', addslashes($value)));
                 }
                 echo "\n";
 

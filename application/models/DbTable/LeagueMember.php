@@ -86,13 +86,15 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->where('lm.position = ?', 'player');
 
         $stmt = $this->getAdapter()->query($select);
-        $data = array('male_players' => 0, 'female_players' => 0);
+        $data = array('male_players' => 0, 'female_players' => 0, 'unknown' => 0);
 
         foreach($stmt->fetchAll() as $row) {
             if($row['gender'] == 'Male') {
                 $data['male_players']++;
-            } else {
+            } else if($row['gender'] == 'Female') {
                 $data['female_players']++;
+            } else {
+                $data['unknown']++;
             }
         }
 

@@ -7,6 +7,10 @@ class My_View_Helper_LeagueBar extends Zend_View_Helper_Abstract
 
     public function leagueBar($name, $current, $total)
     {
+        if($current > $total) {
+            $current = $total;
+        }
+
         $number = (int)(($current / $total) * 100);
         $width = (int)($this->_totalWidth * ($number / 100));
 
@@ -18,6 +22,7 @@ class My_View_Helper_LeagueBar extends Zend_View_Helper_Abstract
         } else {
             $color = 'danger';
         }
+
 
         $string = '<div>' . "\n";
         $string .= '    <strong>' .  ($total - $current) . '</strong> ' . $name . ' left' . "\n";
