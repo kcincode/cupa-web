@@ -220,6 +220,10 @@ class ProfileController extends Zend_Controller_Action
         if($request->isPost()) {
             $post = $request->getPost();
 
+            if(isset($post['cancel'])) {
+                $this->_redirect('profile/contacts');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 

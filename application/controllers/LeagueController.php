@@ -1784,6 +1784,14 @@ class LeagueController extends Zend_Controller_Action
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
+
+
+        // stop if user not logged in
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            $this->renderScript('league/auth.phtml');
+            return;
+        }
+
         $this->view->waitlist = ($this->view->isLeagueRegistrationFull($leagueId)) ? true : false;
 
         // do registration checks to make sure a user is able to register
@@ -1800,13 +1808,6 @@ class LeagueController extends Zend_Controller_Action
                 return;
             }
         }
-
-        // stop if user not logged in
-        if(!Zend_Auth::getInstance()->hasIdentity()) {
-            $this->renderScript('league/auth.phtml');
-            return;
-        }
-
         // TODO: reset session if referer is unset or coming from league page
         // $session->unsetAll();
 

@@ -26,6 +26,14 @@ header ul li {
     margin-right: 8px;
 }
 
+header ul li a {
+    color: #080;
+}
+
+header ul li a:hover {
+    color: #040;
+}
+
 header .home-image {
     text-decoration: none;
     display: block;
