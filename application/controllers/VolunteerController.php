@@ -4,23 +4,33 @@ class VolunteerController extends Zend_Controller_Action
 {
     public function init()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page/view.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
     }
 
     public function indexAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/volunteer/index.css');
     }
 
     public function registerAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/volunteer/register.css');
-        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/volunteer/register.js');
         $form = new Form_Volunteer($this->view->user);
 
         $request = $this->getRequest();
         if($request->isPost()) {
             $post = $request->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('volunteer');
+            }
+
+            foreach($post['primary_interest'] as $interest) {
+                if($interest == 'Other') {
+                    $form->getElement('other')
+                         ->setRequired()
+                         ->addErrorMessage('Please list the other activities you are interested in.');
+                    break;
+                }
+            }
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
@@ -31,7 +41,7 @@ class VolunteerController extends Zend_Controller_Action
                 $volunteerPoolTable = new Model_DbTable_VolunteerPool();
                 $volunteerPoolTable->addVolunteer($data);
 
-                $this->view->message('You have successfully signed up to be a volunteer, you will be contacted for upcomming opportunities.');
+                $this->view->message('You have successfully signed up to be a volunteer, you might be contacted for upcoming opportunities.');
                 $this->_redirect('volunteer/list');
             }
         }
@@ -41,7 +51,6 @@ class VolunteerController extends Zend_Controller_Action
 
     public function listAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/volunteer/list.css');
         $volunteerTable = new Model_DbTable_Volunteer();
         $this->view->volunteers = $volunteerTable->fetchUpcomingVolunteers();
     }

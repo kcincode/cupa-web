@@ -1,6 +1,6 @@
 <?php
 
-class Form_Volunteer extends Zend_Form
+class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
 {
     protected $_user;
     protected $_profile;
@@ -83,7 +83,7 @@ class Form_Volunteer extends Zend_Form
             'Large Event Help - Various Tasks' => 'Large Event Help - Various Tasks',
             'Off-Field Event Help' => 'Off-Field Event Help',
             'Public Relations Efforts' => 'Public Relations Efforts',
-             'Other' => 'Other',
+            'Other' => 'Other',
         );
 
         $this->addElement('multiCheckbox', 'primary_interest', array(
@@ -110,9 +110,39 @@ class Form_Volunteer extends Zend_Form
             'description' => 'List all your past volunteering experiences with CUPA.',
         ));
 
-        $this->addElement('submit', 'register', array(
+        $this->addElement('button', 'register', array(
+            'type' => 'submit',
             'label' => 'Register as a Volunteer',
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+            'escape' => false,
+            'icon' => 'user',
+            'whiteIcon' => true,
+            'iconPosition' => Twitter_Bootstrap_Form_Element_Button::ICON_POSITION_LEFT,
         ));
+
+        $this->addElement('submit', 'cancel', array(
+            'type' => 'submit',
+            'label' => 'Cancel',
+            'escape' => false,
+        ));
+
+
+        $this->addDisplayGroup(
+            array('email', 'first_name', 'last_name', 'phone', 'involvement','primary_interest', 'other', 'experience'),
+            'volunteer_edit_form',
+            array(
+                'legend' => 'Volunteer Registration'
+            )
+        );
+
+        $this->addDisplayGroup(
+            array('register', 'cancel'),
+            'volunteer_edit_actions',
+            array(
+                'disableLoadDefaultDecorators' => true,
+                'decorators' => array('Actions'),
+            )
+        );
 
     }
 }

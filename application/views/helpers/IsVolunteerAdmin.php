@@ -9,17 +9,19 @@ class My_View_Helper_IsVolunteerAdmin extends Zend_View_Helper_Abstract
         $this->view = $view;
     }
 
-    public function isVolunteerAdmin($volunteerId)
+    public function isVolunteerAdmin($volunteerId = null)
     {
         if($this->view->hasRole('admin') or $this->view->hasRole('manager') or $this->view->hasRole('volunteer')) {
             return true;
         }
 
-        $volunteerTable = new Model_DbTable_Volunteer();
-        if(Zend_Auth::getInstance()->hasIdentity()) {
-            $volunteer = $volunteerTable->find($volunteerId)->current();
-            if(Zend_Auth::getInstance()->getIdentity() == $volunteer->id) {
-                return true;
+        if($volunteerId) {
+            $volunteerTable = new Model_DbTable_Volunteer();
+            if(Zend_Auth::getInstance()->hasIdentity()) {
+                $volunteer = $volunteerTable->find($volunteerId)->current();
+                if(Zend_Auth::getInstance()->getIdentity() == $volunteer->id) {
+                    return true;
+                }
             }
         }
 
