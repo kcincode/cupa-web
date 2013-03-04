@@ -55,6 +55,26 @@ class VolunteerController extends Zend_Controller_Action
         $this->view->volunteers = $volunteerTable->fetchUpcomingVolunteers();
     }
 
+    public function listaddAction()
+    {
+        $form = new Form_VolunteerOpportunity();
+
+        $request = $this->getRequest();
+        if($request->isPost()) {
+            $post = $request->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('volunteer/list');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+            }
+        }
+
+        $this->view->form = $form;
+    }
+
     public function signupAction()
     {
         $volunteerId = $this->getRequest()->getUserParam('volunteer');

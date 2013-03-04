@@ -136,7 +136,7 @@ class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
         );
 
         $this->addDisplayGroup(
-            array('register', 'cancel'),
+            array('create', 'cancel'),
             'volunteer_edit_actions',
             array(
                 'disableLoadDefaultDecorators' => true,

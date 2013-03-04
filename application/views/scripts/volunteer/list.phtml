@@ -36,7 +36,7 @@
 
                     <dl class="dl-horizontal">
                         <dt>Location</dt>
-                        <dd><?php echo $this->escape($volunteer['location']) . '<br/>' . $this->escape($volunteer['street']) . '<br/>' . $this->escape($volunteer['city'] . ', ' . $volunteer['state'] . ' ' . $volunteer['zip']); ?><br/><br/></dd>
+                        <dd><?php echo $this->escape($volunteer['location_name']) . '<br/>' . $this->escape($volunteer['address']) . '<br/>' . $this->escape($volunteer['city'] . ', ' . $volunteer['state'] . ' ' . $volunteer['zip']); ?><br/><br/></dd>
                         <dt>Volunteers Needed</dt>
                         <dd><strong class="text-info"><?php echo $this->escape($volunteer['max_volunteers'] - count($volunteer['members'])); ?></strong> More Volunteers Needed</dd>
                         <dt>About the Event:</dt>
