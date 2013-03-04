@@ -20,8 +20,8 @@
                 <div class="pull-right btn-group">
                     <a class="btn btn-mini"><i class="icon-th-list"></i> Sign-up</a>
                     <?php if($this->isVolunteerAdmin($volunteer['id'])): ?>
-                    <a class="btn btn-mini btn-info" href="#"><i class="icon-edit icon-white"></i> Edit</a>
-                    <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to delete this?');" href="#"><i class="icon-trash icon-white"></i> Remove</a>
+                    <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_opportunity_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to delete this?');" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_opportunity_remove'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
                     <?php endif; ?>
                 </div>
                 <h2 class="offset1 text-error"><?php echo $this->escape($volunteer['name']); ?></h2>
@@ -33,12 +33,13 @@
                 <?php endif; ?>
                 </em>
                 <div>
-
                     <dl class="dl-horizontal">
                         <dt>Location</dt>
-                        <dd><?php echo $this->escape($volunteer['location_name']) . '<br/>' . $this->escape($volunteer['address']) . '<br/>' . $this->escape($volunteer['city'] . ', ' . $volunteer['state'] . ' ' . $volunteer['zip']); ?><br/><br/></dd>
+                        <dd><a target="blank" href="<?php echo $this->generateVolunteerMap($volunteer); ?>"><?php echo $this->escape($volunteer['location_name']) . '</a><br/>' . $this->escape($volunteer['address']) . '<br/>' . $this->escape($volunteer['city'] . ', ' . $volunteer['state'] . ' ' . $volunteer['zip']); ?><br/><br/></dd>
                         <dt>Volunteers Needed</dt>
                         <dd><strong class="text-info"><?php echo $this->escape($volunteer['max_volunteers'] - count($volunteer['members'])); ?></strong> More Volunteers Needed</dd>
+                        <dt>Contact:</dt>
+                        <dd><?php echo $this->generateEmailLink($volunteer['contact']->email, $volunteer['contact']->first_name . ' ' . $volunteer['contact']->last_name); ?></dd>
                         <dt>About the Event:</dt>
                         <dd><?php echo $volunteer['information']; ?></dd>
                     </dl>
