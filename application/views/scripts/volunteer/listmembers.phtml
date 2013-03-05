@@ -1,0 +1,47 @@
+<div id="page-banner" class="about">&nbsp;</div>
+
+<div class="row actions">
+    <div class="span9 about">
+        <h2><?php echo $this->escape($this->volunteer->name); ?> Members</h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+            <a class="btn btn-small" href="<?php echo $this->url(); ?>?export=1"><i class="icon-list"></i> Export Data</a>
+        </div>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span9">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="span2">Name</th>
+                        <th class="span3">Email</th>
+                        <th class="span2">Phone</th>
+                        <th class="span2">Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($this->members as $member): ?>
+                    <tr>
+                        <td><?php echo (empty($member['vname'])) ? $this->escape($member['first_name'] . ' ' . $member['last_name']) : $this->escape($member['vname']); ?></td>
+                        <td><?php echo (empty($member['vemail'])) ? $this->escape($member['email']) : $this->escape($member['vemail']); ?></td>
+                        <td><?php echo (empty($member['vphone'])) ? $this->escape($member['phone']) : $this->escape($member['vphone']); ?></td>
+                        <td>
+                            <?php if(strlen($member['comment']) > 20): ?>
+                            <?php echo $this->escape(substr($member['comment'], 0, 20) . '...'); ?>
+                            <?php else: ?>
+                            <?php echo $this->escape($member['comment']); ?>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="span3 page-links">
+            <?php echo $this->partial('volunteer/links.phtml'); ?>
+        </div>
+    </div>
+</div>

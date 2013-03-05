@@ -103,11 +103,13 @@ class VolunteerController extends Zend_Controller_Action
 
     public function listeditAction()
     {
-        if(!$this->view->isVolunteerAdmin()) {
+        $request = $this->getRequest();
+        $volunteerId = $request->getUserParam('volunteer_id');
+
+        if(!$this->view->isVolunteerAdmin($volunteerId)) {
             $this->view->message('You do not have access to this page', 'error');
             $this->_redirect('volunteer/list');
         }
-
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
@@ -115,8 +117,6 @@ class VolunteerController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
-        $request = $this->getRequest();
-        $volunteerId = $request->getUserParam('volunteer_id');
         $volunteerTable = new Model_DbTable_Volunteer();
         $volunteer = $volunteerTable->find($volunteerId)->current();
         $form = new Form_VolunteerOpportunity($volunteer);
@@ -156,6 +156,12 @@ class VolunteerController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $volunteerId = $request->getUserParam('volunteer_id');
+
+        if(!$this->view->isVolunteerAdmin($volunteerId)) {
+            $this->view->message('You do not have access to this page', 'error');
+            $this->_redirect('volunteer/list');
+        }
+
         $volunteerTable = new Model_DbTable_Volunteer();
         $volunteer = $volunteerTable->find($volunteerId)->current();
 
@@ -169,7 +175,90 @@ class VolunteerController extends Zend_Controller_Action
 
     public function signupAction()
     {
-        $volunteerId = $this->getRequest()->getUserParam('volunteer');
+        $request = $this->getRequest();
+        $volunteerId = $request->getUserParam('volunteer_id');
+        $volunteerTable = new Model_DbTable_Volunteer();
+        $volunteer = $volunteerTable->find($volunteerId)->current();
 
+        $form = new Form_Volunteer($this->view->user, 'signup');
+
+        if($request->isPost()) {
+            $post = $request->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('volunteer/list');
+            }
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $volunteerPoolTable = new Model_DbTable_VolunteerPool();
+                $member = $volunteerPoolTable->fetchMember($data);
+
+                $volunteerMemberTable = new Model_DbTable_VolunteerMember();
+                $result = $volunteerMemberTable->addVolunteer($volunteerId, $member->id, $data['comment']);
+
+                if(!$result) {
+                    $this->view->message('You have already signed up for this opportunity', 'warning');
+                } else {
+                    $this->view->message('Signed up for opportunity, you will receive an email from the contact with more information.', 'success');
+                }
+
+                $this->_redirect('volunteer/list');
+            }
+        }
+
+        $this->view->form = $form;
+    }
+
+    public function listmembersAction()
+    {
+        $request = $this->getRequest();
+        $volunteerId = $request->getUserParam('volunteer_id');
+
+        if(!$this->view->isVolunteerAdmin($volunteerId)) {
+            $this->view->message('You do not have access to this page', 'error');
+            $this->_redirect('volunteer/list');
+        }
+
+        $volunteerTable = new Model_DbTable_Volunteer();
+        $this->view->volunteer = $volunteerTable->find($volunteerId)->current();
+
+        $volunteerMemberTable = new Model_DbTable_VolunteerMember();
+        $this->view->members = $volunteerMemberTable->fetchVolunteers($volunteerId);
+
+        if($request->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            $title = str_replace(' ', '_', $this->view->volunteer->name);
+
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' .  $title . '_members.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+
+            echo "name,email,phone,comment\n";
+            foreach($this->view->members as $member) {
+                $name = (empty($members['vname'])) ? $member['first_name'] . ' ' . $member['last_name'] : $member['vname'];
+                $email = (empty($members['vemail'])) ? $member['email'] : $member['vemail'];
+                $phone = (empty($members['vphone'])) ? $member['phone'] : $member['vphone'];
+                echo "{$name},{$email},{$phone}," . addslashes($member['comment']) . "\n";
+            }
+            exit();
+        }
     }
 }

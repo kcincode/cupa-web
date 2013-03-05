@@ -18,8 +18,9 @@
             <?php foreach($this->volunteers as $volunteer): ?>
             <div>
                 <div class="pull-right btn-group">
-                    <a class="btn btn-mini"><i class="icon-th-list"></i> Sign-up</a>
+                    <a class="btn btn-mini" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_signup'); ?>"><i class="icon-th-list"></i> Sign-up</a>
                     <?php if($this->isVolunteerAdmin($volunteer['id'])): ?>
+                    <a class="btn btn-mini" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_list_members'); ?>"><i class="icon-list"></i> Volunteers</a>
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_opportunity_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
                     <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to delete this?');" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_opportunity_remove'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
                     <?php endif; ?>

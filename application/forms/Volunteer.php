@@ -4,10 +4,12 @@ class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
 {
     protected $_user;
     protected $_profile;
+    protected $_type;
 
-    public function __construct($user)
+    public function __construct($user, $type = 'volunteer')
     {
         $this->_user = $user;
+        $this->_type = $type;
 
         if($user) {
             $userProfileTable = new Model_DbTable_UserProfile();
@@ -63,56 +65,68 @@ class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
             'description' => 'Use format: ###-###-####',
         ));
 
-        $involvement = array('0-1 year' => '0-1 year', '2-4 years' => '2-4 years', '5-9 years' => '5-9 years', '10+ years' => '10+ years');
-        $this->addElement('select', 'involvement', array(
-            'validators' => array(
-                array('InArray', false, array($involvement)),
-            ),
-            'required' => true,
-            'label' => 'Years Involved with CUPA:',
-            'multiOptions' => $involvement,
-            'description' => 'Select the amount of time you have been involved with CUPA.',
-        ));
+        if($this->_type == 'volunteer') {
+            $involvement = array('0-1 year' => '0-1 year', '2-4 years' => '2-4 years', '5-9 years' => '5-9 years', '10+ years' => '10+ years');
+            $this->addElement('select', 'involvement', array(
+                'validators' => array(
+                    array('InArray', false, array($involvement)),
+                ),
+                'required' => true,
+                'label' => 'Years Involved with CUPA:',
+                'multiOptions' => $involvement,
+                'description' => 'Select the amount of time you have been involved with CUPA.',
+            ));
 
-        $primary = array(
-            'Youth Outreach Events' => 'Youth Outreach Events',
-            'Running CUPA Leagues' => 'Running CUPA Leagues',
-            'Running CUPA Sponsored Tournaments' => 'Running CUPA Sponsored Tournaments',
-            'Helping with USA Ultimate Sponsord Tournaments' => 'Helping with USA Ultimate Sponsord Tournaments',
-            'Helping with General Volunteer Tasks' => 'Helping with General Volunteer Tasks',
-            'Large Event Help - Various Tasks' => 'Large Event Help - Various Tasks',
-            'Off-Field Event Help' => 'Off-Field Event Help',
-            'Public Relations Efforts' => 'Public Relations Efforts',
-            'Other' => 'Other',
-        );
+            $primary = array(
+                'Youth Outreach Events' => 'Youth Outreach Events',
+                'Running CUPA Leagues' => 'Running CUPA Leagues',
+                'Running CUPA Sponsored Tournaments' => 'Running CUPA Sponsored Tournaments',
+                'Helping with USA Ultimate Sponsord Tournaments' => 'Helping with USA Ultimate Sponsord Tournaments',
+                'Helping with General Volunteer Tasks' => 'Helping with General Volunteer Tasks',
+                'Large Event Help - Various Tasks' => 'Large Event Help - Various Tasks',
+                'Off-Field Event Help' => 'Off-Field Event Help',
+                'Public Relations Efforts' => 'Public Relations Efforts',
+                'Other' => 'Other',
+            );
 
-        $this->addElement('multiCheckbox', 'primary_interest', array(
-            'validators' => array(
-                array('InArray', false, array($primary)),
-            ),
-            'required' => true,
-            'label' => 'Primary Interest for Volunteering:',
-            'multiOptions' => $primary,
-            'description' => 'Select the activities that you would be interested in.',
-        ));
+            $this->addElement('multiCheckbox', 'primary_interest', array(
+                'validators' => array(
+                    array('InArray', false, array($primary)),
+                ),
+                'required' => true,
+                'label' => 'Primary Interest for Volunteering:',
+                'multiOptions' => $primary,
+                'description' => 'Select the activities that you would be interested in.',
+            ));
 
-        $this->addElement('textarea', 'other', array(
-            'filters' => array('StringTrim'),
-            'required' => false,
-            'label' => 'Other: Please Specify:',
-            'description' => 'Specify what you are interested in with volunteering.',
-        ));
+            $this->addElement('textarea', 'other', array(
+                'filters' => array('StringTrim'),
+                'required' => false,
+                'label' => 'Other: Please Specify:',
+                'description' => 'Specify what you are interested in with volunteering.',
+            ));
 
-        $this->addElement('textarea', 'experience', array(
-            'filters' => array('StringTrim'),
-            'required' => false,
-            'label' => 'Please list all past CUPA volunteer experience:',
-            'description' => 'List all your past volunteering experiences with CUPA.',
-        ));
+            $this->addElement('textarea', 'experience', array(
+                'filters' => array('StringTrim'),
+                'required' => false,
+                'label' => 'Please list all past CUPA volunteer experience:',
+                'description' => 'List all your past volunteering experiences with CUPA.',
+            ));
+
+            $elements = array('email', 'first_name', 'last_name', 'phone', 'involvement', 'primary_interest', 'other', 'experience');
+        } else {
+            $this->addElement('textarea', 'comment', array(
+                'filters' => array('StringTrim'),
+                'required' => false,
+                'label' => 'Enter any comments',
+            ));
+
+            $elements = array('email', 'first_name', 'last_name', 'phone', 'comment');
+        }
 
         $this->addElement('button', 'register', array(
             'type' => 'submit',
-            'label' => 'Register as a Volunteer',
+            'label' => ($this->_type == 'volunteer') ? 'Register as a Volunteer' : 'Sign up for Opportunity',
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
             'escape' => false,
             'icon' => 'user',
@@ -126,17 +140,16 @@ class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
             'escape' => false,
         ));
 
-
         $this->addDisplayGroup(
-            array('email', 'first_name', 'last_name', 'phone', 'involvement','primary_interest', 'other', 'experience'),
+            $elements,
             'volunteer_edit_form',
             array(
-                'legend' => 'Volunteer Registration'
+                'legend' => ($this->_type == 'volunteer') ? 'Volunteer Registration' : 'Opportunity Sign up',
             )
         );
 
         $this->addDisplayGroup(
-            array('create', 'cancel'),
+            array('register', 'cancel'),
             'volunteer_edit_actions',
             array(
                 'disableLoadDefaultDecorators' => true,

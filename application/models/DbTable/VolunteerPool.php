@@ -50,4 +50,42 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
 
     	return $this->fetchRow($select);
     }
+
+    public function fetchMember($data)
+    {
+        $userTable = new Model_DbTable_User();
+        $user = $userTable->find(Zend_Auth::getInstance()->getIdentity())->current();
+        if($user->email != $data['email']) {
+            // if logged in email equals email find by email
+            $member = $this->fetchVolunteerFromEmail($data['email']);
+        } else {
+            $member = $this->fetchVolunteerFromId($user->id);
+        }
+
+        if($member) {
+            return $member;
+        }
+
+        if($user->email != $data['email']) {
+            // modify the data
+            $data['name'] = $data['first_name'] . ' ' . $data['last_name'];
+            unset($data['first_name']);
+            unset($data['last_name']);
+            unset($data['comment']);
+
+            $data['involvement'] = (empty($data['involvement'])) ? 'null' : $data['involvement'];
+            $data['primary_interest'] = (empty($data['primary_interest'])) ? 'null' : $data['primary_interest'];
+            $data['experience'] = (empty($data['experience'])) ? 'null' : $data['experience'];
+
+            $id = $this->insert($data);
+
+            return $this->find($id)->current();
+        } else {
+            $row = $this->createRow();
+            $row->user_id = $user->id;
+            $row->save();
+
+            return $row;
+        }
+    }
 }
