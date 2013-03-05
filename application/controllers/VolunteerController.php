@@ -13,6 +13,16 @@ class VolunteerController extends Zend_Controller_Action
 
     public function registerAction()
     {
+        $volunteerPoolTable = new Model_DbTable_VolunteerPool();
+
+        if($this->view->user) {
+            $volunteer = $volunteerPoolTable->fetchVolunteerFromId($this->view->user->id);
+            if($volunteer) {
+                $this->renderScript('volunteer/register_done.phtml');
+                return;
+            }
+        }
+
         $form = new Form_Volunteer($this->view->user);
 
         $request = $this->getRequest();
@@ -38,7 +48,6 @@ class VolunteerController extends Zend_Controller_Action
                 unset($data['first_name']);
                 unset($data['last_name']);
 
-                $volunteerPoolTable = new Model_DbTable_VolunteerPool();
                 $volunteerPoolTable->addVolunteer($data);
 
                 $this->view->message('You have successfully signed up to be a volunteer, you might be contacted for upcoming opportunities.');
@@ -251,12 +260,12 @@ class VolunteerController extends Zend_Controller_Action
 
             set_time_limit(0);
 
-            echo "name,email,phone,comment\n";
+            echo "name,email,phone,involvement,primary_interest,experience,comment\n";
             foreach($this->view->members as $member) {
                 $name = (empty($members['vname'])) ? $member['first_name'] . ' ' . $member['last_name'] : $member['vname'];
                 $email = (empty($members['vemail'])) ? $member['email'] : $member['vemail'];
                 $phone = (empty($members['vphone'])) ? $member['phone'] : $member['vphone'];
-                echo "{$name},{$email},{$phone}," . addslashes($member['comment']) . "\n";
+                echo "{$name},{$email},{$phone},{$member['involvement']},{$member['primary_interest']},{$member['experience']}," . addslashes($member['comment']) . "\n";
             }
             exit();
         }

@@ -18,16 +18,37 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
 		} else {
 			$volunteer = $this->fetchVolunteerFromEmail($userData['email']);
             $user = $userTable->fetchUserBy('email', $userData['email']);
-		}
 
-		if(!empty($volunteer)) {
-			return $volunteer;
+            if(empty($volunteer)) {
+                $volunteer = $this->fetchVolunteerFromId($user->id);
+            }
 		}
 
         if($user) {
             $userData['user_id'] = $user->id;
             unset($userData['name']);
             unset($userData['email']);
+            unset($userData['phone']);
+        }
+
+        $interests = array();
+        foreach($userData['primary_interest'] as $interest) {
+            if($interest != 'Other') {
+                $interests[] = $interest;
+            } else {
+                $interests[] = $userData['other'];
+            }
+        }
+        $userData['primary_interest'] = implode(',', $interests);
+        unset($userData['other']);
+
+        if(!empty($volunteer)) {
+            foreach(array('experience', 'primary_interest', 'involvement') as $key) {
+                $volunteer->$key = (empty($volunteer->$key)) ? $userData[$key] : $volunteer->$key;
+            }
+            $volunteer->save();
+
+            return $volunteer;
         }
 
 		$id = $this->insert($userData);

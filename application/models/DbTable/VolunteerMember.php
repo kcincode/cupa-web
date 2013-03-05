@@ -10,7 +10,7 @@ class Model_DbTable_VolunteerMember extends Zend_Db_Table
         $select = $this->getAdapter()
                        ->select()
                        ->from(array('vm' => $this->_name), array('comment'))
-                       ->joinLeft(array('vp' => 'volunteer_pool'), 'vp.id = vm.volunteer_pool_id', array('name AS vname', 'email AS vemail', 'phone AS vphone'))
+                       ->joinLeft(array('vp' => 'volunteer_pool'), 'vp.id = vm.volunteer_pool_id', array('name AS vname', 'email AS vemail', 'phone AS vphone', 'involvement', 'primary_interest', 'experience'))
                        ->joinLeft(array('u' => 'user'), 'u.id = vp.user_id', array('first_name', 'last_name', 'email'))
                        ->joinLeft(array('up' => 'user_profile'), 'up.user_id = u.id', array('phone'))
                        ->where('volunteer_id = ?', $volunteerId);
