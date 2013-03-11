@@ -15,7 +15,7 @@
         <div class="span2">
             <?php echo $this->partial('admin/menu.phtml', array('active' => 'duplicates')); ?>
         </div>
-        <div class="span9">
+        <div class="span10">
             <h2>Duplicate User Accounts</h2>
             <?php if(count($this->users) > 0): ?>
             <?php foreach($this->users as $user): ?>
@@ -25,11 +25,11 @@
                     <thead>
                         <tr>
                             <th class="span1">Username</th>
-                            <th class="span1">Email</th>
+                            <th class="span2">Email</th>
                             <th class="span1" style="text-align: center;">Requested</th>
-                            <th class="span1" style="text-align: center;">Activated</th>
-                            <th class="span1" style="text-align: center;">Last Login</th>
-                            <th class="span1">Action</th>
+                            <th class="span2" style="text-align: center;">Activated</th>
+                            <th class="span2" style="text-align: center;">Last Login</th>
+                            <th class="span2">Action</th>
                         </tr>
                     </thead>
                     <tbody>
