@@ -7,6 +7,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
+            <a class="btn" href="<?php echo $this->url(array('user_id' => $this->data['id']), 'page_profile_public'); ?>">Public Profile</a>
             <a class="btn" href="<?php echo $this->url(array(), 'profile_add_minor'); ?>">Add Minor</a>
             <a class="btn" href="<?php echo $this->url(array(), 'profile_add_contact'); ?>">Add Emergency Contact</a>
             <a class="btn" href="<?php echo $this->url(array(), 'profile_password'); ?>">Change Password</a>

@@ -199,6 +199,8 @@ class LeagueController extends Zend_Controller_Action
             if($this->view->league['is_archived'] == 1) {
                 $this->view->message('This league page has been archived and therefore is not viewable to users.', 'error');
             }
+        } else {
+            $this->_redirect('leagues');
         }
     }
 
@@ -2291,8 +2293,6 @@ class LeagueController extends Zend_Controller_Action
             }
 
             if($form->isValid($post)) {
-                $data = $form->getValues();
-
                 $userWaiverTable->updateWaiver($this->view->user->id, $this->view->league->year, 1, $this->view->user->id);
                 $this->view->message('User waiver signed', 'success');
                 $this->_redirect('league/' . $leagueId . '/register_success');
@@ -2300,6 +2300,54 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $this->view->form = $form;
+    }
+    
+    public function waiveryearAction()
+    {
+        $year = $this->getRequest()->getUserParam('year');
+        
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find(1)->current();
+        $this->view->league->year = $year;
+        
+        // redirect to the profile page if user is not logged in
+        if(!isset($this->view->user)) {
+            $this->_redirect('profile');
+        }
+
+        // make sure user is over 18
+        $userProfileTable = new Model_DbTable_UserProfile();
+        if(!$userProfileTable->isEighteenOrOver($this->view->user->id)) {
+            $this->view->message('You are not able to sign a waiver since you are younger than 18.', 'info');
+            $this->_redirect('profile');
+        }
+
+        $userWaiverTable = new Model_DbTable_UserWaiver();
+        if($userWaiverTable->hasWaiver($this->view->user->id, $year)) {
+           $this->view->message('You have already signed a waiver for the ' . $year . ' year.', 'info');
+           $this->_redirect('profile');
+        }
+
+        $form = new Form_LeagueWaiver($this->view->user);
+
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->view->message('You disagreed with the waiver.', 'error');
+                $this->_redirect('profile/status');
+            }
+
+            if($form->isValid($post)) {
+                $userWaiverTable->updateWaiver($this->view->user->id, $year, 1, $this->view->user->id);
+                $this->view->message('User waiver signed', 'success');
+                $this->_redirect('profile/status');
+            }
+        }
+
+        $this->view->form = $form;
+        
+        $this->renderScript('league/waiver.phtml');
     }
 
     public function waitlistAction()

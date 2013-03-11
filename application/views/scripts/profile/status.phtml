@@ -6,7 +6,12 @@
                 <?php echo ucwords($this->escape(implode(', ', $this->data['status']['roles']))); ?>
             </dd>
             <dt>Current Waiver:</dt>
-            <dd><?php echo ($this->data['status']['waiver'] === true) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?></dd>
+            <dd>
+                <?php echo ($this->data['status']['waiver'] === true) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span>'; ?>
+                <?php if($this->data['status']['waiver'] === false): ?>
+                ( <a href="<?php echo $this->url(array('year' => date('Y')), 'year_waiver'); ?>">Sign Online Waiver</a> )
+                <?php endif; ?>
+            </dd>
             <dt>Profile Complete:</dt>
             <dd><?php echo ($this->data['status']['profile'] === true) ? '<span class="text-success">Yes</span>' : '<span class="text-error">No</span> ( <a href="' . $this->url(array('state' => 'personal'), 'profile') . '">Update Profile</a> )'; ?></dd>
             <dt>Money Owed:</dt>
