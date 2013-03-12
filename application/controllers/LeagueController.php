@@ -1787,13 +1787,6 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-
-        // stop if user not logged in
-        if(!Zend_Auth::getInstance()->hasIdentity()) {
-            $this->renderScript('league/auth.phtml');
-            return;
-        }
-
         $this->view->waitlist = ($this->view->isLeagueRegistrationFull($leagueId)) ? true : false;
 
         // do registration checks to make sure a user is able to register
@@ -2301,15 +2294,15 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->form = $form;
     }
-    
+
     public function waiveryearAction()
     {
         $year = $this->getRequest()->getUserParam('year');
-        
+
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find(1)->current();
         $this->view->league->year = $year;
-        
+
         // redirect to the profile page if user is not logged in
         if(!isset($this->view->user)) {
             $this->_redirect('profile');
@@ -2346,7 +2339,7 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $this->view->form = $form;
-        
+
         $this->renderScript('league/waiver.phtml');
     }
 

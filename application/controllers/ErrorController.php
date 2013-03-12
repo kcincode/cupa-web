@@ -63,6 +63,12 @@ class ErrorController extends Zend_Controller_Action
         $this->view->request   = $errors->request;
     }
 
+    public function authAction()
+    {
+        // change the layout file for all pages.
+        $this->_helper->_layout->setLayout('layout');
+    }
+
     public function getLog()
     {
         $bootstrap = $this->getInvokeArg('bootstrap');

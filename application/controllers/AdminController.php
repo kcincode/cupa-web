@@ -4,13 +4,9 @@ class AdminController extends Zend_Controller_Action
 {
     public function init()
     {
-        if(!Zend_Auth::getInstance()->hasIdentity()) {
-            $this->_forward('auth');
-        } else {
-            if(!$this->view->hasRole('admin') and !$this->view->hasRole('manager') and !$this->view->hasRole('volunteer') and !$this->view->isLeagueDirector()) {
-                $this->view->message('You do not have access to the management features.');
-                $this->_redirect('/');
-            }
+        if(!$this->view->hasRole('admin') and !$this->view->hasRole('manager') and !$this->view->hasRole('volunteer') and !$this->view->isLeagueDirector()) {
+            $this->view->message('You do not have access to the management features.');
+            $this->_redirect('/');
         }
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
@@ -30,10 +26,6 @@ class AdminController extends Zend_Controller_Action
         $this->view->overall = $userAccessLogTable->fetchReportData('all');
         $this->view->month = $userAccessLogTable->fetchReportData('month');
 
-    }
-
-    public function authAction()
-    {
     }
 
     public function duplicatesAction()
@@ -382,84 +374,4 @@ class AdminController extends Zend_Controller_Action
                 return 'done';
         }
     }
-    /*
-
-        $leagueId = $this->getRequest()->getUserParam('league_id');
-        $this->view->state = $this->getRequest()->getUserParam('state');
-
-        $leagueTable = new Model_DbTable_League();
-        $this->view->league = $leagueTable->find($leagueId)->current();
-
-        if(!$this->view->league) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
-        if(!$this->view->isLeagueDirector($leagueId)) {
-            $this->_redirect('league/' . $leagueId);
-        }
-
-        $session = new Zend_Session_Namespace('move_players');
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-
-        if($this->view->state == 'players') {
-            unset($session->players);
-            $this->view->players = $leagueMemberTable->fetchPlayersByLeague($leagueId);
-
-            if($this->getRequest()->isPost()) {
-                $post = $this->getRequest()->getPost();
-
-                if(!isset($post['players'])) {
-                    $this->view->message('You must select at least one player to move.', 'warning');
-                } else {
-                    $session->players = $post['players'];
-                    $this->_redirect('league/' . $leagueId . '/move/target');
-                }
-            }
-        } else if($this->view->state == 'target') {
-            if(!isset($session->players)) {
-                $this->_redirect('league/' . $leagueId . '/move/players');
-            }
-
-            unset($session->target);
-
-            if($this->getRequest()->isPost()) {
-                $post = $this->getRequest()->getPost();
-                if(!isset($post['target']) or $post['target'] == 0) {
-                    $this->view->message('You must select a league to move the players to.', 'warning');
-                } else {
-                    $session->target = $post['target'];
-                    $this->_redirect('league/' . $leagueId . '/move/confirm');
-                }
-            }
-
-            $this->view->leagues = $leagueTable->fetchAllCurrentLeagues();
-
-        } else if($this->view->state == 'confirm') {
-            if(!isset($session->target)) {
-                $this->_redirect('league/' . $leagueId . '/move/target');
-            }
-
-            if($this->getRequest()->isPost()) {
-                $post = $this->getRequest()->getPost();
-                if(isset($post['confirm'])) {
-                    foreach($session->players as $player) {
-                        $member = $leagueMemberTable->find($player)->current();
-                        $member->league_team_id = null;
-                        $member->league_id = $session->target;
-                        $member->modified_at = date('Y-m-d H:i:s');
-                        $member->modified_by = $this->view->user->id;
-                        $member->save();
-                    }
-                    $this->view->message('Players moved', 'success');
-                    $session->unsetAll();
-                    $this->_redirect('league/' . $leagueId . '/move');
-                }
-            }
-
-            $this->view->players = $session->players;
-            $this->view->target = $session->target;
-        }
-        */
-
 }

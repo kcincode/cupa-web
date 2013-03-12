@@ -2,12 +2,45 @@
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
+    private $_acl = null;
+    private $_auth = null;
+
+    /**
+     * getAcl will just return the acl object
+     *
+     * @return Zend_Acl
+     */
+    public function getAcl()
+    {
+        // return he acl object
+        return $this->_acl;
+    }
+
     protected function _initAutoload()
     {
         $moduleLoader = new Zend_Application_Module_Autoloader(array(
             'namespace' => '',
             'basePath' => APPLICATION_PATH,
         ));
+
+        // setup the users role in the system
+        $this->bootstrap('db');
+        $this->_acl = new Model_Acl();
+        $this->_auth = Zend_Auth::getInstance();
+
+        Zend_Registry::set('role', 'guest');
+        if ($this->_auth->hasIdentity()) {
+            $rolesTable = new Model_DbTable_Role();
+            $role = $rolesTable->fetchUserRole($this->_auth->getIdentity());
+            if ($role) {
+                Zend_Registry::set('role', $role);
+            } else {
+                Zend_Registry::set('role', 'user');
+            }
+        }
+
+        $fc = Zend_Controller_Front::getInstance();
+        $fc->registerPlugin(new Plugin_AccessCheck($this->_acl, $this->_auth));
 
         return $moduleLoader;
     }

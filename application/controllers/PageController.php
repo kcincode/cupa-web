@@ -15,8 +15,14 @@ class PageController extends Zend_Controller_Action
         // link to the db table
         $newsTable = new Model_DbTable_News();
 
-        // get all news and seperate by type
+        // initialize news array
+        $newsCategoryTable = new Model_DbTable_NewsCategory();
         $allNews = array();
+        foreach($newsCategoryTable->fetchAll() as $category) {
+            $allNews[$category->name] = array();
+        }
+
+        // populate the news array
         foreach($newsTable->fetchNewsByCategory('all') as $news) {
             $allNews[$news['category']][] = $news;
         }
@@ -868,8 +874,7 @@ class PageController extends Zend_Controller_Action
         $this->view->news = $newsTable->fetchNewsByCategory($category, false, true);
 
         if(!count($this->view->news)) {
-            // throw a 404 error there is no news returned
-            throw new Zend_Controller_Dispatcher_Exception('Category does not exist');
+            $this->_redirect('allnews');
         }
 
         $session = new Zend_Session_Namespace('newsbackbutton');
