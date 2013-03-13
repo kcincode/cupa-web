@@ -22,12 +22,12 @@ class My_View_Helper_IsLeagueDirector extends Zend_View_Helper_Abstract
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         if($leagueId) {
             foreach($leagueMemberTable->fetchAllByType($leagueId, 'director') as $member) {
-                if($member->user_id == $this->view->user->id) {
+                if($member->user_id == Zend_Auth::getInstance()->getIdentity()) {
                     return true;
                 }
             }
         } else {
-            return $leagueMemberTable->isALeagueDirector($this->view->user->id);
+            return $leagueMemberTable->isALeagueDirector(Zend_Auth::getInstance()->getIdentity());
         }
 
         return false;

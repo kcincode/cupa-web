@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
+            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_minutes_add'); ?>"><i class="icon-list"></i> Add Minutes</a>
             <?php endif; ?>
         </div>
@@ -20,7 +20,7 @@
 
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#visible" data-toggle="tab">Meeting Minutes</a></li>
-                <?php if(($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)) and !empty($this->minutes['hidden'])): ?>
+                <?php if(($this->hasRole('admin') or $this->hasRole('manager')) and !empty($this->minutes['hidden'])): ?>
                 <li><a href="#hidden" data-toggle="tab">Hidden Meeting Minutes</a></li>
                 <?php endif; ?>
             </ul>
@@ -31,7 +31,7 @@
                             <tr>
                                 <th>When</th>
                                 <th>Where</th>
-                                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                                <?php if($this->hasRole('admin') or $this->hasRole('manager') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
                                 <th>Actions</th>
                                 <?php else: ?>
                                 <th>Download</th>
@@ -49,10 +49,12 @@
                                         <i class="icon-download"></i> Download
                                     </a>
                                     <?php endif; ?>
-                                    <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                                    <?php if($this->hasRole('admin') or $this->hasRole('manager') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
                                     <a class="btn btn-small btn-info" href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_edit'); ?>">
                                         <i class="icon-edit icon-white"></i> Edit
                                     </a>
+                                    <?php endif; ?>
+                                    <?php if($this->hasRole('admin')): ?>
                                     <a class="btn btn-small btn-danger" onclick="return confirm('Are you sure you would like to delete these minutes?');"href="<?php echo $this->url(array('minute' => $minute['id']), 'page_minutes_delete'); ?>">
                                         <i class="icon-trash icon-white"></i> Delete
                                     </a>

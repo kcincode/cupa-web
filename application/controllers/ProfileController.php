@@ -50,6 +50,7 @@ class ProfileController extends Zend_Controller_Action
     {
         $user->first_name = $data['first_name'];
         $user->last_name = $data['last_name'];
+        $user->email = $data['email'];
         $user->updated_at = date('Y-m-d H:i:s');
         $user->save();
 

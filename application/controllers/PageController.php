@@ -286,6 +286,7 @@ class PageController extends Zend_Controller_Action
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('editor') and
              !$this->view->hasRole('editor', $page->id) and
+             !$this->view->hasRole('manager') and
              !$this->view->hasRole('admin')))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -441,6 +442,7 @@ class PageController extends Zend_Controller_Action
         if((!Zend_Auth::getInstance()->hasIdentity() or
             (!$this->view->hasRole('admin') and
              !$this->view->hasRole('editor') and
+             !$this->view->hasRole('manager') and
              !$this->view->hasRole('edior', $page->id)))) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -989,6 +991,11 @@ class PageController extends Zend_Controller_Action
         if($this->getRequest()->isPost()) {
 
             $post = $this->getRequest()->getPost();
+
+            if(isset($post['cancel'])) {
+                $this->_redirect('/news/' . $news->slug);
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
 

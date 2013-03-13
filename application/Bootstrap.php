@@ -74,15 +74,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view->title = 'CUPA - Cincinnati Ultimate Players Association';
         $view->headTitle($view->title);
 
-        /*
-        $view->isMobile = Model_UserAgent::isMobile();
-        if($view->isMobile) {
-            $this->bootstrap('layout');
-            $layout = $this->getResource('layout');
-            $layout->setLayout('mobile');
-        }
-*/
-
         // make sure that the db is loaded
         $this->bootstrap('db');
 
@@ -98,6 +89,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 $view->isImpersonated = false;
             }
         }
+
+        //$view->acl = $this->_acl;
 
         return $view;
     }

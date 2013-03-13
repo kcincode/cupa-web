@@ -35,7 +35,7 @@ class Form_News extends Twitter_Bootstrap_Form_Horizontal
             'label' => 'Category:',
             'description' => 'This will be the box that it appears in',
             'multiOptions' => $categories,
-            'value' => (empty($this->_news->category)) ? null : $this->_news->category,
+            'value' => (empty($this->_news->category_id)) ? null : $this->_news->category_id,
         ));
 
         $this->addElement('text', 'title', array(

@@ -4,11 +4,6 @@ class AdminController extends Zend_Controller_Action
 {
     public function init()
     {
-        if(!$this->view->hasRole('admin') and !$this->view->hasRole('manager') and !$this->view->hasRole('volunteer') and !$this->view->isLeagueDirector()) {
-            $this->view->message('You do not have access to the management features.');
-            $this->_redirect('/');
-        }
-
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
     }
 
@@ -18,10 +13,6 @@ class AdminController extends Zend_Controller_Action
 
     public function browserAction()
     {
-        if(!$this->view->hasRole('admin')) {
-            $this->_forward('auth');
-        }
-
         $userAccessLogTable = new Model_DbTable_UserAccessLog();
         $this->view->overall = $userAccessLogTable->fetchReportData('all');
         $this->view->month = $userAccessLogTable->fetchReportData('month');
@@ -30,10 +21,6 @@ class AdminController extends Zend_Controller_Action
 
     public function duplicatesAction()
     {
-        if(!$this->view->hasRole('admin')) {
-            $this->_forward('auth');
-        }
-
         $user = $this->getRequest()->getParam('user');
         $userTable = new Model_DbTable_User();
         if($user) {
@@ -249,10 +236,6 @@ class AdminController extends Zend_Controller_Action
 
     public function volunteerAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
-            $this->_forward('auth');
-        }
-
         $page = $this->getRequest()->getUserParam('page');
 
         $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
@@ -262,7 +245,6 @@ class AdminController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
 
-            ////apache_setenv('no-gzip', '1');
             ob_end_clean();
 
             header('Pragma: public');

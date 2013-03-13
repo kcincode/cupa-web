@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
+            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_pickup_add'); ?>"><i class="icon-plus"></i> Add Pickup</a>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_tournament_add'); ?>"><i class="icon-plus"></i> Add Tournament</a>
             <?php endif; ?>
@@ -39,6 +39,8 @@
             <div class="pull-right">
                 <?php if($this->hasRole('admin') or $this->hasRole('manager') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
                 <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                <?php endif; ?>
+                <?php if($this->hasRole('admin')): ?>
                 <a class="btn btn-danger btn-mini" onclick="if(!confirm('Are you sure you want to delete the pickup <?php echo str_replace("'", "\'", $pickup['title']); ?>?')) { return false; } " href="<?php echo $this->url(array('pickup' => $pickup['id']), 'page_pickup_delete'); ?>"><i class="icon-trash icon-white"></i> Delete</a>
                 <?php endif; ?>
             </div>
