@@ -17,8 +17,4 @@
                 <li<?php echo ($this->active == 'pages') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_pages'); ?>">Pages</a></li>
                 <li<?php echo ($this->active == 'league_players') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_league_players'); ?>">League Players</a></li>
                 <?php endif; ?>
-
-                <?php if($this->hasRole('admin') or $this->hasRole('manager') or $this->hasRole('volunteer')): ?>
-                <li<?php echo ($this->active == 'volunteers') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_volunteer'); ?>">Volunteers</a></li>
-                <?php endif; ?>
             </ul>

@@ -234,47 +234,6 @@ class AdminController extends Zend_Controller_Action
         $this->view->form = $form;
     }
 
-    public function volunteerAction()
-    {
-        $page = $this->getRequest()->getUserParam('page');
-
-        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
-        $volunteers = $leagueAnswerTable->fetchAllVolunteers();
-        if($this->getRequest()->getParam('export')) {
-            // disable the layout
-            $this->_helper->layout()->disableLayout();
-            $this->_helper->viewRenderer->setNoRender(true);
-
-            ob_end_clean();
-
-            header('Pragma: public');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-            header('Cache-Control: public', FALSE);
-            header('Content-Description: File Transfer');
-            header('Content-type: application/octet-stream');
-            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
-                header('Content-Type: application/force-download');
-            }
-            header('Accept-Ranges: bytes');
-            header('Content-Disposition: attachment; filename="CUPA-Volunteers.csv";');
-            header('Content-Transfer-Encoding: binary');
-
-            set_time_limit(0);
-
-            echo "first_name,last_name,email\n";
-            foreach($volunteers as $volunteer) {
-                $email = (empty($volunteer['email'])) ? $volunteer['parent_email'] : $volunteer['email'];
-                echo "{$volunteer['first_name']},{$volunteer['last_name']},{$email}\n";
-            }
-            exit();
-        }
-
-        $this->view->volunteers = Zend_Paginator::factory($volunteers);
-        $this->view->volunteers->setCurrentPageNumber($page);
-        $this->view->volunteers->setItemCountPerPage(25);
-    }
-
     public function leagueplayersAction()
     {
         $session = new Zend_Session_Namespace('admin_league_move');
