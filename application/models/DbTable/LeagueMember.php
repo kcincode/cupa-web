@@ -141,6 +141,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         $data = array();
 
         $leagueInformationTable = new Model_DbTable_LeagueInformation();
+        $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $leagueInfo = $leagueInformationTable->fetchInformation($leagueId);
         if(empty($leagueInfo->contact_email)) {
             $data['all-directors'] = $this->fetchMemberEmails($leagueId, 'director');
@@ -152,8 +153,12 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
             if($isDirector) {
                 $data['all-players'] = $this->fetchMemberEmails($leagueId, 'player');
                 $data['all-captains'] = $this->fetchMemberEmails($leagueId, 'captain');
-            }
+                foreach($leagueTeamTable->fetchAllTeams($leagueId) as $team) {
+                    $key = str_replace(' ', '-', strtolower($team->name));
+                    $data[$key] = $this->fetchMemberEmails($leagueId, 'player', $team->id);
+                }
 
+            }
 
             $teamId = $this->fetchLeagueTeamFromUser($leagueId, $user);
             if(is_numeric($teamId)) {

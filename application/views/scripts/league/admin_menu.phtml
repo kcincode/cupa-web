@@ -1,5 +1,3 @@
-<div class="btn-group">
-    <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Emails</a>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_shirts'); ?>">Shirts/Jerseys</a>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_emergency'); ?>">Emergency List</a>
     <?php if($this->userTeams): ?>
@@ -9,4 +7,3 @@
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_waitlist'); ?>">Waitlist</a>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id, 'all' => null), 'league_status'); ?>">Waivers / Paid Status</a>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_manage'); ?>">Manage Players</a>
-</div>

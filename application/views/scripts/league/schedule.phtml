@@ -49,7 +49,7 @@
                         <span class="<?php echo $this->displayLeagueGameOutcome($game['id'], $game['away_team_id']);?>">
                             <?php echo $this->escape($game['away_team']); ?>
                         </span>
-                        at
+                        <em class="muted">vs</em>
                         <span class="<?php echo $this->displayLeagueGameOutcome($game['id'], $game['home_team_id']);?>">
                             <?php echo $this->escape($game['home_team']); ?>
                         </span>
