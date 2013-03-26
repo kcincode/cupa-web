@@ -21,7 +21,11 @@
             <?php echo $this->page->content; ?>
         </div>
         <div class="span3 page-links">
+            <?php if($this->page->name == 'daytonultimate'): ?>
+            <?php echo $this->partial('league-page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+            <?php else: ?>
             <?php echo $this->partial('page-links.phtml', array('links' => $this->links, 'page' => $this->page)); ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>
