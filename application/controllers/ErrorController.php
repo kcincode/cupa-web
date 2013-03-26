@@ -35,30 +35,33 @@ class ErrorController extends Zend_Controller_Action
                 // 404 error -- controller or action not found
                 $this->getResponse()->setHttpResponseCode(404);
                 $priority = Zend_Log::NOTICE;
+                $logType = 'notice';
                 $this->view->message = 'Page not found';
                 break;
             default:
                 // application error
                 $this->getResponse()->setHttpResponseCode(500);
                 $priority = Zend_Log::CRIT;
+                $logType = 'error';
                 $this->view->message = 'Application error';
                 break;
         }
 
         // Log exception, if logger available
-        $log = $this->getLog();
+        $log = $this->getLog($logType);
         if ($log) {
-            $log->log($this->view->message, $priority, $errors->exception);
-            $log->log('Request Parameters', $priority, $errors->request->getParams());
+            $log->log('***************************************************************', Zend_Log::INFO);
+            $log->log($this->view->message, $priority);
+            $log->log($this->_url, $priority);
+            $log->log($errors->exception, $priority);
+            $log->log($this->_params, $priority);
+            $log->log('***************************************************************', Zend_Log::INFO);
         }
 
         // conditionally display exceptions
         if ($this->getInvokeArg('displayExceptions') == true) {
             $this->view->exception = $errors->exception;
         }
-
-        $pageErrorTable = new Model_DbTable_PageError();
-        $pageErrorTable->log($this->_url, $this->_params, '404', $errors->exception);
 
         $this->view->request   = $errors->request;
     }
@@ -69,13 +72,9 @@ class ErrorController extends Zend_Controller_Action
         $this->_helper->_layout->setLayout('layout');
     }
 
-    public function getLog()
+    public function getLog($logType)
     {
-        $bootstrap = $this->getInvokeArg('bootstrap');
-        if (!$logFile = $bootstrap->getOption('errorLogName')) {
-            return false;
-        }
-        $log = new Zend_Log(new Zend_Log_Writer_Stream(APPLICATION_PATH . "/logs/" . $logFile));
+        $log = new Zend_Log(new Zend_Log_Writer_Stream(APPLICATION_PATH . '/logs/' . $logType . '.log'));
         return $log;
     }
 }

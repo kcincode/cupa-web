@@ -56,10 +56,9 @@
             <p>The cost of this league is: <strong><span class="text-info">$ <?php echo $this->escape($this->cost); ?></span></strong></p>
             <?php if(!empty($this->paypal)): ?>
             <p>If you are not paying online, bring your payment with you on the first night or you risk being removed from the league.</p>
-
             <p>
-                    Use this button to make a payment via paypal:
-                    <?php echo $this->paypal; ?>
+                Use this button to make a payment via paypal:
+                <?php echo $this->paypal; ?>
             </p>
             <?php else: ?>
             <p>Please bring your payment with you on the first night or you risk being removed from the league.</p>
