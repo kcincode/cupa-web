@@ -41,15 +41,16 @@
                         <?php endforeach; ?>
                     </div>
                     <div class="span2">
-                        <h1><small>
-                        <?php echo $this->getLeagueTeamRecord($team->league_id, $team->id); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
-                    </small><h1>
+                        <h1>
+                            <small>
+                                <?php echo $this->getLeagueTeamRecord($team->league_id, $team->id); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
+                            </small>
+                        </h1>
                     </div>
                 </div>
                 <div id="team<?php echo $this->escape($team->id); ?>" class="collapse">
                     <div class="clearfix">&nbsp;</div>
-                    <div id="team<?php echo $this->escape($team->id);?>-players" class="span9">
-                    </div>
+                    <div id="team<?php echo $this->escape($team->id);?>-players" class="span9">&nbsp;</div>
                 </div>
                 <br/>
                 <hr/>

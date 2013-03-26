@@ -97,3 +97,8 @@ section p {
 .lower section.info h2 {
     color: #f90;
 }
+
+.lower section img {
+    width: 40px;
+    height: 40px;
+}
