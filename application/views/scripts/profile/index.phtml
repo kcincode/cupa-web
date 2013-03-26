@@ -2,16 +2,18 @@
 
 <?php if(Zend_Auth::getInstance()->hasIdentity()): ?>
 <div class="row actions">
-    <div class="offset1 span8 pull-left">
-        <h1><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
-    </div>
-    <div class="span2">
+    <div class="span11">
         <div class="btn-group pull-right">
             <a class="btn" href="<?php echo $this->url(array('user_id' => $this->data['id']), 'page_profile_public'); ?>">Public Profile</a>
             <a class="btn" href="<?php echo $this->url(array(), 'profile_add_minor'); ?>">Add Minor</a>
             <a class="btn" href="<?php echo $this->url(array(), 'profile_add_contact'); ?>">Add Emergency Contact</a>
             <a class="btn" href="<?php echo $this->url(array(), 'profile_password'); ?>">Change Password</a>
         </div>
+    </div>
+</div>
+<div class="row">
+    <div class="offset1 span8">
+        <h1><?php echo $this->escape($this->data['first_name'] . ' ' . $this->data['last_name']); ?></h1>
     </div>
 </div>
 <div class="page-content">
