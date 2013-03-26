@@ -34,9 +34,11 @@
                         <?php endforeach; ?>
                     </div>
                     <div class="span2">
-                        <h1><small>
-                        <?php echo $this->getLeagueTeamRecord($team['league_id'], $team['id']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
-                    </small><h1>
+                        <h1>
+                            <small>
+                                <?php echo $this->getLeagueTeamRecord($team['league_id'], $team['id']); ?> (<?php echo $this->getLeagueTeamPointDiff($this->league->id, $team['id']); ?>)
+                            </small>
+                        </h1>
                     </div>
                 </div>
                 <br/>

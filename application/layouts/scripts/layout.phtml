@@ -17,7 +17,9 @@
     </head>
     <body>
         <header>
-            <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">&nbsp;</a>
+            <div id="logo-link" class="home-image">
+                <a class="home-image" href="<?php echo $this->url(array(), 'page_home');?>">&nbsp;</a>
+            </div>
             <div class="menu">
                 <?php echo $this->partial('top-menu.phtml', array('user' => $this->user, 'isImpersonated' => $this->isImpersonated)); ?>
             </div>

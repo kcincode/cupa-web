@@ -34,11 +34,12 @@ header ul li a:hover {
     color: #040;
 }
 
-header .home-image {
+header a.home-image {
     text-decoration: none;
     display: block;
     width: 320px;
-    height: 121px;
+    height: 118px;
+    border: none;
 }
 
 #main-content {
