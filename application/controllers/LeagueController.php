@@ -210,11 +210,16 @@ class LeagueController extends Zend_Controller_Action
         $leagueTable = new Model_DbTable_League();
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
 
+        $season = $leagueSeasonTable->fetchName($league->season);
+
+        if($this->view->isLeagueDirector($leagueId)) {
+            $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($leagueId, true, false, false, true)));
+        }
+
         $league = $leagueTable->find($leagueId)->current();
         $league->is_archived = ($league->is_archived == 1) ? 0 : 1;
         $league->save();
 
-        $season = $leagueSeasonTable->fetchName($league->season);
         $this->_redirect('leagues/' . $season . '/' . $this->view->slugify($this->view->leaguename($league->id, true, false, false, true)));
     }
 
