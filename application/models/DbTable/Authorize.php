@@ -176,14 +176,13 @@ class Model_DbTable_Authorize extends Zend_Db_Table
         $tournament = $tournamentTable->fetchTournament($year, $name, true);
 
         $tournamentMemberTable = new Model_DbTable_TournamentMember();
-        if($userId) {
+        if($userId && isset($tournament->id)) {
             foreach($tournamentMemberTable->fetchAllDirectors($tournament->id) as $member) {
                 if($member->user_id == $userId) {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
