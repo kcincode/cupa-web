@@ -995,7 +995,7 @@ class LeagueController extends Zend_Controller_Action
             }
         }
 
-        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, todayBtn: true, minuteStep: 30, format: \'mm/dd/yyyy hh:ii\' });');
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, todayBtn: true, minuteStep: 15, format: \'mm/dd/yyyy hh:ii\' });');
         $this->view->form = $form;
     }
 
@@ -1003,6 +1003,9 @@ class LeagueController extends Zend_Controller_Action
     {
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $gameId = $this->getRequest()->getUserParam('game_id');
+
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
 
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1057,6 +1060,7 @@ class LeagueController extends Zend_Controller_Action
             }
         }
 
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, todayBtn: true, minuteStep: 15, format: \'mm/dd/yyyy hh:ii\' });');
         $this->view->form = $form;
     }
 
