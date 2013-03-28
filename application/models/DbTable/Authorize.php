@@ -65,15 +65,18 @@ class Model_DbTable_Authorize extends Zend_Db_Table
         return false;
     }
 
-    private function canEditPage($userId, $pageId = null)
+    private function canEditPage($userId, $pageName = null)
     {
         if($this->manage($userId)) {
             return true;
         }
 
         $userRoleTable = new Model_DbTable_UserRole();
-        if($pageId) {
-            return $userRoleTable->hasRole($userId, 'editor', $pageId);
+        if($pageName) {
+            $pageTable = new Model_DbTable_Page();
+            $page = $pageTable->fetchBy('name', $pageName);
+
+            return $userRoleTable->hasRole($userId, 'editor', $page->id);
         } else {
             return $userRoleTable->hasRole($userId, 'editor');
         }
