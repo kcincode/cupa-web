@@ -17,13 +17,13 @@ class My_View_Helper_HasRole extends Zend_View_Helper_Abstract
      * @param string $role
      * @return boolean
      */
-    public function hasRole($role)
+    public function hasRole($role, $pageId = null)
     {
         if(Zend_Auth::getInstance()->hasIdentity()) {
             // check in db
             $userRoleTable = new Model_DbTable_UserRole();
-            if($this->view->page and $role == 'editor') {
-                return $userRoleTable->hasRole(Zend_Auth::getInstance()->getIdentity(), $role, $this->view->page->id);
+            if($pageId and $role == 'editor') {
+                return $userRoleTable->hasRole(Zend_Auth::getInstance()->getIdentity(), $role, $page->id);
             } else {
                 return $userRoleTable->hasRole(Zend_Auth::getInstance()->getIdentity(), $role);
             }

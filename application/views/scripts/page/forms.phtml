@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
+            <?php if($this->isViewable('page_forms_add')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_forms_add'); ?>"><i class="icon-book"></i> Add Form</a>
             <?php endif; ?>
         </div>
@@ -21,7 +21,7 @@
             <ul class="nav nav-tabs">
                 <?php $i = 0; ?>
                 <?php foreach($this->forms as $year => $forms): ?>
-                <?php if($year >= date('Y') - 1 || ($this->hasRole('admin') or $this->hasRole('manager'))): ?>
+                <?php if($year >= date('Y') - 1 || $this->isViewable('page_forms_add')): ?>
                 <li<?php if($i == 0) { echo ' class="active"'; }?>><a href="#<?php echo $this->escape($year); ?>" data-toggle="tab"><?php echo $this->escape($year); ?></a></li>
                 <?php $i++; ?>
                 <?php endif; ?>
@@ -30,7 +30,7 @@
             <div class="tab-content">
                 <?php $i = 0; ?>
                 <?php foreach($this->forms as $year => $forms): ?>
-                <?php if($year >= date('Y') - 1 || ($this->hasRole('admin') or $this->hasRole('manager'))): ?>
+                <?php if($year >= date('Y') - 1 || $this->isViewable('page_forms_add')): ?>
                 <div class="tab-pane<?php if($i == 0) { echo ' active'; }?>" id="<?php echo $this->escape($year); ?>">
                     <?php if($year < date('Y') - 1): ?>
                     <div class="alert alert-warning">These forms are not visible to the public because of age.</div>
@@ -53,8 +53,10 @@
                                 <td><?php echo $this->filesize($form->size); ?></td>
                                 <td>
                                     <a class="btn btn-mini" href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><i class="icon-download"></i> Download</a>
-                                    <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
+                                    <?php if($this->isViewable('page_forms_edit')): ?>
                                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                                    <?php endif; ?>
+                                    <?php if($this->isViewable('page_forms_delete')): ?>
                                     <a class="btn btn-mini btn-danger" onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>"><i class="icon-trash icon-white"></i> Delete</a>
                                     <?php endif; ?>
                                 </td>
@@ -70,52 +72,3 @@
         </div>
     </div>
 </div>
-
-<!--
-<div class="admin-buttons">
-<?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
-    <a class="button" id="add-form" href="#">Add Form</a>
-    <div id="add-form-container"></div>
-<?php endif; ?>
-<p>
-    To download a form, click on the file icon.
-</p>
-</div>
-
-<div id="forms">
-    <?php $this->cycle(array('even', 'odd')); ?>
-    <?php foreach($this->forms as $year => $forms): ?>
-    <h2><a href="<?php echo $this->url(array('type' => 'all', 'year' => $year), 'page_forms'); ?>"><?php echo $this->escape($year); ?> Forms</a></h2>
-    <div class="row header">
-        <div class="name">Name</div>
-        <div class="type">Type</div>
-        <div class="size">Size</div>
-        <div class="actions">&nbsp;</div>
-    </div>
-
-    <?php foreach($forms as $form): ?>
-    <div class="row <?php echo $this->cycle()->next(); ?>">
-        <div class="name">
-            <a href="<?php echo $this->url(array('type' => $form->name, 'year' => 0), 'page_forms'); ?>"><?php echo $this->escape($form->name); ?></a>
-        </div>
-        <div class="type"><?php echo $this->escape($form->type); ?></div>
-        <div class="size"><?php echo $this->filesize($form->size); ?></div>
-        <div class="actions">
-            <?php if(file_exists(APPLICATION_PATH . '/../public/images/ico-' . $form->type . '.png')): ?>
-            <a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-<?php echo $this->escape($form->type); ?>.png" title="Download"/></a>
-            <?php else: ?>
-            <a href="<?php echo $this->url(array('type' => $form->name, 'year' => $form->year), 'page_forms'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-download.png" title="Download"/></a>
-            <?php endif; ?>
-            <?php if($this->hasRole('admin') or $this->hasRole('editor')): ?>
-            <a href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_edit'); ?>"><img src="<?php echo $this->baseUrl(); ?>/images/ico-uparrow.png" title="Re-Upload"/></a>
-            <a onclick="javascript: return confirm('Are you sure you would like to delete this form?');" href="<?php echo $this->url(array('form_id' => $form->id), 'page_forms_delete'); ?>">
-                <img src="<?php echo $this->baseUrl(); ?>/images/ico-delete.png" title="Delete"/>
-            </a>
-            <?php endif; ?>
-        </div>
-    </div>
-    <?php endforeach; ?>
-    <div class="clearfix">&nbsp;</div>
-    <?php endforeach; ?>
-</div>
--->

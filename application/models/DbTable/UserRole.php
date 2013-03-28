@@ -40,8 +40,12 @@ class Model_DbTable_UserRole extends Zend_Db_Table
         $row->save();
     }
 
-    public function fetchRoles($userId)
+    public function fetchRoles($userId = null)
     {
+        if(!$userId) {
+            return array();
+        }
+
         $select = $this->select()
                        ->where('user_id = ?', $userId);
 

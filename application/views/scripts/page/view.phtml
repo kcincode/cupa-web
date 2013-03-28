@@ -6,10 +6,10 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+            <?php if($this->isViewable('page_admin')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array('page' => $this->page->name), 'page_admin'); ?>"><i class="icon-book"></i> Admin</a>
             <?php endif; ?>
-            <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('manager')): ?>
+            <?php if($this->isViewable('page_edit')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array('page' => $this->page->name), 'page_edit'); ?>"><i class="icon-list"></i> Edit</a>
             <?php endif; ?>
         </div>

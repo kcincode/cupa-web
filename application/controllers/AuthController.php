@@ -321,31 +321,25 @@ class AuthController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
-        if($this->view->hasRole('admin')) {
-            $user = $this->getRequest()->getUserParam('user');
-            $oldUserId = $this->view->user->id;
-            $session = new Zend_Session_Namespace('adminuser');
+        $user = $this->getRequest()->getUserParam('user');
+        $oldUserId = $this->view->user->id;
+        $session = new Zend_Session_Namespace('adminuser');
 
-            $userTable = new Model_DbTable_User();
-            if(is_numeric($user)) {
-                $userObj = $userTable->find($user)->current();
-            } else {
-                $userObj = $userTable->fetchUserBy('username', $user);
-            }
-
-            if(isset($userObj->id)) {
-                Zend_Auth::getInstance()->getStorage()->write($userObj->id);
-                $this->view->message("Impersonating user `{$userObj->first_name} {$userObj->last_name}` successful.", 'succes');
-                $session->oldUser = $oldUserId;
-                $this->_redirect('/');
-            } else {
-                $this->view->message('Invalid user specified.', 'error');
-                $this->_redirect('/');
-            }
+        $userTable = new Model_DbTable_User();
+        if(is_numeric($user)) {
+            $userObj = $userTable->find($user)->current();
         } else {
-            $this->view->message('You do not have access to impersonate a user.', 'error');
+            $userObj = $userTable->fetchUserBy('username', $user);
         }
 
-        $this->_redirect('/');
+        if(isset($userObj->id)) {
+            Zend_Auth::getInstance()->getStorage()->write($userObj->id);
+            $this->view->message("Impersonating user `{$userObj->first_name} {$userObj->last_name}` successful.", 'succes');
+            $session->oldUser = $oldUserId;
+            $this->_redirect('/');
+        } else {
+            $this->view->message('Invalid user specified.', 'error');
+            $this->_redirect('/');
+        }
     }
 }

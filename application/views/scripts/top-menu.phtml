@@ -1,6 +1,6 @@
 <ul>
     <!--<li><a href="<?php echo $this->url(array(), 'volunteer'); ?>">VOLUNTEER INFO</a> |</li>-->
-    <?php if($this->hasRole('admin') || $this->hasRole('manager') || $this->isLeagueDirector()): ?>
+    <?php if($this->isViewable('admin')): ?>
     <li><a href="<?php echo $this->url(array(), 'admin'); ?>">MANAGE</a> |</li>
     <?php endif; ?>
     <li><a href="<?php echo $this->url(array(), 'page_contact'); ?>">CONTACT US</a> |</li>

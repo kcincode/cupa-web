@@ -42,16 +42,13 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', $page);
 
-        if(($page and $page->is_visible) or
-           ($page and !$page->is_visible and (Zend_Auth::getInstance()->hasIdentity() and ($this->view->hasRole('admin') or
-           $this->view->hasRole('editor') or
-           $this->view->hasRole('editor', $page->id) or
-           $this->view->hasRole('manager'))))) {
-                if(!$page->is_visible) {
-                    $this->view->message('*** This page is not yet visible to the public ***', 'warning');
-                }
-                $this->view->page = $page;
-                $this->view->links = $pageTable->fetchChildren($page);
+        if(($page && $page->is_visible) ||
+           ($page && !$page->is_visible && ($this->view->isViewable('page_edit')))) {
+            if(!$page->is_visible) {
+                $this->view->message('*** This page is not yet visible to the public ***', 'warning');
+            }
+            $this->view->page = $page;
+            $this->view->links = $pageTable->fetchChildren($page);
         } else {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
@@ -76,16 +73,7 @@ class PageController extends Zend_Controller_Action
         }
 
         $form = new Form_PageEdit($page);
-
         $this->view->page = $page;
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and
-           !$this->view->hasRole('editor') and
-           !$this->view->hasRole('manager'))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit this page.');
-            $this->_redirect('/' . $page->name);
-        }
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
@@ -131,14 +119,6 @@ class PageController extends Zend_Controller_Action
         }
 
         $form = new Form_PageAdmin($page);
-
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and !$this->view->hasRole('manager'))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit this page.');
-            $this->_redirect('/' . $page->name);
-        }
-
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
@@ -715,16 +695,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'clubs');
 
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and
-            !$this->view->hasRole('manager') and
-            !$this->view->hasRole('editor') and
-            !$this->view->hasRole('editor', $page->id))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
-            $this->_redirect('/clubs');
-        }
-
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
@@ -779,15 +749,6 @@ class PageController extends Zend_Controller_Action
 
         $page = $pageTable->fetchBy('name', 'clubs');
         $clubId = $this->getRequest()->getUserParam('club');
-
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('editor') and
-            !$this->view->hasRole('editor', $page->id) and
-            !$this->view->isClubCaptain($clubId))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
-            $this->_redirect('/clubs');
-        }
 
         $club = $clubTable->find($clubId)->current();
 

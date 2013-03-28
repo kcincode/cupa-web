@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+            <?php if($this->isViewable('page_clubs_add')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_clubs_add'); ?>"><i class="icon-plus"></i> Add Team</a>
             <?php endif; ?>
         </div>
@@ -20,10 +20,10 @@
             <a name="<?php echo $this->escape(strtolower(preg_replace('/\s|\(|\)/', '', $club['name']))); ?>"></a>
                 <div class="pull-right">
                 <?php echo $this->displayClubRostersLink($club->id); ?>
-                <?php if($this->hasRole('admin') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id) or $this->isClubCaptain($club->id)): ?>
+                <?php if($this->isViewable('page_clubs_edit', $club->id)): ?>
                     <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
                 <?php endif; ?>
-                <?php if($this->hasRole('admin')): ?>
+                <?php if($this->isViewable('page_clubs_delete', $club->id)): ?>
                     <a class="btn btn-danger btn-mini" onclick="if(!confirm('Are you sure you want to delete the club <?php echo $club->name; ?>?')) { return false; } " href="<?php echo $this->url(array('club' => $club->id), 'page_clubs_delete'); ?>"><i class="icon-trash icon-white"></i> Delete</a>
                 <?php endif; ?>
                 </div>
