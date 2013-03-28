@@ -140,18 +140,18 @@ class Form_LeagueScheduleEdit extends Twitter_Bootstrap_Form_Horizontal
         );
 
         $this->addDisplayGroup(
-            array('home_team', 'home_score'),
-            'schedule_home_edit_form',
-            array(
-                'legend' => 'Home Team',
-            )
-        );
-
-        $this->addDisplayGroup(
             array('away_team', 'away_score'),
             'schedule_away_edit_form',
             array(
                 'legend' => 'Away Team',
+            )
+        );
+
+        $this->addDisplayGroup(
+            array('home_team', 'home_score'),
+            'schedule_home_edit_form',
+            array(
+                'legend' => 'Home Team',
             )
         );
 
