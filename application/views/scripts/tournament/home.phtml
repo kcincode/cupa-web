@@ -1,6 +1,6 @@
 <div class="span11 actions pull-right">
     <div class="btn-group pull-right">
-        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <?php if($this->isViewable('tournament_update_add')): ?>
         <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_update_add'); ?>"><i class="icon-book"></i> Add Update</a>
         <?php endif; ?>
     </div>
@@ -9,7 +9,7 @@
     <div class="row">
         <div class="span8">
             <div class="pull-right">
-                <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+                <?php if($this->isViewable('tournament_home_edit')): ?>
                 <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_home_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
                 <?php endif; ?>
             </div>
@@ -22,8 +22,10 @@
             <?php foreach($this->updates as $update): ?>
             <div class="well well-small" style="word-wrap: break-word;">
                 <div class="pull-right">
-                    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+                    <?php if($this->isViewable('tournament_update_edit')): ?>
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <?php endif; ?>
+                    <?php if($this->isViewable('tournament_update_delete')): ?>
                     <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you would like to delete this update?');" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'update_id' => $update->id), 'tournament_update_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
                     <?php endif; ?>
                 </div>

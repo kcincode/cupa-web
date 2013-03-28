@@ -59,4 +59,16 @@ class Model_DbTable_UserRole extends Zend_Db_Table
         return $data;
     }
 
+    public function fetchRolesData($userId = null)
+    {
+        if(!$userId) {
+            return array();
+        }
+
+        $select = $this->select()
+                       ->where('user_id = ?', $userId);
+
+        return $this->fetchAll($select);
+    }
+
 }

@@ -1,6 +1,6 @@
 <div class="span11 actions pull-right">
     <div class="btn-group pull-right">
-        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <?php if($this->isViewable('tournament_location_edit')): ?>
         <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_location_edit'); ?>"><i class="icon-book"></i> Edit Location</a>
         <?php endif; ?>
     </div>

@@ -27,7 +27,9 @@
 				<tr>
 					<td><?php echo $this->escape($member['member']); ?></td>
 					<td align="center">
-						<a class="btn btn-mini btn-danger" onclick="if(!confirm('Are you sure you want to remove this member?')) { return false; }" href="<?php echo $this->url(array('id' => $member['id']), 'club_member_remove'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+                        <?php if($this->isViewable('club_member_remove')): ?>
+						<a class="btn btn-mini btn-danger" onclick="if(!confirm('Are you sure you want to remove this member?')) { return false; }" href="<?php echo $this->url(array('club_id' => $this->club->id, 'id' => $member['id']), 'club_member_remove'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
+                        <?php endif; ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>

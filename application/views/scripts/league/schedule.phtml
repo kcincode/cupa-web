@@ -10,8 +10,10 @@
         <div class="span12">
             <h2 class="pull-left">League Schedule</h2>
             <div class="pull-right">
-                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <?php if($this->isViewable('league_schedule_add')): ?>
                 <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule_add'); ?>"><i class="icon-plus icon-white"></i>Add a Game</a>
+                <?php endif; ?>
+                <?php if($this->isViewable('league_schedule_generate')): ?>
                 <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_schedule_generate'); ?>">Auto Generate Schedule</a>
                 <?php endif; ?>
             </div>
@@ -45,7 +47,7 @@
                     <div class="span2">
                         <?php echo date('m/d/Y h:i A', strtotime($this->escape($game['day']))); ?>
                     </div>
-                    <div class="<?php echo ($this->isLeagueDirector($this->league->id)) ? 'span5' : 'span7'; ?>">
+                    <div class="<?php echo ($this->isViewable('league_schedule_edit')) ? 'span5' : 'span7'; ?>">
                         <span class="<?php echo $this->displayLeagueGameOutcome($game['id'], $game['away_team_id']);?>">
                             <?php echo $this->escape($game['away_team']); ?>
                         </span>
@@ -59,7 +61,7 @@
                         <?php if($result == '0 - 0'): ?>
                         <?php $result = 'N/A'; ?>
                         <?php endif; ?>
-                        <?php if($this->isLeagueDirector($this->league->id)): ?>
+                        <?php if($this->isViewable('league_schedule_edit')): ?>
                         <a title="Edit Score" href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $game['id']), 'league_schedule_edit'); ?>">
                             <?php echo $result; ?>
                         </a>
@@ -67,7 +69,7 @@
                         <?php echo $result; ?>
                         <?php endif; ?>
                     </div>
-                    <?php if($this->isLeagueDirector($this->league->id)): ?>
+                    <?php if($this->isViewable('league_schedule_delete')): ?>
                     <div class="span2 align-center">
                         <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you would like to remove this game?');" href="<?php echo $this->url(array('league_id' => $this->league->id, 'game_id' => $game['id']), 'league_schedule_delete'); ?>">
                             <i class="icon-trash icon-white"></i> Remove

@@ -20,7 +20,7 @@
             <div class="pull-right">
                 <?php echo $this->form; ?>
             </div>
-            
+
             <?php if(count($this->users) > 0): ?>
             <table class="table table-condensed table-hover">
                 <thead>
@@ -37,7 +37,7 @@
                         <td><?php echo $this->escape($user->email); ?></td>
                         <td>
                             <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('user_id' => $user->id, 'filter' => $this->filter), 'admin_user_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
-                            <?php if($this->hasRole('admin')): ?>
+                            <?php if($this->isViewable('auth_impersonate_user')): ?>
                             <a class="btn btn-mini btn-warning" href="<?php echo $this->url(array('user' => $user->id), 'auth_impersonate_user'); ?>"><i class="icon-user icon-white"></i> Impersonate</a>
                             <?php endif; ?>
                         </td>

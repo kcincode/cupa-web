@@ -10,7 +10,7 @@
         <div class="span12">
             <h2 class="pull-left"><?php echo (count($this->teams['final'])) ? 'Final' : 'Current'; ?> Team Rankings</h2>
             <div class="pull-right">
-                <?php if($this->isLeagueDirector($this->league->id)): ?>
+                <?php if($this->isViewable('league_rankings_edit')): ?>
                 <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_rankings_edit'); ?>"><i class="icon-edit icon-white"></i> Edit Rankings</a>
                 <?php endif; ?>
             </div>

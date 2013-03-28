@@ -18,7 +18,7 @@ class TournamentController extends Zend_Controller_Action
         if(empty($this->_name)) {
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         } else if(empty($this->_year)) {
-            $this->_year = $tournamentTable->fetchMostCurrentYear($this->_name, ($this->view->hasRole('admin') or $this->view->hasRole('manager')));
+            $this->_year = $tournamentTable->fetchMostCurrentYear($this->_name, $this->view->isViewable('tournament_admin'));
         }
 
         if(empty($this->_year)) {
@@ -28,7 +28,7 @@ class TournamentController extends Zend_Controller_Action
 
         $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name);
         $tournamentTmp = $tournamentTable->fetchTournament($this->_year, $this->_name, true);
-        if(empty($this->view->tournament) and ($this->view->hasRole('admin') || $this->view->hasRole('manager') || $this->view->isTournamentAdmin($tournamentTmp->id))) {
+        if(empty($this->view->tournament) && $this->view->isViewable('tournament_admin')) {
             $this->view->tournament = $tournamentTable->fetchTournament($this->_year, $this->_name, true);
         }
 
@@ -56,10 +56,6 @@ class TournamentController extends Zend_Controller_Action
 
     public function updateaddAction()
     {
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
-        }
-
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
         $form = new Form_TournamentEdit($this->view->tournament->id, 'update');
 
@@ -93,10 +89,6 @@ class TournamentController extends Zend_Controller_Action
     {
         $this->view->section = 'home';
 
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
-        }
-
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
         $form = new Form_TournamentEdit($this->view->tournament->id, 'home');
 
@@ -126,10 +118,6 @@ class TournamentController extends Zend_Controller_Action
     public function updateeditAction()
     {
         $this->view->section = 'home';
-
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
-        }
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $updateId = $this->getRequest()->getUserParam('update_id');
@@ -161,10 +149,6 @@ class TournamentController extends Zend_Controller_Action
 
     public function updatedeleteAction()
     {
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year);
-        }
-
         $updateId = $this->getRequest()->getUserParam('update_id');
 
         $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
@@ -267,10 +251,6 @@ class TournamentController extends Zend_Controller_Action
     {
         $this->view->section = 'bid';
 
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/bid');
-        }
-
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
 
@@ -325,10 +305,6 @@ class TournamentController extends Zend_Controller_Action
         $form = new Form_TournamentEdit($this->view->tournament->id, 'team');
 
         if($this->getRequest()->isPost()) {
-            if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-                $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
-            }
-
             $post = $this->getRequest()->getPost();
 
             if(isset($post['cancel'])) {
@@ -353,10 +329,6 @@ class TournamentController extends Zend_Controller_Action
     {
         $teamId = $this->getRequest()->getUserParam('team_id');
 
-        if(!is_numeric($teamId) or !$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
-        }
-
         $tournamentTeamTable = new Model_DbTable_TournamentTeam();
         $team = $tournamentTeamTable->find($teamId)->current();
         if($team) {
@@ -371,10 +343,6 @@ class TournamentController extends Zend_Controller_Action
     {
         $this->view->section = 'teams';
         $teamId = $this->getRequest()->getUserParam('team_id');
-
-        if(!is_numeric($teamId) or !$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/teams');
-        }
 
         $tournamentTeamTable = new Model_DbTable_TournamentTeam();
         $team = $tournamentTeamTable->find($teamId)->current();
@@ -406,15 +374,10 @@ class TournamentController extends Zend_Controller_Action
 
     public function scheduleeditAction()
     {
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/schedule');
-        }
-
         $this->view->section = 'schedule';
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $form = new Form_TournamentEdit($this->view->tournament->id, 'schedule');
-
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -445,10 +408,6 @@ class TournamentController extends Zend_Controller_Action
 
     public function locationeditAction()
     {
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/location');
-        }
-
         $this->view->section = 'location';
 
         $form = new Form_TournamentEdit($this->view->tournament->id, 'location');
@@ -487,11 +446,6 @@ class TournamentController extends Zend_Controller_Action
     public function lodgingaddAction()
     {
         $this->view->section = 'lodging';
-
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
-        }
-
         $form = new Form_TournamentEdit($this->view->tournament->id, 'lodging');
 
         if($this->getRequest()->isPost()) {
@@ -528,10 +482,6 @@ class TournamentController extends Zend_Controller_Action
     public function lodgingeditAction()
     {
         $this->view->section = 'lodging';
-
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
-        }
 
         $lodgingId = $this->getRequest()->getUserParam('lodging_id');
         $form = new Form_TournamentEdit($this->view->tournament->id, 'lodging', $lodgingId);
@@ -572,10 +522,6 @@ class TournamentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/lodging');
-        }
-
         $lodgingId = $this->getRequest()->getUserParam('lodging_id');
 
         $tournamentLodgingTable = new Model_DbTable_TournamentLodging();
@@ -597,10 +543,6 @@ class TournamentController extends Zend_Controller_Action
 
     public function contactaddAction()
     {
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
-        }
-
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
         $this->view->section = 'contact';
@@ -650,10 +592,6 @@ class TournamentController extends Zend_Controller_Action
 
     public function contacteditAction()
     {
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
-        }
-
         $this->view->section = 'contact';
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
@@ -711,10 +649,6 @@ class TournamentController extends Zend_Controller_Action
     {
         $contactId = $this->getRequest()->getUserParam('contact_id');
 
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
-        }
-
         $tournamentMemberTable = new Model_DbTable_TournamentMember();
         $member = $tournamentMemberTable->find($contactId)->current();
 
@@ -725,10 +659,6 @@ class TournamentController extends Zend_Controller_Action
 
     public function adminAction()
     {
-        if(!$this->view->isTournamentAdmin($this->view->tournament->id)) {
-            $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
-        }
-
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
 

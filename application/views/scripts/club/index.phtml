@@ -48,7 +48,7 @@
         </ul>
         <div class="tab-content well">
             <div class="pull-right">
-                <?php if($this->isClubCaptain($this->club->id)): ?>
+                <?php if($this->isViewable('club_edit')): ?>
                 <a class="btn btn-info" href="<?php echo $this->url(array('club_id' => $this->club->id, 'year' => $year), 'club_edit'); ?>"><i class="icon-edit icon-white"></i> Edit Roster</a>
                 <?php endif; ?>
             </div>

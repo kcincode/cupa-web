@@ -31,7 +31,7 @@
     </li>
     <?php endif; ?>
     <li><a href="<?php echo $this->url(array(), 'page_contact'); ?>">CONTACT US</a> |</li>
-    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+    <?php if($this->isViewable('tournament_admin')): ?>
     <li><a href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_admin'); ?>">ADMIN</a> |</li>
     <?php endif; ?>
     <li><a href="<?php echo $this->baseUrl(); ?>/">CUPA HOME</a> |</li>

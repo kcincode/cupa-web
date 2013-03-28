@@ -3,18 +3,27 @@
             </div>
             <ul class="nav nav-list well well-small">
                 <li class="nav-header">Admin Actions</li>
-                <?php if($this->hasRole('admin')): ?>
+                <?php if($this->isViewable('admin_browser')): ?>
                 <li<?php echo ($this->active == 'browser') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_browser'); ?>">Browser Data</a></li>
+                <?php endif; ?>
+
+                <?php if($this->isViewable('admin_duplicates')): ?>
                 <li<?php echo ($this->active == 'duplicates') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_duplicates'); ?>">Duplicate Users</a></li>
                 <?php endif; ?>
 
-                <?php if($this->isLeagueDirector()): ?>
+                <?php if($this->isViewable('admin_unpaid')): ?>
                 <li<?php echo ($this->active == 'unpaid') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_unpaid'); ?>">Un-paid List</a></li>
                 <?php endif; ?>
 
-                <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+                <?php if($this->isViewable('admin_users')): ?>
                 <li<?php echo ($this->active == 'users') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_users'); ?>">Users</a></li>
+                <?php endif; ?>
+
+                <?php if($this->isViewable('admin_pages')): ?>
                 <li<?php echo ($this->active == 'pages') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_pages'); ?>">Pages</a></li>
+                <?php endif; ?>
+
+                <?php if($this->isViewable('admin_league_players')): ?>
                 <li<?php echo ($this->active == 'league_players') ? ' class="active"' : ''; ?>><a href="<?php echo $this->url(array(), 'admin_league_players'); ?>">League Players</a></li>
                 <?php endif; ?>
             </ul>

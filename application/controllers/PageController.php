@@ -55,12 +55,6 @@ class PageController extends Zend_Controller_Action
         }
     }
 
-    public function oldviewAction()
-    {
-        $page = $this->getRequest()->getUserParam('page');
-        $this->_redirect($page);
-    }
-
     public function editAction()
     {
         $page = $this->getRequest()->getUserParam('page');
@@ -200,14 +194,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
 
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('editor') and
-             !$this->view->hasRole('editor', $page->id) and
-             !$this->view->hasRole('admin')))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
         $officerId = $this->getRequest()->getUserParam('officer');
         $officerTable = new Model_DbTable_Officer();
         $officer = $officerTable->find($officerId)->current();
@@ -262,16 +248,6 @@ class PageController extends Zend_Controller_Action
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'officers');
-
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('editor') and
-             !$this->view->hasRole('editor', $page->id) and
-             !$this->view->hasRole('manager') and
-             !$this->view->hasRole('admin')))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
         $form = new Form_OfficerEdit();
 
         if($this->getRequest()->isPost()) {
@@ -313,12 +289,6 @@ class PageController extends Zend_Controller_Action
 
     public function officersdeleteAction()
     {
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-             !$this->view->hasRole('admin'))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
         // disable the layout
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
@@ -353,14 +323,6 @@ class PageController extends Zend_Controller_Action
     {
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
-
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('admin') and
-             !$this->view->hasRole('editor') and
-             !$this->view->hasRole('edior', $page->id)))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
@@ -418,16 +380,6 @@ class PageController extends Zend_Controller_Action
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
-
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('admin') and
-             !$this->view->hasRole('editor') and
-             !$this->view->hasRole('manager') and
-             !$this->view->hasRole('edior', $page->id)))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
         $form = new Form_MinuteEdit();
 
         if($this->getRequest()->isPost()) {
@@ -473,14 +425,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'board_meeting_minutes');
 
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('admin') and
-             !$this->view->hasRole('editor') and
-             !$this->view->hasRole('edior', $page->id)))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
         $minuteId = $this->getRequest()->getUserParam('minute');
         $minuteTable = new Model_DbTable_Minute();
         $minute = $minuteTable->find($minuteId)->current();
@@ -522,7 +466,7 @@ class PageController extends Zend_Controller_Action
 
         set_time_limit(0);
         echo stripslashes($minute->pdf);
-        flush();
+        exit();
 
         return;
     }
@@ -564,15 +508,6 @@ class PageController extends Zend_Controller_Action
 
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
-
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('admin') and
-             !$this->view->hasRole('manager') and
-             !$this->view->hasRole('editor') and
-             !$this->view->hasRole('editor', $page->id)))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
 
         $form = new Form_PickupEdit();
 
@@ -616,15 +551,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
 
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('admin') and
-             !$this->view->hasRole('manager') and
-             !$this->view->hasRole('editor') and
-             !$this->view->hasRole('editor', $page->id)))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
         $pickupTable = new Model_DbTable_Pickup();
         $pickup = $pickupTable->find($this->getRequest()->getUserParam('pickup'))->current();
         $form = new Form_PickupEdit($pickup);
@@ -661,12 +587,6 @@ class PageController extends Zend_Controller_Action
 
     public function pickupdeleteAction()
     {
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('admin')))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
         $pickupTable = new Model_DbTable_Pickup();
         $pickupId = $this->getRequest()->getUserParam('pickup');
         $pickup = $pickupTable->find($pickupId)->current();
@@ -802,15 +722,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
 
         $page = $pageTable->fetchBy('name', 'clubs');
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and
-            !$this->view->hasRole('manager') and
-            !$this->view->hasRole('editor') and
-            !$this->view->hasRole('editor', $page->id))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
-            $this->_redirect('/clubs');
-        }
 
         $clubId = $this->getRequest()->getUserParam('club');
         if(is_numeric($clubId)) {
@@ -863,16 +774,12 @@ class PageController extends Zend_Controller_Action
         $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
 
-        if($news and
-           (Zend_Auth::getInstance()->hasIdentity() and
-            ($this->view->hasRole('reporter') or
-             $this->view->hasRole('admin')) or
-             $news->is_visible)) {
-                if(!$news->is_visible) {
-                    $this->view->message('*** This news story is not yet visible to the public ***', 'warning');
-                }
+        if($news && $this->view->isVisible('news_edit')) {
+            if(!$news->is_visible) {
+                $this->view->message('*** This news story is not yet visible to the public ***', 'warning');
+            }
 
-                $this->view->news = $news;
+            $this->view->news = $news;
         } else {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('News item not found');
@@ -881,12 +788,6 @@ class PageController extends Zend_Controller_Action
 
     public function newsaddAction()
     {
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('reporter') and
-             !$this->view->hasRole('admin')))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('News item not found');
-        }
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
@@ -932,12 +833,6 @@ class PageController extends Zend_Controller_Action
 
     public function newseditAction()
     {
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('reporter') and
-             !$this->view->hasRole('admin')))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('News item not found');
-        }
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
@@ -1034,15 +929,6 @@ class PageController extends Zend_Controller_Action
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'forms');
 
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and
-            !$this->view->hasRole('manager') and
-            !$this->view->hasRole('editor') and
-            !$this->view->hasRole('editor', $page->id))) {
-            $this->view->message('You either are not logged in or you do not have permission to add a form.');
-            $this->_redirect('forms');
-        }
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
 
         $form = new Form_FormEdit();
@@ -1114,16 +1000,6 @@ class PageController extends Zend_Controller_Action
         if(!$formId or !$page) {
             // throw a 404 error if the page cannot be found
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
-
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and
-            !$this->view->hasRole('manager') and
-            !$this->view->hasRole('editor') and
-            !$this->view->hasRole('editor', $page->id))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit forms.');
-            $this->_redirect('/forms');
         }
 
         $formTable = new Model_DbTable_Form();
@@ -1203,16 +1079,6 @@ class PageController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        if(!Zend_Auth::getInstance()->hasIdentity() or
-           Zend_Auth::getInstance()->hasIdentity() and
-           (!$this->view->hasRole('admin') and
-            !$this->view->hasRole('manager') and
-            !$this->view->hasRole('editor') and
-            !$this->view->hasRole('editor', $page->id))) {
-            $this->view->message('You either are not logged in or you do not have permission to edit this team.');
-            $this->_redirect('/forms');
-        }
-
         $this->view->message('Form ' . $form->year . '_' . $form->name . ' deleted', 'success');
         $form->delete();
         $this->_redirect('forms');
@@ -1222,15 +1088,6 @@ class PageController extends Zend_Controller_Action
     {
         $pageTable = new Model_DbTable_Page();
         $page = $pageTable->fetchBy('name', 'pickup');
-
-        if((!Zend_Auth::getInstance()->hasIdentity() or
-            (!$this->view->hasRole('admin') and
-             !$this->view->hasRole('manager') and
-             !$this->view->hasRole('editor') and
-             !$this->view->hasRole('editor', $page->id)))) {
-            // throw a 404 error if the page cannot be found
-            throw new Zend_Controller_Dispatcher_Exception('Page not found');
-        }
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');

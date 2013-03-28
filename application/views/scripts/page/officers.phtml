@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+            <?php if($this->isViewable('page_officers_add')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'page_officers_add'); ?>"><i class="icon-user"></i> Add Officer</a>
             <?php endif; ?>
         </div>
@@ -33,12 +33,12 @@
                         </li>
                         <li class="since">Starting <?php echo date('F d, Y', strtotime($officer['since'])); ?></li>
                         <li>
-                            <?php if($this->hasRole('admin') or $this->hasRole('manager') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                            <?php if($this->isViewable('page_officers_edit')): ?>
                             <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_edit'); ?>">
                                 <i class="icon-edit icon-white"></i> Edit
                             </a>
                             <?php endif; ?>
-                            <?php if($this->hasRole('admin')): ?>
+                            <?php if($this->isViewable('page_officers_delete')): ?>
                             <a class="btn btn-danger btn-mini" onclick="if(!confirm('Are you sure you would like to delete this officer?')) { return false; }" href="<?php echo $this->url(array('officer' => $officer['id']), 'page_officers_delete'); ?>">
                                 <i class="icon-trash icon-white"></i> Remove
                             </a>

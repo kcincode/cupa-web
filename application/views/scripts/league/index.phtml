@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->hasRole('admin') or $this->hasRole('manager')): ?>
+            <?php if($this->isViewable('leagues_add')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'leagues_add'); ?>"><i class="icon-list"></i> Add Season</a>
             <?php endif; ?>
         </div>
@@ -17,7 +17,7 @@
         <div class="span9">
             <?php foreach($this->leagues as $i => $league): ?>
                 <div class="pull-right btn-group">
-                        <?php if($this->hasRole('admin') or $this->hasRole('manager') or $this->hasRole('editor') or $this->hasRole('editor', $this->page->id)): ?>
+                        <?php if($this->isViewable('leagues_move')): ?>
                         <?php if($i != 0): ?>
                             <a class="btn btn-mini" href="<?php echo $this->url(array('season_id' => $league['id'], 'weight' => $i - 1), 'leagues_move');?>"><i class="icon-arrow-up"></i></a>
                         <?php endif; ?>
@@ -26,7 +26,7 @@
                         <?php endif; ?>
                             <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
                         <?php endif; ?>
-                        <?php if($this->hasRole('admin')): ?>
+                        <?php if($this->isViewable('leagues_delete')): ?>
                             <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to delete this season?');" href="<?php echo $this->url(array('season_id' => $league['id']), 'leagues_delete');?>"><i class="icon-trash icon-white"></i> Remove</a>
                         <?php endif; ?>
                 </div>

@@ -1,6 +1,6 @@
 <div class="span11 actions pull-right">
     <div class="btn-group pull-right">
-        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <?php if($this->isViewable('tournament_contact_add')): ?>
         <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_contact_add'); ?>"><i class="icon-book"></i> Add a Contact</a>
         <?php endif; ?>
     </div>
@@ -19,8 +19,10 @@
             <?php foreach($this->members as $member): ?>
             <div class="offset2 span8">
                 <div class="pull-right">
-                    <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+                    <?php if($this->isViewable('tournament_contact_edit')): ?>
                     <a class="btn btn-info btn-mini" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <?php endif; ?>
+                    <?php if($this->isViewable('tournament_contact_delete')): ?>
                     <a onclick="return confirm('Are you sure you want to delete this contact?');"class="btn btn-danger btn-mini" class="delete" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'contact_id' => $member->id), 'tournament_contact_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
                     <?php endif; ?>
                 </div>

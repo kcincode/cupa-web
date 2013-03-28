@@ -6,7 +6,9 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
+            <?php if($this->isViewable('admin_duplicates_email')): ?>
             <a class="btn" href="<?php echo $this->url(array(), 'admin_duplicates_email'); ?>"><i class="icon-envelope"></i> Send Notifications</a>
+            <?php endif; ?>
         </div>
     </div>
 </div>

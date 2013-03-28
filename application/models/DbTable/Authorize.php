@@ -11,7 +11,15 @@ class Model_DbTable_Authorize extends Zend_Db_Table
     {
         $userRoleTable = new Model_DbTable_UserRole();
         $this->_userId = $userId;
-        $this->_roles = array_values($userRoleTable->fetchRoles($userId));
+
+        $roles = array();
+        foreach($userRoleTable->fetchRolesData($userId) as $role) {
+            if(empty($role->page_id)) {
+                $roles[] = $role->role;
+            }
+        }
+
+        $this->_roles = $roles;
 
         parent::__construct();
     }
@@ -100,17 +108,6 @@ class Model_DbTable_Authorize extends Zend_Db_Table
 
     }
 
-    private function viewAdminLink($userId)
-    {
-        if(in_array('volunteer', $this->_roles)) {
-            return true;
-        }
-
-        if($this->leagueDirector($userId)) {
-            return true;
-        }
-    }
-
     private function reporter($userId)
     {
         if($this->manage($userId)) {
@@ -136,5 +133,61 @@ class Model_DbTable_Authorize extends Zend_Db_Table
                 return true;
             }
         }
+    }
+
+    private function leagueCaptain($userId, $leagueId = null, $teamId = null)
+    {
+        if($this->manage($userId)) {
+            return true;
+        }
+
+        if($this->leagueDirector($userId, $leagueId)) {
+            return true;
+        }
+
+        if($userId) {
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            foreach($leagueMemberTable->fetchAllByType($leagueId, 'captain', $teamId) as $member) {
+                if($member->user_id == $userId) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function tournamentDirector($userId, $name, $year)
+    {
+        if($this->manage($userId)) {
+            return true;
+        }
+
+        $tournamentTable = new Model_DbTable_Tournament();
+        $tournament = $tournamentTable->fetchTournament($year, $name, true);
+
+        $tournamentMemberTable = new Model_DbTable_TournamentMember();
+        if($userId) {
+            foreach($tournamentMemberTable->fetchAllDirectors($tournament->id) as $member) {
+                if($member->user_id == $userId) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function volunteer($userId)
+    {
+        if($this->adminOnly($userId)) {
+            return true;
+        }
+
+        if(in_array('volunteer', $this->_roles)) {
+            return true;
+        }
+
+        return false;
     }
 }

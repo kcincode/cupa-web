@@ -81,10 +81,6 @@ class AdminController extends Zend_Controller_Action
 
     public function unpaidAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin') and !$this->view->isLeagueDirector()) {
-            $this->_forward('auth');
-        }
-
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/unpaid.css');
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
@@ -107,10 +103,6 @@ class AdminController extends Zend_Controller_Action
 
     public function userAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
-            $this->_forward('auth');
-        }
-
         $filter = $this->getRequest()->getPost('filter');
         if(empty($filter)) {
             $filter = $this->getRequest()->getParam('filter');
@@ -134,10 +126,6 @@ class AdminController extends Zend_Controller_Action
 
     public function usereditAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
-            $this->_forward('auth');
-        }
-
         $filter = $this->getRequest()->getParam('filter');
         $page = $this->getRequest()->getParam('page');
 
@@ -171,10 +159,6 @@ class AdminController extends Zend_Controller_Action
     }
     public function pageAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
-            $this->_forward('auth');
-        }
-
         $filter = $this->getRequest()->getPost('filter');
         if(empty($filter)) {
             $filter = $this->getRequest()->getParam('filter');
@@ -198,9 +182,6 @@ class AdminController extends Zend_Controller_Action
 
     public function pageaddAction()
     {
-        if(!$this->view->hasRole('manager') and !$this->view->hasRole('admin')) {
-            $this->_forward('auth');
-        }
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/ckeditor/ckeditor.js');
 
         $form = new Form_Page();

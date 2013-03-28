@@ -1,6 +1,6 @@
 <div class="span11 actions pull-right">
     <div class="btn-group pull-right">
-        <?php if($this->isTournamentAdmin($this->tournament->id)): ?>
+        <?php if($this->isViewable('tournament_lodging_add')): ?>
         <a class="btn btn-small" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year), 'tournament_lodging_add'); ?>"><i class="icon-book"></i> Add Lodging</a>
         <?php endif; ?>
     </div>
@@ -16,9 +16,12 @@
             <?php foreach($this->lodging as $item): ?>
             <div class="well well-small">
                 <div class="pull-right">
+                    <?php if($this->isViewable('tournament_lodging_edit')): ?>
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <?php endif; ?>
+                    <?php if($this->isViewable('tournament_lodging_delete')): ?>
                     <a onclick="return confirm('Are you sure you would like to delete this lodging?');" class="btn btn-mini btn-danger" href="<?php echo $this->url(array('name' => $this->tournament->name, 'year' => $this->tournament->year, 'lodging_id' => $item->id), 'tournament_lodging_delete'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
-
+                    <?php endif; ?>
                 </div>
                 <h4><a href="<?php echo $this->escape($item->link); ?>"><?php echo $this->escape($item->title); ?></a></h4>
                 <p>
