@@ -66,11 +66,6 @@ class VolunteerController extends Zend_Controller_Action
 
     public function listaddAction()
     {
-        if(!$this->view->isVolunteerAdmin()) {
-            $this->view->message('You do not have access to this page', 'error');
-            $this->_redirect('volunteer/list');
-        }
-
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
@@ -114,11 +109,6 @@ class VolunteerController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $volunteerId = $request->getUserParam('volunteer_id');
-
-        if(!$this->view->isVolunteerAdmin($volunteerId)) {
-            $this->view->message('You do not have access to this page', 'error');
-            $this->_redirect('volunteer/list');
-        }
 
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
@@ -165,11 +155,6 @@ class VolunteerController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $volunteerId = $request->getUserParam('volunteer_id');
-
-        if(!$this->view->isVolunteerAdmin($volunteerId)) {
-            $this->view->message('You do not have access to this page', 'error');
-            $this->_redirect('volunteer/list');
-        }
 
         $volunteerTable = new Model_DbTable_Volunteer();
         $volunteer = $volunteerTable->find($volunteerId)->current();
@@ -224,11 +209,6 @@ class VolunteerController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $volunteerId = $request->getUserParam('volunteer_id');
-
-        if(!$this->view->isVolunteerAdmin($volunteerId)) {
-            $this->view->message('You do not have access to this page', 'error');
-            $this->_redirect('volunteer/list');
-        }
 
         $volunteerTable = new Model_DbTable_Volunteer();
         $this->view->volunteer = $volunteerTable->find($volunteerId)->current();

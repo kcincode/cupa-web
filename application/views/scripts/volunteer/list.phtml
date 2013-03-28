@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->isVolunteerAdmin()): ?>
+            <?php if($this->isViewable('volunteer_opportunity_add')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'volunteer_opportunity_add'); ?>"><i class="icon-book"></i> Add Opportunity</a>
             <?php endif; ?>
         </div>
@@ -16,14 +16,20 @@
     <div class="row">
         <div class="span9">
             <?php if(count($this->volunteers)): ?>
-            
+
             <?php foreach($this->volunteers as $volunteer): ?>
             <div>
                 <div class="pull-right btn-group">
+                    <?php if($this->isViewable('volunteer_signup')): ?>
                     <a class="btn btn-mini" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_signup'); ?>"><i class="icon-th-list"></i> Sign-up</a>
-                    <?php if($this->isVolunteerAdmin($volunteer['id'])): ?>
+                    <?php endif; ?>
+                    <?php if($this->isViewable('volunteer_list_members')): ?>
                     <a class="btn btn-mini" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_list_members'); ?>"><i class="icon-list"></i> Volunteers</a>
+                    <?php endif; ?>
+                    <?php if($this->isViewable('volunteer_opportunity_edit')): ?>
                     <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_opportunity_edit'); ?>"><i class="icon-edit icon-white"></i> Edit</a>
+                    <?php endif; ?>
+                    <?php if($this->isViewable('volunteer_opportunity_remove')): ?>
                     <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to delete this?');" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_opportunity_remove'); ?>"><i class="icon-trash icon-white"></i> Remove</a>
                     <?php endif; ?>
                 </div>

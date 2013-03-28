@@ -774,7 +774,7 @@ class PageController extends Zend_Controller_Action
         $newsTable = new Model_DbTable_News();
         $news = $newsTable->fetchNewsBySlug($slug);
 
-        if($news && $this->view->isVisible('news_edit')) {
+        if($news && $this->view->isViewable('news_view')) {
             if(!$news->is_visible) {
                 $this->view->message('*** This news story is not yet visible to the public ***', 'warning');
             }

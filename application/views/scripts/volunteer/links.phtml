@@ -3,7 +3,7 @@
         <li><a href="<?php echo $this->url(array(), 'volunteer'); ?>">Volunteer Info</a></li>
         <li><a href="<?php echo $this->url(array(), 'volunteer_register'); ?>">Become a Volunteer</a></li>
         <li><a href="<?php echo $this->url(array(), 'volunteer_list'); ?>">View Opportunities</a></li>
-        <?php if($this->isVolunteerAdmin()): ?>
+        <?php if($this->isViewable('volunteer_pool')): ?>
         <li><a href="<?php echo $this->url(array(), 'volunteer_pool'); ?>">Volunteer Pool</a></li>
         <?php endif; ?>
     </ul>

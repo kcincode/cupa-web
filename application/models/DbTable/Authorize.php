@@ -71,6 +71,7 @@ class Model_DbTable_Authorize extends Zend_Db_Table
             return true;
         }
 
+        $userRoleTable = new Model_DbTable_UserRole();
         if($pageId) {
             return $userRoleTable->hasRole($userId, 'editor', $pageId);
         } else {
@@ -98,7 +99,7 @@ class Model_DbTable_Authorize extends Zend_Db_Table
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         if($leagueId) {
             foreach($leagueMemberTable->fetchAllByType($leagueId, 'director') as $member) {
-                if($userId == Zend_Auth::getInstance()->getIdentity()) {
+                if($userId == $member->user_id) {
                     return true;
                 }
             }
@@ -106,6 +107,7 @@ class Model_DbTable_Authorize extends Zend_Db_Table
             return $leagueMemberTable->isALeagueDirector($userId);
         }
 
+        return false;
     }
 
     private function reporter($userId)
@@ -157,13 +159,17 @@ class Model_DbTable_Authorize extends Zend_Db_Table
         return false;
     }
 
-    private function tournamentDirector($userId, $name, $year)
+    private function tournamentDirector($userId, $name, $year = null)
     {
         if($this->manage($userId)) {
             return true;
         }
 
         $tournamentTable = new Model_DbTable_Tournament();
+        if(is_null($year)) {
+            $year = $tournamentTable->fetchMostCurrentYear($name, true);
+        }
+
         $tournament = $tournamentTable->fetchTournament($year, $name, true);
 
         $tournamentMemberTable = new Model_DbTable_TournamentMember();

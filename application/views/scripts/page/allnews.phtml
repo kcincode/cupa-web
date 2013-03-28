@@ -22,7 +22,7 @@
             <?php if($news['is_visible'] == 1 || ($news['is_visible'] == 0 && $this->isViewable('news_edit'))): ?>
             <div class="well well-small">
                 <?php if($news['is_visible'] == 0): ?>
-                <div class="alert alert-warning">This news story is not yet public.</div>
+                <div class="alert alert-warning">This news story is not viewable to the public.</div>
                 <?php endif; ?>
                 <div class="pull-right">
                     <a class="btn btn-small btn-info" href="<?php echo $this->url(array('slug' => $news['slug']), 'news_view'); ?>"><i class="icon-list icon-white"></i> View Full Story</a>

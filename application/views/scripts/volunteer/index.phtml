@@ -6,7 +6,7 @@
     </div>
     <div class="span2">
         <div class="btn-group pull-right">
-            <?php if($this->isVolunteerAdmin()): ?>
+            <?php if($this->isViewable('volunteer_opportunity_add')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array(), 'volunteer_opportunity_add'); ?>"><i class="icon-book"></i> Add Opportunity</a>
             <?php endif; ?>
         </div>
