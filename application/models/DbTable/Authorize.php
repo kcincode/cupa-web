@@ -198,4 +198,9 @@ class Model_DbTable_Authorize extends Zend_Db_Table
 
         return false;
     }
+
+    private function user($userId)
+    {
+        return true;
+    }
 }

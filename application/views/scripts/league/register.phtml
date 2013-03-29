@@ -9,6 +9,7 @@
             <a class="btn btn-mini" href="<?php echo $this->url(array('type' => $this->season, 'name' => $this->slugify($this->leaguename($this->league->id, true, false, false, true))), 'leagues_view'); ?>">Back to League</a>
         </div>
     </div>
+    <?php if(Zend_Auth::getInstance()->hasIdentity()): ?>
     <div class="row">
         <div class="offset1 span9">
             <?php if($this->state == 'done'): ?>
@@ -21,4 +22,12 @@
             <?php echo $this->form; ?>
         </div>
     </div>
+    <?php else: ?>
+    <div class="row">
+    <div class="hero-unit span9 offset1">
+        <h1>Please Login</h1>
+        <p>To register for this league you must first login.  You can login with the link in the upper right of this page.  If you do not have a user account yet you may register for one with the same link.  Just click on the register button.</p>
+    </div>
+</div>
+    <?php endif; ?>
 </div>

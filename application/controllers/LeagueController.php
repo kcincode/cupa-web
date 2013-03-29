@@ -1663,6 +1663,10 @@ class LeagueController extends Zend_Controller_Action
 
     public function registerAction()
     {
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
+            return;
+        }
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
 
         $leagueTable = new Model_DbTable_League();
