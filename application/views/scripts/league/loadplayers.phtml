@@ -4,6 +4,9 @@
                                     <th>Player</th>
                                     <th class="span1">Gender</th>
                                     <th class="span1">Height</th>
+                                    <?php if(!is_null($this->players[0]['club'])): ?>
+                                    <th class="span1">Club Player</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -12,6 +15,11 @@
                                     <td><a href="<?php echo $this->url(array('user_id' => $player['id']), 'page_profile_public'); ?>"><?php echo $this->fullname($player['id']); ?></a></td>
                                     <td style="text-align: center;"><?php echo (empty($player['gender'])) ? 'Unknown' : $this->escape($player['gender']); ?></td>
                                     <td style="text-align: center;"><?php echo (empty($player['height'])) ? 'Unknown' : $this->escape(floor($player['height'] / 12)) . "'" . $this->escape($player['height'] % 12) .'"'; ?></td>
+                                    <?php if(!is_null($player['club'])): ?>
+                                    <td style="text-align: center;"><?php echo (is_null($player['club_id']) && $player['club'] == 'No') ? 'No' : 'Yes'; ?></td>
+                                    <?php elseif(!is_null($this->players[0]['club'])): ?>
+                                    <td style="text-align: center;">??</td>
+                                    <?php endif; ?>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>

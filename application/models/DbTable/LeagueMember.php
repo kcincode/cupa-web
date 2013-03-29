@@ -23,15 +23,15 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     {
         $data = array();
         $select = $this->getAdapter()->select()
-                           ->from(array('l' => 'league', array('id', 'year', 'day', 'name', 'season')))
-                           ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array())
-                           ->joinLeft(array('lm' => 'league_member'), 'lm.league_id = l.id', array('user_id'))
-                           ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array())
-                           ->where('lm.position = ?', 'director')
-                           ->where('l.is_archived = ?', 0)
-                           ->order('u.last_name')
-                           ->order('u.first_name')
-                           ->order('l.year DESC');
+                       ->from(array('l' => 'league', array('id', 'year', 'day', 'name', 'season')))
+                       ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array())
+                       ->joinLeft(array('lm' => 'league_member'), 'lm.league_id = l.id', array('user_id'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array())
+                       ->where('lm.position = ?', 'director')
+                       ->where('l.is_archived = ?', 0)
+                       ->order('u.last_name')
+                       ->order('u.first_name')
+                       ->order('l.year DESC');
         foreach($this->getAdapter()->fetchAll($select) as $row) {
             $league = $row['year'] . ' ' . $row['day'] . ' ' . $row['name'];
             if(!empty($row['season'])) {
@@ -44,12 +44,12 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         }
 
         $select = $this->getAdapter()->select()
-                           ->from(array('t' => 'tournament', array('id', 'year', 'display_name')))
-                           ->joinLeft(array('tm' => 'tournament_member'), 'tm.tournament_id = t.id', array('user_id', 'name AS overName'))
-                           ->joinLeft(array('u' => 'user'), 'u.id = tm.user_id', array())
-                           ->where('tm.type = ?', 'director')
-                           ->where('t.is_visible = ?', 1)
-                           ->order('t.year DESC');
+                       ->from(array('t' => 'tournament', array('id', 'year', 'display_name')))
+                       ->joinLeft(array('tm' => 'tournament_member'), 'tm.tournament_id = t.id', array('user_id', 'name AS overName'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = tm.user_id', array())
+                       ->where('tm.type = ?', 'director')
+                       ->where('t.is_visible = ?', 1)
+                       ->order('t.year DESC');
 
         foreach($this->getAdapter()->fetchAll($select) as $row) {
             if(!empty($row['user_id'])) {
@@ -105,11 +105,14 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     {
         $select = $this->getAdapter()->select()
                        ->from(array('lm' => $this->_name), array())
+                       ->joinLeft(array('l' => 'league'), 'lm.league_id = l.id', array())
                        ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('*'))
-                       ->joinLeft(array('up' =>'user_profile'), 'up.user_id = lm.user_id', array('*'))
-                       ->where('league_id = ?', $leagueId)
+                       ->joinLeft(array('up' => 'user_profile'), 'up.user_id = lm.user_id', array('*'))
+                       ->joinLeft(array('cm' => 'club_member'), 'cm.user_id = u.id AND l.year <= cm.year', array('club_id'))
+                       ->joinLeft(array('la' => 'league_answer'), 'la.league_member_id = lm.id && la.league_question_id = 32', array('answer AS club'))
+                       ->where('lm.league_id = ?', $leagueId)
                        ->where('league_team_id = ?', $teamId)
-                       ->where('position = ?', 'player')
+                       ->where('lm.position = ?', 'player')
                        ->order('u.last_name')
                        ->order('u.first_name');
 
