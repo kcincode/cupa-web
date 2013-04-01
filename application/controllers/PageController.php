@@ -1110,20 +1110,22 @@ class PageController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
+                $tournamentTable = new Model_DbTable_Tournament();
                 if($data['name'] == 'new') {
                     $data['name'] = $data['new_name'];
-
-                    $tournamentTable = new Model_DbTable_Tournament();
-                    $tournament = $tournamentTable->createBlankTournament($data['year'], $data['name'], $data['directors']);
-                    if($tournament) {
-                        $this->view->message('Tournament Created', 'success');
-                        $this->_redirect('/tournament/' .  $data['name'] . '/' . $data['year']);
-                    } else {
-                        $this->view->message('Tournament Already Exists', 'error');
-                    }
-
+                } else {
+                    $tmp = $tournamentTable->find($data['name'])->current();
+                    $data['name'] = $tmp->name;
+                    unset($tmp);
                 }
 
+                $tournament = $tournamentTable->createBlankTournament($data['year'], $data['name'], $data['directors']);
+                if($tournament) {
+                    $this->view->message('Tournament Created', 'success');
+                    $this->_redirect('/tournament/' .  $data['name'] . '/' . $data['year']);
+                } else {
+                    $this->view->message('Tournament Already Exists', 'error');
+                }
             }
         }
 

@@ -25,6 +25,7 @@ class Model_DbTable_Tournament extends Zend_Db_Table
         $tournament->name = $name;
         $tournament->year = $year;
         $tournament->display_name = $name;
+        $tournament->is_visible = 0;
         $tournament->save();
 
         $tournamentInfoTable = new Model_DbTable_TournamentInformation();
