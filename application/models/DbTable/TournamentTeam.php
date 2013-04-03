@@ -20,7 +20,7 @@ class Model_DbTable_TournamentTeam extends Zend_Db_Table
         return false;
     }
 
-    public function fetchAllTeams($tournamentId)
+    public function fetchAllTeams($tournamentId, $notPaid = false)
     {
         $select = $this->getAdapter()->select()
                        ->from(array('tt' => $this->_name), array('*'))
@@ -28,6 +28,10 @@ class Model_DbTable_TournamentTeam extends Zend_Db_Table
                        ->where('tournament_id = ?', $tournamentId)
                        ->order('division ASC')
                        ->order('name');
+
+        if($notPaid) {
+            $select = $select->where('tt.paid = ?', 0);
+        }
 
         $teams = array();
         foreach($this->getAdapter()->fetchAll($select) as $team) {

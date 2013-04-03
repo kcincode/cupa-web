@@ -575,11 +575,12 @@ class Form_LeagueEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $this->addElement('textarea', 'paypal_code', array(
             'filters' => array('StringTrim'),
-            'required' => true,
+            'required' => false,
             'label' => 'Paypal Button:',
             'class' => 'span7',
             'style' => 'height: 200px;',
-            'description' => 'Enter the paypal button HTML code.',
+            'disabled' => 'disabled',
+            'description' => 'This is no longer used.',
             'value' => $this->_leagueData['information']['paypal_code'],
         ));
 

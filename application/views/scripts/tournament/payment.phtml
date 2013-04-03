@@ -13,10 +13,28 @@
             <?php if(!empty($this->tournamentInfo->paypal)): ?>
             <div class="well">
                 <p>
-                    If you would like to pay via paypal you may do so below.  Just select the type of payment if there is one and click the button.  It will take you to paypal's site to pay for the tournament.
+                    If you would like to pay via paypal you may do so below.  Just click the button and it will take you to paypal's site to pay for the tournament.
+                </p>
+                <p>
+                    The tournament cost is <span class="text-info">$<?php echo $this->escape($this->tournamentInfo->cost); ?></span>
                 </p>
                 <div class="center">
+                    <?php if(count($this->teams)): ?>
+                    <select id="team">
+                        <option value="0">Select a Team</option>
+                        <?php foreach($this->teams as $div => $teams): ?>
+                        <optgroup label="<?php echo $this->escape($div); ?>">
+                        <?php foreach($teams as $team): ?>
+                            <option value="<?php echo $this->escape($team['id']); ?>"><?php echo $this->escape($team['name']); ?></option>
+                        <?php endforeach; ?>
+                        </optgroup>
+                        <?php endforeach; ?>
+                    </select><br/>
+                    <a id="paypal-link" class="btn btn-success" onclick="return pay();" href="<?php echo $this->url(array('id' => $this->tournament->id, 'type' => 'tournament'), 'paypal'); ?>">Pay via Paypal</a>
                     <?php echo $this->tournamentInfo->paypal; ?>
+                    <?php else: ?>
+                    <p><strong>There are currently no teams to pay for.</strong></p>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php endif; ?>
@@ -40,3 +58,17 @@
         </div>
     </div>
 </div>
+
+<script>
+function pay()
+{
+    if($('#team').val() == 0) {
+        alert('You must select a team to pay for.');
+        return false;
+    }
+
+    var href = $('#paypal-link').prop('href');
+    $('#paypal-link').prop('href', href + '/' + $('#team').val());
+    return true;
+}
+</script>

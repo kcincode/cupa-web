@@ -54,11 +54,11 @@
         <div class="offset1 span9">
             <h2>Payment Information</h2>
             <p>The cost of this league is: <strong><span class="text-info">$ <?php echo $this->escape($this->cost); ?></span></strong></p>
-            <?php if(!empty($this->paypal)): ?>
+            <?php if(!empty($this->cost)): ?>
             <p>If you are not paying online, bring your payment with you on the first night or you risk being removed from the league.</p>
             <p>
-                Use this button to make a payment via paypal:
-                <?php echo $this->paypal; ?>
+                Use this button to make a payment via paypal:<br/>
+                <a class="btn btn-success" href="<?php echo $this->url(array('id' => $this->league->id, 'type' => 'league'), 'paypal'); ?>">Pay via Paypal</a>
             </p>
             <?php else: ?>
             <p>Please bring your payment with you on the first night or you risk being removed from the league.</p>

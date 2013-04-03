@@ -1132,4 +1132,157 @@ class PageController extends Zend_Controller_Action
         $this->view->headScript()->appendScript('$(".select2").select2();');
         $this->view->form = $form;
     }
+
+    public function paypalAction()
+    {
+
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $request = $this->getRequest();
+        $id = $request->getUserParam('id');
+        $type = $request->getUserParam('type');
+
+        $paypalConfig = $this->getInvokeArg('bootstrap')->getOption('paypal');
+        $paypalConfig['return_url'] = 'http://cincyultimate.org/paypal_success/' . $id . '/' . $type;
+        $paypalConfig['cancel_url'] = 'http://cincyultimate.org/paypal_fail/' . $id . '/' . $type;
+        $paypalConfig['use_proxy'] = null;
+        $paypalConfig['proxy_host'] = null;
+        $paypalConfig['proxy_port'] = null;
+
+        $paypal = new Model_Paypal($paypalConfig, (APPLICATION_ENV == 'production') ? false : true);
+        $cost = 0;
+        switch($type) {
+            case 'league':
+                $leagueInformationTable = new Model_DbTable_LeagueInformation();
+                $info = $leagueInformationTable->fetchInformation($id);
+                if(isset($info->cost)) {
+                    $cost = $info->cost;
+                }
+                $paypal->description = $this->view->leaguename($id, true, true, true, true) . ' - $' . $cost;
+                $redirect = '/league/' . $id . '/register_success';
+                break;
+            case 'tournament':
+                $tournamentInformationTable = new Model_DbTable_TournamentInformation();
+                $info = $tournamentInformationTable->fetchInfo($id);
+                if(isset($info->cost)) {
+                    $cost = $info->cost;
+                }
+                $tournamentTable = new Model_DbTable_Tournament();
+                $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+                $tournament = $tournamentTable->find($id)->current();
+
+                $team = $tournamentTeamTable->find($request->getParam('team_id'))->current();
+                $paypal->description = $tournament->display_name . ' ' . $tournament->year . ' - ' . $team->name . ' - $' . $cost;
+
+                $paypal->return_url = 'http://cincyultimate.org/paypal_success/' . $id . '/' . $type . '/' . $request->getParam('team_id');
+                $redirect = '/tournament/' . $tournament->name . '/' . $tournament->year . '/payment';
+                break;
+        }
+
+        if(!Zend_Auth::getInstance()->hasIdentity() && $type != 'tournament') {
+            $this->view->message('You must be logged in to pay via paypal.', 'error');
+            $this->_redirect($redirect);
+        }
+
+        // if cost == 0 or not set
+        if(empty($cost)) {
+            $this->view->message('Error trying to pay with paypal.', 'error');
+            $this->_redirect($redirect);
+        }
+
+        $paypal->amount_total = $cost;
+        $paypal->set_express_checkout();
+
+        if(!$paypal->_error) {
+            $_SESSION['token'] = $paypal->token;
+            $paypal->set_express_checkout_successful_redirect();
+            return;
+        }
+
+        $this->view->message('Error trying to pay with paypal.', 'error');
+        $this->_redirect($redirect);
+    }
+
+    public function paypalsuccessAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $request = $this->getRequest();
+        $id = $request->getUserParam('id');
+        $type = $request->getUserParam('type');
+
+        $paypalConfig = $this->getInvokeArg('bootstrap')->getOption('paypal');
+        $paypal = new Model_Paypal($paypalConfig, (APPLICATION_ENV == 'production') ? false : true);
+        $paypal->token = $request->getParam('token');
+
+        if($paypal->get_express_checkout_details()) {
+            $data = array();
+            $data['confirm'] = Zend_Json::encode($paypal->Response);
+            $paypal->amount_total = $paypal->Response['AMT'];
+            if($paypal->do_express_checkout_payment()) {
+                $data['complete'] = Zend_Json::encode($paypal->Response);
+            }
+            $data = implode('::', $data);
+            $paypalTable = new Model_DbTable_Paypal();
+            $paypalId = $paypalTable->log($id, $type, $data);
+        }
+
+        switch($type) {
+            case 'league':
+                $redirect = 'league/' . $id . '/register_success';
+
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                $member = $leagueMemberTable->fetchMember($id, $this->view->user->id);
+                $member->paid = 1;
+                $member->save();
+
+                break;
+            case 'tournament':
+                $tournamentTable = new Model_DbTable_Tournament();
+                $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+                $tournament = $tournamentTable->find($id)->current();
+
+                $team = $tournamentTeamTable->find($request->getParam('team_id'))->current();
+                $team->paid = 1;
+                $team->save();
+
+                $redirect = 'tournament/' . $tournament->name . '/' . $tournament->year . '/teams';
+                break;
+        }
+
+        $this->view->message('Your payment has been completed.', 'success');
+        $this->_redirect($redirect);
+    }
+
+    public function paypalfailAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $request = $this->getRequest();
+        $id = $request->getUserParam('id');
+        $type = $request->getUserParam('type');
+
+        switch($type) {
+            case 'league':
+                $redirect = 'league/' . $id . '/register_success';
+                break;
+            case 'tournament':
+                $tournamentTable = new Model_DbTable_Tournament();
+                $tournament = $tournamentTable->find($id)->current();
+                $redirect = 'tournament/' . $tournament->name . '/' . $tournament->year . '/payment';
+                break;
+        }
+
+        $paypalConfig = $this->getInvokeArg('bootstrap')->getOption('paypal');
+        $paypal = new Model_Paypal($paypalConfig, (APPLICATION_ENV == 'production') ? false : true);
+        $paypal->token = $request->getParam('token');
+
+        if($paypal->get_express_checkout_details()) {
+            $this->view->message('You did not complete the transaction.', 'warning');
+            $this->_redirect($redirect);
+        }
+    }
 }

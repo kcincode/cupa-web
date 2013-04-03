@@ -285,6 +285,9 @@ class TournamentController extends Zend_Controller_Action
     public function paymentAction()
     {
         $this->view->section = 'bid';
+
+        $tournamentTeamTable = new Model_DbTable_TournamentTeam();
+        $this->view->teams = $tournamentTeamTable->fetchAllTeams($this->view->tournament->id, true);
     }
 
     public function teamsAction()

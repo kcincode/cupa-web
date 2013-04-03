@@ -304,11 +304,13 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
         ));
 
         $this->addElement('textarea', 'paypal', array(
-            'required' => true,
+            'required' => false,
             'label' => 'Paypal Button HTML:',
             'filters' => array('StringTrim'),
             'class' => 'span7',
             'style' => 'height: 200px;',
+            'disabled' => 'disabled',
+            'description' => 'This is no longer used.',
             'value' => (isset($this->_tournamentInfo->paypal)) ? $this->_tournamentInfo->paypal : null,
         ));
 
