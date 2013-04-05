@@ -1281,8 +1281,11 @@ class PageController extends Zend_Controller_Action
         $paypal->token = $request->getParam('token');
 
         if($paypal->get_express_checkout_details()) {
-            $this->view->message('You did not complete the transaction.', 'warning');
-            $this->_redirect($redirect);
+            $this->view->message('You did not complete the transaction.', 'error');
+        } else {
+            $this->view->message('Error occured with paypal.', 'error');
         }
+
+        $this->_redirect($redirect);
     }
 }
