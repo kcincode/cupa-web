@@ -133,13 +133,13 @@
                     <?php echo $this->getLeagueRegistrationStatus($this->league['id']); ?><br/>
                     <?php if($this->isLeagueRegistrationOpen($this->league['id'])): ?>
                         <?php if($this->league['limits']['male_players'] !== null and $this->league['limits']['female_players'] !== null): ?>
-                            <?php echo $this->leagueBar('male player spots', $this->league['male_players'], $this->league['limits']['male_players']); ?>
-                            <?php echo $this->leagueBar('female player sopts', $this->league['female_players'], $this->league['limits']['female_players']); ?>
+                            <?php echo $this->leagueBar('male player spots', $this->league['male_players'], $this->league['limits']['male_players'], $this->league['registration_end']); ?>
+                            <?php echo $this->leagueBar('female player sopts', $this->league['female_players'], $this->league['limits']['female_players'], $this->league['registration_end']); ?>
                         <?php elseif($this->league['limits']['total_players'] !== null): ?>
-                            <?php echo $this->leagueBar('player spots', $this->league['total_players'], $this->league['limits']['total_players']); ?>
+                            <?php echo $this->leagueBar('player spots', $this->league['total_players'], $this->league['limits']['total_players'], $this->league['registration_end']); ?>
                         <?php endif; ?>
                         <?php if($this->league['information']['user_teams'] and $this->league['teams'] < $this->league['limits']['teams']): ?>
-                            <?php echo $this->leagueBar('team spots', $this->league['teams'], $this->league['limits']['teams']); ?>
+                            <?php echo $this->leagueBar('team spots', $this->league['teams'], $this->league['limits']['teams'], $this->league['registration_end']); ?>
                         <?php endif; ?>
 
                         <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Register</a> for the league now!<br/><br/>

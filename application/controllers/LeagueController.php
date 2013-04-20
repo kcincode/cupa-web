@@ -776,6 +776,7 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
+
                 $leagueTeamTable = new Model_DbTable_LeagueTeam();
                 if($leagueTeamTable->isUnique($leagueId, $data['name'])) {
                     $id = $leagueTeamTable->insert(array(
@@ -788,6 +789,23 @@ class LeagueController extends Zend_Controller_Action
                     ));
 
                     if(is_numeric($id)) {
+                        $team = $leagueTeamTable->find($id)->current();
+                        $leagueMemberTable = new Model_DbTable_LeagueMember();
+
+                        foreach($data['captains'] as $captainId) {
+                            $leagueMember = $leagueMemberTable->createRow();
+                            $leagueMember->league_id = $team->league_id;
+                            $leagueMember->user_id = $captainId;
+                            $leagueMember->position = 'captain';
+                            $leagueMember->league_team_id = $team->id;
+                            $leagueMember->paid = 0;
+                            $leagueMember->release = 0;
+                            $leagueMember->created_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_by = $this->view->user->id;
+                            $leagueMember->save();
+                        }
+
                         $this->view->message('Team created', 'success');
                         $this->_redirect('league/' . $leagueId);
                     }
