@@ -33,7 +33,13 @@ class My_View_Helper_LeagueBar extends Zend_View_Helper_Abstract
         }
 
         $string = '<div>' . "\n";
-        $string .= '    <strong>' .  ($total - $current) . '</strong> ' . $name . ' left' . ' ( <strong>' . $dateDiff . "</strong> )\n";
+
+        if($name != 'team spots') {
+            $string .= '    <strong>' .  ($total - $current) . '</strong> ' . $name . ' left' . ' ( <strong>' . $dateDiff . "</strong> )\n";
+        } else {
+            $string .= '    <strong>' .  ($total - $current) . '</strong> ' . $name . ' left' . "\n";
+        }
+
         $string .= '    <div class="progress progress-' . $color . '">' . "\n";
         $string .= '        <div class="bar" style="width: ' . number_format($ratio) . '%"></div>' . "\n";
         $string .= '    </div>';
