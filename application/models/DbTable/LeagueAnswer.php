@@ -92,7 +92,15 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
                        ->order('u.last_name')
                        ->order('u.first_name');
 
-        return $this->getAdapter()->fetchAll($select);
+        $results = $this->getAdapter()->fetchAll($select);
+        usort($results, function($a, $b) {
+            $aname = (is_numeric($a['team'])) ? $a['team_name'] : $a['team'];
+            $bname = (is_numeric($b['team'])) ? $b['team_name'] : $b['team'];
+
+            return ($aname < $bname) ? -1 : 1;
+        });
+
+        return $results;
     }
 
     public function fetchAllVolunteers()
