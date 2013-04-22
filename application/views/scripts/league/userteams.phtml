@@ -23,7 +23,7 @@
                     <?php foreach($this->players as $player): ?>
                     <tr>
                         <td><?php echo $this->escape($player['first_name'] . ' ' . $player['last_name']); ?></td>
-                        <td><?php echo $this->escape($player['team']); ?></td>
+                        <td><?php echo (is_numeric($player['team'])) ? $this->escape($player['team_name']) : $this->escape($player['team']); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

@@ -85,6 +85,7 @@ class Model_DbTable_LeagueAnswer extends Zend_Db_Table
                        ->from(array('la' => $this->_name), array('answer AS team'))
                        ->joinLeft(array('lm' => 'league_member'), 'lm.id = la.league_member_id', array())
                        ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
+                       ->joinLeft(array('lt' => 'league_team'), 'lt.id = la.answer', array('name as team_name'))
                        ->where('lm.league_id = ?', $leagueId)
                        ->where('la.league_question_id = ?', $question->id)
                        ->order('la.answer')
