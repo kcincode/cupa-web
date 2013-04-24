@@ -51,6 +51,8 @@ class ErrorController extends Zend_Controller_Action
         $log = $this->getLog($logType);
         if ($log) {
             $log->log('***************************************************************', Zend_Log::INFO);
+            $userId = Zend_Auth::getInstance()->getIdentity();
+            $log->log('USER ID: ' . $userId, $priority);
             $log->log($this->view->message, $priority);
             $log->log($this->_url, $priority);
             $log->log($errors->exception, $priority);

@@ -1135,7 +1135,6 @@ class PageController extends Zend_Controller_Action
 
     public function paypalAction()
     {
-
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
@@ -1144,7 +1143,7 @@ class PageController extends Zend_Controller_Action
         $type = $request->getUserParam('type');
 
         $paypalConfig = $this->getInvokeArg('bootstrap')->getOption('paypal');
-        $paypalConfig['return_url'] = 'http://cincyultimate.org/paypal_success/' . $id . '/' . $type;
+        $paypalConfig['return_url'] = 'http://cincyultimate.org/paypal_success/' . $id . '/' . $type . '/' . Zend_Auth::getInstance()->getIdentity();
         $paypalConfig['cancel_url'] = 'http://cincyultimate.org/paypal_fail/' . $id . '/' . $type;
         $paypalConfig['use_proxy'] = null;
         $paypalConfig['proxy_host'] = null;
@@ -1175,7 +1174,7 @@ class PageController extends Zend_Controller_Action
                 $team = $tournamentTeamTable->find($request->getParam('team_id'))->current();
                 $paypal->description = $tournament->display_name . ' ' . $tournament->year . ' - ' . $team->name . ' - $' . $cost;
 
-                $paypal->return_url = 'http://cincyultimate.org/paypal_success/' . $id . '/' . $type . '/' . $request->getParam('team_id');
+                $paypal->return_url = $paypalConfig['return_url'] . '/' . $request->getParam('team_id');
                 $redirect = '/tournament/' . $tournament->name . '/' . $tournament->year . '/payment';
                 break;
         }
@@ -1212,6 +1211,7 @@ class PageController extends Zend_Controller_Action
         $request = $this->getRequest();
         $id = $request->getUserParam('id');
         $type = $request->getUserParam('type');
+        $userId = $request->getUserParam('user_id');
 
         $paypalConfig = $this->getInvokeArg('bootstrap')->getOption('paypal');
         $paypal = new Model_Paypal($paypalConfig, (APPLICATION_ENV == 'production') ? false : true);
@@ -1226,7 +1226,7 @@ class PageController extends Zend_Controller_Action
             }
             $data = implode('::', $data);
             $paypalTable = new Model_DbTable_Paypal();
-            $paypalId = $paypalTable->log($id, $type, $data);
+            $paypalId = $paypalTable->log($userId, $id, $type, $data);
         }
 
         switch($type) {
@@ -1234,7 +1234,7 @@ class PageController extends Zend_Controller_Action
                 $redirect = 'league/' . $id . '/register_success';
 
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
-                $member = $leagueMemberTable->fetchMember($id, $this->view->user->id);
+                $member = $leagueMemberTable->fetchMember($id, $userId);
                 $member->paid = 1;
                 $member->save();
 
