@@ -50,14 +50,16 @@ class ErrorController extends Zend_Controller_Action
         // Log exception, if logger available
         $log = $this->getLog($logType);
         if ($log) {
-            $log->log('***************************************************************', Zend_Log::INFO);
-            $userId = Zend_Auth::getInstance()->getIdentity();
-            $log->log('USER ID: ' . $userId, $priority);
-            $log->log($this->view->message, $priority);
-            $log->log($this->_url, $priority);
-            $log->log($errors->exception, $priority);
-            $log->log($this->_params, $priority);
-            $log->log('***************************************************************', Zend_Log::INFO);
+            if(strstr($this->_url, 'apple-touch-icon') === false) {
+                $log->log('***************************************************************', Zend_Log::INFO);
+                $userId = Zend_Auth::getInstance()->getIdentity();
+                $log->log('USER ID: ' . $userId, $priority);
+                $log->log($this->view->message, $priority);
+                $log->log($this->_url, $priority);
+                $log->log($errors->exception, $priority);
+                $log->log($this->_params, $priority);
+                $log->log('***************************************************************', Zend_Log::INFO);
+            }
         }
 
         // conditionally display exceptions
