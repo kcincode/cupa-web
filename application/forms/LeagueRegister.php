@@ -361,7 +361,6 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
                     'required' => true,
                     'label' => '1.) Do you want to create a team or join a team?',
                     'multiOptions' => array('0' => 'Create a Team', '1' => 'Join a Team'),
-                    'separator' => '&nbsp;&nbsp;&nbsp;',
                 ));
 
                 $this->addElement('select', 'user_team_select', array(
@@ -372,7 +371,6 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
                     'label' => 'a.) Select the team you would like to join:',
                     'description' => 'Select the team you would like to join, the captain will make a descision to allow you to join.',
                     'multiOptions' => $currentTeams,
-                    'separator' => '&nbsp;&nbsp;&nbsp;',
                 ));
 
                 $this->addElement('text', 'user_team_new', array(

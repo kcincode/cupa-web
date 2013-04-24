@@ -1714,8 +1714,6 @@ class LeagueController extends Zend_Controller_Action
                 return;
             }
         }
-        // TODO: reset session if referer is unset or coming from league page
-        // $session->unsetAll();
 
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $state = $this->getRequest()->getUserParam('state');
@@ -1793,6 +1791,8 @@ class LeagueController extends Zend_Controller_Action
 
     private function registerLeague($leagueId, &$form)
     {
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league_register.js');
+
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         unset($session->league);
 
