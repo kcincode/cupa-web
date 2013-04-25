@@ -81,8 +81,6 @@ class AdminController extends Zend_Controller_Action
 
     public function unpaidAction()
     {
-        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/manage/unpaid.css');
-
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $data = array();
         foreach($leagueMemberTable->fetchUnpaidPlayers() as $row) {
