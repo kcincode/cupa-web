@@ -14,8 +14,12 @@ class Model_DbTable_UserEmergency extends Zend_Db_Table
     	return $this->fetchRow($select);
     }
 
-    public function fetchAllContacts($userId)
+    public function fetchAllContacts($userId = null)
     {
+        if(is_null($userId)) {
+            return null;
+        }
+
     	$select = $this->select()
     	               ->where('user_id = ?', $userId)
     	               ->order('weight ASC');
