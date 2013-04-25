@@ -380,12 +380,11 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
                     'description' => 'Enter the team name you would like to create.  First come first serve.',
                 ));
 
-
                 if(count($teams) >= $limits['teams']) {
                     $this->removeElement('team_select');
                     $this->removeElement('user_team_new');
                     $this->getElement('user_team_select')->setLabel('1.) Select the team you would like to join:');
-
+                    $questionList[] = 'user_team_select';
                 } else if(count($teams) == 0) {
                     $this->removeElement('team_select');
                     $this->removeElement('user_team_select');
