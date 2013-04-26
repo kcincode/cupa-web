@@ -229,7 +229,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'description' => 'Enter/Check your birthday',
             'class' => 'datepicker',
             'errorMessage' => 'Invalid date.',
-            'value' => $userProfile->birthday,
+            'value' => date('m/d/Y', strtotime($userProfile->birthday)),
         ));
 
         $this->addElement('text', 'nickname', array(
@@ -479,7 +479,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'First name:',
-            'value' => $user->first_name,
+            'value' => (empty($this->_session->personal['first_name'])) ? $userProfile->first_name : $this->_session->personal['first_name'],
             'disabled' => true,
             'description' => 'Check your first name.',
         ));
@@ -488,7 +488,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Last name:',
-            'value' => $user->last_name,
+            'value' => (empty($this->_session->personal['last_name'])) ? $userProfile->last_name : $this->_session->personal['last_name'],
             'disabled' => true,
             'description' => 'Check your last name.',
         ));
@@ -497,7 +497,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Email Address:',
-            'value' => $user->email,
+            'value' => (empty($this->_session->personal['email'])) ? $userProfile->email : $this->_session->personal['email'],
             'disabled' => true,
             'description' => 'Check your email address.',
         ));
@@ -506,7 +506,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Phone:',
-            'value' => $userProfile->phone,
+            'value' => (empty($this->_session->personal['phone'])) ? $userProfile->phone : $this->_session->personal['phone'],
             'disabled' => true,
             'description' => 'Check your phone number.',
         ));
@@ -515,7 +515,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Birthday:',
-            'value' => date('m/d/Y', strtotime($userProfile->birthday)),
+            'value' => (empty($this->_session->personal['birthday'])) ? date('m/d/Y', strtotime($userProfile->birthday)) : date('m/d/Y', strtotime($this->_session->personal['birthday'])),
             'disabled' => true,
             'description' => 'Check your phone number.',
         ));

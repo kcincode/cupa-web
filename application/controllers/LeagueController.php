@@ -1767,6 +1767,9 @@ class LeagueController extends Zend_Controller_Action
 
     private function registerPersonal($leagueId, &$form)
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
+
         $session = new Zend_Session_Namespace('registration' . $leagueId);
 
         $userEmergencyTable = new Model_DbTable_UserEmergency();
@@ -1787,6 +1790,8 @@ class LeagueController extends Zend_Controller_Action
                 $this->_redirect('league/' . $leagueId . '/register/league');
             }
         }
+
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
     }
 
     private function registerLeague($leagueId, &$form)
