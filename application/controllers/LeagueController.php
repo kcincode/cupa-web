@@ -1870,6 +1870,7 @@ class LeagueController extends Zend_Controller_Action
             $userProfile->height = $session->personal['height'];
             $userProfile->level = $session->personal['level'];
             $userProfile->experience = $session->personal['experience'];
+            $userProfile->save();
 
             $userEmergencyTable = new Model_DbTable_UserEmergency();
             for($i = 1; $i < 3; $i++) {
