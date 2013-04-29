@@ -223,7 +223,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
         $this->addElement('text', 'birthday', array(
             'required' => true,
             'validators' => array(
-                array('Date'),
+                array('Date', false, array('format' => 'MM/dd/YYYY')),
             ),
             'label' => 'Birthday:',
             'description' => 'Enter/Check your birthday',

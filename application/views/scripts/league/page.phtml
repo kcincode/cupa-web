@@ -41,7 +41,7 @@
                 *** This page is not yet viewable, it is only viewable to those that can edit it. ***
             </div>
             <?php endif; ?>
-            <h3 class="<?php echo $this->pageClass(); ?>">Description</h3>
+            <h3 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], true, false, false, true); ?></h3>
             <hr/>
             <div class="pull-right">
                 <?php if($this->isViewable('league_description_edit')): ?>
@@ -57,7 +57,7 @@
             <br/>
 
 
-            <h3 class="<?php echo $this->pageClass(); ?>">Information</h3>
+            <h3 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], false, false, false, true); ?> Information</h3>
             <hr/>
             <div class="pull-right">
                 <?php if($this->isViewable('league_information_edit')): ?>
@@ -117,7 +117,7 @@
             </dl>
             <br/>
 
-            <h3 class="<?php echo $this->pageClass(); ?>">Registration</h3>
+            <h3 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], false, false, false, true); ?> Registration</h3>
             <hr/>
             <div class="pull-right">
                 <?php if($this->isViewable('league_registration_edit')): ?>
@@ -142,10 +142,10 @@
                             <?php echo $this->leagueBar('team spots', $this->league['teams'], $this->league['limits']['teams'], $this->league['registration_end']); ?>
                         <?php endif; ?>
 
-                        <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Register</a> for the league now!<br/><br/>
+                        <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Register for <?php echo $this->leaguename($this->league['id'], false, false, false, true); ?>!</a> <br/><br/>
                     <?php elseif(strstr($this->getLeagueRegistrationMessage($this->league['id']), 'League registration is full with') !== false): ?>
                         <p>You may still register for the waitlist if you like</p>
-                        <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Waitlist Registration</a>
+                        <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Waitlist for <?php echo $this->leaguename($this->league['id'], false, false, false, true); ?></a>
                         <br/><br/>
                     <?php endif; ?>
 
