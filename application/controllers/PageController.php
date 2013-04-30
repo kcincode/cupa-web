@@ -1143,8 +1143,10 @@ class PageController extends Zend_Controller_Action
         $type = $request->getUserParam('type');
 
         $paypalConfig = $this->getInvokeArg('bootstrap')->getOption('paypal');
-        $paypalConfig['return_url'] = 'http://cincyultimate.org/paypal_success/' . $id . '/' . $type . '/' . Zend_Auth::getInstance()->getIdentity();
-        $paypalConfig['cancel_url'] = 'http://cincyultimate.org/paypal_fail/' . $id . '/' . $type;
+        $userId = (Zend_Auth::getInstance()->hasIdentity()) ? Zend_Auth::getInstance()->getIdentity() : 0;
+        $server = (APPLICATION_ENV == 'production') ? 'http://cincyultimate.org' : 'http://localhost/cupa';
+        $paypalConfig['return_url'] = $server . '/paypal_success/' . $id . '/' . $type . '/' . $userId;
+        $paypalConfig['cancel_url'] = $server . '/paypal_fail/' . $id . '/' . $type;
         $paypalConfig['use_proxy'] = null;
         $paypalConfig['proxy_host'] = null;
         $paypalConfig['proxy_port'] = null;

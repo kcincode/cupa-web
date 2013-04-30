@@ -28,6 +28,7 @@ class ErrorController extends Zend_Controller_Action
             return;
         }
 
+        $userId = Zend_Auth::getInstance()->getIdentity();
         switch ($errors->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
@@ -44,6 +45,14 @@ class ErrorController extends Zend_Controller_Action
                 $priority = Zend_Log::CRIT;
                 $logType = 'error';
                 $this->view->message = 'Application error';
+
+                // email webmaster the error
+                $mail = new Zend_Mail();
+                $mail->setFrom('no-replay@cincyultimate.org');
+                $mail->addTo('webmaster@cincyultimate.org');
+                $mail->setSubject('[CUPA] Apllication Error');
+                $mail->setBodyText("USER ID: $userId\r\nURL: {$this->_url}\r\nPARAMS: {$this->_params}\r\n\r\nEXCEPTION:\r\n{$errors->exception}\r\n\r\n");
+                $mail->send();
                 break;
         }
 
@@ -52,7 +61,6 @@ class ErrorController extends Zend_Controller_Action
         if ($log) {
             if(strstr($this->_url, 'apple-touch-icon') === false) {
                 $log->log('***************************************************************', Zend_Log::INFO);
-                $userId = Zend_Auth::getInstance()->getIdentity();
                 $log->log('USER ID: ' . $userId, $priority);
                 $log->log($this->view->message, $priority);
                 $log->log($this->_url, $priority);
