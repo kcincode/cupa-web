@@ -6,6 +6,7 @@ class LeagueController extends Zend_Controller_Action
     public function init()
     {
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/leagues.css');
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
         if($leagueId) {
@@ -2060,7 +2061,7 @@ class LeagueController extends Zend_Controller_Action
 
                 if(empty($post['available'])) {
                     $this->view->message('You must select at least on player to add', 'error');
-                } else {
+                } else if($teamId != 0) {
                     foreach($post['available'] as $leagueMemberId) {
                         $leagueMember = $leagueMemberTable->find($leagueMemberId)->current();
                         $leagueMember->league_team_id = $teamId;
@@ -2069,6 +2070,8 @@ class LeagueController extends Zend_Controller_Action
                         $leagueMember->save();
                     }
                     $this->view->message('Player(s) added', 'success');
+                } else {
+                    $this->view->message('You must select a team to add the player(s) to.', 'error');
                 }
             } else if(isset($post['manage-remove'])) {
                 unset($post['available']);
