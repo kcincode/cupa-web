@@ -479,7 +479,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'First name:',
-            'value' => (empty($this->_session->personal['first_name'])) ? $userProfile->first_name : $this->_session->personal['first_name'],
+            'value' => (empty($this->_session->personal['first_name'])) ? $user->first_name : $this->_session->personal['first_name'],
             'disabled' => true,
             'description' => 'Check your first name.',
         ));
@@ -488,7 +488,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Last name:',
-            'value' => (empty($this->_session->personal['last_name'])) ? $userProfile->last_name : $this->_session->personal['last_name'],
+            'value' => (empty($this->_session->personal['last_name'])) ? $user->last_name : $this->_session->personal['last_name'],
             'disabled' => true,
             'description' => 'Check your last name.',
         ));
@@ -497,7 +497,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Email Address:',
-            'value' => (empty($this->_session->personal['email'])) ? $userProfile->email : $this->_session->personal['email'],
+            'value' => (empty($this->_session->personal['email'])) ? $user->email : $this->_session->personal['email'],
             'disabled' => true,
             'description' => 'Check your email address.',
         ));
