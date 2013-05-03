@@ -15,6 +15,7 @@ class Model_DbTable_League extends Zend_Db_Table
                        //->where('li.is_youth = ?', 0)
                        ->order('l.is_archived ASC')
                        ->order('l.year DESC')
+                       ->order('l.registration_begin DESC')
                        ->order('l.registration_end');
 
         if(!$all) {
