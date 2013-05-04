@@ -16,7 +16,7 @@
                                     <td style="text-align: center;"><?php echo (empty($player['gender'])) ? 'Unknown' : $this->escape($player['gender']); ?></td>
                                     <td style="text-align: center;"><?php echo (empty($player['height'])) ? 'Unknown' : $this->escape(floor($player['height'] / 12)) . "'" . $this->escape($player['height'] % 12) .'"'; ?></td>
                                     <?php if(!is_null($player['club'])): ?>
-                                    <td style="text-align: center;"><?php echo (is_null($player['club_id']) && $player['club'] == 'No') ? 'No' : 'Yes'; ?></td>
+                                    <td style="text-align: center;"><?php echo (is_null($player['club_id']) && substr($player['club'], 0, 2) == 'No') ? 'No' : 'Yes'; ?></td>
                                     <?php elseif(!is_null($this->players[0]['club'])): ?>
                                     <td style="text-align: center;">??</td>
                                     <?php endif; ?>

@@ -12,18 +12,16 @@ class Model_DbTable_League extends Zend_Db_Table
                        ->joinLeft(array('ls' => 'league_season'), 'ls.id = l.season', array('name AS season'))
                        ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array())
                        ->where('ls.name = ?', $season)
-                       //->where('li.is_youth = ?', 0)
                        ->order('l.is_archived ASC')
                        ->order('l.year DESC')
-                       ->order('l.registration_begin DESC')
                        ->order('l.registration_end');
-
         if(!$all) {
-            $select->where('l.visible_from <= ?', date('Y-m-d H:i:s'));
+            $select = $select->where('l.visible_from <= ?', date('Y-m-d H:i:s'));
         }
 
         if(!$showArchived) {
             $select = $select->where('is_archived = ?', 0);
+            $select = $select->where('is_youth = ?', 0);
         }
 
         $results = $this->getAdapter()->fetchAll($select);
