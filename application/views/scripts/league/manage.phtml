@@ -43,12 +43,19 @@
     </div>
     <div class="row">
         <form method="post">
-            <div class="span4 well well-small">
-                <select class="span4" style="height: 350px;" name="available[]" multiple>
-                    <?php foreach($this->available as $data): ?>
-                    <option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="span4 well well-small" style="height: 350px; overflow: auto;">
+                <?php if(count($this->available)): ?>
+                <?php foreach($this->available as $data): ?>
+                <div class="row">
+                    <label class="pull-right btn span3" for="player<?php echo $this->escape($data['id']); ?>">
+                        <?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?>
+                    </label>
+                    <input style="margin: 10px;" class="pull-right" id="player<?php echo $this->escape($data['id']); ?>" type="checkbox" name="available[]" value="<?php echo $this->escape($data['id']); ?>"/>
+                </div>
+                <?php endforeach; ?>
+                <?php else: ?>
+                <p class="alert">There are no available players</p>
+                <?php endif; ?>
             </div>
             <div class="span3 align-center">
                 <br/><br/><br/><br/><br/><br/>
@@ -59,12 +66,23 @@
                 <input type="hidden" name="manage-clear-team" value="<?php echo $this->escape($this->teamId); ?>"/>
                 <button class="btn btn-mini btn-warning" type="submit" name="manage-clear"><i class="icon-remove icon-white"></i> Clear Team</button>
             </div>
-            <div class="span4 well well-small">
-                <select class="span4" style="height: 350px;" name="players[]" multiple>
+            <div class="span4 well well-small" style="height: 350px; overflow: auto;">
+                <?php if(count($this->teamPlayers)): ?>
                 <?php foreach($this->teamPlayers as $data): ?>
-                    <option value="<?php echo $this->escape($data['id']); ?>"><?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?></option>
+                <div class="row">
+                    <input style="margin: 10px 10px 10px 25px;" class="pull-right" id="player<?php echo $this->escape($data['id']); ?>" type="checkbox" name="players[]" value="<?php echo $this->escape($data['id']); ?>"/>
+                    <label class="pull-right btn span3" for="player<?php echo $this->escape($data['id']); ?>">
+                        <?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?>
+                    </label>
+                </div>
                 <?php endforeach; ?>
-                </select>
+                <?php else: ?>
+                <?php if(isset($this->teamId) && $this->teamId != 0): ?>
+                <p class="alert">There are no team players</p>
+                <?php else: ?>
+                <p class="alert">Please select a team to add players to</p>
+                <?php endif; ?>
+                <?php endif; ?>
             </div>
         </form>
     </div>
