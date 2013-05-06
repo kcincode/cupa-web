@@ -1694,6 +1694,7 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $leagueId = $this->getRequest()->getUserParam('league_id');
+        $key = $this->getRequest()->getUserParam('key');
 
         $leagueTable = new Model_DbTable_League();
         $this->view->league = $leagueTable->find($leagueId)->current();
@@ -1716,7 +1717,7 @@ class LeagueController extends Zend_Controller_Action
                 $this->_redirect('/league/' . $leagueId . '/register_success');
             }
 
-            if(!$this->view->waitlist) {
+            if(!$this->view->waitlist && $key != sha1($this->view->leaguename($leagueId, true, true, true, true))) {
                 //$this->view->message($this->view->registrationMessage, 'error');
                 $this->renderScript('league/registration-error.phtml');
                 return;
@@ -1726,6 +1727,7 @@ class LeagueController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $state = $this->getRequest()->getUserParam('state');
         $session->waitlist = $this->view->waitlist;
+        $session->key = $key;
 
         if($state != 'user') {
             if($this->view->isRegistered($leagueId, $session->registrantId)) {
@@ -1746,6 +1748,8 @@ class LeagueController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace('registration' . $leagueId);
         $leagueTable = new Model_DbTable_League();
 
+        $forceRegistration = (!empty($session->key)) ? '/' . $session->key : '';
+
         $league = $leagueTable->find($leagueId)->current();
         $leagueSeasonTable = new Model_DbTable_LeagueSeason();
         $season  = $leagueSeasonTable->fetchName($league->season);
@@ -1754,7 +1758,7 @@ class LeagueController extends Zend_Controller_Action
         if(!$userTable->hasMinors($this->view->user->id)) {
             $session->registrantId = $this->view->user->id;
 
-            $this->_redirect('league/' . $leagueId . '/register/personal');
+            $this->_redirect('league/' . $leagueId . '/register/personal' . $forceRegistration);
         }
 
         if($this->getRequest()->isPost()) {
@@ -1768,7 +1772,7 @@ class LeagueController extends Zend_Controller_Action
                 $data = $form->getValues();
 
                 $session->registrantId = $data['user'];
-                $this->_redirect('league/' . $leagueId . '/register/personal');
+                $this->_redirect('league/' . $leagueId . '/register/personal' . $forceRegistration);
             }
         }
     }
@@ -1779,6 +1783,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
 
         $session = new Zend_Session_Namespace('registration' . $leagueId);
+        $forceRegistration = (!empty($session->key)) ? '/' . $session->key : '';
 
         $userEmergencyTable = new Model_DbTable_UserEmergency();
         $this->view->contacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
@@ -1789,13 +1794,13 @@ class LeagueController extends Zend_Controller_Action
             $post = $this->getRequest()->getPost();
 
             if(isset($post['back'])) {
-                $this->_redirect('league/' . $leagueId . '/register/user');
+                $this->_redirect('league/' . $leagueId . '/register/user' . $forceRegistration);
             }
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $session->personal = $data;
-                $this->_redirect('league/' . $leagueId . '/register/league');
+                $this->_redirect('league/' . $leagueId . '/register/league' . $forceRegistration);
             }
         }
 
@@ -1807,17 +1812,18 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/league_register.js');
 
         $session = new Zend_Session_Namespace('registration' . $leagueId);
+        $forceRegistration = (!empty($session->key)) ? '/' . $session->key : '';
         unset($session->league);
 
         if(empty($session->personal)) {
-            $this->_redirect('league/' . $leagueId . '/register/personal');
+            $this->_redirect('league/' . $leagueId . '/register/personal' . $forceRegistration);
         }
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
             if(isset($post['back'])) {
-                $this->_redirect('league/' . $leagueId . '/register/personal');
+                $this->_redirect('league/' . $leagueId . '/register/personal' . $forceRegistration);
             }
 
             if($form->isValid($post)) {
@@ -1831,7 +1837,7 @@ class LeagueController extends Zend_Controller_Action
                 }
 
                 $session->league = $data;
-                $this->_redirect('league/' . $leagueId . '/register/done');
+                $this->_redirect('league/' . $leagueId . '/register/done' . $forceRegistration);
             }
         }
     }
@@ -1839,17 +1845,18 @@ class LeagueController extends Zend_Controller_Action
     private function registerDone($leagueId, &$form)
     {
         $session = new Zend_Session_Namespace('registration' . $leagueId);
+        $forceRegistration = (!empty($session->key)) ? '/' . $session->key : '';
         unset($session->done);
 
         if(empty($session->league)) {
-            $this->_redirect('league/' . $leagueId . '/register/league');
+            $this->_redirect('league/' . $leagueId . '/register/league' . $forceRegistration);
         }
 
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
             if(isset($post['back'])) {
-                $this->_redirect('league/' . $leagueId . '/register/league');
+                $this->_redirect('league/' . $leagueId . '/register/league' . $forceRegistration);
             } else {
                 $this->saveRegistrationData($leagueId, $session);
             }
@@ -1878,7 +1885,7 @@ class LeagueController extends Zend_Controller_Action
             }
 
             $userProfile->gender = $session->personal['gender'];
-            $userProfile->birthday = $session->personal['birthday'];
+            $userProfile->birthday = date('Y-m-d', strtotime($session->personal['birthday']));
             $userProfile->nickname = $session->personal['nickname'];
             $userProfile->height = $session->personal['height'];
             $userProfile->level = $session->personal['level'];
@@ -2032,7 +2039,6 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/select2/select2.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
 
-        $addForm = new Form_LeagueManage($leagueId, 'add');
         $removeForm = new Form_LeagueManage($leagueId, 'remove');
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
@@ -2040,18 +2046,7 @@ class LeagueController extends Zend_Controller_Action
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
-            if(isset($post['add'])) {
-                if($addForm->isValid($post)) {
-                    $data = $addForm->getValues();
-
-                    foreach($data['user'] as $user) {
-                        $leagueMemberTable->addNewPlayer($leagueId, $user);
-                    }
-
-                    $this->view->message('Players added to league.', 'success');
-                    $this->_redirect('league/' . $leagueId . '/manage');
-                }
-            } else if(isset($post['remove'])) {
+            if(isset($post['remove'])) {
                 if($removeForm->isValid($post)) {
                     $data = $removeForm->getValues();
 
@@ -2113,11 +2108,11 @@ class LeagueController extends Zend_Controller_Action
             }
         }
 
+        $key = sha1($this->view->leaguename($leagueId, true, true, true, true));
+        $this->view->url = 'http://cincyultimate.org/league/' . $leagueId . '/register/user/' . $key;
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
         $this->view->available = $leagueMemberTable->fetchPlayersByTeam($leagueId, null);
         $this->view->teamPlayers = $leagueMemberTable->fetchPlayersByTeam($leagueId, $teamId);
-
-        $this->view->addForm = $addForm;
         $this->view->removeForm = $removeForm;
 
         $this->view->headScript()->appendScript('$(".select2").select2();');

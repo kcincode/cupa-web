@@ -473,6 +473,8 @@ class Model_DbTable_User extends Zend_Db_Table
                        ->joinLeft(array('lm' => 'league_member'), 'lm.user_id <> u.id', array())
                        ->where('lm.position = ?', 'player')
                        ->where('lm.league_id = ?', $leagueId)
+                       ->where('u.activated_at IS NOT NULL')
+                       ->where('u.last_login IS NOT NULL')
                        ->order('last_name')
                        ->order('first_name');
 
