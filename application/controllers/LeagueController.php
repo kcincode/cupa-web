@@ -1875,6 +1875,7 @@ class LeagueController extends Zend_Controller_Action
             $userTable = new Model_DbTable_User();
 
             $user = $userTable->find($session->registrantId)->current();
+            $user->email = $session->personal['email'];
             $user->first_name = $session->personal['first_name'];
             $user->last_name = $session->personal['last_name'];
 
@@ -1883,8 +1884,10 @@ class LeagueController extends Zend_Controller_Action
                 $user->email = $session->personal['email'];
                 $userProfile->phone = $session->personal['phone'];
             }
+            $user->save();
 
             $userProfile->gender = $session->personal['gender'];
+            $userProfile->phone = $session->personal['phone'];
             $userProfile->birthday = date('Y-m-d', strtotime($session->personal['birthday']));
             $userProfile->nickname = $session->personal['nickname'];
             $userProfile->height = $session->personal['height'];
@@ -1952,6 +1955,15 @@ class LeagueController extends Zend_Controller_Action
             // redirect to success/payment screen
             $type = ($session->waitlist) ? 'waitlisted' : 'registered';
             $this->view->message('You have successfully ' . $type . ' for ' . $this->view->leaguename($leagueId, true, true, true, true));
+        } else {
+            $mail = new Zend_Mail();
+            $mail->setFrom('no-reply@cincyultimate.org');
+            $mail->addTo('webmaster@cincyultimate.org');
+            $mail->setSubject('[CUPA] Apllication Error: Registration');
+            $mail->setBodyText("Registrant: {$session->registrantId}\r\nPersonal:" . print_r($session->personal, true) . "\r\nLeague:" . print_r($session->league, true) . "\r\nUSER ID: $userId\r\nURL: {$this->_url}\r\nPARAMS: {$this->_params}\r\n\r\nEXCEPTION:\r\n{$errors->exception}\r\n\r\n");
+            $mail->send();
+            $this->view->message('There was an error processing your request, please try again.', 'error');
+            return;
         }
 
         $userWaiverTable = new Model_DbTable_UserWaiver();
