@@ -70,7 +70,7 @@
                 <?php if(count($this->teamPlayers)): ?>
                 <?php foreach($this->teamPlayers as $data): ?>
                 <div class="row">
-                    <input style="margin: 10px 10px 10px 25px;" class="pull-right" id="player<?php echo $this->escape($data['id']); ?>" type="checkbox" name="players[]" value="<?php echo $this->escape($data['id']); ?>"/>
+                    <input style="margin: 10px 5px 10px 25px;" class="pull-right" id="player<?php echo $this->escape($data['id']); ?>" type="checkbox" name="players[]" value="<?php echo $this->escape($data['id']); ?>"/>
                     <label class="pull-right btn span3" for="player<?php echo $this->escape($data['id']); ?>">
                         <?php echo $this->escape($data['first_name']) . ' ' . $this->escape($data['last_name']); ?>
                     </label>
