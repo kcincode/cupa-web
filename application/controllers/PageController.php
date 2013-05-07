@@ -806,24 +806,30 @@ class PageController extends Zend_Controller_Action
                 $data = $form->getValues();
                 $newsTable = new Model_DbTable_News();
 
-                $news = $newsTable->createRow();
-                $news->is_visible = $data['is_visible'];
-                $news->category_id = $data['category'];
-                $news->title = $data['title'];
-                $news->slug = $newsTable->slugifyTitle($data['title']);
-                $news->url = (empty($data['url'])) ? null : $data['url'];
-                $news->info = $data['info'];
-                $news->content = $data['content'];
-                $news->posted_by = $this->view->user->id;
-                $news->edited_at = date('Y-m-d H:i:s');
-                $news->type = $newsTable->getNewsType($data);
-                $news->last_edited_by = $this->view->user->id;
-                $news->posted_at = date('Y-m-d H:i:s');
-                $news->remove_at = (empty($post['remove_at'])) ? null : date('Y-m-d H:i:s', strtotime($post['remove_at']));
-                $news->save();
+                $test = $newsTable->fetchNewsBySlug($newsTable->slugifyTitle($data['title']));
+                if(empty($test)) {
 
-                $this->view->message('News item created');
-                $this->_redirect('/news/' . $news->slug);
+                    $news = $newsTable->createRow();
+                    $news->is_visible = $data['is_visible'];
+                    $news->category_id = $data['category'];
+                    $news->title = $data['title'];
+                    $news->slug = $newsTable->slugifyTitle($data['title']);
+                    $news->url = (empty($data['url'])) ? null : $data['url'];
+                    $news->info = $data['info'];
+                    $news->content = $data['content'];
+                    $news->posted_by = $this->view->user->id;
+                    $news->edited_at = date('Y-m-d H:i:s');
+                    $news->type = $newsTable->getNewsType($data);
+                    $news->last_edited_by = $this->view->user->id;
+                    $news->posted_at = date('Y-m-d H:i:s');
+                    $news->remove_at = (empty($post['remove_at'])) ? null : date('Y-m-d H:i:s', strtotime($post['remove_at']));
+                    $news->save();
+
+                    $this->view->message('News item created');
+                    $this->_redirect('/news/' . $news->slug);
+                } else {
+                    $this->view->message('News title already exists please try a different one.', 'error');
+                }
             }
         }
 
