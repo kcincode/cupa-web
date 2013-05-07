@@ -122,9 +122,11 @@ class AuthController extends Zend_Controller_Action
             return;
         }
 
-        // log the logout
-        $userAccessLogTable = new Model_DbTable_UserAccessLog();
-        $userAccessLogTable->log($this->view->user->username, 'logout');
+        if(Zend_Auth::getInstance()->hasIdentity()) {
+            // log the logout
+            $userAccessLogTable = new Model_DbTable_UserAccessLog();
+            $userAccessLogTable->log($this->view->user->username, 'logout');
+        }
 
         // clear the authentication identity
         Zend_Auth::getInstance()->clearIdentity();
