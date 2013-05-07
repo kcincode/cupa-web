@@ -132,6 +132,7 @@
                 <dd>
                     <?php echo $this->getLeagueRegistrationStatus($this->league['id']); ?><br/>
                     <?php if($this->isLeagueRegistrationOpen($this->league['id'])): ?>
+                        <?php if(Zend_Auth::getInstance()->hasIdentity()): ?>
                         <?php if($this->league['limits']['male_players'] !== null and $this->league['limits']['female_players'] !== null): ?>
                             <?php echo $this->leagueBar('male player spots', $this->league['male_players'], $this->league['limits']['male_players'], $this->league['registration_end']); ?>
                             <?php echo $this->leagueBar('female player sopts', $this->league['female_players'], $this->league['limits']['female_players'], $this->league['registration_end']); ?>
@@ -142,10 +143,20 @@
                             <?php echo $this->leagueBar('team spots', $this->league['teams'], $this->league['limits']['teams'], $this->league['registration_end']); ?>
                         <?php endif; ?>
 
-                        <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Register for <?php echo $this->leaguename($this->league['id'], false, false, false, true); ?>!</a> <br/><br/>
+                        <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Register for <?php echo $this->leaguename($this->league['id'], false, false, false, true); ?>!</a>
+                        <?php else: ?>
+                        <br/>
+                        <p class="btn disabled">Login to register</p>
+                        <?php endif; ?>
+                        <br/><br/>
                     <?php elseif(strstr($this->getLeagueRegistrationMessage($this->league['id']), 'League registration is full with') !== false): ?>
+                         <?php if(Zend_Auth::getInstance()->hasIdentity()): ?>
                         <p>You may still register for the waitlist if you like</p>
                         <a class="btn btn-primary" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_register'); ?>">Waitlist for <?php echo $this->leaguename($this->league['id'], false, false, false, true); ?></a>
+                        <?php else: ?>
+                        <br/>
+                        <p class="btn disabled">Login to register</p>
+                        <?php endif; ?>
                         <br/><br/>
                     <?php endif; ?>
 
