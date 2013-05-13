@@ -1147,9 +1147,14 @@ class PageController extends Zend_Controller_Action
         $request = $this->getRequest();
         $id = $request->getUserParam('id');
         $type = $request->getUserParam('type');
+        $userId = $request->getUserParam('user_id');
 
         $paypalConfig = $this->getInvokeArg('bootstrap')->getOption('paypal');
-        $userId = (Zend_Auth::getInstance()->hasIdentity()) ? Zend_Auth::getInstance()->getIdentity() : 0;
+
+        if(!$userId) {
+            $userId = (Zend_Auth::getInstance()->hasIdentity()) ? Zend_Auth::getInstance()->getIdentity() : 0;
+        }
+
         $server = (APPLICATION_ENV == 'production') ? 'http://cincyultimate.org' : 'http://localhost/cupa';
         $paypalConfig['return_url'] = $server . '/paypal_success/' . $id . '/' . $type . '/' . $userId;
         $paypalConfig['cancel_url'] = $server . '/paypal_fail/' . $id . '/' . $type;

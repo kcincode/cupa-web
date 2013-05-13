@@ -58,7 +58,15 @@
             <p>If you are not paying online, bring your payment with you on the first night or you risk being removed from the league.</p>
             <p>
                 Use this button to make a payment via paypal:<br/>
-                <a class="btn btn-success" href="<?php echo $this->url(array('id' => $this->league->id, 'type' => 'league'), 'paypal'); ?>">Pay via Paypal</a>
+                <?php if(count($this->players) > 1): ?>
+                    Pay for:
+                    <select id="user_select" onchange="$('#paypal').prop('href', $('#paypal').prop('href').replace(/\/(\d)*$/, '/' + $(this).val()));">
+                        <?php foreach($this->players as $player): ?>
+                        <option value="<?php echo $this->escape($player['user_id']); ?>"><?php echo $this->fullname($player['user_id']); ?></option>
+                        <?php endforeach; ?>
+                    </select><br/>
+                <?php endif; ?>
+                <a id="paypal" class="btn btn-success" href="<?php echo $this->url(array('id' => $this->league->id, 'type' => 'league', 'user_id' => $this->players[0]['user_id']), 'paypal'); ?>">Pay via Paypal</a>
             </p>
             <?php else: ?>
             <p>Please bring your payment with you on the first night or you risk being removed from the league.</p>

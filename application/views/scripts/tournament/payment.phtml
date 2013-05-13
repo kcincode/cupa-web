@@ -30,7 +30,7 @@
                         </optgroup>
                         <?php endforeach; ?>
                     </select><br/>
-                    <a id="paypal-link" class="btn btn-success" onclick="return pay();" href="<?php echo $this->url(array('id' => $this->tournament->id, 'type' => 'tournament'), 'paypal'); ?>">Pay via Paypal</a>
+                    <a id="paypal-link" class="btn btn-success" onclick="return pay();" href="<?php echo $this->url(array('id' => $this->tournament->id, 'type' => 'tournament', 'user_id' => 0), 'paypal'); ?>">Pay via Paypal</a>
                     <?php else: ?>
                     <p><strong>There are currently no teams to pay for.</strong></p>
                     <?php endif; ?>

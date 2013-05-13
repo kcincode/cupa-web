@@ -13,11 +13,13 @@ class LeagueController extends Zend_Controller_Action
             $leagueInformationTable = new Model_DbTable_LeagueInformation();
             $leagueTable = new Model_DbTable_League();
             $this->view->league = $leagueTable->find($leagueId)->current();
-            $information = $leagueInformationTable->fetchInformation($leagueId);
-            $this->view->userTeams = ($information->user_teams == 1) ? true : false;
+            if($this->view->league) {
+                $information = $leagueInformationTable->fetchInformation($leagueId);
+                $this->view->userTeams = ($information->user_teams == 1) ? true : false;
 
-            if(!$this->view->userTeams and $this->getRequest()->getActionName() == 'userteams') {
-                $this->_redirect('league/' . $leagueId);
+                if(!$this->view->userTeams and $this->getRequest()->getActionName() == 'userteams') {
+                    $this->_redirect('league/' . $leagueId);
+                }
             }
         }
     }
@@ -1875,19 +1877,17 @@ class LeagueController extends Zend_Controller_Action
             $userTable = new Model_DbTable_User();
 
             $user = $userTable->find($session->registrantId)->current();
-            $user->email = $session->personal['email'];
             $user->first_name = $session->personal['first_name'];
             $user->last_name = $session->personal['last_name'];
 
             // only update the user email/phone if they are not a minor
-            if(!empty($user->parent)) {
+            if(empty($user->parent)) {
                 $user->email = $session->personal['email'];
                 $userProfile->phone = $session->personal['phone'];
             }
             $user->save();
 
             $userProfile->gender = $session->personal['gender'];
-            $userProfile->phone = $session->personal['phone'];
             $userProfile->birthday = date('Y-m-d', strtotime($session->personal['birthday']));
             $userProfile->nickname = $session->personal['nickname'];
             $userProfile->height = $session->personal['height'];
