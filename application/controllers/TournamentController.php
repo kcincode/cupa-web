@@ -48,6 +48,10 @@ class TournamentController extends Zend_Controller_Action
 
     public function homeAction()
     {
+        if(strstr($_SERVER['HTTP_USER_AGENT'], 'chromeframe') === false) {
+            $this->view->message('You are using an IE browser or an older browser, to enhance your experience please download the google chrome frame <a href="http://www.google.com/chromeframe">here</a>', 'warning');
+        }
+
         $this->view->section = 'home';
 
         $tournamentUpdateTable = new Model_DbTable_TournamentUpdate();
