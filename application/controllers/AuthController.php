@@ -15,15 +15,15 @@ class AuthController extends Zend_Controller_Action
             $this->_redirect('/');
         }
 
-        // disable the layout
+        // disable the layout and view
         $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
 
         // create link to user_access_logs table
         $userAccessLogTable = new Model_DbTable_UserAccessLog();
 
         // if the form is submitted
         if($this->getRequest()->isPost()) {
-            $this->_helper->viewRenderer->setNoRender(true);
 
             // get the post data
             $data = $this->getRequest()->getPost();
