@@ -481,7 +481,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'label' => 'First name:',
             'value' => (empty($this->_session->personal['first_name'])) ? $user->first_name : $this->_session->personal['first_name'],
             'disabled' => true,
-            'description' => 'Check your first name.',
+            'description' => 'Please check your first name.',
         ));
 
         $this->addElement('text', 'last_name', array(
@@ -490,7 +490,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'label' => 'Last name:',
             'value' => (empty($this->_session->personal['last_name'])) ? $user->last_name : $this->_session->personal['last_name'],
             'disabled' => true,
-            'description' => 'Check your last name.',
+            'description' => 'Please check your last name.',
         ));
 
         $this->addElement('text', 'email', array(
@@ -499,7 +499,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'label' => 'Email Address:',
             'value' => (empty($this->_session->personal['email'])) ? $user->email : $this->_session->personal['email'],
             'disabled' => true,
-            'description' => 'Check your email address.',
+            'description' => 'Please check your email address.',
         ));
 
         $this->addElement('text', 'phone', array(
@@ -508,7 +508,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'label' => 'Phone:',
             'value' => (empty($this->_session->personal['phone'])) ? $userProfile->phone : $this->_session->personal['phone'],
             'disabled' => true,
-            'description' => 'Check your phone number.',
+            'description' => 'Please check your phone number.',
         ));
 
         $this->addElement('text', 'birthday', array(
@@ -517,7 +517,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'label' => 'Birthday:',
             'value' => (empty($this->_session->personal['birthday'])) ? date('m/d/Y', strtotime($userProfile->birthday)) : date('m/d/Y', strtotime($this->_session->personal['birthday'])),
             'disabled' => true,
-            'description' => 'Check your phone number.',
+            'description' => 'Please check your birthday.',
         ));
 
         $this->addDisplayGroup(
