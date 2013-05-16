@@ -229,7 +229,7 @@ class Form_LeagueRegister extends Twitter_Bootstrap_Form_Vertical
             'description' => 'Enter/Check your birthday',
             'class' => 'datepicker',
             'errorMessage' => 'Invalid date.',
-            'value' => date('m/d/Y', strtotime($userProfile->birthday)),
+            'value' => (strtotime($userProfile->phone) == 0) ? null : date('m/d/Y', strtotime($userProfile->phone)),
         ));
 
         $this->addElement('text', 'nickname', array(
