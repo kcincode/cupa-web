@@ -1962,7 +1962,7 @@ class LeagueController extends Zend_Controller_Action
             $mail->setSubject('[CUPA] Apllication Error: Registration');
             $mail->setBodyText("Registrant: {$session->registrantId}\r\nPersonal:" . print_r($session->personal, true) . "\r\nLeague:" . print_r($session->league, true) . "\r\nUSER ID: $userId\r\nURL: {$this->_url}\r\nPARAMS: {$this->_params}\r\n\r\nEXCEPTION:\r\n{$errors->exception}\r\n\r\n");
             $mail->send();
-            $this->view->message('There was an error processing your request, please try again.', 'error');
+            $this->view->message('There was an error processing your request, please make sure you have entered all data.', 'error');
             return;
         }
 
