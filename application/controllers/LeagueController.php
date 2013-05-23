@@ -1791,6 +1791,8 @@ class LeagueController extends Zend_Controller_Action
         $this->view->contacts = $userEmergencyTable->fetchAllContacts($session->registrantId);
         unset($session->personal);
 
+        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
+
         // handle post request
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -1801,12 +1803,20 @@ class LeagueController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
+
+                // make sure that the birthday is > 8 yrs old
+                list($m, $d, $y) = explode('/', $data['birthday']);
+                list($curM, $curD, $curY) = explode('/', date('m/d/Y'));
+                if(($curY - $y) < 8) {
+                    $form->getElement('birthday')->addError('Birthday is not valid.');
+                    return;
+                }
+
                 $session->personal = $data;
                 $this->_redirect('league/' . $leagueId . '/register/league' . $forceRegistration);
             }
         }
 
-        $this->view->headScript()->appendScript('$(".datepicker").datepicker();');
     }
 
     private function registerLeague($leagueId, &$form)
