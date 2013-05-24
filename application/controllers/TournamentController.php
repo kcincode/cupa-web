@@ -592,7 +592,6 @@ class TournamentController extends Zend_Controller_Action
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
             }
         }
-                Zend_Debug::dump($form->isValid($post));
 
         $this->view->headScript()->appendScript('$(".select2").select2();');
         $this->view->form = $form;
