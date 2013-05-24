@@ -132,7 +132,7 @@ class AuthController extends Zend_Controller_Action
         Zend_Auth::getInstance()->clearIdentity();
 
         // destroy session data
-        Zend_Session::destroy();
+        Zend_Session::destroy(true);
     }
 
     public function registerAction()
