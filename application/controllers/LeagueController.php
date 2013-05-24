@@ -1966,11 +1966,21 @@ class LeagueController extends Zend_Controller_Action
             $type = ($session->waitlist) ? 'waitlisted' : 'registered';
             $this->view->message('You have successfully ' . $type . ' for ' . $this->view->leaguename($leagueId, true, true, true, true));
         } else {
+
+            $url = $_SERVER['REQUEST_URI'];
+
+            $params = array(
+                'get' => $this->getRequest()->getParams(),
+                'post' => $this->getRequest()->getPost(),
+            );
+            $params = Zend_Json::encode($this->_params, true);
+            $userId = Zend_Auth::getInstance()->getIdentity();
+
             $mail = new Zend_Mail();
             $mail->setFrom('no-reply@cincyultimate.org');
             $mail->addTo('webmaster@cincyultimate.org');
             $mail->setSubject('[CUPA] Apllication Error: Registration');
-            $mail->setBodyText("Registrant: {$session->registrantId} (" . Zend_Auth::getInstance()->getIdentity() . ")\r\nPersonal:" . print_r($session->personal, true) . "\r\nLeague:" . print_r($session->league, true) . "\r\nUSER ID: $userId\r\nURL: {$this->_url}\r\nPARAMS: {$this->_params}\r\n\r\nEXCEPTION:\r\n{$errors->exception}\r\n\r\n");
+            $mail->setBodyText("Registrant: {$session->registrantId} (" . Zend_Auth::getInstance()->getIdentity() . ")\r\nPersonal:" . print_r($session->personal, true) . "\r\nLeague:" . print_r($session->league, true) . "\r\nUSER ID: $userId\r\nURL: {$url}\r\nPARAMS: {$params}\r\n\r\n");
             $mail->send();
             $this->view->message('There was an error processing your request, please make sure you have entered all data.', 'error');
             return;
