@@ -61,7 +61,7 @@ class AdminController extends Zend_Controller_Action
                 }
 
                 if($id == 0) {
-                    $string = "Dear {$account['first_name']} {$account['last_name']}\r\n" . $string;
+                    $string = "Hello {$account['first_name']} {$account['last_name']}\r\n" . $string;
                 }
                 $string .= "    " . str_pad($account['username'], 20, ' ', STR_PAD_LEFT) . ": {$account['email']}\r\n";
             }
