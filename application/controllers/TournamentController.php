@@ -563,7 +563,7 @@ class TournamentController extends Zend_Controller_Action
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
             }
 
-            if($post['user_id'] == 0 && empty($post['name']) || empty($post['email'])) {
+            if($post['user_id'] == 0 && (empty($post['name']) || empty($post['email']))) {
                 $form->getElement('user_id')->addErrorMessage('You must select a user or enter user information.')->markAsError();
             }
 
@@ -592,6 +592,7 @@ class TournamentController extends Zend_Controller_Action
                 $this->_redirect('tournament/' . $this->view->tournament->name . '/' . $this->view->tournament->year . '/contact');
             }
         }
+                Zend_Debug::dump($form->isValid($post));
 
         $this->view->headScript()->appendScript('$(".select2").select2();');
         $this->view->form = $form;

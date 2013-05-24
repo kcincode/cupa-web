@@ -46,13 +46,15 @@ class ErrorController extends Zend_Controller_Action
                 $logType = 'error';
                 $this->view->message = 'Application error';
 
-                // email webmaster the error
-                $mail = new Zend_Mail();
-                $mail->setFrom('no-reply@cincyultimate.org');
-                $mail->addTo('webmaster@cincyultimate.org');
-                $mail->setSubject('[CUPA] Apllication Error');
-                $mail->setBodyText("USER ID: $userId\r\nURL: {$this->_url}\r\nPARAMS: {$this->_params}\r\n\r\nEXCEPTION:\r\n{$errors->exception}\r\n\r\n");
-                $mail->send();
+                if(APPLICATION_ENV == 'production') {
+                    // email webmaster the error
+                    $mail = new Zend_Mail();
+                    $mail->setFrom('no-reply@cincyultimate.org');
+                    $mail->addTo('webmaster@cincyultimate.org');
+                    $mail->setSubject('[CUPA] Apllication Error');
+                    $mail->setBodyText("USER ID: $userId\r\nURL: {$this->_url}\r\nPARAMS: {$this->_params}\r\n\r\nEXCEPTION:\r\n{$errors->exception}\r\n\r\n");
+                    $mail->send();
+                }
                 break;
         }
 
