@@ -15,7 +15,13 @@
     </div>
     <div class="row">
         <div class="offset1 span10">
-            <p class="alert alert-info">To add a player to this league send them an email with this url:<br/><?php echo $this->escape($this->url); ?></p>
+            <p class="alert alert-info">To add a player to this league and require them to answer the registration questions send them this url:<br/><?php echo $this->escape($this->url); ?></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset1 span10 well well-small">
+            <?php echo $this->addForm; ?>
+<!--            <p>You can also manually add them with this button: <a class="btn btn-primary" href="#">Add Player</a> <span class="text-warning">(they will not have registration data)</span></p>-->
         </div>
     </div>
     <div class="row">

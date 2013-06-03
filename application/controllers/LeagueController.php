@@ -2072,13 +2072,25 @@ class LeagueController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/select2/select2.min.js');
 
         $removeForm = new Form_LeagueManage($leagueId, 'remove');
+        $addForm = new Form_LeagueManage($leagueId, 'add');
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         if($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
-            if(isset($post['remove'])) {
+            if(isset($post['add'])) {
+                if($addForm->isValid($post)) {
+                    $data = $addForm->getValues();
+
+                    foreach($data['user'] as $user) {
+                        $leagueMemberTable->addNewPlayer($leagueId, $user);
+                    }
+
+                    $this->view->message('Players added to league.', 'success');
+                    $this->_redirect('league/' . $leagueId . '/manage');
+                }
+            } else if(isset($post['remove'])) {
                 if($removeForm->isValid($post)) {
                     $data = $removeForm->getValues();
 
@@ -2145,6 +2157,7 @@ class LeagueController extends Zend_Controller_Action
         $this->view->teams = $leagueTeamTable->fetchAllTeams($leagueId);
         $this->view->available = $leagueMemberTable->fetchPlayersByTeam($leagueId, null);
         $this->view->teamPlayers = $leagueMemberTable->fetchPlayersByTeam($leagueId, $teamId);
+        $this->view->addForm = $addForm;
         $this->view->removeForm = $removeForm;
 
         $this->view->headScript()->appendScript('$(".select2").select2();');

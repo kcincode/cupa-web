@@ -466,14 +466,16 @@ class Model_DbTable_User extends Zend_Db_Table
 
     public function fetchAllUsersNotInLeague($leagueId, $filter = null)
     {
+        // Note... this just returns all users until I can figure out the query.
+
         $select = $this->getAdapter()
                        ->select()
                        ->distinct()
                        ->from(array('u' => $this->_name), array('*'))
-                       ->joinLeft(array('lm' => 'league_member'), 'lm.user_id <> u.id', array())
-                       ->where('lm.position = ?', 'player')
-                       ->where('lm.league_id = ?', $leagueId)
-                       ->where('u.activated_at IS NOT NULL')
+//                       ->joinRight(array('lm' => 'league_member'), 'lm.user_id <> u.id', array())
+//                       ->where('lm.position = ?', 'player')
+//                       ->where('lm.league_id = ?', $leagueId)
+                       ->where('u.is_active = ?', 1)
                        ->where('u.last_login IS NOT NULL')
                        ->order('last_name')
                        ->order('first_name');
