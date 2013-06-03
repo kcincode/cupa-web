@@ -74,7 +74,7 @@ class Form_LeagueScheduleEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $this->addElement('select', 'home_team', array(
             'validators' => array(
-                array('InArray', false, array(array_keys($leagueTeams))),
+                array('GreaterThan', false, array('min' => 0, 'messages' => array('notGreaterThan' => 'Please select a team'))),
             ),
             'required' => true,
             'label' => 'Home Team:',
@@ -95,7 +95,7 @@ class Form_LeagueScheduleEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $this->addElement('select', 'away_team', array(
             'validators' => array(
-                array('InArray', false, array(array_keys($leagueTeams))),
+                array('GreaterThan', false, array('min' => 0, 'messages' => array('notGreaterThan' => 'Please select a team'))),
             ),
             'required' => true,
             'label' => 'Away Team:',
