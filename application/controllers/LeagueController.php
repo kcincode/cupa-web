@@ -448,6 +448,9 @@ class LeagueController extends Zend_Controller_Action
 
     public function pageregistrationeditAction()
     {
+        $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datetimepicker.css');
+        $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datetimepicker.js');
+
         $leagueId = $this->getRequest()->getUserParam('league_id');
         $leagueTable = new Model_DbTable_League();
         $pageTable = new Model_DbTable_Page();
@@ -491,8 +494,8 @@ class LeagueController extends Zend_Controller_Action
                 $data = $form->getValues();
 
                 $league = $leagueTable->find($leagueId)->current();
-                $league->registration_begin = $data['registration_begin'];
-                $league->registration_end = $data['registration_end'];
+                $league->registration_begin = date('Y-m-d H:i:s', strtotime($data['registration_begin'] . ':00'));
+                $league->registration_end = date('Y-m-d H:i:s', strtotime($data['registration_end'] . ':00'));
                 $league->save();
 
                 $leagueLimitTable = new Model_DbTable_LeagueLimit();
@@ -519,10 +522,10 @@ class LeagueController extends Zend_Controller_Action
 
                 $this->view->message('League registration updated', 'success');
                 $this->_redirect('leagues/' . $this->view->season . '/' . $this->view->slugify($this->view->leaguename($this->view->league['id'], true, false, false, true)));
-
             }
         }
 
+        $this->view->headScript()->appendScript('$(".datetimepicker").datetimepicker({ autoclose: true, todayBtn: true, minuteStep: 15, format: \'yyyy-mm-dd hh:ii\' });');
         $this->view->form = $form;
     }
 
