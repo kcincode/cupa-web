@@ -57,7 +57,7 @@ class Form_LeagueContact extends Twitter_Bootstrap_Form_Horizontal
            'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Message Content:',
-            'class' => 'span6',
+            'class' => 'span6 ckeditor',
             'style' => 'height: 250px;',
         ));
 
