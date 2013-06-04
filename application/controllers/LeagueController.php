@@ -1357,10 +1357,10 @@ class LeagueController extends Zend_Controller_Action
                         $mail->clearRecipients();
                         if(APPLICATION_ENV == 'production') {
                             $mail->addTo($email);
-                            $mail->setBodyText($post['content']);
+                            $mail->setBodyHtml($post['content']);
                         } else {
                             $mail->addTo('kcin1018@gmail.com');
-                            $mail->setBodyText("TO: $email\r\n\r\n" . $post['content']);
+                            $mail->setBodyHtml("TO: $email\r\n\r\n" . $post['content']);
                         }
                         $mail->send();
                     }
