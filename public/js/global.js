@@ -21,7 +21,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'post',
             url: BASE_URL + '/login',
-            data: 'username='+$('#username').val()+'&password='+$('#password').val(),
+            data: 'username='+$('#username').val()+'&password='+encodeURIComponent($('#password').val()),
             success: function(response) {
                 var obj = eval('(' + response + ')');
                 if(obj.result == 'Error') {

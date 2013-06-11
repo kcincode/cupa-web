@@ -1,7 +1,7 @@
 <?php
 class Model_Authenticate {
     private $_user;
-    
+
     public function __construct($user)
     {
         $this->_user = $user;
@@ -11,15 +11,15 @@ class Model_Authenticate {
     {
         return (empty($this->_user->salt)) ? $this->checkPassword($password, 'md5') : $this->checkPassword($password, 'sha1');
     }
-    
+
     private function checkPassword($password, $algorithm)
     {
         if($algorithm == 'md5') {
             // generate md5 hash of password
-            $passwordHash = md5($password);
+            $passwordHash = md5("$password");
         } else if($algorithm == 'sha1') {
             // generate sha1 hash of the salt + password
-            $passwordHash = sha1($this->_user->salt . $password);
+            $passwordHash = sha1($this->_user->salt . "$password");
         }
 
         // check to see if the hashes match

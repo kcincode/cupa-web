@@ -27,6 +27,7 @@ class AuthController extends Zend_Controller_Action
 
             // get the post data
             $data = $this->getRequest()->getPost();
+            $data['password'] = urldecode($data['password']);
             if(!empty($data['username']) and !empty($data['password'])) {
                 // get the user object
                 $userTable = new Model_DbTable_User();
@@ -44,7 +45,7 @@ class AuthController extends Zend_Controller_Action
                     $authentication = new Model_Authenticate($user);
 
                     // try the password for authentication
-                    if($authentication->authenticate($data['password'])) {
+                    if($authentication->authenticate("{$data['password']}")) {
                         // successfull login
 
                         // check to see if the user is active
@@ -62,7 +63,7 @@ class AuthController extends Zend_Controller_Action
                         // update the salt if doesn't exist
                         if(empty($user->salt)) {
                             $user->salt = $userTable->generateUniqueCodeFor('salt');
-                            $user->password = sha1($user->salt . $data['password']);
+                            $user->password = sha1($user->salt . "{$data['password']}");
                             $user->save();
                         }
 

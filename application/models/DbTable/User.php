@@ -89,7 +89,7 @@ class Model_DbTable_User extends Zend_Db_Table
         if($user) {
             if(empty($user->activated_at)) {
                 $user->salt = $this->generateUniqueCodeFor('salt');
-                $user->password = sha1($user->salt . $password);
+                $user->password = sha1($user->salt . "$password");
                 $user->updated_at = date('Y-m-d H:i:s');
                 $user->save();
                 return $user->id;
@@ -105,9 +105,9 @@ class Model_DbTable_User extends Zend_Db_Table
         if($user) {
             if(empty($user->salt)) {
                 $user->salt = $this->generateUniqueCodeFor('salt');
-                $user->password = sha1($user->salt . $password);
+                $user->password = sha1($user->salt . "$password");
             } else {
-                $user->password = sha1($user->salt . $password);
+                $user->password = sha1($user->salt . "$password");
             }
 
             $user->updated_at = date('Y-m-d H:i:s');
