@@ -297,10 +297,10 @@ class VolunteerController extends Zend_Controller_Action
 
             set_time_limit(0);
 
-            echo "first_name,last_name,email\n";
+            echo "volunteer,email\n";
             foreach($volunteers as $volunteer) {
                 $email = (empty($volunteer['email'])) ? $volunteer['parent_email'] : $volunteer['email'];
-                echo "{$volunteer['first_name']},{$volunteer['last_name']},{$email}\n";
+                echo "{$volunteer['volunteer_name']},{$email}\n";
             }
             exit();
         }
