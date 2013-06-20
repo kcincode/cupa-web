@@ -104,6 +104,9 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
         } else {
             $row = $this->createRow();
             $row->user_id = $user->id;
+            $row->involvement = '0-1 year';
+            $row->primary_interest = 'Unknown';
+            $row->experience = 'Unknown';
             $row->save();
 
             return $row;

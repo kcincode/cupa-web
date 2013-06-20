@@ -186,9 +186,11 @@ class VolunteerController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
+                // fetch or create pool member
                 $volunteerPoolTable = new Model_DbTable_VolunteerPool();
                 $member = $volunteerPoolTable->fetchMember($data);
 
+                // create the member of the volunteer opportunity
                 $volunteerMemberTable = new Model_DbTable_VolunteerMember();
                 $result = $volunteerMemberTable->addVolunteer($volunteerId, $member->id, $data['comment']);
 
