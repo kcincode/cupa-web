@@ -15,6 +15,23 @@ class Form_VolunteerOpportunity extends Twitter_Bootstrap_Form_Horizontal
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
+        $categories = array(0 => 'Select a Category');
+        $volunteerCategoryTable = new Model_DbTable_VolunteerCategory();
+        foreach($volunteerCategoryTable->fetchAllCategories() as $category) {
+            $categories[$category->id] = $category->category;
+        }
+        $this->addElement('select', 'volunteer_category_id', array(
+            'filters' => array('StringTrim'),
+            'required' => true,
+            'validators' => array(
+                array('GreaterThan', false, array('min' => 0, 'messages' => array('notGreaterThan' => 'Please select a category.'))),
+            ),
+            'class' => 'select2 span4',
+            'multiOptions' => $categories,
+            'label' => 'Opportunity Category:',
+            'value' => (empty($this->_volunteer['volunteer_category_id'])) ? null : $this->_volunteer['volunteer_category_id'],
+        ));
+
         $this->addElement('text', 'name', array(
             'filters' => array('StringTrim'),
             'required' => true,
@@ -137,7 +154,7 @@ class Form_VolunteerOpportunity extends Twitter_Bootstrap_Form_Horizontal
 
         $title = (empty($this->_volunteer)) ? 'Create a Volunteer Opportunity' : 'Edit a Volunteer Opportunity';
         $this->addDisplayGroup(
-            array('name', 'start', 'end', 'contact_id', 'max_volunteers', 'information'),
+            array('volunteer_category_id', 'name', 'start', 'end', 'contact_id', 'max_volunteers', 'information'),
             'volunteer_location_edit_form',
             array(
                 'legend' => $title,

@@ -112,4 +112,17 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
             return $row;
         }
     }
+
+    public function fetchAllVolunteers()
+    {
+        $select = $this->getAdapter()
+                       ->select()
+                       ->from(array('vp' => $this->_name), array('*'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = vp.user_id', array("CONCAT(u.first_name, ' ', u.last_name) AS volunteer_name", 'u.email'))
+                       ->joinLeft(array('up' => 'user'), 'up.id = u.parent', array('up.email AS parent_email'))
+                       ->order('u.last_name')
+                       ->order('u.first_name');
+
+        return $this->getAdapter()->fetchAll($select);
+    }
 }

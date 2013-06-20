@@ -5,11 +5,13 @@ class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
     protected $_user;
     protected $_profile;
     protected $_type;
+    protected $_volunteer;
 
-    public function __construct($user, $type = 'volunteer')
+    public function __construct($user, $type = 'volunteer', $volunteer = null)
     {
         $this->_user = $user;
         $this->_type = $type;
+        $this->_volunteer = $volunteer;
 
         if($user) {
             $userProfileTable = new Model_DbTable_UserProfile();
@@ -124,6 +126,66 @@ class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
             $elements = array('email', 'first_name', 'last_name', 'phone', 'comment');
         }
 
+        $this->addDisplayGroup(
+            $elements,
+            'volunteer_edit_form',
+            array(
+                'legend' => ($this->_type == 'volunteer') ? 'Volunteer Registration' : 'Opportunity Sign up',
+            )
+        );
+
+        if($this->_type == 'signup') {
+            $volunteerCategoryTable = new Model_DbTable_VolunteerCategory();
+            $category = $volunteerCategoryTable->find($this->_volunteer->volunteer_category_id)->current();
+
+            $els = array();
+            foreach(Zend_Json::decode($category->questions) as $question) {
+                if($question['type'] == 'checkboxes') {
+                    $selects = array();
+                    if(count($question['answers'])) {
+                        foreach($question['answers'] as $key => $value) {
+                            $selects[$key] = $value;
+                        }
+                    }
+
+                    $this->addElement('multiCheckbox', $question['name'], array(
+                        'label' => $question['title'],
+                        'multiOptions' => $selects,
+                        'required' => $question['required'],
+                    ));
+                } else if($question['type'] == 'textarea') {
+                    $this->addElement('textarea', $question['name'], array(
+                        'filters' => array('StringTrim'),
+                        'label' => $question['title'],
+                        'required' => $question['required'],
+                    ));
+                } else if($question['type'] == 'radio') {
+                    $selects = array();
+                    if(count($question['answers'])) {
+                        foreach($question['answers'] as $key => $value) {
+                            $selects[$key] = $value;
+                        }
+                    }
+
+                    $this->addElement('radio', $question['name'], array(
+                        'label' => $question['title'],
+                        'multiOptions' => $selects,
+                        'required' => $question['required'],
+                    ));
+                }
+                $els[] = $question['name'];
+            }
+
+
+            $this->addDisplayGroup(
+                $els,
+                'volunteer_edit_form_questions',
+                array(
+                    'legend' => $category->category . ' Questions',
+                )
+            );
+        }
+
         $this->addElement('button', 'register', array(
             'type' => 'submit',
             'label' => ($this->_type == 'volunteer') ? 'Register as a Volunteer' : 'Sign up for Opportunity',
@@ -139,14 +201,6 @@ class Form_Volunteer extends Twitter_Bootstrap_Form_Horizontal
             'label' => 'Cancel',
             'escape' => false,
         ));
-
-        $this->addDisplayGroup(
-            $elements,
-            'volunteer_edit_form',
-            array(
-                'legend' => ($this->_type == 'volunteer') ? 'Volunteer Registration' : 'Opportunity Sign up',
-            )
-        );
 
         $this->addDisplayGroup(
             array('register', 'cancel'),

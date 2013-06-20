@@ -27,7 +27,7 @@
                 <tbody>
                     <?php foreach($this->volunteers as $volunteer): ?>
                     <tr>
-                        <td><?php echo $this->escape($volunteer['first_name'] . ' ' . $volunteer['last_name']); ?></td>
+                        <td><?php echo $this->escape($volunteer['volunteer_name']); ?></td>
                         <td><?php echo (empty($volunteer['email'])) ? $this->escape($volunteer['parent_email']) : $this->escape($volunteer['email']); ?></td>
                     </tr>
                     <?php endforeach; ?>

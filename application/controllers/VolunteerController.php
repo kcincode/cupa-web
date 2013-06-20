@@ -174,7 +174,7 @@ class VolunteerController extends Zend_Controller_Action
         $volunteerTable = new Model_DbTable_Volunteer();
         $volunteer = $volunteerTable->find($volunteerId)->current();
 
-        $form = new Form_Volunteer($this->view->user, 'signup');
+        $form = new Form_Volunteer($this->view->user, 'signup', $volunteer);
 
         if($request->isPost()) {
             $post = $request->getPost();
@@ -192,7 +192,7 @@ class VolunteerController extends Zend_Controller_Action
 
                 // create the member of the volunteer opportunity
                 $volunteerMemberTable = new Model_DbTable_VolunteerMember();
-                $result = $volunteerMemberTable->addVolunteer($volunteerId, $member->id, $data['comment']);
+                $result = $volunteerMemberTable->addVolunteer($volunteerId, $member->id, $data);
 
                 if(!$result) {
                     $this->view->message('You have already signed up for this opportunity', 'warning');
@@ -242,12 +242,27 @@ class VolunteerController extends Zend_Controller_Action
 
             set_time_limit(0);
 
-            echo "name,email,phone,involvement,primary_interest,experience,comment\n";
-            foreach($this->view->members as $member) {
-                $name = (empty($members['vname'])) ? $member['first_name'] . ' ' . $member['last_name'] : $member['vname'];
-                $email = (empty($members['vemail'])) ? $member['email'] : $member['vemail'];
-                $phone = (empty($members['vphone'])) ? $member['phone'] : $member['vphone'];
-                echo "{$name},{$email},{$phone},{$member['involvement']},{$member['primary_interest']},{$member['experience']}," . addslashes($member['comment']) . "\n";
+            $header = array('name', 'email', 'phone', 'involvement', 'primary_interest',' experience', 'comment');
+            if(isset($this->view->members[0]['answers'])) {
+                foreach(Zend_Json::decode($this->view->members[0]['answers']) as $key => $value) {
+                    $header[] = $key;
+                }
+                echo implode(',', $header) . "\n";
+
+                foreach($this->view->members as $member) {
+                    $name = (empty($members['vname'])) ? $member['first_name'] . ' ' . $member['last_name'] : $member['vname'];
+                    $email = (empty($members['vemail'])) ? $member['email'] : $member['vemail'];
+                    $phone = (empty($members['vphone'])) ? $member['phone'] : $member['vphone'];
+                    echo "{$name},{$email},{$phone},{$member['involvement']},{$member['primary_interest']},{$member['experience']}," . addslashes($member['comment']);
+                    foreach(Zend_Json::decode($member['answers']) as $value) {
+                        if(is_array($value)) {
+                            echo ',(' . implode(' | ', $value) . ')';
+                        } else {
+                            echo ",$value";
+                        }
+                    }
+                    echo "\n";
+                }
             }
             exit();
         }
@@ -257,8 +272,9 @@ class VolunteerController extends Zend_Controller_Action
     {
         $page = $this->getRequest()->getUserParam('page');
 
-        $leagueAnswerTable = new Model_DbTable_LeagueAnswer();
-        $volunteers = $leagueAnswerTable->fetchAllVolunteers();
+        //$leagueAnswerTable = new Model_DbTable_LeagueAnswer();
+        $volunteerPoolTable = new Model_DbTable_VolunteerPool();
+        $volunteers = $volunteerPoolTable->fetchAllVolunteers();
         if($this->getRequest()->getParam('export')) {
             // disable the layout
             $this->_helper->layout()->disableLayout();
