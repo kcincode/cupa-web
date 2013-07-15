@@ -156,11 +156,17 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
             if($isDirector) {
                 $data['all-players'] = $this->fetchMemberEmails($leagueId, 'player');
                 $data['all-captains'] = $this->fetchMemberEmails($leagueId, 'captain');
+
+                $data['unpaid-players'] = array();
+                foreach($this->fetchUnpaidPlayers($leagueId) as $row) {
+                    $email = (empty($row['email'])) ? $row['parent'] : $row['email'];
+                    $data['unpaid-players'][$email] = $email;
+                }
+
                 foreach($leagueTeamTable->fetchAllTeams($leagueId) as $team) {
                     $key = str_replace(' ', '-', strtolower($team->name));
                     $data[$key] = $this->fetchMemberEmails($leagueId, 'player', $team->id);
                 }
-
             }
 
             $teamId = $this->fetchLeagueTeamFromUser($leagueId, $user);
@@ -179,7 +185,8 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->from(array('lm' => $this->_name), array())
                        ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
                        ->where('lm.league_id = ?', $leagueId)
-                       ->where('lm.position = ?', $type);
+                       ->where('lm.position = ?', $type)
+                       ->where('u.email IS NOT NULL');
 
         if($teamId) {
             $select->where('lm.league_team_id = ?', $teamId);
@@ -384,11 +391,12 @@ lm.position = ?";
         return $this->getAdapter()->fetchAll($select);
     }
 
-    public function fetchUnpaidPlayers()
+    public function fetchUnpaidPlayers($leagueId = null, $noDate = null)
     {
         $select = $this->getAdapter()->select()
                        ->from(array('lm' => $this->_name), array('id', 'user_id'))
-                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name', 'email'))
+                       ->joinLeft(array('up' => 'user'), 'up.id = u.parent', array('email AS parent'))
                        ->joinLeft(array('l' => 'league'), 'l.id = lm.league_id', array('l.id AS league'))
                        ->joinLeft(array('li' => 'league_information'), 'li.league_id = l.id', array('cost'))
                        ->joinLeft(array('ll' => 'league_location'), 'll.league_id = l.id', array())
@@ -396,10 +404,13 @@ lm.position = ?";
                        ->where('lm.paid = ?', 0)
                        ->where('l.year >= ?', 2011)
                        ->where('ll.type = ?', 'league')
-                       ->where('ll.end < ?', date('Y-m-d H:i:s'))
                        ->where('cost IS NOT NULL AND cost > ?', 0)
                        ->order('u.last_name')
                        ->order('u.first_name');
+
+        if($leagueId !== null) {
+            $select = $select->where('lm.league_id = ?', $leagueId);
+        }
 
         return $this->getAdapter()->fetchAll($select);
     }
