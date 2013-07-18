@@ -88,17 +88,14 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
         }
 
         if($user->email != $data['email']) {
-            // modify the data
-            $data['name'] = $data['first_name'] . ' ' . $data['last_name'];
-            unset($data['first_name']);
-            unset($data['last_name']);
-            unset($data['comment']);
+            $volunteerData = array();
+            $volunteerData['name'] = $data['first_name'] . ' ' . $data['last_name'];
 
-            $data['involvement'] = (empty($data['involvement'])) ? 'null' : $data['involvement'];
-            $data['primary_interest'] = (empty($data['primary_interest'])) ? 'null' : $data['primary_interest'];
-            $data['experience'] = (empty($data['experience'])) ? 'null' : $data['experience'];
+            $volunteerData['involvement'] = (empty($data['involvement'])) ? 'null' : $data['involvement'];
+            $volunteerData['primary_interest'] = (empty($data['primary_interest'])) ? 'null' : $data['primary_interest'];
+            $volunteerData['experience'] = (empty($data['experience'])) ? 'null' : $data['experience'];
 
-            $id = $this->insert($data);
+            $id = $this->insert($volunteerData);
 
             return $this->find($id)->current();
         } else {

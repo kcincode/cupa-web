@@ -45,6 +45,14 @@
                     <dl class="dl-horizontal">
                         <dt>Location</dt>
                         <dd><a target="blank" href="<?php echo $this->generateVolunteerMap($volunteer); ?>"><?php echo $this->escape($volunteer['location_name']) . '</a><br/>' . $this->escape($volunteer['address']) . '<br/>' . $this->escape($volunteer['city'] . ', ' . $volunteer['state'] . ' ' . $volunteer['zip']); ?><br/><br/></dd>
+                        <dt>When</dt>
+                        <dd>
+                            <?php if(date('Y-m-d', strtotime($volunteer['start'])) == date('Y-m-d', strtotime($volunteer['end']))): ?>
+                                <?php echo $this->escape(date('m/d/Y', strtotime($volunteer['start']))); ?> <?php echo $this->escape(date('h:i A', strtotime($volunteer['start']))); ?> - <?php echo $this->escape(date('h:i A', strtotime($volunteer['end']))); ?>
+                                <?php else: ?>
+                                <?php echo $this->escape(date('m/d/Y @ h:i A', strtotime($volunteer['start']))); ?> to <?php echo $this->escape(date('m/d/Y @ h:i A', strtotime($volunteer['end']))); ?>
+                            <?php endif; ?>
+                        </dd>
                         <dt>Volunteers Needed</dt>
                         <dd><strong class="text-info"><?php echo $this->escape($volunteer['max_volunteers'] - count($volunteer['members'])); ?></strong> More Volunteers Needed</dd>
                         <dt>Contact:</dt>
