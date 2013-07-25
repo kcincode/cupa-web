@@ -9,17 +9,25 @@ class My_View_Helper_DisplayLeagueGameOutcome extends Zend_View_Helper_Abstract
         $this->view = $view;
     }
 
-    public function displayLeagueGameOutcome($gameId, $teamId)
+    public function displayLeagueGameOutcome($gameData, $type)
     {
-        $leagueGameDataTable = new Model_DbTable_LeagueGameData();
-        $outcome = $leagueGameDataTable->fetchOutcome($gameId, $teamId);
+        $data = array();
+        if($type == 'home') {
+            $data = array(
+                0 => $gameData['home_score'],
+                1 => $gameData['away_score'],
+            );
+        } else if($type == 'away') {
+            $data = array(
+                0 => $gameData['away_score'],
+                1 => $gameData['home_score'],
+            );
+        }
 
-        if($outcome == 'win') {
-            return 'text-success';
-        } else if($outcome == 'loss') {
-            return 'text-error';
-        } else {
+        if($data[0] == $data[1]) {
             return '';
         }
+
+        return ($data[0] > $data[1]) ? 'text-success' : 'text-error';
     }
 }

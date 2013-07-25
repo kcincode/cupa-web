@@ -48,11 +48,11 @@
                         <?php echo date('m/d/Y h:i A', strtotime($this->escape($game['day']))); ?>
                     </div>
                     <div class="<?php echo ($this->isViewable('league_schedule_edit')) ? 'span5' : 'span7'; ?>">
-                        <span class="<?php echo $this->displayLeagueGameOutcome($game['id'], $game['away_team_id']);?>">
+                        <span class="<?php echo $this->displayLeagueGameOutcome($game, 'away');?>">
                             <?php echo $this->escape($game['away_team']); ?>
                         </span>
                         <em class="muted">vs</em>
-                        <span class="<?php echo $this->displayLeagueGameOutcome($game['id'], $game['home_team_id']);?>">
+                        <span class="<?php echo $this->displayLeagueGameOutcome($game, 'home');?>">
                             <?php echo $this->escape($game['home_team']); ?>
                         </span>
                     </div>
