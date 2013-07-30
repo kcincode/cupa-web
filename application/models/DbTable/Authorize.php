@@ -199,6 +199,22 @@ class Model_DbTable_Authorize extends Zend_Db_Table
         return false;
     }
 
+    private function volunteerContact($userId, $volunteerId)
+    {
+        if($this->volunteer($userId)) {
+            return true;
+        }
+
+        $volunteerTable = new Model_DbTable_Volunteer();
+        $volunteer = $volunteerTable->find($volunteerId)->current();
+
+        if($volunteer->contact_id == $userId) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function user($userId)
     {
         return true;

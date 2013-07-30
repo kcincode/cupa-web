@@ -23,7 +23,7 @@
                     <?php if($this->isViewable('volunteer_signup')): ?>
                     <a class="btn btn-mini" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_signup'); ?>"><i class="icon-th-list"></i> Sign-up</a>
                     <?php endif; ?>
-                    <?php if($this->isViewable('volunteer_list_members')): ?>
+                    <?php if($this->isViewable('volunteer_list_members', $volunteer['id'])): ?>
                     <a class="btn btn-mini" href="<?php echo $this->url(array('volunteer_id' => $volunteer['id']), 'volunteer_list_members'); ?>"><i class="icon-list"></i> Volunteers</a>
                     <?php endif; ?>
                     <?php if($this->isViewable('volunteer_opportunity_edit')): ?>
