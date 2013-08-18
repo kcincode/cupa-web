@@ -26,6 +26,12 @@ class Model_DbTable_Authorize extends Zend_Db_Table
 
     public function isAuthorized($routeName, $data)
     {
+        /*
+        if(substr($routeName, 0, 3) == 'api') {
+            // TODO: limit to managers and admins
+            return true;
+        }*/
+
         $select = $this->select()
                        ->where('route_name = ?', $routeName);
 

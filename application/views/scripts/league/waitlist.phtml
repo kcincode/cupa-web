@@ -17,10 +17,11 @@
             <table class="table table-condensed table-hover">
                 <thead>
                     <tr>
-                        <th class="span4">Player</th>
-                        <th class="span4">Email</th>
+                        <th class="span3">Player</th>
+                        <th class="span3">Email</th>
                         <th class="span1" style="text-align: center;">Gender</th>
                         <th class="span3" style="text-align: center;">Date</th>
+                        <th class="span2" style="text-align: center;">&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,6 +31,10 @@
                         <td><?php echo $this->generateEmailLink($player['user_id']); ?></td>
                         <td style="text-align: center;"><?php echo $this->escape($player['profile']['gender']); ?></td>
                         <td style="text-align: center;"><?php echo date('m/d/y h:i:s A', strtotime($player['created_at'])); ?></td>
+                        <td style="text-align: center;">
+                            <a class="btn btn-mini btn-success" href="<?php echo $this->baseUrl(); ?>/league/<?php echo $this->escape($this->league->id); ?>/waitlist/add/1/member/<?php echo $this->escape($player['id']); ?>"><i class="icon-white icon-check"></i></a>
+                            <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to remove this player?');" href="<?php echo $this->baseUrl(); ?>/league/<?php echo $this->escape($this->league->id); ?>/waitlist/remove/1/member/<?php echo $this->escape($player['id']); ?>"><i class="icon-white icon-remove"</i></a>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

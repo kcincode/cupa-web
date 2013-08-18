@@ -271,6 +271,7 @@ lm.position = ?";
                 $data[$row['user_id']]['answers'][$row['name']] = $row['answer'];
             } else {
                 $data[$row['user_id']] = array(
+                    'id' => $row['id'],
                     'created_at' => $row['created_at'],
                     'user_id' => $row['user_id'],
                     'first_name' => $row['first_name'],

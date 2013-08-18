@@ -2322,8 +2322,30 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $this->view->players = $leagueMemberTable->fetchPlayerInformation($leagueId, 'waitlist');
+        if($this->getRequest()->getParam('add')) {
+            // add the player from waitlist to player
+            $id = $this->getRequest()->getParam('member');
 
+            $leagueMember = $leagueMemberTable->find($id)->current();
+            $leagueMember->position = 'player';
+            $leagueMember->modified_at = date('Y-m-d H:i:s');
+            $leagueMember->modified_by = $this->view->user->id;
+            $leagueMember->save();
+
+            $this->_redirect('league/' . $leagueId . '/waitlist');
+        }
+
+        if($this->getRequest()->getParam('remove')) {
+            // delete the player from waitlist
+            $id = $this->getRequest()->getParam('member');
+
+            $leagueMember = $leagueMemberTable->find($id)->current();
+            $leagueMember->delete();
+
+            $this->_redirect('league/' . $leagueId . '/waitlist');
+        }
+
+        $this->view->players = $leagueMemberTable->fetchPlayerInformation($leagueId, 'waitlist');
         if($this->getRequest()->getParam('export')) {
             // disable the layout
             $this->_helper->layout()->disableLayout();
