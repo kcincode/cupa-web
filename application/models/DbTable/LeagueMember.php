@@ -156,6 +156,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
             if($isDirector) {
                 $data['all-players'] = $this->fetchMemberEmails($leagueId, 'player');
                 $data['all-captains'] = $this->fetchMemberEmails($leagueId, 'captain');
+                $data['waitlisted-players'] = $this->fetchMemberEmails($leagueId, 'waitlist');
 
                 $data['unpaid-players'] = array();
                 foreach($this->fetchUnpaidPlayers($leagueId) as $row) {
