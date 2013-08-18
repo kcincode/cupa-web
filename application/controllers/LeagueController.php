@@ -1348,6 +1348,10 @@ class LeagueController extends Zend_Controller_Action
                 $mail->setSubject($post['subject']);
                 $mail->setFrom($post['from']);
 
+                // log the email
+                $leagueEmailTable = new Model_DbTable_LeagueEmail();
+                $leagueEmailTable->log($post, $data);
+
                 foreach($post['to'] as $to) {
                     foreach($data[$to] as $email) {
                         if(empty($email)) {
