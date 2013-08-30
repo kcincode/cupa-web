@@ -2,16 +2,21 @@
                             <thead>
                                 <tr>
                                     <th>Player</th>
+                                    <?php if(!$this->information->is_youth): ?>
                                     <th class="span1">Gender</th>
                                     <th class="span1">Height</th>
                                     <?php if(!is_null($this->players[0]['club'])): ?>
                                     <th class="span1">Club Player</th>
+                                    <?php endif; ?>
                                     <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach($this->players as $player): ?>
                                 <tr>
+                                    <?php if($this->information->is_youth): ?>
+                                    <td><?php echo $this->escape($player['first_name'] . ' ' . $player['last_name']); ?></td>
+                                    <?php else: ?>
                                     <td><a href="<?php echo $this->url(array('user_id' => $player['id']), 'page_profile_public'); ?>"><?php echo $this->fullname($player['id']); ?></a></td>
                                     <td style="text-align: center;"><?php echo (empty($player['gender'])) ? 'Unknown' : $this->escape($player['gender']); ?></td>
                                     <td style="text-align: center;"><?php echo (empty($player['height'])) ? 'Unknown' : $this->escape(floor($player['height'] / 12)) . "'" . $this->escape($player['height'] % 12) .'"'; ?></td>
@@ -19,6 +24,7 @@
                                     <td style="text-align: center;"><?php echo (is_null($player['club_id']) && substr($player['club'], 0, 2) == 'No') ? 'No' : 'Yes'; ?></td>
                                     <?php elseif(!is_null($this->players[0]['club'])): ?>
                                     <td style="text-align: center;">??</td>
+                                    <?php endif; ?>
                                     <?php endif; ?>
                                 </tr>
                                 <?php endforeach; ?>

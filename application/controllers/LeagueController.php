@@ -758,10 +758,17 @@ class LeagueController extends Zend_Controller_Action
         $teamId = $this->getRequest()->getUserParam('team_id');
 
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
 
         $this->view->team = $leagueTeamTable->find($teamId)->current();
-        $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
+        $this->view->information = $leagueInformationTable->fetchInformation($this->view->team->league_id);
+        if($this->view->information->is_youth) {
+            $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
+            $this->view->players = $leagueMemberYouthTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
+        } else {
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
+        }
     }
 
     public function teamsaddAction()
