@@ -34,10 +34,14 @@
                         </div>
                         <h3 class="media-heading" style="text-shadow: 0 0 1px #444; color: <?php echo ($team->color_code) ? $team->color_code : '#222'; ?>"><?php echo $this->escape($team->name); ?></h3>
                         <strong>Color:</strong> <?php echo $this->escape(ucwords($team->color)); ?><br/>
-                        <strong>Captain(s):</strong>
-                        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team->league_id, $team->id); ?>
+                        <strong><?php echo ($this->information->is_youth) ? 'Coaches:' : 'Captains'; ?></strong>
+                        <?php $i = 1; $captains = $this->getLeagueTeamCaptains($team->league_id, $team->id, $this->information->is_youth); ?>
                         <?php foreach($captains as $captain): ?>
+                            <?php if($this->information->is_youth): ?>
+                            <?php echo $this->escape($captain->first_name . ' ' . $captain->last_name); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
+                            <?php else: ?>
                             <?php echo $this->fullname($captain->user_id); ?><?php if($i < count($captains)):?>, <?php $i++; endif; ?>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
                     <div class="span2">

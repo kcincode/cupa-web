@@ -14,8 +14,8 @@ class LeagueController extends Zend_Controller_Action
             $leagueTable = new Model_DbTable_League();
             $this->view->league = $leagueTable->find($leagueId)->current();
             if($this->view->league) {
-                $information = $leagueInformationTable->fetchInformation($leagueId);
-                $this->view->userTeams = ($information->user_teams == 1) ? true : false;
+                $this->view->information = $leagueInformationTable->fetchInformation($leagueId);
+                $this->view->userTeams = ($this->view->information->user_teams == 1) ? true : false;
 
                 if(!$this->view->userTeams and $this->getRequest()->getActionName() == 'userteams') {
                     $this->_redirect('league/' . $leagueId);
@@ -785,7 +785,6 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
-
                 $leagueTeamTable = new Model_DbTable_LeagueTeam();
                 if($leagueTeamTable->isUnique($leagueId, $data['name'])) {
                     $id = $leagueTeamTable->insert(array(
@@ -799,25 +798,51 @@ class LeagueController extends Zend_Controller_Action
 
                     if(is_numeric($id)) {
                         $team = $leagueTeamTable->find($id)->current();
-                        $leagueMemberTable = new Model_DbTable_LeagueMember();
+                        if($this->view->information->is_youth) {
+                            $userTable = new Model_DbTable_User();
+                            $userProfileTable = new Model_DbTable_UserProfile();
+                            $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
 
-                        foreach($data['captains'] as $captainId) {
-                            $leagueMember = $leagueMemberTable->createRow();
-                            $leagueMember->league_id = $team->league_id;
-                            $leagueMember->user_id = $captainId;
-                            $leagueMember->position = 'captain';
-                            $leagueMember->league_team_id = $team->id;
-                            $leagueMember->paid = 0;
-                            $leagueMember->release = 0;
-                            $leagueMember->created_at = date('Y-m-d H:i:s');
-                            $leagueMember->modified_at = date('Y-m-d H:i:s');
-                            $leagueMember->modified_by = $this->view->user->id;
-                            $leagueMember->save();
+                            foreach($data['captains'] as $captainId) {
+                                $user = $userTable->find($captainId)->current();
+                                $userProfile = $userProfileTable->find($captainId)->current();
+
+                                $leagueMember = $leagueMemberYouthTable->createRow();
+                                $leagueMember->league_id = $team->league_id;
+                                $leagueMember->first_name = $user->first_name;
+                                $leagueMember->last_name = $user->last_name;
+                                $leagueMember->email = $user->email;
+                                $leagueMember->phone = $userProfile->phone;
+                                $leagueMember->position = 'coach';
+                                $leagueMember->league_team_id = $team->id;
+                                $leagueMember->modified_by = $this->view->user->id;
+                                $leagueMember->created_at = date('Y-m-d H:i:s');
+                                $leagueMember->modified_at = date('Y-m-d H:i:s');
+                                $leagueMember->save();
+                            }
+                        } else {
+                            $leagueMemberTable = new Model_DbTable_LeagueMember();
+
+                            foreach($data['captains'] as $captainId) {
+                                $leagueMember = $leagueMemberTable->createRow();
+                                $leagueMember->league_id = $team->league_id;
+                                $leagueMember->user_id = $captainId;
+                                $leagueMember->position = 'captain';
+                                $leagueMember->league_team_id = $team->id;
+                                $leagueMember->paid = 0;
+                                $leagueMember->release = 0;
+                                $leagueMember->created_at = date('Y-m-d H:i:s');
+                                $leagueMember->modified_at = date('Y-m-d H:i:s');
+                                $leagueMember->modified_by = $this->view->user->id;
+                                $leagueMember->save();
+                            }
                         }
 
                         $this->view->message('Team created', 'success');
                         $this->_redirect('league/' . $leagueId);
                     }
+                } else {
+                    $this->view->message('Duplicate Team exists.', 'error');
                 }
             }
         }
@@ -859,40 +884,86 @@ class LeagueController extends Zend_Controller_Action
                 $data = $form->getValues();
 
                 if(!$isCaptain) {
-                    $leagueMemberTable = new Model_DbTable_LeagueMember();
+                    if($this->view->information->is_youth) {
+                        // generate coaches array
+                        $userTable = new Model_DbTable_User();
+                        $userProfileTable = new Model_DbTable_UserProfile();
+                        $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
 
-                    // remove all of the directors that are not in the list
-                    $dbCaptains = array();
-                    foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
-                        if(!in_array($captain->user_id, array_values($data['captains']))) {
-                            $captain->delete();
-                        } else {
-                            $dbCaptains[] = $captain->user_id;
+                        $coaches = array();
+                        foreach($data['captains'] as $coach) {
+                            $user = $userTable->find($coach)->current();
+                            $coaches[] = $user->first_name . '-' . $user->last_name . '-' . $user->email;
                         }
-                    }
 
-                    // add the directors that are not in the DB
-                    foreach($data['captains'] as $captainId) {
-                        if(!in_array($captainId, $dbCaptains)) {
-                            $leagueMember = $leagueMemberTable->createRow();
-                            $leagueMember->league_id = $team->league_id;
-                            $leagueMember->user_id = $captainId;
-                            $leagueMember->position = 'captain';
-                            $leagueMember->league_team_id = $team->id;
-                            $leagueMember->paid = 0;
-                            $leagueMember->release = 0;
-                            $leagueMember->created_at = date('Y-m-d H:i:s');
-                            $leagueMember->modified_at = date('Y-m-d H:i:s');
-                            $leagueMember->modified_by = $this->view->user->id;
-                            $leagueMember->save();
+
+                        // remove all of the coaches that are no longer in the list
+                        $coachesDb = array();
+                        foreach($leagueMemberYouthTable->fetchAllByType($team->league_id, 'coach', $team->id) as $coach) {
+                            if(!in_array($coach->first_name . '-' . $coach->last_name . '-' . $coach->email, array_values($coaches))) {
+                                $coach->delete();
+                            } else {
+                                $coachesDb[] = $coach->first_name . '-' . $coach->last_name . '-' . $coach->email;
+                            }
                         }
-                    }
 
-                    $team->name = $data['name'];
-                    $team->color = $data['color'];
-                    $team->color_code = $data['color_code'];
-                    $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
-                    $team->save();
+                        // add all the coaches that aren't in
+                        foreach($data['captains'] as $captainId) {
+                            $user = $userTable->find($captainId)->current();
+                            $userProfile = $userProfileTable->find($captainId)->current();
+                            $key = $user->first_name . '-' . $user->last_name . '-' . $user->email;
+
+                            if(!in_array($key, $coachesDb)) {
+                                $leagueMember = $leagueMemberYouthTable->createRow();
+                                $leagueMember->league_id = $team->league_id;
+                                $leagueMember->first_name = $user->first_name;
+                                $leagueMember->last_name = $user->last_name;
+                                $leagueMember->email = $user->email;
+                                $leagueMember->phone = $userProfile->phone;
+                                $leagueMember->position = 'coach';
+                                $leagueMember->league_team_id = $team->id;
+                                $leagueMember->modified_by = $this->view->user->id;
+                                $leagueMember->created_at = date('Y-m-d H:i:s');
+                                $leagueMember->modified_at = date('Y-m-d H:i:s');
+                                $leagueMember->save();
+                            }
+                        }
+                    } else {
+                        $leagueMemberTable = new Model_DbTable_LeagueMember();
+
+                        // remove all of the directors that are not in the list
+                        $dbCaptains = array();
+                        foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
+                            if(!in_array($captain->user_id, array_values($data['captains']))) {
+                                $captain->delete();
+                            } else {
+                                $dbCaptains[] = $captain->user_id;
+                            }
+                        }
+
+                        // add the directors that are not in the DB
+                        foreach($data['captains'] as $captainId) {
+                            if(!in_array($captainId, $dbCaptains)) {
+                                $leagueMember = $leagueMemberTable->createRow();
+                                $leagueMember->league_id = $team->league_id;
+                                $leagueMember->user_id = $captainId;
+                                $leagueMember->position = 'captain';
+                                $leagueMember->league_team_id = $team->id;
+                                $leagueMember->paid = 0;
+                                $leagueMember->release = 0;
+                                $leagueMember->created_at = date('Y-m-d H:i:s');
+                                $leagueMember->modified_at = date('Y-m-d H:i:s');
+                                $leagueMember->modified_by = $this->view->user->id;
+                                $leagueMember->save();
+                            }
+                        }
+
+                        $team->name = $data['name'];
+                        $team->color = $data['color'];
+                        $team->color_code = $data['color_code'];
+                        $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
+                        $team->save();
+                    }
                 }
 
                 if(!empty($_FILES['logo']['tmp_name'])) {

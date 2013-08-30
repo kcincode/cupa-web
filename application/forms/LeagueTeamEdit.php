@@ -28,6 +28,9 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                 'class' => 'span5',
             ));
 
+            $leagueInformationTable = new Model_DbTable_LeagueInformation();
+            $info = $leagueInformationTable->fetchInformation($this->_leagueId);
+
             $userTable = new Model_DbTable_User();
             $users = array();
             foreach($userTable->fetchAllUsers() as $user) {
@@ -35,11 +38,19 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
             }
 
             $leagueMemberTable = new Model_DbTable_LeagueMember();
+            $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
             $captains = array();
             if($this->_team) {
-                foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'captain', $this->_team->id) as $member) {
-                    $user = $userTable->find($member['user_id'])->current();
-                    $captains[] = $user->id;
+                if($info->is_youth) {
+                    foreach($leagueMemberYouthTable->fetchAllByType($this->_leagueId, 'coach', $this->_team->id) as $member) {
+                        $user = $userTable->fetchUserBy('email', $member['email']);
+                        $captains[] = $user->id;
+                    }
+                } else {
+                    foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'captain', $this->_team->id) as $member) {
+                        $user = $userTable->find($member['user_id'])->current();
+                        $captains[] = $user->id;
+                    }
                 }
             }
 
@@ -48,11 +59,11 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                     array('InArray', false, array(array_keys($users))),
                 ),
                 'required' => true,
-                'label' => 'Captains:',
+                'label' => ($info->is_youth == 0) ? 'Captains:' : 'Coaches:',
                 'class' => 'span6 select2',
                 'multiOptions' => $users,
                 'value' => (empty($captains)) ? null : $captains,
-                'data-placeholder' => 'Select one or more captains'
+                'data-placeholder' => ($info->is_youth == 0) ? 'Select one or more captains' : 'Select one or more coaches',
             ));
 
             $this->addElement('text', 'color', array(

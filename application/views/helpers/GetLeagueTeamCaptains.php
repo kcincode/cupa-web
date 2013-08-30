@@ -14,9 +14,15 @@ class My_View_Helper_GetLeagueTeamCaptains extends Zend_View_Helper_Abstract
      *
      * @return string
      */
-    public function getLeagueTeamCaptains($leagueId, $teamId)
+    public function getLeagueTeamCaptains($leagueId, $teamId, $youth = false)
     {
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        return $leagueMemberTable->fetchAllByType($leagueId, 'captain', $teamId);
+        if($youth) {
+            $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
+            return $leagueMemberYouthTable->fetchAllByType($leagueId, 'coach', $teamId);
+
+        } else {
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            return $leagueMemberTable->fetchAllByType($leagueId, 'captain', $teamId);
+        }
     }
 }
