@@ -3,7 +3,7 @@
         <div class="btn-group">
             <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Emails</a>
         <?php if($this->isViewable('league_players')): ?>
-        <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league, 'userTeams' => $this->userTeams));?>
+        <?php echo $this->partial('league/admin_menu.phtml', array('league' => $this->league, 'userTeams' => $this->userTeams, 'information' => $this->information));?>
         <?php endif; ?>
         </div>
     </div>

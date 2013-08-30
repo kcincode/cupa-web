@@ -3,6 +3,9 @@
     <?php if($this->userTeams): ?>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_userteams'); ?>">Team Requests</a>
     <?php endif; ?>
+    <?php if($this->information->is_youth): ?>
+    <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_coaches'); ?>">Coaches List</a>
+    <?php endif; ?>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_players'); ?>">Players List</a>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_waitlist'); ?>">Waitlist</a>
     <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id, 'all' => null), 'league_status'); ?>">Waivers / Paid Status</a>

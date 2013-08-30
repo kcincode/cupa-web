@@ -2477,4 +2477,16 @@ class LeagueController extends Zend_Controller_Action
             exit();
         }
     }
+
+    public function coachesAction()
+    {
+        $leagueId = $this->getRequest()->getUserParam('league_id');
+        $leagueTable = new Model_DbTable_League();
+        $this->view->league = $leagueTable->find($leagueId)->current();
+
+        if(!$this->view->league) {
+            // throw a 404 error if the page cannot be found
+            throw new Zend_Controller_Dispatcher_Exception('Page not found');
+        }
+    }
 }

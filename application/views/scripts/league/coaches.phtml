@@ -9,7 +9,7 @@
     <div class="row">
         <div class="span12">
             <h2 class="pull-left">
-                Emergency Contacts
+                Coaches List
             </h2>
             <div class="pull-right">
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1"><i class="icon-list icon-white"></i> Export Data</a>
@@ -17,23 +17,16 @@
             <table class="table table-condensed table-hover">
                 <thead>
                     <tr>
-                        <th class="span4">Player</th>
-                        <th class="span6">Contact (Phone)</th>
+                        <th class="span4">Name</th>
+                        <th class="span4">Team</th>
+                        <th class="span1">Background</th>
+                        <th class="span1">Waiver</th>
+                        <th class="span1">Form</th>
+                        <th class="span1">Test</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($this->contacts as $userId => $data): ?>
-                    <?php if($userId): ?>
-                    <tr>
-                        <td><?php echo $this->fullname($userId); ?></td>
-                        <td>
-                            <?php foreach($data as $contact): ?>
-                            <?php echo $this->escape($contact['name']); ?> (<?php echo $this->escape($contact['phone']); ?>)<br/>
-                            <?php endforeach; ?>
-                        </td>
-                    </tr>
-                    <?php endif; ?>
-                    <?php endforeach; ?>
+                    <tr><td colspan="6" style="text-align: center;">No Coaches yet</td></tr>
                 </tbody>
             </table>
         </div>
