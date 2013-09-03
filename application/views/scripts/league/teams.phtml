@@ -24,7 +24,9 @@
                 <div class="media-body">
                     <div class="span8">
                         <div class="pull-right">
+                            <?php if(!$this->information->is_youth): ?>
                             <button type="button" onclick="loadPlayers('<?php echo $this->escape($team->id); ?>');"class="btn btn-mini" data-toggle="collapse" data-target="#team<?php echo $this->escape($team->id); ?>"><i class="icon-list icon-white"></i> Show Players</button>
+                            <?php endif; ?>
                             <?php if($this->isViewable('league_team_edit', $team->id)): ?>
                             <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league->id, 'team_id' => $team->id), 'league_team_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
                             <?php endif; ?>

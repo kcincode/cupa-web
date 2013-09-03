@@ -18,7 +18,7 @@ class My_View_Helper_GetLeagueTeamCaptains extends Zend_View_Helper_Abstract
     {
         if($youth) {
             $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
-            return $leagueMemberYouthTable->fetchAllByType($leagueId, 'coach', $teamId);
+            return $leagueMemberYouthTable->fetchAllByType($leagueId, 'coaches', $teamId);
 
         } else {
             $leagueMemberTable = new Model_DbTable_LeagueMember();

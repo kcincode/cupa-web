@@ -39,14 +39,20 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
 
             $leagueMemberTable = new Model_DbTable_LeagueMember();
             $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
-            $captains = array();
             if($this->_team) {
                 if($info->is_youth) {
+                    $coaches = array();
+                    $asstCoaches = array();
                     foreach($leagueMemberYouthTable->fetchAllByType($this->_leagueId, 'coach', $this->_team->id) as $member) {
                         $user = $userTable->fetchUserBy('email', $member['email']);
-                        $captains[] = $user->id;
+                        $coaches[] = $user->id;
+                    }
+                    foreach($leagueMemberYouthTable->fetchAllByType($this->_leagueId, 'assistant_coach', $this->_team->id) as $member) {
+                        $user = $userTable->fetchUserBy('email', $member['email']);
+                        $asstCoaches[] = $user->id;
                     }
                 } else {
+                    $captains = array();
                     foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'captain', $this->_team->id) as $member) {
                         $user = $userTable->find($member['user_id'])->current();
                         $captains[] = $user->id;
@@ -54,17 +60,43 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                 }
             }
 
-            $this->addElement('multiselect', 'captains', array(
-                'validators' => array(
-                    array('InArray', false, array(array_keys($users))),
-                ),
-                'required' => true,
-                'label' => ($info->is_youth == 0) ? 'Captains:' : 'Coaches:',
-                'class' => 'span6 select2',
-                'multiOptions' => $users,
-                'value' => (empty($captains)) ? null : $captains,
-                'data-placeholder' => ($info->is_youth == 0) ? 'Select one or more captains' : 'Select one or more coaches',
-            ));
+            if($info->is_youth) {
+                $this->addElement('multiselect', 'coaches', array(
+                    'validators' => array(
+                        array('InArray', false, array(array_keys($users))),
+                    ),
+                    'required' => true,
+                    'label' => 'Coaches:',
+                    'class' => 'span6 select2',
+                    'multiOptions' => $users,
+                    'value' => (empty($coaches)) ? null : $coaches,
+                    'data-placeholder' => 'Select one or more coaches',
+                ));
+
+                $this->addElement('multiselect', 'asst_coaches', array(
+                    'validators' => array(
+                        array('InArray', false, array(array_keys($users))),
+                    ),
+                    'required' => true,
+                    'label' => 'Assistant Coaches:',
+                    'class' => 'span6 select2',
+                    'multiOptions' => $users,
+                    'value' => (empty($asstCoaches)) ? null : $asstCoaches,
+                    'data-placeholder' => 'Select one or more coaches',
+                ));
+            } else {
+                $this->addElement('multiselect', 'captains', array(
+                    'validators' => array(
+                        array('InArray', false, array(array_keys($users))),
+                    ),
+                    'required' => true,
+                    'label' => 'Captains:',
+                    'class' => 'span6 select2',
+                    'multiOptions' => $users,
+                    'value' => (empty($captains)) ? null : $captains,
+                    'data-placeholder' => 'Select one or more captains',
+                ));
+            }
 
             $this->addElement('text', 'color', array(
                 'filters' => array('StringTrim'),
@@ -129,7 +161,11 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
         if($this->_justLogo) {
             $questions = array('logo');
         } else {
-            $questions = array('name', 'captains', 'color', 'color_code', 'logo');
+            if($info->is_youth) {
+                $questions = array('name', 'coaches', 'asst_coaches', 'color', 'color_code', 'logo');
+            } else {
+                $questions = array('name', 'captains', 'color', 'color_code', 'logo');
+            }
         }
         $title = (empty($this->_team)) ? 'Add a Team' : 'Edit Team';
         $this->addDisplayGroup(
