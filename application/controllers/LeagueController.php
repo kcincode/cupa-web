@@ -937,7 +937,7 @@ class LeagueController extends Zend_Controller_Action
                         $coaches = array();
                         foreach($data['coaches'] as $coach) {
                             $user = $userTable->find($coach)->current();
-                            $coaches[] = $user->first_name . '-' . $user->last_name . '-' . $user->email;
+                            $coaches[] = $user->id;
                         }
 
                         // remove all of the coaches that are no longer in the list
@@ -946,7 +946,7 @@ class LeagueController extends Zend_Controller_Action
                             if(!in_array($coach->first_name . '-' . $coach->last_name . '-' . $coach->email, array_values($coaches))) {
                                 $coach->delete();
                             } else {
-                                $coachesDb[] = $coach->first_name . '-' . $coach->last_name . '-' . $coach->email;
+                                $coachesDb[] = $coach->user_id;
                             }
                         }
 
@@ -954,13 +954,12 @@ class LeagueController extends Zend_Controller_Action
                         foreach($data['coaches'] as $captainId) {
                             $user = $userTable->find($captainId)->current();
                             $userProfile = $userProfileTable->find($captainId)->current();
-                            $key = $user->first_name . '-' . $user->last_name . '-' . $user->email;
 
                             if(empty($userProfile->phone)) {
                                 $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
                             }
 
-                            if(!in_array($key, $coachesDb)) {
+                            if(!in_array($captainId, $coachesDb)) {
                                 $leagueMember = $leagueMemberTable->createRow();
                                 $leagueMember->league_id = $team->league_id;
                                 $leagueMember->user_id = $captainId;
@@ -983,7 +982,7 @@ class LeagueController extends Zend_Controller_Action
                         $coaches = array();
                         foreach($data['asst_coaches'] as $coach) {
                             $user = $userTable->find($coach)->current();
-                            $coaches[] = $user->first_name . '-' . $user->last_name . '-' . $user->email;
+                            $coaches[] = $user->id;
                         }
 
                         // remove all of the coaches that are no longer in the list
@@ -992,7 +991,7 @@ class LeagueController extends Zend_Controller_Action
                             if(!in_array($coach->first_name . '-' . $coach->last_name . '-' . $coach->email, array_values($coaches))) {
                                 $coach->delete();
                             } else {
-                                $coachesDb[] = $coach->first_name . '-' . $coach->last_name . '-' . $coach->email;
+                                $coachesDb[] = $coach->user_id;
                             }
                         }
 
@@ -1000,13 +999,12 @@ class LeagueController extends Zend_Controller_Action
                         foreach($data['asst_coaches'] as $captainId) {
                             $user = $userTable->find($captainId)->current();
                             $userProfile = $userProfileTable->find($captainId)->current();
-                            $key = $user->first_name . '-' . $user->last_name . '-' . $user->email;
 
                             if(empty($userProfile->phone)) {
                                 $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
                             }
 
-                            if(!in_array($key, $coachesDb)) {
+                            if(!in_array($captainId, $coachesDb)) {
                                 $leagueMember = $leagueMemberTable->createRow();
                                 $leagueMember->league_id = $team->league_id;
                                 $leagueMember->user_id = $captainId;
