@@ -43,11 +43,11 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                     $coaches = array();
                     $asstCoaches = array();
                     foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'coach', $this->_team->id) as $member) {
-                        $user = $userTable->fetchUserBy('email', $member['email']);
+                        $user = $userTable->find($member['user_id'])->current();
                         $coaches[] = $user->id;
                     }
                     foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'assistant_coach', $this->_team->id) as $member) {
-                        $user = $userTable->fetchUserBy('email', $member['email']);
+                        $user = $userTable->find($member['user_id'])->current();
                         $asstCoaches[] = $user->id;
                     }
                 } else {
