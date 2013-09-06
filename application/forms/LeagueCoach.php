@@ -81,6 +81,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
             $this->addElement('radio', $type, array(
                 'label' => $label,
                 'multiOptions' => array(0 => 'Incomplete', 1 => 'Complete'),
+                'label_class' => 'inline',
                 'value' => $this->_coach[$type],
             ));
         }
