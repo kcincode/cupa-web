@@ -943,7 +943,7 @@ class LeagueController extends Zend_Controller_Action
                         // remove all of the coaches that are no longer in the list
                         $coachesDb = array();
                         foreach($leagueMemberTable->fetchAllByType($team->league_id, 'coach', $team->id) as $coach) {
-                            if(!in_array($coach->first_name . '-' . $coach->last_name . '-' . $coach->email, array_values($coaches))) {
+                            if(!in_array($coach->user_id, array_values($coaches))) {
                                 $coach->delete();
                             } else {
                                 $coachesDb[] = $coach->user_id;
@@ -988,7 +988,7 @@ class LeagueController extends Zend_Controller_Action
                         // remove all of the coaches that are no longer in the list
                         $coachesDb = array();
                         foreach($leagueMemberTable->fetchAllByType($team->league_id, 'assistant_coach', $team->id) as $coach) {
-                            if(!in_array($coach->first_name . '-' . $coach->last_name . '-' . $coach->email, array_values($coaches))) {
+                            if(!in_array($coach->user_id, array_values($coaches))) {
                                 $coach->delete();
                             } else {
                                 $coachesDb[] = $coach->user_id;
