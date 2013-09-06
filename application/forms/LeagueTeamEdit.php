@@ -38,16 +38,15 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
             }
 
             $leagueMemberTable = new Model_DbTable_LeagueMember();
-            $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
             if($this->_team) {
                 if($info->is_youth) {
                     $coaches = array();
                     $asstCoaches = array();
-                    foreach($leagueMemberYouthTable->fetchAllByType($this->_leagueId, 'coach', $this->_team->id) as $member) {
+                    foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'coach', $this->_team->id) as $member) {
                         $user = $userTable->fetchUserBy('email', $member['email']);
                         $coaches[] = $user->id;
                     }
-                    foreach($leagueMemberYouthTable->fetchAllByType($this->_leagueId, 'assistant_coach', $this->_team->id) as $member) {
+                    foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'assistant_coach', $this->_team->id) as $member) {
                         $user = $userTable->fetchUserBy('email', $member['email']);
                         $asstCoaches[] = $user->id;
                     }
@@ -77,7 +76,7 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                     'validators' => array(
                         array('InArray', false, array(array_keys($users))),
                     ),
-                    'required' => true,
+                    'required' => false,
                     'label' => 'Assistant Coaches:',
                     'class' => 'span6 select2',
                     'multiOptions' => $users,

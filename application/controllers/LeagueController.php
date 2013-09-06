@@ -758,17 +758,18 @@ class LeagueController extends Zend_Controller_Action
         $teamId = $this->getRequest()->getUserParam('team_id');
 
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
-        $leagueInformationTable = new Model_DbTable_LeagueInformation();
-
         $this->view->team = $leagueTeamTable->find($teamId)->current();
+        //$leagueInformationTable = new Model_DbTable_LeagueInformation();
+
+        /*
         $this->view->information = $leagueInformationTable->fetchInformation($this->view->team->league_id);
         if($this->view->information->is_youth) {
-            $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
-            $this->view->players = $leagueMemberYouthTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
-        } else {
-            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            $leagueMemberTable = new Model_DbTable_LeagueMemberYouth();
             $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
-        }
+        } else {*/
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
+        //}
     }
 
     public function teamsaddAction()
@@ -805,21 +806,31 @@ class LeagueController extends Zend_Controller_Action
 
                     if(is_numeric($id)) {
                         $team = $leagueTeamTable->find($id)->current();
+                        $leagueMemberTable = new Model_DbTable_LeagueMember();
+
                         if($this->view->information->is_youth) {
                             $userTable = new Model_DbTable_User();
                             $userProfileTable = new Model_DbTable_UserProfile();
-                            $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
 
                             foreach($data['coaches'] as $coachId) {
                                 $user = $userTable->find($coachId)->current();
                                 $userProfile = $userProfileTable->find($coachId)->current();
 
-                                $leagueMember = $leagueMemberYouthTable->createRow();
+                                if(empty($userProfile->phone)) {
+                                    $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
+                                }
+
+                                $leagueMember = $leagueMemberTable->createRow();
                                 $leagueMember->league_id = $team->league_id;
+                                $leagueMember->user_id = $coachId;
+
+                                /*
                                 $leagueMember->first_name = $user->first_name;
                                 $leagueMember->last_name = $user->last_name;
                                 $leagueMember->email = $user->email;
                                 $leagueMember->phone = $userProfile->phone;
+                                */
+
                                 $leagueMember->position = 'coach';
                                 $leagueMember->league_team_id = $team->id;
                                 $leagueMember->modified_by = $this->view->user->id;
@@ -832,12 +843,21 @@ class LeagueController extends Zend_Controller_Action
                                 $user = $userTable->find($coachId)->current();
                                 $userProfile = $userProfileTable->find($coachId)->current();
 
-                                $leagueMember = $leagueMemberYouthTable->createRow();
+                                if(empty($userProfile->phone)) {
+                                    $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
+                                }
+
+                                $leagueMember = $leagueMemberTable->createRow();
                                 $leagueMember->league_id = $team->league_id;
+                                $leagueMember->user_id = $coachId;
+
+                                /*
                                 $leagueMember->first_name = $user->first_name;
                                 $leagueMember->last_name = $user->last_name;
                                 $leagueMember->email = $user->email;
                                 $leagueMember->phone = $userProfile->phone;
+                                */
+
                                 $leagueMember->position = 'assistant_coach';
                                 $leagueMember->league_team_id = $team->id;
                                 $leagueMember->modified_by = $this->view->user->id;
@@ -846,8 +866,6 @@ class LeagueController extends Zend_Controller_Action
                                 $leagueMember->save();
                             }
                         } else {
-                            $leagueMemberTable = new Model_DbTable_LeagueMember();
-
                             foreach($data['captains'] as $captainId) {
                                 $leagueMember = $leagueMemberTable->createRow();
                                 $leagueMember->league_id = $team->league_id;
@@ -909,11 +927,12 @@ class LeagueController extends Zend_Controller_Action
                 $data = $form->getValues();
 
                 if(!$isCaptain) {
+                    $leagueMemberTable = new Model_DbTable_LeagueMember();
+
                     if($this->view->information->is_youth) {
                         // generate coaches array
                         $userTable = new Model_DbTable_User();
                         $userProfileTable = new Model_DbTable_UserProfile();
-                        $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
 
                         $coaches = array();
                         foreach($data['coaches'] as $coach) {
@@ -923,7 +942,7 @@ class LeagueController extends Zend_Controller_Action
 
                         // remove all of the coaches that are no longer in the list
                         $coachesDb = array();
-                        foreach($leagueMemberYouthTable->fetchAllByType($team->league_id, 'coach', $team->id) as $coach) {
+                        foreach($leagueMemberTable->fetchAllByType($team->league_id, 'coach', $team->id) as $coach) {
                             if(!in_array($coach->first_name . '-' . $coach->last_name . '-' . $coach->email, array_values($coaches))) {
                                 $coach->delete();
                             } else {
@@ -937,13 +956,20 @@ class LeagueController extends Zend_Controller_Action
                             $userProfile = $userProfileTable->find($captainId)->current();
                             $key = $user->first_name . '-' . $user->last_name . '-' . $user->email;
 
+                            if(empty($userProfile->phone)) {
+                                $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
+                            }
+
                             if(!in_array($key, $coachesDb)) {
-                                $leagueMember = $leagueMemberYouthTable->createRow();
+                                $leagueMember = $leagueMemberTable->createRow();
                                 $leagueMember->league_id = $team->league_id;
-                                $leagueMember->first_name = $user->first_name;
-                                $leagueMember->last_name = $user->last_name;
-                                $leagueMember->email = $user->email;
-                                $leagueMember->phone = $userProfile->phone;
+                                $leagueMember->user_id = $captainId;
+
+                                //$leagueMember->first_name = $user->first_name;
+                                //$leagueMember->last_name = $user->last_name;
+                                //$leagueMember->email = $user->email;
+                                //$leagueMember->phone = $userProfile->phone;
+
                                 $leagueMember->position = 'coach';
                                 $leagueMember->league_team_id = $team->id;
                                 $leagueMember->modified_by = $this->view->user->id;
@@ -962,7 +988,7 @@ class LeagueController extends Zend_Controller_Action
 
                         // remove all of the coaches that are no longer in the list
                         $coachesDb = array();
-                        foreach($leagueMemberYouthTable->fetchAllByType($team->league_id, 'assistant_coach', $team->id) as $coach) {
+                        foreach($leagueMemberTable->fetchAllByType($team->league_id, 'assistant_coach', $team->id) as $coach) {
                             if(!in_array($coach->first_name . '-' . $coach->last_name . '-' . $coach->email, array_values($coaches))) {
                                 $coach->delete();
                             } else {
@@ -976,13 +1002,22 @@ class LeagueController extends Zend_Controller_Action
                             $userProfile = $userProfileTable->find($captainId)->current();
                             $key = $user->first_name . '-' . $user->last_name . '-' . $user->email;
 
+                            if(empty($userProfile->phone)) {
+                                $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
+                            }
+
                             if(!in_array($key, $coachesDb)) {
-                                $leagueMember = $leagueMemberYouthTable->createRow();
+                                $leagueMember = $leagueMemberTable->createRow();
                                 $leagueMember->league_id = $team->league_id;
+                                $leagueMember->user_id = $captainId;
+
+                                /*
                                 $leagueMember->first_name = $user->first_name;
                                 $leagueMember->last_name = $user->last_name;
                                 $leagueMember->email = $user->email;
                                 $leagueMember->phone = $userProfile->phone;
+                                */
+
                                 $leagueMember->position = 'assistant_coach';
                                 $leagueMember->league_team_id = $team->id;
                                 $leagueMember->modified_by = $this->view->user->id;
@@ -993,8 +1028,6 @@ class LeagueController extends Zend_Controller_Action
                         }
 
                     } else {
-                        $leagueMemberTable = new Model_DbTable_LeagueMember();
-
                         // remove all of the directors that are not in the list
                         $dbCaptains = array();
                         foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
@@ -2547,7 +2580,7 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $this->view->coaches = $leagueMemberTable->fetchAllByType($leagueId, 'coaches');
+        $this->view->coaches = $leagueMemberTable->fetchAllCoachesWithTeams($leagueId);
     }
 
     public function coacheditAction()
@@ -2563,10 +2596,33 @@ class LeagueController extends Zend_Controller_Action
 
             if($form->isValid($post)) {
                 $data = $form->getValues();
-                Zend_Debug::dump($data);
+                $userTable = new Model_DbTable_User();
+                $user = $userTable->find($coach['user_id'])->current();
+
+                $userProfileTable = new Model_DbTable_UserProfile();
+                $userProfile = $userProfileTable->find($coach['user_id'])->current();
+
+                // update user data
+                $user->first_name = $data['first_name'];
+                $user->last_name = $data['last_name'];
+                $user->email = $data['email'];
+                $user->save();
+
+                // update phone number
+                $userProfile->phone = $data['phone'];
+                $userProfile->save();
+
+                // update checks
+                foreach($data as $key => $value) {
+                    if(!in_array($key, array('first_name', 'last_name', 'email', 'phone'))) {
+                        $coach->$key = $value;
+                    }
+                }
+                $coach->save();
+
+                $this->_redirect('league/' . $coach->league_id . '/coaches');
             }
         }
-
 
         $this->view->form = $form;
     }

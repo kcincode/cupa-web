@@ -3,8 +3,11 @@
 class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
 {
     protected $_coach;
+    protected $_user;
+    protected $_userProfile;
+
     protected $_checks = array(
-        'background_check' => 'Background Check',
+        'background' => 'Background Check',
         'bsa_safety' => 'BSA Safety',
         'concussion' => 'Concussion Training',
         'chaperon' => 'Chaperon Form',
@@ -16,6 +19,11 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
     public function __construct($coach)
     {
         $this->_coach = $coach;
+        $userTable = new Model_DbTable_User();
+        $this->_user = $userTable->find($coach['user_id'])->current();
+        $userProfileTable = new Model_DbTable_UserProfile();
+        $this->_userProfile = $userProfileTable->find($coach['user_id'])->current();
+
         parent::__construct();
     }
 
@@ -23,36 +31,50 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
     {
         $this->addElement('text', 'first_name', array(
             'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', true, array('min' => 2, 'max' => 25, 'messages' => array('stringLengthInvalid' => 'Invalid first name, max of 25 characters.'))),
+            ),
             'required' => true,
-            'label' => 'First Name:',
-            'value' => $this->_coach['first_name'],
+            'label' => 'Firstname:',
+            'class' => 'span3',
+            'value' => $this->_user->first_name,
         ));
 
         $this->addElement('text', 'last_name', array(
             'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', true, array('min' => 2, 'max' => 25, 'messages' => array('stringLengthInvalid' => 'Invalid last name, max of 25 characters.'))),
+            ),
             'required' => true,
-            'label' => 'Last Name:',
-            'value' => $this->_coach['last_name'],
+            'label' => 'Lastname:',
+            'class' => 'span3',
+            'value' => $this->_user->last_name,
         ));
 
         $this->addElement('text', 'email', array(
             'filters' => array('StringTrim'),
             'validators' => array(
-                array('EmailAddress'),
+                'EmailAddress',
+                array('Db_NoRecordExists', false, array('table' => 'user', 'field' => 'email', 'exclude' => array('field' => 'id', 'value' => $this->_user->id), 'messages' => array('recordFound' => 'Email address is already used.'))),
+
             ),
+            'class' => 'span5',
             'required' => true,
-            'label' => 'Email:',
-            'value' => $this->_coach['email'],
+            'label' => 'Email Address:',
+            'value' => $this->_user->email,
         ));
 
         $this->addElement('text', 'phone', array(
             'filters' => array('StringTrim'),
-            'validators' => array(
-                array('RegEx', false, array('pattern' => '\d\d\d-\d\d\d-\d\d\d\d')),
-            ),
             'required' => true,
+            'validators' => array(
+                array('Regex', false, array('pattern' => '/^\d\d\d-\d\d\d-\d\d\d\d$/', 'messages' => array('regexNotMatch' => 'Invalid phone number ###-###-####'))),
+            ),
+            'description' => 'Format: ###-###-####',
             'label' => 'Phone:',
-            'value' => $this->_coach['phone'],
+            'class' => 'span2',
+            'style' => 'text-align: center',
+            'value' => (empty($this->_userProfile->phone)) ? null : $this->_userProfile->phone,
         ));
 
         foreach($this->_checks as $type => $label) {
