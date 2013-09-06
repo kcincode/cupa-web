@@ -66,9 +66,14 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     public function fetchAllByType($leagueId, $position, $teamId = null)
     {
         $select = $this->select()
-                       ->where('league_id = ?', $leagueId)
-                       ->where('position = ?', $position);
+                       ->where('league_id = ?', $leagueId);
 
+        if($position == 'coaches') {
+            $select->where('position LIKE ?', '%coach%')
+                   ->order('position DESC');
+        } else {
+            $select->where('position = ?', $position);
+        }
 
         if($teamId) {
            $select->where('league_team_id = ?', $teamId);
@@ -452,5 +457,20 @@ lm.position = ?";
         $select = $this->select()->where('user_id = ?', $userId)->where('position = ?', 'director');
 
         return (count($this->fetchAll($select)) > 0) ? true : false;
+    }
+
+    public function fetchAllCoachesWithTeams($leagueId)
+    {
+        $select = $this->getAdapter()->select()
+                       ->from(array('lm' => $this->_name), array('*'))
+                       ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('name'))
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
+                       ->where('lm.position LIKE ?', '%coach%')
+                       ->order('lt.name')
+                       ->order('lm.position DESC')
+                       ->order('u.last_name')
+                       ->order('u.first_name');
+
+        return $this->getAdapter()->fetchAll($select);
     }
 }

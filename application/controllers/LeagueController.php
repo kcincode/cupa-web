@@ -2546,15 +2546,15 @@ class LeagueController extends Zend_Controller_Action
             throw new Zend_Controller_Dispatcher_Exception('Page not found');
         }
 
-        $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
-        $this->view->coaches = $leagueMemberYouthTable->fetchAllCoachesWithTeams($leagueId);
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $this->view->coaches = $leagueMemberTable->fetchAllByType($leagueId, 'coaches');
     }
 
     public function coacheditAction()
     {
         $coachId = $this->getRequest()->getUserParam('coach_id');
-        $leagueMemberYouthTable = new Model_DbTable_LeagueMemberYouth();
-        $coach = $leagueMemberYouthTable->find($coachId)->current();
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $coach = $leagueMemberTable->find($coachId)->current();
 
         $form = new Form_LeagueCoach($coach);
         $request = $this->getRequest();
