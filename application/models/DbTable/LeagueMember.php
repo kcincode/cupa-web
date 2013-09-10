@@ -463,7 +463,7 @@ lm.position = ?";
     {
         $select = $this->getAdapter()->select()
                        ->from(array('lm' => $this->_name), array('*'))
-                       ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('name'))
+                       ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('id AS team_id', 'name'))
                        ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
                        ->where('lm.position LIKE ?', '%coach%')
                        ->order('lt.name')

@@ -12,7 +12,9 @@
                 Coaches List
             </h2>
             <div class="pull-right">
+                <?php if($this->isViewable('league_players')): ?>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1"><i class="icon-list icon-white"></i> Export Data</a>
+                <?php endif; ?>
             </div>
             <table class="table table-condensed table-hover">
                 <thead>
@@ -31,7 +33,9 @@
                         <td><?php echo $this->escape($coach['name']); ?> (<?php echo $this->escape(ucwords(str_replace('_', ' ', $coach['position']))); ?>)</td>
                         <td><?php echo $this->getCoachStatus($coach); ?></td>
                         <td>
+                            <?php if($this->isLeagueCoach($coach)): ?>
                             <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('coach_id' => $coach['id']), 'league_coach_edit'); ?>"><i class="icon-white icon-edit"></i> Edit</a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

@@ -1,3 +1,8 @@
 .messages {
     margin-top: 50px;
 }
+
+.league-menu {
+    text-align: right;
+    margin-left: 50px !important;
+}
