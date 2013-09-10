@@ -19,6 +19,37 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
     {
         $this->addElementPrefixPath('Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
+        $info = $leagueInformationTable->fetchInformation($this->_leagueId);
+
+        $userTable = new Model_DbTable_User();
+        $users = array();
+        foreach($userTable->fetchAllUsers() as $user) {
+            $users[$user->id] = $user->first_name . ' ' . $user->last_name;
+        }
+
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        if($this->_team) {
+            if($info->is_youth) {
+                $coaches = array();
+                $asstCoaches = array();
+                foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'coach', $this->_team->id) as $member) {
+                    $user = $userTable->find($member['user_id'])->current();
+                    $coaches[] = $user->id;
+                }
+                foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'assistant_coach', $this->_team->id) as $member) {
+                    $user = $userTable->find($member['user_id'])->current();
+                    $asstCoaches[] = $user->id;
+                }
+            } else {
+                $captains = array();
+                foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'captain', $this->_team->id) as $member) {
+                    $user = $userTable->find($member['user_id'])->current();
+                    $captains[] = $user->id;
+                }
+            }
+        }
+
         if(!$this->_justLogo) {
             $this->addElement('text', 'name', array(
                 'filters' => array('StringTrim'),
@@ -27,75 +58,6 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                 'label' => 'Name:',
                 'class' => 'span5',
             ));
-
-            $leagueInformationTable = new Model_DbTable_LeagueInformation();
-            $info = $leagueInformationTable->fetchInformation($this->_leagueId);
-
-            $userTable = new Model_DbTable_User();
-            $users = array();
-            foreach($userTable->fetchAllUsers() as $user) {
-                $users[$user->id] = $user->first_name . ' ' . $user->last_name;
-            }
-
-            $leagueMemberTable = new Model_DbTable_LeagueMember();
-            if($this->_team) {
-                if($info->is_youth) {
-                    $coaches = array();
-                    $asstCoaches = array();
-                    foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'coach', $this->_team->id) as $member) {
-                        $user = $userTable->find($member['user_id'])->current();
-                        $coaches[] = $user->id;
-                    }
-                    foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'assistant_coach', $this->_team->id) as $member) {
-                        $user = $userTable->find($member['user_id'])->current();
-                        $asstCoaches[] = $user->id;
-                    }
-                } else {
-                    $captains = array();
-                    foreach($leagueMemberTable->fetchAllByType($this->_leagueId, 'captain', $this->_team->id) as $member) {
-                        $user = $userTable->find($member['user_id'])->current();
-                        $captains[] = $user->id;
-                    }
-                }
-            }
-
-            if($info->is_youth) {
-                $this->addElement('multiselect', 'coaches', array(
-                    'validators' => array(
-                        array('InArray', false, array(array_keys($users))),
-                    ),
-                    'required' => true,
-                    'label' => 'Coaches:',
-                    'class' => 'span6 select2',
-                    'multiOptions' => $users,
-                    'value' => (empty($coaches)) ? null : $coaches,
-                    'data-placeholder' => 'Select one or more coaches',
-                ));
-
-                $this->addElement('multiselect', 'asst_coaches', array(
-                    'validators' => array(
-                        array('InArray', false, array(array_keys($users))),
-                    ),
-                    'required' => false,
-                    'label' => 'Assistant Coaches:',
-                    'class' => 'span6 select2',
-                    'multiOptions' => $users,
-                    'value' => (empty($asstCoaches)) ? null : $asstCoaches,
-                    'data-placeholder' => 'Select one or more coaches',
-                ));
-            } else {
-                $this->addElement('multiselect', 'captains', array(
-                    'validators' => array(
-                        array('InArray', false, array(array_keys($users))),
-                    ),
-                    'required' => true,
-                    'label' => 'Captains:',
-                    'class' => 'span6 select2',
-                    'multiOptions' => $users,
-                    'value' => (empty($captains)) ? null : $captains,
-                    'data-placeholder' => 'Select one or more captains',
-                ));
-            }
 
             $this->addElement('text', 'color', array(
                 'filters' => array('StringTrim'),
@@ -114,6 +76,44 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
                 'data-color-format' => 'hex',
                 'style' => 'text-align: center;',
                 'label' => 'Select the color:',
+            ));
+        }
+
+        if($info->is_youth) {
+            $this->addElement('multiselect', 'coaches', array(
+                'validators' => array(
+                    array('InArray', false, array(array_keys($users))),
+                ),
+                'required' => true,
+                'label' => 'Coaches:',
+                'class' => 'span6 select2',
+                'multiOptions' => $users,
+                'value' => (empty($coaches)) ? null : $coaches,
+                'data-placeholder' => 'Select one or more coaches',
+            ));
+
+            $this->addElement('multiselect', 'asst_coaches', array(
+                'validators' => array(
+                    array('InArray', false, array(array_keys($users))),
+                ),
+                'required' => false,
+                'label' => 'Assistant Coaches:',
+                'class' => 'span6 select2',
+                'multiOptions' => $users,
+                'value' => (empty($asstCoaches)) ? null : $asstCoaches,
+                'data-placeholder' => 'Select one or more coaches',
+            ));
+        } else {
+            $this->addElement('multiselect', 'captains', array(
+                'validators' => array(
+                    array('InArray', false, array(array_keys($users))),
+                ),
+                'required' => true,
+                'label' => 'Captains:',
+                'class' => 'span6 select2',
+                'multiOptions' => $users,
+                'value' => (empty($captains)) ? null : $captains,
+                'data-placeholder' => 'Select one or more captains',
             ));
         }
 
@@ -158,7 +158,11 @@ class Form_LeagueTeamEdit extends Twitter_Bootstrap_Form_Horizontal
         ));
 
         if($this->_justLogo) {
-            $questions = array('logo');
+            if($info->is_youth) {
+                $questions = array('coaches', 'asst_coaches', 'logo');
+            } else {
+                $questions = array('captains', 'logo');
+            }
         } else {
             if($info->is_youth) {
                 $questions = array('name', 'coaches', 'asst_coaches', 'color', 'color_code', 'logo');

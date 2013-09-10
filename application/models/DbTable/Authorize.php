@@ -156,11 +156,25 @@ class Model_DbTable_Authorize extends Zend_Db_Table
             return true;
         }
 
-        if($userId) {
-            $leagueMemberTable = new Model_DbTable_LeagueMember();
-            foreach($leagueMemberTable->fetchAllByType($leagueId, 'captain', $teamId) as $member) {
-                if($member->user_id == $userId) {
-                    return true;
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
+        $info = $leagueInformationTable->fetchInformation($leagueId);
+
+        if($info->is_youth == 1) {
+            if($userId) {
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                foreach($leagueMemberTable->fetchAllByType($leagueId, 'coach', $teamId) as $member) {
+                    if($member->user_id == $userId) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            if($userId) {
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                foreach($leagueMemberTable->fetchAllByType($leagueId, 'captain', $teamId) as $member) {
+                    if($member->user_id == $userId) {
+                        return true;
+                    }
                 }
             }
         }
