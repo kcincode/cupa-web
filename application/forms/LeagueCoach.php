@@ -4,23 +4,39 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
 {
     protected $_coach;
     protected $_user;
+    protected $_type;
     protected $_userProfile;
 
     protected $_checks = array(
-        'background' => 'Background Check',
-        'bsa_safety' => 'BSA Safety',
-        'concussion' => 'Concussion Training',
-        'chaperon' => 'Chaperon Form',
-        'manual' => 'Read Coaching Manual',
-        'rules' => 'Read Rules',
-        'usau' => 'USAU requirements',
+        'director' => array(
+            'background' => 'Background Check',
+            'bsa_safety' => 'BSA Safety',
+            'concussion' => 'Concussion Training',
+            'chaperon' => 'Chaperon Form',
+            'manual' => 'Read Coaching Manual',
+            'rules' => 'Read Rules',
+            'usau' => 'USAU requirements',
+        ),
+        'coach' => array(
+            'bsa_safety' => 'BSA Safety',
+            'concussion' => 'Concussion Training',
+            'chaperon' => 'Chaperon Form',
+            'manual' => 'Read Coaching Manual',
+            'rules' => 'Read Rules',
+        ),
+        'assistant_coach' => array(
+            'manual' => 'Read Coaching Manual',
+            'rules' => 'Read Rules',
+        )
     );
 
-    public function __construct($coach)
+    public function __construct($coach, $type)
     {
         $this->_coach = $coach;
+
         $userTable = new Model_DbTable_User();
         $this->_user = $userTable->find($coach['user_id'])->current();
+        $this->_type = $type;
         $userProfileTable = new Model_DbTable_UserProfile();
         $this->_userProfile = $userProfileTable->find($coach['user_id'])->current();
 
@@ -77,7 +93,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
             'value' => (empty($this->_userProfile->phone)) ? null : $this->_userProfile->phone,
         ));
 
-        foreach($this->_checks as $type => $label) {
+        foreach($this->_checks[$this->_type] as $type => $label) {
             $this->addElement('radio', $type, array(
                 'label' => $label,
                 'multiOptions' => array(0 => 'Incomplete', 1 => 'Complete'),
@@ -110,7 +126,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
         );
 
         $this->addDisplayGroup(
-            array_keys($this->_checks),
+            array_keys($this->_checks[$this->_type]),
             'coach_edit_require',
             array(
                 'legend' => 'Coaching Requirements',

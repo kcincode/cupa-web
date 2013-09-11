@@ -2587,7 +2587,16 @@ class LeagueController extends Zend_Controller_Action
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $coach = $leagueMemberTable->find($coachId)->current();
 
-        $form = new Form_LeagueCoach($coach);
+        if($this->view->isViewable('league_players')) {
+            $type = 'director';
+        } else if($this->view->user->id == $coach['user_id']) {
+            $type = $coach['position'];
+        } else {
+            $member = $leagueMemberTable->fetchOther($coach['league_id'], $this->view->user->id);
+            $type = $member->position;
+        }
+
+        $form = new Form_LeagueCoach($coach, $type);
         $request = $this->getRequest();
         if($request->isPost()) {
             $post = $request->getPost();

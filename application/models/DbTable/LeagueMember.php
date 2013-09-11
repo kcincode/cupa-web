@@ -19,6 +19,22 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         return $this->fetchRow($select);
     }
 
+    public function fetchOther($leagueId, $userId, $teamId = null, $position = 'player')
+    {
+        $select = $this->select()
+                       ->where('league_id = ?', $leagueId)
+                       ->where('user_id = ?', $userId)
+                       ->where('position <> ?', $position)
+                       ->order('position DESC');
+
+
+        if($teamId) {
+            $select->where('team_id = ?', $teamId);
+        }
+
+        return $this->fetchRow($select);
+    }
+
     public function fetchUniqueDirectors()
     {
         $data = array();
