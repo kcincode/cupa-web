@@ -152,7 +152,7 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->page = $pageTable->fetchBy('name', $season . '_league');
         $this->view->links = $leagueSeasonTable->generateLinks();
-        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $this->view->isViewable('leagues_edit'), $this->view->isViewable('leagues_delete'));
+        $this->view->leagues = $leagueTable->fetchCurrentLeaguesBySeason($season, $this->view->isViewable('league_edit'), $this->view->isViewable('league_archive'));
 
         if(count($this->view->leagues) != 0) {
             if($leagueName == 'default') {

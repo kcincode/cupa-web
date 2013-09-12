@@ -23,11 +23,11 @@
             <p>There are currently no leagues, check back at a later time for leagues.</p>
             <?php else: ?>
             <div class="pull-right">
-                <?php if($this->isViewable('league_edit')): ?>
+                <?php if($this->isViewable('league_edit', $this->league['id'])): ?>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_edit');?>"><i class="icon-edit icon-white"></i> Edit League</a>
                 <?php endif; ?>
 
-                <?php if($this->isViewable('league_archive')): ?>
+                <?php if($this->isViewable('league_archive', $this->league['id'])): ?>
                 <?php if($this->league['is_archived'] == 0): ?>
                 <a class="btn btn-mini btn-danger" onclick="return confirm('Are you sure you want to archive this league?');" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_archive');?>"><i class="icon-book icon-white"></i> Archive League</a>
                 <?php else: ?>
@@ -44,7 +44,7 @@
             <h3 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], true, false, false, true); ?></h3>
             <hr/>
             <div class="pull-right">
-                <?php if($this->isViewable('league_description_edit')): ?>
+                <?php if($this->isViewable('league_description_edit', $this->league['id'])): ?>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_description_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
                 <?php endif; ?>
             </div>
@@ -60,7 +60,7 @@
             <h3 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], false, false, false, true); ?> Information</h3>
             <hr/>
             <div class="pull-right">
-                <?php if($this->isViewable('league_information_edit')): ?>
+                <?php if($this->isViewable('league_information_edit', $this->league['id'])): ?>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_information_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
                 <?php endif; ?>
             </div>
@@ -71,7 +71,7 @@
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Teams</a>
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_schedule'); ?>">Schedule</a>
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_rankings'); ?>">Rankings</a>
-                    <?php elseif($this->isViewable('league_players')): ?>
+                    <?php elseif($this->isViewable('league_players', $this->league['id'])): ?>
                     <a class="btn btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_view'); ?>">Event Page</a>
                     <?php endif; ?>
                     <br/><br/>
@@ -120,10 +120,10 @@
             <h3 class="<?php echo $this->pageClass(); ?>"><?php echo $this->leaguename($this->league['id'], false, false, false, true); ?> Registration</h3>
             <hr/>
             <div class="pull-right">
-                <?php if($this->isViewable('league_registration_edit')): ?>
+                <?php if($this->isViewable('league_registration_edit', $this->league['id'])): ?>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_registration_edit');?>"><i class="icon-edit icon-white"></i> Edit</a>
                 <?php endif; ?>
-                <?php if($this->isViewable('league_registration_questions_edit')): ?>
+                <?php if($this->isViewable('league_registration_questions_edit', $this->league['id'])): ?>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league['id']), 'league_registration_questions_edit');?>"><i class="icon-list icon-white"></i> Edit Registration Questions</a>
                 <?php endif; ?>
             </div>
