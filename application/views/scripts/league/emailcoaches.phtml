@@ -1,0 +1,21 @@
+<div id="page-banner">&nbsp;</div>
+
+<div class="page-content">
+    <div class="row">
+        <div class="span12 actions">
+            <?php echo $this->partial('league/header.phtml', array('league' => $this->league, 'user' => $this->user, 'userTeams' => $this->userTeams, 'information' => $this->information));?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <h2 class="pull-left">
+                Email Incomplete Coaches
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <?php echo $this->form; ?>
+        </div>
+    </div>
+</div>

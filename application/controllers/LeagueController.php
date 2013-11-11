@@ -2633,4 +2633,50 @@ class LeagueController extends Zend_Controller_Action
 
         $this->view->form = $form;
     }
+
+    public function emailcoachesAction()
+    {
+        $leagueId = $this->getRequest()->getParam('league_id');
+        $form = new Form_LeagueCoachContact($leagueId, $this->view->user, $this->view->isViewable('league_players'));
+
+        $request = $this->getRequest();
+        if($request->isPost()) {
+            $post = $request->getPost();
+
+            if($form->isValid($post)) {
+                $data = $form->getValues();
+
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
+                $emails = $leagueMemberTable->fetchAllCoachesEmails($data['to']);
+
+                $mail = new Zend_Mail();
+                $mail->setSubject($data['subject']);
+                $mail->setFrom($data['from']);
+
+                // log the email
+                $leagueEmailTable = new Model_DbTable_LeagueEmail();
+                $leagueEmailTable->log($post, $data);
+
+                $initialContent = '';
+
+
+                foreach($emails as $email) {
+                    $mail->clearRecipients();
+                    if(APPLICATION_ENV == 'production') {
+                        $mail->addTo($email);
+                        $mail->setBodyHtml($data['content']);
+                    } else {
+                        $mail->addTo('kcin1018@gmail.com');
+                        $mail->setBodyHtml("TO: $email\r\n\r\n" . $data['content']);
+                    }
+                    $mail->send();
+                }
+
+                $this->view->message('Emails sent.', 'success');
+                $this->_redirect('league/' . $leagueId . '/coaches_email');
+            }
+        }
+
+        $this->view->form = $form;
+    }
 }

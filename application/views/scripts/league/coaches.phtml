@@ -13,6 +13,7 @@
             </h2>
             <div class="pull-right">
                 <?php if($this->isViewable('league_players')): ?>
+                <a class="btn btn-mini btn-info" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email_coaches'); ?>"><i class="icon-white icon-envelope"></i> Email Incomplete Coaches</a>
                 <a class="btn btn-mini btn-info" href="<?php echo $this->url(); ?>?export=1"><i class="icon-list icon-white"></i> Export Data</a>
                 <?php endif; ?>
             </div>

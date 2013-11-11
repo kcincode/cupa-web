@@ -174,9 +174,26 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         }
 
         if($user) {
+            $teamId = $this->fetchLeagueTeamFromUser($leagueId, $user);
+
             if($isDirector) {
-                $data['all-players'] = $this->fetchMemberEmails($leagueId, 'player');
-                $data['all-captains'] = $this->fetchMemberEmails($leagueId, 'captain');
+                if($leagueInfo->is_youth == 1) {
+                  $data['all-coaches'] = $this->fetchMemberEmails($leagueId, 'coaches');
+                } else {
+                  $data['all-captains'] = $this->fetchMemberEmails($leagueId, 'captain');
+                }
+            }
+
+            if(is_numeric($teamId)) {
+                if($leagueInfo->is_youth == 1) {
+                  $data['my-coaches'] = $this->fetchMemberEmails($leagueId, 'coaches', $teamId);
+                } else {
+                  $data['my-captain'] = $this->fetchMemberEmails($leagueId, 'captain', $teamId);
+                }
+                $data['my-team'] = $this->fetchMemberEmails($leagueId, 'player', $teamId);
+            }
+
+            if($isDirector) {
                 $data['waitlisted-players'] = $this->fetchMemberEmails($leagueId, 'waitlist');
 
                 $data['unpaid-players'] = array();
@@ -185,16 +202,12 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                     $data['unpaid-players'][$email] = $email;
                 }
 
+                $data['all-players'] = $this->fetchMemberEmails($leagueId, 'player');
+
                 foreach($leagueTeamTable->fetchAllTeams($leagueId) as $team) {
                     $key = str_replace(' ', '-', strtolower($team->name));
                     $data[$key] = $this->fetchMemberEmails($leagueId, 'player', $team->id);
                 }
-            }
-
-            $teamId = $this->fetchLeagueTeamFromUser($leagueId, $user);
-            if(is_numeric($teamId)) {
-                $data['my-captain'] = $this->fetchMemberEmails($leagueId, 'captain', $teamId);
-                $data['my-team'] = $this->fetchMemberEmails($leagueId, 'player', $teamId);
             }
         }
 
@@ -207,8 +220,13 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
                        ->from(array('lm' => $this->_name), array())
                        ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
                        ->where('lm.league_id = ?', $leagueId)
-                       ->where('lm.position = ?', $type)
                        ->where('u.email IS NOT NULL');
+
+        if($type == 'coaches') {
+            $select->where('lm.position LIKE ?', '%coach');
+        } else {
+            $select->where('lm.position = ?', $type);
+        }
 
         if($teamId) {
             $select->where('lm.league_team_id = ?', $teamId);
@@ -227,7 +245,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         $select = $this->select()
                        ->where('league_id = ?', $leagueId)
                        ->where('user_id = ?', $user->id)
-                       ->where("position = 'player' OR position = 'captain'");
+                       ->where("position = 'player' OR position = 'captain' OR position LIKE '%coach'");
 
         $result = $this->fetchRow($select);
         if(isset($result->league_team_id)) {
@@ -486,6 +504,24 @@ lm.position = ?";
                        ->order('lm.position DESC')
                        ->order('u.last_name')
                        ->order('u.first_name');
+
+        return $this->getAdapter()->fetchAll($select);
+    }
+
+    public function fetchAllCoachesEmails($criteria)
+    {
+        $select = $this->getAdapter()
+                       ->select()
+                       ->distinct()
+                       ->from(array('lm' => $this->_name), array('*'))
+                       ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
+                       ->where("position = 'assistant_coach' OR position = 'coach'");
+
+        $where = '';
+        foreach($criteria as $to) {
+            $where .= $to . ' = 0 OR ';
+        }
+        $select->where(substr($where, 0, -4));
 
         return $this->getAdapter()->fetchAll($select);
     }
