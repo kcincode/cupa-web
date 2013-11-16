@@ -34,6 +34,7 @@ class Form_LeagueCoachContact extends Twitter_Bootstrap_Form_Horizontal
             $this->getElement('from')->setValue($this->_user->email);
         }
 
+        /*
         $toSelection = $this->getContacts();
 
         $this->addElement('multiCheckbox', 'to', array(
@@ -44,21 +45,23 @@ class Form_LeagueCoachContact extends Twitter_Bootstrap_Form_Horizontal
             'label' => 'To:',
             'multiOptions' => $toSelection,
         ));
+        */
 
         $this->addElement('text', 'subject', array(
             'filters' => array('StringTrim'),
             'required' => true,
             'label' => 'Subject:',
-            'value' => '[CUPA Coaching] League Information',
+            'value' => '[CUPA Coaching] Missing Requirements',
             'class' => 'span6',
         ));
 
         $this->addElement('textarea', 'content', array(
            'filters' => array('StringTrim'),
-            'required' => true,
-            'label' => 'Message Content:',
+            'required' => false,
+            'label' => 'Extra Content:',
             'class' => 'span6 ckeditor',
             'style' => 'height: 250px;',
+            'description' => 'This will be added to the bottom of the email message.',
         ));
 
         $this->addElement('button', 'save', array(
@@ -75,7 +78,7 @@ class Form_LeagueCoachContact extends Twitter_Bootstrap_Form_Horizontal
             array('from', 'to', 'subject', 'content'),
             'contact_edit_form',
             array(
-                'legend' => 'Send an email',
+                'legend' => 'Email Incomplete Coaches',
             )
         );
 
