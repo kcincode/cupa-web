@@ -2647,28 +2647,55 @@ class LeagueController extends Zend_Controller_Action
                 $data = $form->getValues();
 
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
-                $emails = $leagueMemberTable->fetchAllCoachesEmails($data['to']);
+                $emails = $leagueMemberTable->fetchAllCoachesEmails();
+
+                // log the emails
+                //$leagueEmailTable = new Model_DbTable_LeagueEmail();
+                //$leagueEmailTable->log($post, $data);
 
                 $mail = new Zend_Mail();
                 $mail->setSubject($data['subject']);
                 $mail->setFrom($data['from']);
 
-                // log the email
-                $leagueEmailTable = new Model_DbTable_LeagueEmail();
-                $leagueEmailTable->log($post, $data);
-
-                $initialContent = '';
-
-
                 foreach($emails as $email) {
                     $mail->clearRecipients();
+                    $body = "Hello,\r\nAccording to our records you are missing the following qualifications to become a CUPA coach.  Please complete all of the following and let your head coach or directors know.\r\n\r\n";
+
+                    if($email['background'] == 0) {
+                        $body .= "Missing Background Check\r\n";
+                    }
+                    if($email['bsa_safety'] == 0) {
+                        $body .= "Missing BSA Safety Training\r\n";
+                    }
+                    if($email['concussion'] == 0) {
+                        $body .= "Missing Concussion Training\r\n";
+                    }
+                    if($email['chaperon'] == 0) {
+                        $body .= "Missing Chaperon Form\r\n";
+                    }
+                    if($email['manual'] == 0) {
+                        $body .= "Have not read the Coaching Manual\r\n";
+                    }
+                    if($email['rules'] == 0) {
+                        $body .= "Have not read the Ultimate Rules\r\n";
+                    }
+                    if($email['usau'] == 0) {
+                        $body .= "Missing USAU Requirements\r\n";
+                    }
+
+                    $body .= "\r\nYou may find out information about these requirements " . '<a href="http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/league/youth_requirements">here</a>.';
+                    if(!empty($data['content'])) {
+                        $body .= "\r\n\r\nMessage From League Directors:\r\n" . $data['content'];
+                    }
+
                     if(APPLICATION_ENV == 'production') {
-                        $mail->addTo($email);
-                        $mail->setBodyHtml($data['content']);
+                        $mail->addTo($email['email']);
+                        $mail->setBodyHtml($body);
                     } else {
                         $mail->addTo('kcin1018@gmail.com');
-                        $mail->setBodyHtml("TO: $email\r\n\r\n" . $data['content']);
+                        $mail->setBodyHtml("TO: {$email['email']}\r\n\r\n" . $body);
                     }
+
                     $mail->send();
                 }
 

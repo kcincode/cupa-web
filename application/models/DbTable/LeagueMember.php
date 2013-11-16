@@ -508,7 +508,7 @@ lm.position = ?";
         return $this->getAdapter()->fetchAll($select);
     }
 
-    public function fetchAllCoachesEmails($criteria)
+    public function fetchAllCoachesEmails($criteria = null)
     {
         $select = $this->getAdapter()
                        ->select()
@@ -517,11 +517,13 @@ lm.position = ?";
                        ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
                        ->where("position = 'assistant_coach' OR position = 'coach'");
 
-        $where = '';
-        foreach($criteria as $to) {
-            $where .= $to . ' = 0 OR ';
+        if($criteria) {
+            $where = '';
+            foreach($criteria as $to) {
+                $where .= $to . ' = 0 OR ';
+            }
+            $select->where(substr($where, 0, -4));
         }
-        $select->where(substr($where, 0, -4));
 
         return $this->getAdapter()->fetchAll($select);
     }
