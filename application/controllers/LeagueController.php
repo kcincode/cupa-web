@@ -2659,36 +2659,36 @@ class LeagueController extends Zend_Controller_Action
 
                 foreach($emails as $email) {
                     $mail->clearRecipients();
-                    $body = "Hello,\r\nAccording to our records you are missing the following qualifications to become a CUPA coach.  Please complete all of the following and let your head coach or directors know.\r\n\r\n";
-
+                    $body = "<p>Hello,</p>\r\n<p>According to our records you are missing the following qualifications to become a CUPA coach.  Please complete all of the following and let your head coach or directors know.</p>\r\n\r\n";
+                    $body .= "<ul>\r\n";
                     if($email['background'] == 0) {
-                        $body .= "Missing Background Check\r\n";
+                        $body .= "<li>Missing Background Check</li>\r\n";
                     }
                     if($email['bsa_safety'] == 0) {
-                        $body .= "Missing BSA Safety Training\r\n";
+                        $body .= "<li>Missing BSA Safety Training</li>\r\n";
                     }
                     if($email['concussion'] == 0) {
-                        $body .= "Missing Concussion Training\r\n";
+                        $body .= "<li>Missing Concussion Training</li>\r\n";
                     }
                     if($email['chaperon'] == 0) {
-                        $body .= "Missing Chaperon Form\r\n";
+                        $body .= "<li>Missing Chaperon Form</li>\r\n";
                     }
                     if($email['manual'] == 0) {
-                        $body .= "Have not read the Coaching Manual\r\n";
+                        $body .= "<li>Have not read the Coaching Manual</li>\r\n";
                     }
                     if($email['rules'] == 0) {
-                        $body .= "Have not read the Ultimate Rules\r\n";
+                        $body .= "<li>Have not read the Ultimate Rules</li>\r\n";
                     }
                     if($email['usau'] == 0) {
-                        $body .= "Missing USAU Requirements\r\n";
+                        $body .= "<li>Missing USAU Requirements</li>\r\n";
                     }
 
-                    $body .= "\r\nYou may find out information about these requirements " . '<a href="http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/league/youth_requirements">here</a>.';
+                    $body .= "</ul>\r\n<p>You may find out information about these requirements " . '<a href="http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/league/youth_requirements">here</a>.</p>';
                     if(!empty($data['content'])) {
-                        $body .= "\r\n\r\nMessage From League Directors:\r\n" . $data['content'];
+                        $body .= "\r\n\r\n<p><strong>Message From League Directors:</strong></p>\r\n<p>" . $data['content'] . '</p>';
                     }
 
-                    if(APPLICATION_ENV == 'production') {
+                    if(APPLICATION_ENV == 'production' || APPLICATION_ENV == 'testing') {
                         $mail->addTo($email['email']);
                         $mail->setBodyHtml($body);
                     } else {
