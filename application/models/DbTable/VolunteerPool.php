@@ -19,7 +19,7 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
 			$volunteer = $this->fetchVolunteerFromEmail($userData['email']);
             $user = $userTable->fetchUserBy('email', $userData['email']);
 
-            if(empty($volunteer)) {
+            if(empty($volunteer) && !empty($user)) {
                 $volunteer = $this->fetchVolunteerFromId($user->id);
             }
 		}
@@ -90,10 +90,12 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
         if($user->email != $data['email']) {
             $volunteerData = array();
             $volunteerData['name'] = $data['first_name'] . ' ' . $data['last_name'];
+            $volunteerData['email'] = $data['email'];
+            $volunteerData['phone'] = $data['phone'];
 
-            $volunteerData['involvement'] = (empty($data['involvement'])) ? 'null' : $data['involvement'];
-            $volunteerData['primary_interest'] = (empty($data['primary_interest'])) ? 'null' : $data['primary_interest'];
-            $volunteerData['experience'] = (empty($data['experience'])) ? 'null' : $data['experience'];
+            $volunteerData['involvement'] = (empty($data['involvement'])) ? 'Unknown' : $data['involvement'];
+            $volunteerData['primary_interest'] = (empty($data['primary_interest'])) ? 'Unknown' : $data['primary_interest'];
+            $volunteerData['experience'] = (empty($data['experience'])) ? 'Unknown' : $data['experience'];
 
             $id = $this->insert($volunteerData);
 

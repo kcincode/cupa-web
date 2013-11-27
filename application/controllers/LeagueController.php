@@ -2051,6 +2051,10 @@ class LeagueController extends Zend_Controller_Action
 
     private function saveRegistrationData($leagueId, $session)
     {
+        if(!isset($session->registrantId)) {
+            $session->registrantId = Zend_Auth::getInstance()->getIdentity();
+        }
+
         if(isset($session->registrantId)) {
             $leagueMemberTable = new Model_DbTable_LeagueMember();
             $member = $leagueMemberTable->fetchMember($leagueId, $session->registrantId, null, ($session->waitlist) ? 'waitlist' : 'player');
