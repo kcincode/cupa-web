@@ -247,18 +247,18 @@ class VolunteerController extends Zend_Controller_Action
                 foreach(Zend_Json::decode($this->view->members[0]['answers']) as $key => $value) {
                     $header[] = $key;
                 }
-                echo implode(',', $header) . "\n";
+                echo "\"" . implode('","', $header) . "\"\n";
 
                 foreach($this->view->members as $member) {
-                    $name = (empty($members['vname'])) ? $member['first_name'] . ' ' . $member['last_name'] : $member['vname'];
-                    $email = (empty($members['vemail'])) ? $member['email'] : $member['vemail'];
-                    $phone = (empty($members['vphone'])) ? $member['phone'] : $member['vphone'];
-                    echo "{$name},{$email},{$phone},{$member['involvement']},{$member['primary_interest']},{$member['experience']}," . addslashes($member['comment']);
+                    $name = (empty($member['vname'])) ? $member['first_name'] . ' ' . $member['last_name'] : $member['vname'];
+                    $email = (empty($member['vemail'])) ? $member['email'] : $member['vemail'];
+                    $phone = (empty($member['vphone'])) ? $member['phone'] : $member['vphone'];
+                    echo "\"{$name}\",\"{$email}\",\"{$phone}\",\"{$member['involvement']}\",\"{$member['primary_interest']}\",\"{$member['experience']}\",\"" . addslashes($member['comment']) . "\"";
                     foreach(Zend_Json::decode($member['answers']) as $value) {
                         if(is_array($value)) {
-                            echo ',(' . implode(' | ', $value) . ')';
+                            echo ',"(' . implode(' | ', $value) . ')"';
                         } else {
-                            echo ",$value";
+                            echo ",\"{$value}\"";
                         }
                     }
                     echo "\n";
