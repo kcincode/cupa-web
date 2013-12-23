@@ -2629,6 +2629,10 @@ class LeagueController extends Zend_Controller_Action
                         $coach->$key = $value;
                     }
                 }
+
+                // update bsa_safety to automatically check
+                $coach->bsa_saftey = 1;
+
                 $coach->save();
 
                 $this->_redirect('league/' . $coach->league_id . '/coaches');
@@ -2699,6 +2703,8 @@ class LeagueController extends Zend_Controller_Action
                         $mail->addTo('kcin1018@gmail.com');
                         $mail->setBodyHtml("TO: {$email['email']}\r\n\r\n" . $body);
                     }
+
+                    $body .= "\r\n\r\n<br/><p>Thank you,\r\n\r\n<br/>The YUC League Directors</p>";
 
                     $mail->send();
                 }
