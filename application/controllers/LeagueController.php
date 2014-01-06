@@ -2605,6 +2605,10 @@ class LeagueController extends Zend_Controller_Action
         if($request->isPost()) {
             $post = $request->getPost();
 
+            if(isset($post['cancel'])) {
+                $this->_redirect('league/' . $coach->league_id . '/coaches');
+            }
+
             if($form->isValid($post)) {
                 $data = $form->getValues();
                 $userTable = new Model_DbTable_User();
@@ -2631,8 +2635,7 @@ class LeagueController extends Zend_Controller_Action
                 }
 
                 // update bsa_safety to automatically check
-                $coach->bsa_saftey = 1;
-
+                $coach->bsa_safety = 1;
                 $coach->save();
 
                 $this->_redirect('league/' . $coach->league_id . '/coaches');
