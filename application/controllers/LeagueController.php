@@ -2438,6 +2438,10 @@ class LeagueController extends Zend_Controller_Action
 
     public function waiveryearAction()
     {
+        $session = new Zend_Session_Namespace('wavier_redirect');
+        if(!isset($session->previous)) {
+            $session->previous = $_SERVER['HTTP_REFERER'];
+        }
         $year = $this->getRequest()->getUserParam('year');
 
         $leagueTable = new Model_DbTable_League();
@@ -2446,20 +2450,39 @@ class LeagueController extends Zend_Controller_Action
 
         // redirect to the profile page if user is not logged in
         if(!isset($this->view->user)) {
-            $this->_redirect('profile');
+            if(strpos($session->previous, 'league/youth_requirements') !== false) {
+                $this->view->message('Please use the login link in the upper right to login before signing the waiver', 'error');
+                $url = $session->previous;
+                unset($session->previous);
+                $this->_redirect($url);
+            } else {
+                $this->_redirect('profile');
+            }
         }
 
         // make sure user is over 18
         $userProfileTable = new Model_DbTable_UserProfile();
         if(!$userProfileTable->isEighteenOrOver($this->view->user->id)) {
             $this->view->message('You are not able to sign a waiver since you are younger than 18.', 'info');
-            $this->_redirect('profile');
+            if(strpos($session->previous, 'league/youth_requirements') !== false) {
+                $url = $session->previous;
+                unset($session->previous);
+                $this->_redirect($url);
+            } else {
+                $this->_redirect('profile');
+            }
         }
 
         $userWaiverTable = new Model_DbTable_UserWaiver();
         if($userWaiverTable->hasWaiver($this->view->user->id, $year)) {
            $this->view->message('You have already signed a waiver for the ' . $year . ' year.', 'info');
-           $this->_redirect('profile');
+            if(strpos($session->previous, 'league/youth_requirements') !== false) {
+                $url = $session->previous;
+                unset($session->previous);
+                $this->_redirect($url);
+            } else {
+                $this->_redirect('profile');
+            }
         }
 
         $form = new Form_LeagueWaiver($this->view->user);
@@ -2469,18 +2492,29 @@ class LeagueController extends Zend_Controller_Action
 
             if(isset($post['cancel'])) {
                 $this->view->message('You disagreed with the waiver.', 'error');
-                $this->_redirect('profile/status');
+                if(strpos($session->previous, 'league/youth_requirements') !== false) {
+                    $url = $session->previous;
+                    unset($session->previous);
+                    $this->_redirect($url);
+                } else {
+                    $this->_redirect('profile/status');
+                }
             }
 
             if($form->isValid($post)) {
                 $userWaiverTable->updateWaiver($this->view->user->id, $year, 1, $this->view->user->id);
                 $this->view->message('User waiver signed', 'success');
-                $this->_redirect('profile/status');
+                if(strpos($session->previous, 'league/youth_requirements') !== false) {
+                    $url = $session->previous;
+                    unset($session->previous);
+                    $this->_redirect($url);
+                } else {
+                    $this->_redirect('profile/status');
+                }
             }
         }
 
         $this->view->form = $form;
-
         $this->renderScript('league/waiver.phtml');
     }
 
