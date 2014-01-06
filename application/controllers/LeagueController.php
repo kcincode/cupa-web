@@ -2450,39 +2450,27 @@ class LeagueController extends Zend_Controller_Action
 
         // redirect to the profile page if user is not logged in
         if(!isset($this->view->user)) {
-            if(strpos($session->previous, 'league/youth_requirements') !== false) {
-                $this->view->message('Please use the login link in the upper right to login before signing the waiver', 'error');
-                $url = $session->previous;
-                unset($session->previous);
-                $this->_redirect($url);
-            } else {
-                $this->_redirect('profile');
-            }
+            $this->view->message('Please use the login link in the upper right to login before signing the waiver', 'error');
+            $url = $session->previous;
+            unset($session->previous);
+            $this->_redirect($url);
         }
 
         // make sure user is over 18
         $userProfileTable = new Model_DbTable_UserProfile();
         if(!$userProfileTable->isEighteenOrOver($this->view->user->id)) {
             $this->view->message('You are not able to sign a waiver since you are younger than 18.', 'info');
-            if(strpos($session->previous, 'league/youth_requirements') !== false) {
-                $url = $session->previous;
-                unset($session->previous);
-                $this->_redirect($url);
-            } else {
-                $this->_redirect('profile');
-            }
+            $url = $session->previous;
+            unset($session->previous);
+            $this->_redirect($url);
         }
 
         $userWaiverTable = new Model_DbTable_UserWaiver();
         if($userWaiverTable->hasWaiver($this->view->user->id, $year)) {
            $this->view->message('You have already signed a waiver for the ' . $year . ' year.', 'info');
-            if(strpos($session->previous, 'league/youth_requirements') !== false) {
-                $url = $session->previous;
-                unset($session->previous);
-                $this->_redirect($url);
-            } else {
-                $this->_redirect('profile');
-            }
+            $url = $session->previous;
+            unset($session->previous);
+            $this->_redirect($url);
         }
 
         $form = new Form_LeagueWaiver($this->view->user);
@@ -2492,25 +2480,17 @@ class LeagueController extends Zend_Controller_Action
 
             if(isset($post['cancel'])) {
                 $this->view->message('You disagreed with the waiver.', 'error');
-                if(strpos($session->previous, 'league/youth_requirements') !== false) {
-                    $url = $session->previous;
-                    unset($session->previous);
-                    $this->_redirect($url);
-                } else {
-                    $this->_redirect('profile/status');
-                }
+                $url = $session->previous;
+                unset($session->previous);
+                $this->_redirect($url);
             }
 
             if($form->isValid($post)) {
                 $userWaiverTable->updateWaiver($this->view->user->id, $year, 1, $this->view->user->id);
                 $this->view->message('User waiver signed', 'success');
-                if(strpos($session->previous, 'league/youth_requirements') !== false) {
-                    $url = $session->previous;
-                    unset($session->previous);
-                    $this->_redirect($url);
-                } else {
-                    $this->_redirect('profile/status');
-                }
+                $url = $session->previous;
+                unset($session->previous);
+                $this->_redirect($url);
             }
         }
 
@@ -2691,6 +2671,7 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
+                $userWaiverTable = new Model_DbTable_UserWaiver();
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
                 $emails = $leagueMemberTable->fetchAllCoachesEmails();
 
@@ -2706,6 +2687,11 @@ class LeagueController extends Zend_Controller_Action
                     $mail->clearRecipients();
                     $body = "<p>Hello,</p>\r\n<p>According to our records you are missing the following qualifications to become a CUPA coach.  Please complete all of the following and let your head coach or directors know.</p>\r\n\r\n";
                     $body .= "<ul>\r\n";
+
+                    if(!$userWaiverTable->hasWaiver($email['user_id'], date('Y'))) {
+                        $body .= "<li>Missing Signed Waiver</li>\r\n";
+                    }
+
                     if($email['background'] == 0) {
                         $body .= "<li>Missing Background Check</li>\r\n";
                     }
@@ -2715,33 +2701,34 @@ class LeagueController extends Zend_Controller_Action
                     if($email['concussion'] == 0) {
                         $body .= "<li>Missing Concussion Training</li>\r\n";
                     }
-                    if($email['chaperon'] == 0) {
-                        $body .= "<li>Missing Chaperon Form</li>\r\n";
-                    }
+                    //if($email['chaperon'] == 0) {
+                    //    $body .= "<li>Missing Chaperon Form</li>\r\n";
+                    //}
                     if($email['manual'] == 0) {
                         $body .= "<li>Have not read the Coaching Manual</li>\r\n";
                     }
                     if($email['rules'] == 0) {
                         $body .= "<li>Have not read the Ultimate Rules</li>\r\n";
                     }
-                    if($email['usau'] == 0) {
-                        $body .= "<li>Missing USAU Requirements</li>\r\n";
-                    }
+                    //if($email['usau'] == 0) {
+                    //    $body .= "<li>Missing USAU Requirements</li>\r\n";
+                    //}
 
                     $body .= "</ul>\r\n<p>You may find out information about these requirements " . '<a href="http://' . $_SERVER['SERVER_NAME'] . $this->view->baseUrl() . '/league/youth_requirements">here</a>.</p>';
                     if(!empty($data['content'])) {
                         $body .= "\r\n\r\n<p><strong>Message From League Directors:</strong></p>\r\n<p>" . $data['content'] . '</p>';
                     }
 
+                    $body .= "\r\n\r\n<br/><p>Thank you,\r\n\r\n<br/>The YUC League Directors</p>";
+
                     if(APPLICATION_ENV == 'production' || APPLICATION_ENV == 'testing') {
                         $mail->addTo($email['email']);
                         $mail->setBodyHtml($body);
                     } else {
                         $mail->addTo('kcin1018@gmail.com');
-                        $mail->setBodyHtml("TO: {$email['email']}\r\n\r\n" . $body);
+                        $mail->setBodyHtml("TO: {$email['email']} ({$email['user_id']})\r\n\r\n" . $body);
                     }
 
-                    $body .= "\r\n\r\n<br/><p>Thank you,\r\n\r\n<br/>The YUC League Directors</p>";
 
                     $mail->send();
                 }

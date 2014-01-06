@@ -12,15 +12,15 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
             'background' => 'Background Check',
             //'bsa_safety' => 'BSA Safety',
             'concussion' => 'Concussion Training',
-            'chaperon' => 'Chaperon Form',
+            //'chaperon' => 'Chaperon Form',
             'manual' => 'Read Coaching Manual',
             'rules' => 'Read Rules',
-            'usau' => 'USAU requirements',
+            //'usau' => 'USAU requirements',
         ),
         'coach' => array(
             //'bsa_safety' => 'BSA Safety',
             'concussion' => 'Concussion Training',
-            'chaperon' => 'Chaperon Form',
+            //'chaperon' => 'Chaperon Form',
             'manual' => 'Read Coaching Manual',
             'rules' => 'Read Rules',
         ),
@@ -93,6 +93,21 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
             'value' => (empty($this->_userProfile->phone)) ? null : $this->_userProfile->phone,
         ));
 
+        $userWaiverTable = new Model_DbTable_UserWaiver();
+        $view = Zend_Layout::getMvcInstance()->getView();
+        $user = (Zend_Auth::getInstance()->hasIdentity()) ? $view->user : null;
+        $waiver = $userWaiverTable->hasWaiver($this->_user->id, date('Y'));
+        if($waiver) {
+            $text = '<span class="text-success">' . date('Y') . ' Waiver is signed</span>';
+        } else {
+            $text = ($user != null && $user->id == $this->_user->id) ? '<span class="text-error">' . date('Y') . ' Waiver <strong>NOT</strong> signed</span> (<a href="' . $view->baseUrl() . '/waiver/' . date('Y') . '">Sign Waiver Here</a>)' : '<span class="text-error">' . date('Y') . ' Waiver <strong>NOT</strong> signed</span>';
+        }
+
+        $this->addElement('html', 'waiver', array(
+            'label' => 'Waiver',
+            'value' => $text,
+        ));
+
         foreach($this->_checks[$this->_type] as $type => $label) {
             $this->addElement('radio', $type, array(
                 'label' => $label,
@@ -126,7 +141,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
         );
 
         $this->addDisplayGroup(
-            array_keys($this->_checks[$this->_type]),
+            array_merge(array('waiver'), array_keys($this->_checks[$this->_type])),
             'coach_edit_require',
             array(
                 'legend' => 'Coaching Requirements',
