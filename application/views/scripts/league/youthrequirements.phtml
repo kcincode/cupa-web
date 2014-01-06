@@ -1,0 +1,44 @@
+<div id="page-banner" class="youth">&nbsp;</div>
+
+<div class="row actions">
+    <div class="span9 pull-left youth">
+        <h2>Youth Coaching Requirements</h2>
+    </div>
+    <div class="span2">
+        <div class="btn-group pull-right">
+        </div>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row">
+        <div class="span12">
+            <dl class="dl-horizontal">
+                <dt>Background Check:</dt>
+                <dd><a href="https://true-hire.com/cincyultimate/bg-check.html">https://true-hire.com/cincyultimate/bg-check.html</a></dd>
+                <br/>
+                <dt>Concussion Training:</dt>
+                <dd><a href="http://www.nfhslearn.com/electiveDetail.aspx?courseID=38000">http://www.nfhslearn.com/electiveDetail.aspx?courseID=38000</a></dd>
+                <br/>
+                <dt>CUPA Waiver:</dt>
+                <?php if($this->waiver): ?>
+                <dd><span class="text-success"><?php echo date('Y'); ?> waiver is signed.</span></dd>
+                <?php else: ?>
+                <dd><span class="text-error"><?php echo date('Y'); ?> waiver NOT signed.</span> (<a href="<?php echo $this->baseUrl(); ?>/waiver/<?php echo date('Y'); ?>">Sign Online Waiver</a>)</dd>
+                <?php endif; ?>
+                <br/>
+                <dt>Official Rules:</dt>
+                <dd><a href="http://www.usaultimate.org/resources/officiating/rules/11th_edition_rules.aspx">http://www.usaultimate.org/resources/officiating/rules/11th_edition_rules.aspx</a></dd>
+                <br/>
+                <dt>YUC Coaching Guide:</dt>
+                <dd>Coming soon!</dd>
+                <br/>
+                <dt>USAU Requirements<br/>(Div A coaches):</dt>
+                <dd><br/><a href="http://www.usaultimate.org/membership/chaperones.aspx">http://www.usaultimate.org/membership/chaperones.aspx</a></dd>
+                <br/>
+                <dt>Virtus training<br/>(Catholic Schools):</dt>
+                <dd><br/><a href="http://www.catholiccincinnati.org/ministries-offices/safe-environment-for-children-and-youth/virtus-awareness-session/">http://www.catholiccincinnati.org/ministries-offices/safe-environment-for-children-and-youth/virtus-awareness-session/</a></dd>
+                <br/>
+            </dl>
+        </div>
+    </div>
+</div>

@@ -105,7 +105,7 @@ class Model_DbTable_Tournament extends Zend_Db_Table
     {
         $select = $this->getAdapter()->select()
                        ->from(array('t' => $this->_name), array('*'))
-                       ->join(array('ti' => 'tournament_information'), 'ti.tournament_id = t.id', array('start', 'end'))
+                       ->join(array('ti' => 'tournament_information'), 'ti.tournament_id = t.id', array('start', 'end', 'tenative_date'))
                        ->order('name')
                        ->order('year ASC');
 
@@ -118,6 +118,14 @@ class Model_DbTable_Tournament extends Zend_Db_Table
             $data[$row['name']] = $row;
             $data[$row['name']]['type'] = 'tournament';
         }
+
+        usort($data, function($a, $b){
+            if($a['year'] == $b['year']) {
+                return ($a['start'] < $b['start']) ? -1 : 1;
+            }
+
+            return ($a['year'] > $b['year']) ? -1 : 1;
+        });
 
         return $data;
     }

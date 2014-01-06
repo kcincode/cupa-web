@@ -10,7 +10,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
     protected $_checks = array(
         'director' => array(
             'background' => 'Background Check',
-            'bsa_safety' => 'BSA Safety',
+            //'bsa_safety' => 'BSA Safety',
             'concussion' => 'Concussion Training',
             'chaperon' => 'Chaperon Form',
             'manual' => 'Read Coaching Manual',
@@ -18,7 +18,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
             'usau' => 'USAU requirements',
         ),
         'coach' => array(
-            'bsa_safety' => 'BSA Safety',
+            //'bsa_safety' => 'BSA Safety',
             'concussion' => 'Concussion Training',
             'chaperon' => 'Chaperon Form',
             'manual' => 'Read Coaching Manual',

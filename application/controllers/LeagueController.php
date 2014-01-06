@@ -2672,9 +2672,9 @@ class LeagueController extends Zend_Controller_Action
                     if($email['background'] == 0) {
                         $body .= "<li>Missing Background Check</li>\r\n";
                     }
-                    if($email['bsa_safety'] == 0) {
-                        $body .= "<li>Missing BSA Safety Training</li>\r\n";
-                    }
+                    //if($email['bsa_safety'] == 0) {
+                    //    $body .= "<li>Missing BSA Safety Training</li>\r\n";
+                    //}
                     if($email['concussion'] == 0) {
                         $body .= "<li>Missing Concussion Training</li>\r\n";
                     }
@@ -2715,5 +2715,11 @@ class LeagueController extends Zend_Controller_Action
         }
 
         $this->view->form = $form;
+    }
+
+    public function youthrequirementsAction()
+    {
+        $userWaiverTable = new Model_DbTable_UserWaiver();
+        $this->view->waiver = (Zend_Auth::getInstance()->hasIdentity()) ? $userWaiverTable->hasWaiver(Zend_Auth::getInstance()->getIdentity(), date('Y')) : false;
     }
 }

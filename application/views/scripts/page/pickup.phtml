@@ -22,7 +22,10 @@
             <?php foreach($this->tournaments as $tournament): ?>
             <p>
                 <a href="<?php echo $this->url(array('name' => $tournament['name']), 'tournament_home'); ?>"><?php echo $this->escape($tournament['display_name']); ?></a> -
-                <?php if($tournament['start'] == $tournament['end']): ?>
+
+                <?php if($tournament['tenative_date'] == 1): ?>
+                <?php echo $this->escape(date('F Y', strtotime($tournament['start']))); ?>
+                <?php elseif($tournament['start'] == $tournament['end']): ?>
                 <?php echo $this->escape(date('F jS Y', strtotime($tournament['start']))); ?>
                 <?php else: ?>
                 <?php echo $this->escape(date('F jS', strtotime($tournament['start']))); ?> - <?php echo $this->escape(date('jS Y', strtotime($tournament['end']))); ?>
