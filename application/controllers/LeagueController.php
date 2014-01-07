@@ -2643,7 +2643,7 @@ class LeagueController extends Zend_Controller_Action
 
                 // update checks
                 foreach($data as $key => $value) {
-                    if(!in_array($key, array('first_name', 'last_name', 'email', 'phone'))) {
+                    if(!in_array($key, array('first_name', 'last_name', 'email', 'phone', 'waiver'))) {
                         $coach->$key = $value;
                     }
                 }
