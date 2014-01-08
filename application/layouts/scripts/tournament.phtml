@@ -30,7 +30,8 @@
                 <?php if($this->tournamentInfo->tenative_date == 1): ?>
                 <?php echo date('F Y', strtotime($this->tournamentInfo->start)); ?>
                 <?php elseif(isset($this->tournamentInfo->start)): ?>
-                <?php echo date('l, F j, Y', strtotime($this->tournamentInfo->start)); ?>
+                <?php echo date('F j, Y', strtotime($this->tournamentInfo->start)); ?> -
+                <?php echo date('F j, Y', strtotime($this->tournamentInfo->end)); ?>
                 <?php else: ?>
                 <?php echo 'TBD'; ?>
                 <?php endif; ?>

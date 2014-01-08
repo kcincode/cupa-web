@@ -10,6 +10,7 @@
         <div class="span12">
             <h2>Payment Information</h2>
 
+            <?php if($this->tournament->use_paypal): ?>
             <div class="well">
                 <p>
                     If you would like to pay via paypal you may do so below.  Just click the button and it will take you to paypal's site to pay for the tournament.
@@ -35,6 +36,14 @@
                     <?php endif; ?>
                 </div>
             </div>
+            <?php elseif(!empty($this->tournamentInfo->paypal)): ?>
+            <div>
+                <p>
+                    The tournament cost is <span class="text-info">$<?php echo $this->escape($this->tournamentInfo->cost); ?></span>
+                </p>
+                <strong><pre><?php echo $this->escape($this->tournamentInfo->paypal); ?></pre></strong>
+            </div>
+            <?php endif; ?>
 
             <div>
                 <?php if(!empty($this->tournamentInfo->mail_payment)): ?>
@@ -68,4 +77,3 @@ function pay()
     $('#paypal-link').prop('href', href + '/' + $('#team').val());
     return true;
 }
-</script>

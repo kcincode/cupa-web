@@ -7,22 +7,22 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
 
     public function addVolunteer($userData)
     {
-    	if(!isset($userData['experience']) or !isset($userData['primary_interest']) or !isset($userData['involvement'])) {
-    		return null;
-    	}
+        if(!isset($userData['experience']) or !isset($userData['primary_interest']) or !isset($userData['involvement'])) {
+            return null;
+        }
 
         $userTable = new Model_DbTable_User();
-    	if(!empty($userData['user_id'])) {
-	    	$volunteer = $this->fetchVolunteerFromId($userData['user_id']);
+        if(!empty($userData['user_id'])) {
+            $volunteer = $this->fetchVolunteerFromId($userData['user_id']);
             $user = $userTable->find($userData['user_id'])->current();
-		} else {
-			$volunteer = $this->fetchVolunteerFromEmail($userData['email']);
+        } else {
+            $volunteer = $this->fetchVolunteerFromEmail($userData['email']);
             $user = $userTable->fetchUserBy('email', $userData['email']);
 
             if(empty($volunteer) && !empty($user)) {
                 $volunteer = $this->fetchVolunteerFromId($user->id);
             }
-		}
+        }
 
         if($user) {
             $userData['user_id'] = $user->id;
@@ -51,25 +51,25 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
             return $volunteer;
         }
 
-		$id = $this->insert($userData);
+        $id = $this->insert($userData);
 
-		return $this->find($id)->current();
+        return $this->find($id)->current();
     }
 
     public function fetchVolunteerFromId($userId)
     {
-    	$select = $this->select()
-    	               ->where('user_id = ?', $userId);
+        $select = $this->select()
+                       ->where('user_id = ?', $userId);
 
-    	return $this->fetchRow($select);
+        return $this->fetchRow($select);
     }
 
     public function fetchVolunteerFromEmail($email)
     {
-    	$select = $this->select()
-    	               ->where('email = ?', $email);
+        $select = $this->select()
+                       ->where('email = ?', $email);
 
-    	return $this->fetchRow($select);
+        return $this->fetchRow($select);
     }
 
     public function fetchMember($data)
@@ -90,8 +90,8 @@ class Model_DbTable_VolunteerPool extends Zend_Db_Table
         if($user->email != $data['email']) {
             $volunteerData = array();
             $volunteerData['name'] = $data['first_name'] . ' ' . $data['last_name'];
-            $volunteerData['email'] = $data['email'];
             $volunteerData['phone'] = $data['phone'];
+            $volunteerData['email'] = $data['email'];
 
             $volunteerData['involvement'] = (empty($data['involvement'])) ? 'Unknown' : $data['involvement'];
             $volunteerData['primary_interest'] = (empty($data['primary_interest'])) ? 'Unknown' : $data['primary_interest'];

@@ -623,7 +623,7 @@ class TournamentController extends Zend_Controller_Action
                 if($data['user_id'] != 0) {
                     // user user id and email if set
                     $member->user_id = $data['user_id'];
-                    $member->name = null;
+                    $member->name = (isset($data['name'])) ? $data['name'] : null;
                     $member->email = (isset($data['email'])) ? $data['email'] : null;
                     $member->type = $data['type'];
                     $member->weight = $data['weight'];

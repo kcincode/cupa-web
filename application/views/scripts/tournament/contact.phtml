@@ -33,10 +33,10 @@
                 <?php $userTable = new Model_DbTable_User(); $user = $userTable->find($member->user_id)->current(); ?>
                     <?php if(!empty($this->tournament->email) and $member->type == 'director'): ?>
                     <?php echo $this->generateEmailLink($this->tournament->email, $this->fullname($user->id)); ?>
-                    <?php elseif(empty($member->email)): ?>
-                    <?php echo $this->generateEmailLink($user->email, $this->fullname($user->id)); ?>
-                    <?php else: ?>
+                    <?php elseif(!empty($member->email)): ?>
                     <?php echo $this->generateEmailLink($member->email, $this->fullname($user->id)); ?>
+                    <?php else: ?>
+                    <?php echo $this->generateEmailLink($user->email, $this->fullname($user->id)); ?>
                     <?php endif; ?>
                 <?php endif; ?>
                     <small>

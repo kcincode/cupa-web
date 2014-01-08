@@ -55,7 +55,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initPage()
     {
-        $this->bootstrap('view');
+        $this->bootstrap('View');
         $view = $this->getResource('View');
 
         $view->title = 'CUPA - Cincinnati Ultimate Players Association';
@@ -82,4 +82,3 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         return $view;
     }
 }
-

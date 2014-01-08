@@ -203,8 +203,11 @@ class Form_TournamentEdit extends Twitter_Bootstrap_Form_Horizontal
 
         $tournamentDivisionTable = new Model_DbTable_TournamentDivision();
         $divisions = array('0' => 'Select a division');
+        $validDivisions = ($this->_tournament->divisions !== null) ? Zend_Json::decode($this->_tournament->divisions) : null;
         foreach($tournamentDivisionTable->fetchDivisions() as $division) {
-            $divisions[$division->id] = ucwords($division->name);
+            if($validDivisions === null || in_array($division->name, $validDivisions)) {
+                $divisions[$division->id] = ucwords($division->name);
+            }
         }
 
         $divisionValues = $divisions;

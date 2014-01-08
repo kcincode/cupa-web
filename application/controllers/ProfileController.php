@@ -8,7 +8,7 @@ class ProfileController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/page.css');
         $this->view->headLink()->appendStylesheet($this->view->baseUrl() . '/css/bootstrap-datepicker.css');
         $this->view->headScript()->appendFile($this->view->baseUrl() . '/js/bootstrap-datepicker.js');
-        if(!Zend_Auth::getInstance()->hasIdentity() && $this->getRequest()->getActionName() != 'public') {
+        if(!Zend_Auth::getInstance()->hasIdentity()) {
             $this->forward('index');
         }
     }

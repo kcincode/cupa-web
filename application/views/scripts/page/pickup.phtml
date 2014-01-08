@@ -22,7 +22,6 @@
             <?php foreach($this->tournaments as $tournament): ?>
             <p>
                 <a href="<?php echo $this->url(array('name' => $tournament['name']), 'tournament_home'); ?>"><?php echo $this->escape($tournament['display_name']); ?></a> -
-
                 <?php if($tournament['tenative_date'] == 1): ?>
                 <?php echo $this->escape(date('F Y', strtotime($tournament['start']))); ?>
                 <?php elseif($tournament['start'] == $tournament['end']): ?>
