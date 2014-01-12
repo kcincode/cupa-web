@@ -93,8 +93,13 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
             'value' => (empty($this->_userProfile->phone)) ? null : $this->_userProfile->phone,
         ));
 
-        $userWaiverTable = new Model_DbTable_UserWaiver();
         $view = Zend_Layout::getMvcInstance()->getView();
+        $this->addElement('html', 'requirements', array(
+            'label' => 'Requirements',
+            'value' => '<a href="' . $view->baseUrl() . '/league/youth_requirements">Youth Coaching Requirements</a>',
+        ));
+
+        $userWaiverTable = new Model_DbTable_UserWaiver();
         $user = (Zend_Auth::getInstance()->hasIdentity()) ? $view->user : null;
         $waiver = $userWaiverTable->hasWaiver($this->_user->id, date('Y'));
         if($waiver) {
@@ -141,7 +146,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
         );
 
         $this->addDisplayGroup(
-            array_merge(array('waiver'), array_keys($this->_checks[$this->_type])),
+            array_merge(array('requirements', 'waiver'), array_keys($this->_checks[$this->_type])),
             'coach_edit_require',
             array(
                 'legend' => 'Coaching Requirements',

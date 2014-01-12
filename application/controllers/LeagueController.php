@@ -2597,6 +2597,44 @@ class LeagueController extends Zend_Controller_Action
 
         $leagueMemberTable = new Model_DbTable_LeagueMember();
         $this->view->coaches = $leagueMemberTable->fetchAllCoachesWithTeams($leagueId);
+
+        if($this->getRequest()->getParam('export')) {
+            // disable the layout
+            $this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+
+            ob_end_clean();
+
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: public', FALSE);
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            if(isset($_SERVER['HTTP_USER_AGENT']) and (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+                header('Content-Type: application/force-download');
+            }
+            header('Accept-Ranges: bytes');
+            header('Content-Disposition: attachment; filename="' . str_replace(' ', '-', $this->view->leaguename($this->view->league, true, true, true, true)) . '_coaches.csv";');
+            header('Content-Transfer-Encoding: binary');
+
+            set_time_limit(0);
+            echo "Lastname,Firstname,Team,Position,Status,Waiver,Background,Concussion,Manual,Rules\n";
+            foreach($this->view->coaches as $coach) {
+                $wiaver = ($this->view->hasUserSignedWaiver($coach['user_id'], $this->view->league->year) == true) ? 'Yes' : 'No';
+                echo $coach['last_name'] . ',' .
+                     $coach['first_name'] . ',' .
+                     $coach['name'] . ',' .
+                     ucwords(str_replace('_', ' ', $coach['position'])) . ',' .
+                     strip_tags($this->view->getCoachStatus($coach)) . ',' .
+                     $wiaver . ',' .
+                     $coach['background'] . ',' .
+                     $coach['concussion'] . ',' .
+                     $coach['manual'] . ',' .
+                     $coach['rules'] . "\n";
+            }
+            exit();
+        }
     }
 
     public function coacheditAction()
