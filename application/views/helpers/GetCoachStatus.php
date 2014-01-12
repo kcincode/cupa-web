@@ -21,10 +21,10 @@ class My_View_Helper_GetCoachStatus extends Zend_View_Helper_Abstract
         if($data['background'] == 0 ||
            //$data['bsa_safety'] == 0 ||
            $data['concussion'] == 0 ||
-           $data['chaperon'] == 0 ||
+           //$data['chaperon'] == 0 ||
            $data['manual'] == 0 ||
-           $data['rules'] == 0 ||
-           $data['usau'] == 0) {
+           $data['rules'] == 0) {
+           //$data['usau'] == 0) {
             return 'Incomplete';
         }
         return 'Complete';
