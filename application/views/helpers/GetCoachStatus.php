@@ -27,6 +27,11 @@ class My_View_Helper_GetCoachStatus extends Zend_View_Helper_Abstract
            //$data['usau'] == 0) {
             return 'Incomplete';
         }
-        return 'Complete';
+
+        $leagueTable = new Model_DbTable_League();
+        $league = $leagueTable->find($data['league_id'])->current();
+
+        $userWaiverTable = new Model_DbTable_UserWaiver();
+        return ($userWaiverTable->hasWaiver($data['user_id'], $league->year) === true) ? 'Complete' : 'Incomplete';
     }
 }

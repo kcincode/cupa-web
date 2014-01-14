@@ -6,6 +6,7 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
     protected $_user;
     protected $_type;
     protected $_userProfile;
+    protected $_league;
 
     protected $_checks = array(
         'director' => array(
@@ -39,6 +40,8 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
         $this->_type = $type;
         $userProfileTable = new Model_DbTable_UserProfile();
         $this->_userProfile = $userProfileTable->find($coach['user_id'])->current();
+        $leagueTable = new Model_DbTable_League();
+        $this->_league = $leagueTable->find($coach['league_id'])->current();
 
         parent::__construct();
     }
@@ -101,11 +104,11 @@ class Form_LeagueCoach extends Twitter_Bootstrap_Form_Horizontal
 
         $userWaiverTable = new Model_DbTable_UserWaiver();
         $user = (Zend_Auth::getInstance()->hasIdentity()) ? $view->user : null;
-        $waiver = $userWaiverTable->hasWaiver($this->_user->id, date('Y'));
+        $waiver = $userWaiverTable->hasWaiver($this->_user->id, $this->_league->year);
         if($waiver) {
-            $text = '<span class="text-success">' . date('Y') . ' Waiver is signed</span>';
+            $text = '<span class="text-success">' . $this->_league->year . ' Waiver is signed</span>';
         } else {
-            $text = ($user != null && $user->id == $this->_user->id) ? '<span class="text-error">' . date('Y') . ' Waiver <strong>NOT</strong> signed</span> (<a href="' . $view->baseUrl() . '/waiver/' . date('Y') . '">Sign Waiver Here</a>)' : '<span class="text-error">' . date('Y') . ' Waiver <strong>NOT</strong> signed</span>';
+            $text = ($user != null && $user->id == $this->_user->id) ? '<span class="text-error">' . $this->_league->year . ' Waiver <strong>NOT</strong> signed</span> (<a href="' . $view->baseUrl() . '/waiver/' . $this->_league->year . '">Sign Waiver Here</a>)' : '<span class="text-error">' . $this->_league->year . ' Waiver <strong>NOT</strong> signed</span>';
         }
 
         $this->addElement('html', 'waiver', array(
