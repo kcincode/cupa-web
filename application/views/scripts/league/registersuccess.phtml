@@ -76,14 +76,25 @@
     <div class="row">
         <div class="offset1 span9">
             <h2>Liability Forms</h2>
-            <p>Waivers are only required for the first CUPA event you participate in for <?php echo $this->escape($this->league->year); ?>. If you haven't participated yet this year, please fill out the form below and bring it with you on the first night.</p>
-            <p>If you are registering for a player <span class="highlight">18 or over</span> please click <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_waiver');?>">here</a> to sign an online waiver.</p>
+            <?php if($this->information->is_youth): ?>
+                <p>Waivers and medical release is required to play in any CUPA event you participate in.  You can print the form, fill it out, and bring with you on the first night of league.</p>
+                <p>Here are the forms: (There is one for YUC and one for Jr Ultimate)</p>
+                <ul>
+                    <li><a href="<?php echo $this->baseUrl(); ?>/upload/2014-jr_waiver.pdf">Jr. Ultimate Waiver/Medical Release</a></li>
+                    <li><a href="<?php echo $this->baseUrl(); ?>/upload/2014-yuc_waiver.pdf">YUC Waiver/Medical Release</a></li>
+                </ul>
+            <?php else: ?>
+                <p>Waivers are only required for the first CUPA event you participate in for <?php echo $this->escape($this->league->year); ?>. If you haven't participated yet this year, please fill out the form below and bring it with you on the first night.</p>
+                <p>If you are registering for a player <span class="highlight">18 or over</span> please click <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_waiver');?>">here</a> to sign an online waiver.</p>
 
-            <p>If you are registering for a player between <span class="highlight">16 and 18</span> please click <a href="<?php echo $this->url(array('type' => 'all', 'year' => $this->league->year), 'page_forms'); ?>">here</a> to download the forms for your parent to sign.  There may be more than one form to sign for certain leagues.</p>
-
-            <p>If you have trouble downloading these forms you may need Adobe Acrobat Reader.  To get it free <a href="http://get.adobe.com/reader/">click here</a>.</p>
-            <p>If you have other trouble please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a></p>
-
+                <p>If you are registering for a player between <span class="highlight">16 and 18</span> please click <a href="<?php echo $this->url(array('type' => 'all', 'year' => $this->league->year), 'page_forms'); ?>">here</a> to download the forms for your parent to sign.  There may be more than one form to sign for certain leagues.</p>
+            <?php endif; ?>
+            <p>
+                If you have trouble downloading these forms you may need Adobe Acrobat Reader.  To get it free <a href="http://get.adobe.com/reader/">click here</a>.
+            </p>
+            <p>
+                If you have other trouble please contact <a href="<?php echo $this->url(array(), 'page_contact');?>">CUPA</a> or the <a href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Director</a>
+            </p>
         </div>
     </div>
 </div>
