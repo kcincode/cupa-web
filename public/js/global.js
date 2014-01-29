@@ -15,12 +15,13 @@ $(document).ready(function() {
         setTimeout('$("#username").focus()', 500);
     });
 
+    var url = (document.URL.split(':')[0] == 'https') ? 'https://secure85.inmotionhosting.com/~cincyu6/secure_login.php' : BASE_URL + '/secure_login.php'
     // login link handler
     $('#login-link').click(function(e) {
         e.preventDefault();
         $.ajax({
             type: 'post',
-            url: BASE_URL + '/login',
+            url: url,
             data: 'username='+$('#username').val()+'&password='+encodeURIComponent($('#password').val()),
             success: function(response) {
                 var obj = eval('(' + response + ')');

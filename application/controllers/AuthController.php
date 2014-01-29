@@ -12,7 +12,8 @@ class AuthController extends Zend_Controller_Action
     {
         // make sure its an AJAX request
         if(!$this->getRequest()->isXmlHttpRequest()) {
-            $this->_redirect('/');
+            var_dump('Error not ajax');
+//            $this->_redirect('/');
         }
 
         // disable the layout and view
