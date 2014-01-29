@@ -9,9 +9,9 @@
         <meta http-equiv="EXPIRES" content="0" />
         <?php endif; ?>
         <!--[if lt IE 9]>
-        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-        <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/bootstrap.min.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap.min.css" type="text/css" media="all" />
         <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/css/tournament.css" type="text/css" media="all" />
         <?php echo $this->headLink() . "\n"; ?>
         <link rel="shortcut icon" href="<?php echo $this->baseUrl(); ?>/favicon.ico" />
@@ -57,7 +57,7 @@
         </script>
         <?php echo $this->headScript()
                         ->prependFile($this->baseUrl() . '/js/global.js')
-                        ->prependFile($this->baseUrl() . '/js/bootstrap.min.js')
-                        ->prependFile($this->baseUrl() . '/js/jquery-1.9.0.min.js') . "\n"; ?>
+                        ->prependFile('https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js')
+                        ->prependFile('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js') . "\n"; ?>
     </body>
 </html>
