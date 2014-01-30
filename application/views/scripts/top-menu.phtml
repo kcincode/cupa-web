@@ -20,6 +20,7 @@
             <li class="span4">
                 <form id="login-form">
                     <div id="login-error"></div>
+                    <input id="session" type="hidden" name="session" value="<?php echo Zend_Session::getId(); ?>"/>
                     <label for="username" >Username/Email</label>
                     <input id="username" class="span4" type="text" name="username" style="margin-bottom: 15px;"/>
                     <label for="password">Password</label>
