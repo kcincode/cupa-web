@@ -1,10 +1,4 @@
 <?php
-header('Access-Control-Allow-Origin: http://cincyultimate.org');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Credentials: true');
-
-
-
 // Define application environment
 defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
@@ -38,7 +32,7 @@ $application = new Zend_Application(
     APPLICATION_PATH . '/configs/application.ini'
 );
 
-Zend_Session::setId($_POST['session']);
+//Zend_Session::setId($_POST['session']);
 
 $application->bootstrap('session')
             ->bootstrap();
@@ -49,5 +43,5 @@ $response = new Zend_Controller_Response_Http();
 $front->setRequest($request->setRequestUri('login'), $response)
       ->dispatch();
 
-$response->setHeader('Access-Control-Allow-Origin', '*', true);
+//$response->setHeader('Access-Control-Allow-Origin', '*', true);
 $response->sendResponse();

@@ -15,7 +15,8 @@ $(document).ready(function() {
         setTimeout('$("#username").focus()', 500);
     });
 
-    var url = (document.URL.indexOf('cincyultimate') != -1) ? 'https://secure85.inmotionhosting.com/~cincyu6/secure_login.php' : BASE_URL + '/secure_login.php';
+    //var url = (document.URL.indexOf('cincyultimate') != -1) ? 'https://secure85.inmotionhosting.com/~cincyu6/secure_login.php' : BASE_URL + '/secure_login.php';
+    var url = BASE_URL + '/secure_login.php';
 
     // login link handler
     $('#login-link').click(function(e) {
@@ -24,11 +25,11 @@ $(document).ready(function() {
             type: 'post',
             url: url,
             dataTye: 'json',
-            crossDomain: true,
-            xhrFields: {
+            //crossDomain: true,
+            /*xhrFields: {
                 withCredentials: true
-            },
-            data: 'username='+$('#username').val()+'&password='+encodeURIComponent($('#password').val())+'&session='+$('#session').val(),
+            },*/
+            data: 'username='+$('#username').val()+'&password='+encodeURIComponent($('#password').val()),//+'&session='+$('#session').val(),
             success: function(response) {
                 var obj = eval('(' + response + ')');
                 if(obj.result == 'Error') {
