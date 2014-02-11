@@ -5,7 +5,7 @@
                                     <?php if(!$this->information->is_youth): ?>
                                     <th class="span1">Gender</th>
                                     <th class="span1">Height</th>
-                                    <?php if(!is_null($this->players[0]['club'])): ?>
+                                    <?php if(isset($this->players[0]['club']) && !is_null($this->players[0]['club'])): ?>
                                     <th class="span1">Club Player</th>
                                     <?php endif; ?>
                                     <?php endif; ?>

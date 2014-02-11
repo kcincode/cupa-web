@@ -754,22 +754,20 @@ class LeagueController extends Zend_Controller_Action
 
         // disable the layout
         $this->_helper->layout()->disableLayout();
-
         $teamId = $this->getRequest()->getUserParam('team_id');
 
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $this->view->team = $leagueTeamTable->find($teamId)->current();
-        //$leagueInformationTable = new Model_DbTable_LeagueInformation();
+        $leagueInformationTable = new Model_DbTable_LeagueInformation();
 
-        /*
         $this->view->information = $leagueInformationTable->fetchInformation($this->view->team->league_id);
         if($this->view->information->is_youth) {
             $leagueMemberTable = new Model_DbTable_LeagueMemberYouth();
             $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
-        } else {*/
-        $leagueMemberTable = new Model_DbTable_LeagueMember();
-        $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
-        //}
+        } else {
+            $leagueMemberTable = new Model_DbTable_LeagueMember();
+            $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
+        }
     }
 
     public function teamsaddAction()
@@ -926,139 +924,137 @@ class LeagueController extends Zend_Controller_Action
             if($form->isValid($post)) {
                 $data = $form->getValues();
 
-                if(!$isCaptain) {
-                    $leagueMemberTable = new Model_DbTable_LeagueMember();
+                $leagueMemberTable = new Model_DbTable_LeagueMember();
 
-                    if($this->view->information->is_youth) {
-                        // generate coaches array
-                        $userTable = new Model_DbTable_User();
-                        $userProfileTable = new Model_DbTable_UserProfile();
+                if(($isCaptain && $this->view->information->is_youth) || !$isCaptain) {
+                    // generate coaches array
+                    $userTable = new Model_DbTable_User();
+                    $userProfileTable = new Model_DbTable_UserProfile();
 
-                        $coaches = array();
-                        foreach($data['coaches'] as $coach) {
-                            $user = $userTable->find($coach)->current();
-                            $coaches[] = $user->id;
-                        }
-
-                        // remove all of the coaches that are no longer in the list
-                        $coachesDb = array();
-                        foreach($leagueMemberTable->fetchAllByType($team->league_id, 'coach', $team->id) as $coach) {
-                            if(!in_array($coach->user_id, array_values($coaches))) {
-                                $coach->delete();
-                            } else {
-                                $coachesDb[] = $coach->user_id;
-                            }
-                        }
-
-                        // add all the coaches that aren't in
-                        foreach($data['coaches'] as $captainId) {
-                            $user = $userTable->find($captainId)->current();
-                            $userProfile = $userProfileTable->find($captainId)->current();
-
-                            if(empty($userProfile->phone)) {
-                                $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
-                            }
-
-                            if(!in_array($captainId, $coachesDb)) {
-                                $leagueMember = $leagueMemberTable->createRow();
-                                $leagueMember->league_id = $team->league_id;
-                                $leagueMember->user_id = $captainId;
-
-                                //$leagueMember->first_name = $user->first_name;
-                                //$leagueMember->last_name = $user->last_name;
-                                //$leagueMember->email = $user->email;
-                                //$leagueMember->phone = $userProfile->phone;
-
-                                $leagueMember->position = 'coach';
-                                $leagueMember->league_team_id = $team->id;
-                                $leagueMember->modified_by = $this->view->user->id;
-                                $leagueMember->created_at = date('Y-m-d H:i:s');
-                                $leagueMember->modified_at = date('Y-m-d H:i:s');
-                                $leagueMember->save();
-                            }
-                        }
-
-
-                        $coaches = array();
-                        foreach($data['asst_coaches'] as $coach) {
-                            $user = $userTable->find($coach)->current();
-                            $coaches[] = $user->id;
-                        }
-
-                        // remove all of the coaches that are no longer in the list
-                        $coachesDb = array();
-                        foreach($leagueMemberTable->fetchAllByType($team->league_id, 'assistant_coach', $team->id) as $coach) {
-                            if(!in_array($coach->user_id, array_values($coaches))) {
-                                $coach->delete();
-                            } else {
-                                $coachesDb[] = $coach->user_id;
-                            }
-                        }
-
-                        // add all the coaches that aren't in
-                        foreach($data['asst_coaches'] as $captainId) {
-                            $user = $userTable->find($captainId)->current();
-                            $userProfile = $userProfileTable->find($captainId)->current();
-
-                            if(empty($userProfile->phone)) {
-                                $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
-                            }
-
-                            if(!in_array($captainId, $coachesDb)) {
-                                $leagueMember = $leagueMemberTable->createRow();
-                                $leagueMember->league_id = $team->league_id;
-                                $leagueMember->user_id = $captainId;
-
-                                /*
-                                $leagueMember->first_name = $user->first_name;
-                                $leagueMember->last_name = $user->last_name;
-                                $leagueMember->email = $user->email;
-                                $leagueMember->phone = $userProfile->phone;
-                                */
-
-                                $leagueMember->position = 'assistant_coach';
-                                $leagueMember->league_team_id = $team->id;
-                                $leagueMember->modified_by = $this->view->user->id;
-                                $leagueMember->created_at = date('Y-m-d H:i:s');
-                                $leagueMember->modified_at = date('Y-m-d H:i:s');
-                                $leagueMember->save();
-                            }
-                        }
-
-                    } else {
-                        // remove all of the directors that are not in the list
-                        $dbCaptains = array();
-                        foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
-                            if(!in_array($captain->user_id, array_values($data['captains']))) {
-                                $captain->delete();
-                            } else {
-                                $dbCaptains[] = $captain->user_id;
-                            }
-                        }
-
-                        // add the directors that are not in the DB
-                        foreach($data['captains'] as $captainId) {
-                            if(!in_array($captainId, $dbCaptains)) {
-                                $leagueMember = $leagueMemberTable->createRow();
-                                $leagueMember->league_id = $team->league_id;
-                                $leagueMember->user_id = $captainId;
-                                $leagueMember->position = 'captain';
-                                $leagueMember->league_team_id = $team->id;
-                                $leagueMember->paid = 0;
-                                $leagueMember->release = 0;
-                                $leagueMember->created_at = date('Y-m-d H:i:s');
-                                $leagueMember->modified_at = date('Y-m-d H:i:s');
-                                $leagueMember->modified_by = $this->view->user->id;
-                                $leagueMember->save();
-                            }
-                        }
-
-                        $team->name = $data['name'];
-                        $team->color = $data['color'];
-                        $team->color_code = $data['color_code'];
-                        $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
-                        $team->save();
+                    $coaches = array();
+                    foreach($data['coaches'] as $coach) {
+                        $user = $userTable->find($coach)->current();
+                        $coaches[] = $user->id;
                     }
+
+                    // remove all of the coaches that are no longer in the list
+                    $coachesDb = array();
+                    foreach($leagueMemberTable->fetchAllByType($team->league_id, 'coach', $team->id) as $coach) {
+                        if(!in_array($coach->user_id, array_values($coaches))) {
+                            $coach->delete();
+                        } else {
+                            $coachesDb[] = $coach->user_id;
+                        }
+                    }
+
+                    // add all the coaches that aren't in
+                    foreach($data['coaches'] as $captainId) {
+                        $user = $userTable->find($captainId)->current();
+                        $userProfile = $userProfileTable->find($captainId)->current();
+
+                        if(empty($userProfile->phone)) {
+                            $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
+                        }
+
+                        if(!in_array($captainId, $coachesDb)) {
+                            $leagueMember = $leagueMemberTable->createRow();
+                            $leagueMember->league_id = $team->league_id;
+                            $leagueMember->user_id = $captainId;
+
+                            //$leagueMember->first_name = $user->first_name;
+                            //$leagueMember->last_name = $user->last_name;
+                            //$leagueMember->email = $user->email;
+                            //$leagueMember->phone = $userProfile->phone;
+
+                            $leagueMember->position = 'coach';
+                            $leagueMember->league_team_id = $team->id;
+                            $leagueMember->modified_by = $this->view->user->id;
+                            $leagueMember->created_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_at = date('Y-m-d H:i:s');
+                            $leagueMember->save();
+                        }
+                    }
+
+
+                    $coaches = array();
+                    foreach($data['asst_coaches'] as $coach) {
+                        $user = $userTable->find($coach)->current();
+                        $coaches[] = $user->id;
+                    }
+
+                    // remove all of the coaches that are no longer in the list
+                    $coachesDb = array();
+                    foreach($leagueMemberTable->fetchAllByType($team->league_id, 'assistant_coach', $team->id) as $coach) {
+                        if(!in_array($coach->user_id, array_values($coaches))) {
+                            $coach->delete();
+                        } else {
+                            $coachesDb[] = $coach->user_id;
+                        }
+                    }
+
+                    // add all the coaches that aren't in
+                    foreach($data['asst_coaches'] as $captainId) {
+                        $user = $userTable->find($captainId)->current();
+                        $userProfile = $userProfileTable->find($captainId)->current();
+
+                        if(empty($userProfile->phone)) {
+                            $this->view->message('Please notify ' . $user->email . ' to update their phone number.', 'error');
+                        }
+
+                        if(!in_array($captainId, $coachesDb)) {
+                            $leagueMember = $leagueMemberTable->createRow();
+                            $leagueMember->league_id = $team->league_id;
+                            $leagueMember->user_id = $captainId;
+
+                            /*
+                            $leagueMember->first_name = $user->first_name;
+                            $leagueMember->last_name = $user->last_name;
+                            $leagueMember->email = $user->email;
+                            $leagueMember->phone = $userProfile->phone;
+                            */
+
+                            $leagueMember->position = 'assistant_coach';
+                            $leagueMember->league_team_id = $team->id;
+                            $leagueMember->modified_by = $this->view->user->id;
+                            $leagueMember->created_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_at = date('Y-m-d H:i:s');
+                            $leagueMember->save();
+                        }
+                    }
+
+                } else if(!$isCaptain) {
+                    // remove all of the directors that are not in the list
+                    $dbCaptains = array();
+                    foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {
+                        if(!in_array($captain->user_id, array_values($data['captains']))) {
+                            $captain->delete();
+                        } else {
+                            $dbCaptains[] = $captain->user_id;
+                        }
+                    }
+
+                    // add the directors that are not in the DB
+                    foreach($data['captains'] as $captainId) {
+                        if(!in_array($captainId, $dbCaptains)) {
+                            $leagueMember = $leagueMemberTable->createRow();
+                            $leagueMember->league_id = $team->league_id;
+                            $leagueMember->user_id = $captainId;
+                            $leagueMember->position = 'captain';
+                            $leagueMember->league_team_id = $team->id;
+                            $leagueMember->paid = 0;
+                            $leagueMember->release = 0;
+                            $leagueMember->created_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_at = date('Y-m-d H:i:s');
+                            $leagueMember->modified_by = $this->view->user->id;
+                            $leagueMember->save();
+                        }
+                    }
+
+                    $team->name = $data['name'];
+                    $team->color = $data['color'];
+                    $team->color_code = $data['color_code'];
+                    $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
+                    $team->save();
                 }
 
                 if(!empty($_FILES['logo']['tmp_name'])) {
@@ -2681,7 +2677,7 @@ class LeagueController extends Zend_Controller_Action
 
                 // update checks
                 foreach($data as $key => $value) {
-                    if(!in_array($key, array('first_name', 'last_name', 'email', 'phone', 'waiver'))) {
+                    if(!in_array($key, array('first_name', 'last_name', 'email', 'phone', 'waiver', 'requirements'))) {
                         $coach->$key = $value;
                     }
                 }

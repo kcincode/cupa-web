@@ -500,6 +500,7 @@ lm.position = ?";
                        ->joinLeft(array('lt' => 'league_team'), 'lt.id = lm.league_team_id', array('id AS team_id', 'name'))
                        ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('first_name', 'last_name'))
                        ->where('lm.position LIKE ?', '%coach%')
+                       ->where('lm.league_id = ?', $leagueId)
                        ->order('lt.name')
                        ->order('lm.position DESC')
                        ->order('u.last_name')
