@@ -926,7 +926,7 @@ class LeagueController extends Zend_Controller_Action
 
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
 
-                if(($isCaptain && $this->view->information->is_youth) || !$isCaptain) {
+                if(($isCaptain || $this->view->isViewable('league_team_add')) && $this->view->information->is_youth) {
                     // generate coaches array
                     $userTable = new Model_DbTable_User();
                     $userProfileTable = new Model_DbTable_UserProfile();
@@ -1022,7 +1022,14 @@ class LeagueController extends Zend_Controller_Action
                         }
                     }
 
-                } else if(!$isCaptain) {
+                    if($this->view->isViewable('league_team_add')) {
+                        $team->name = $data['name'];
+                        $team->color = $data['color'];
+                        $team->color_code = $data['color_code'];
+                        $team->final_rank = (empty($data['final_rank'])) ? null : $data['final_rank'];
+                        $team->save();
+                    }
+                } else if(!$isCaptain && $this->view->isViewable('league_team_add')) {
                     // remove all of the directors that are not in the list
                     $dbCaptains = array();
                     foreach($leagueMemberTable->fetchAllByType($team->league_id, 'captain', $team->id) as $captain) {

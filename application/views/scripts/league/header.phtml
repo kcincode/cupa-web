@@ -1,7 +1,7 @@
 <div class="row">
     <div class="span11 league-menu">
         <div class="btn-group">
-        <?php if($this->information->is_youth): ?>
+        <?php if($this->information->is_youth && $this->isViewable('league_coaches')): ?>
             <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_coaches'); ?>">Coaches List</a>
         <?php endif; ?>
             <a class="btn btn-small" href="<?php echo $this->url(array('league_id' => $this->league->id), 'league_email'); ?>">League Emails</a>
