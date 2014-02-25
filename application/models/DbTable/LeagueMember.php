@@ -509,14 +509,18 @@ lm.position = ?";
         return $this->getAdapter()->fetchAll($select);
     }
 
-    public function fetchAllCoachesEmails($criteria = null)
+    public function fetchAllCoachesEmails($leagueId, $criteria = null)
     {
         $select = $this->getAdapter()
                        ->select()
                        ->distinct()
                        ->from(array('lm' => $this->_name), array('*'))
-                       ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
-                       ->where("position = 'assistant_coach' OR position = 'coach'");
+                       ->joinLeft(array('l' => 'league'), 'l.id = lm.league_id', array())
+                       ->joinLeft(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
+                       ->joinLeft(array('uw' => 'user_waiver'), 'uw.user_id = u.id AND l.year = uw.year', array())
+                       ->where("position = 'assistant_coach' OR position = 'coach'")
+                       ->where('lm.league_id = ?', $leagueId)
+                       ->where('uw.year IS NULL');
 
         if($criteria) {
             $where = '';

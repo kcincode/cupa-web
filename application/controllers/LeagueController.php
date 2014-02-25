@@ -2714,7 +2714,7 @@ class LeagueController extends Zend_Controller_Action
 
                 $userWaiverTable = new Model_DbTable_UserWaiver();
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
-                $emails = $leagueMemberTable->fetchAllCoachesEmails();
+                $emails = $leagueMemberTable->fetchAllCoachesEmails($leagueId, array('background', 'concussion', 'manual', 'rules'));
 
                 // log the emails
                 //$leagueEmailTable = new Model_DbTable_LeagueEmail();
@@ -2769,7 +2769,6 @@ class LeagueController extends Zend_Controller_Action
                         $mail->addTo('kcin1018@gmail.com');
                         $mail->setBodyHtml("TO: {$email['email']} ({$email['user_id']})\r\n\r\n" . $body);
                     }
-
 
                     $mail->send();
                 }
