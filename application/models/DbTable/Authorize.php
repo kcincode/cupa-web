@@ -162,7 +162,7 @@ class Model_DbTable_Authorize extends Zend_Db_Table
         if($info->is_youth == 1) {
             if($userId) {
                 $leagueMemberTable = new Model_DbTable_LeagueMember();
-                foreach($leagueMemberTable->fetchAllByType($leagueId, 'coach', $teamId) as $member) {
+                foreach($leagueMemberTable->fetchAllByType($leagueId, 'coaches', $teamId) as $member) {
                     if($member->user_id == $userId) {
                         return true;
                     }
