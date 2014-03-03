@@ -761,13 +761,8 @@ class LeagueController extends Zend_Controller_Action
         $leagueInformationTable = new Model_DbTable_LeagueInformation();
 
         $this->view->information = $leagueInformationTable->fetchInformation($this->view->team->league_id);
-        if($this->view->information->is_youth) {
-            $leagueMemberTable = new Model_DbTable_LeagueMemberYouth();
-            $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
-        } else {
-            $leagueMemberTable = new Model_DbTable_LeagueMember();
-            $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
-        }
+        $leagueMemberTable = new Model_DbTable_LeagueMember();
+        $this->view->players = $leagueMemberTable->fetchAllPlayerData($this->view->team->league_id, $teamId);
     }
 
     public function teamsaddAction()
