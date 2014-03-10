@@ -219,8 +219,8 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         $select = $this->getAdapter()->select()
                        ->from(array('lm' => $this->_name), array())
                        ->join(array('u' => 'user'), 'u.id = lm.user_id', array('email'))
-                       ->where('lm.league_id = ?', $leagueId)
-                       ->where('u.email IS NOT NULL');
+                       ->joinLeft(array('up' => 'user'), 'up.id = u.parent', array('email AS parent'))
+                       ->where('lm.league_id = ?', $leagueId);
 
         if($type == 'coaches') {
             $select->where('lm.position LIKE ?', '%coach');
@@ -234,7 +234,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
 
         $data = array();
         foreach($this->getAdapter()->fetchAll($select) as $email) {
-            $data[] = $email['email'];
+            $data[] = (empty($email['email'])) ? $email['parent'] : $email['email'];
         }
 
         return $data;
@@ -284,9 +284,10 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
 
     public function fetchPlayerInformation($leagueId, $status = 'player')
     {
-        $sql = "SELECT lm.id, lm.user_id, lm.created_at, u.first_name, u.last_name, u.email, up.gender, up.birthday, up.phone, up.nickname, up.height, ul.name AS user_level, lt.name AS team, up.experience, lq.name, la.answer
+        $sql = "SELECT lm.id, lm.user_id, lm.created_at, u.first_name, u.last_name, u.email, uu.email AS parent, up.gender, up.birthday, up.phone, up.nickname, up.height, ul.name AS user_level, lt.name AS team, up.experience, lq.name, la.answer
 FROM league_member lm
 LEFT JOIN user u ON u.id = lm.user_id
+LEFT JOIN user uu ON uu.id = u.parent
 LEFT JOIN league_question_list lql ON lql.league_id = lm.league_id
 LEFT JOIN league_question lq ON lq.id = lql.league_question_id
 LEFT JOIN league_answer la ON la.league_member_id = lm.id AND la.league_question_id = lq.id
@@ -316,7 +317,7 @@ lm.position = ?";
                     'user_id' => $row['user_id'],
                     'first_name' => $row['first_name'],
                     'last_name' => $row['last_name'],
-                    'email' => $row['email'],
+                    'email' => (empty($row['email'])) ? $row['parent'] : $row['email'],
                     'team' => $row['team'],
                     'profile' => array(
                         'gender' => $row['gender'],
