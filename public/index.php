@@ -1,4 +1,9 @@
 <?php
+// convert url to remove www
+if(strpos($_SERVER['HTTP_HOST'], 'www.cincyultimate.org') !== false) {
+    header('Location: http://' . str_replace('www.cincyultimate.org', 'cincyultimate.org', $_SERVER['HTTP_HOST']) . $_SERVER['REQUEST_URI']);
+}
+
 // Define application environment
 defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
