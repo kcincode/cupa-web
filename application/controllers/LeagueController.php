@@ -1533,6 +1533,8 @@ class LeagueController extends Zend_Controller_Action
                 if(APPLICATION_ENV != 'production') {
                     $mail->addTo('kcin1018@gmail.com');
                     $post['content'] = '<pre>' . print_r($emails, true) . '</pre>' . $post['content'];
+                } else {
+                    $mail->addTo($post['from']);
                 }
 
                 $mail->setBodyHtml($post['content']);

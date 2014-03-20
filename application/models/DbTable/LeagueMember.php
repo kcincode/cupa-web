@@ -188,7 +188,10 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
 
             if(is_numeric($teamId)) {
                 if($leagueInfo->is_youth == 1) {
-                  $data['head-coaches'] = $this->fetchMemberEmails($leagueId, 'coach');
+                  if($isHeadCoach) {
+                      $data['head-coaches'] = $this->fetchMemberEmails($leagueId, 'coach');
+                  }
+
                   $data['my-coaches'] = $this->fetchMemberEmails($leagueId, 'coaches', $teamId);
                 } else {
                   $data['my-captain'] = $this->fetchMemberEmails($leagueId, 'captain', $teamId);
