@@ -164,6 +164,8 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     {
         $data = array();
 
+        $isHeadCoach = $this->isALeagueHeadCoach($user->id);
+
         $leagueInformationTable = new Model_DbTable_LeagueInformation();
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $leagueInfo = $leagueInformationTable->fetchInformation($leagueId);
@@ -186,6 +188,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
 
             if(is_numeric($teamId)) {
                 if($leagueInfo->is_youth == 1) {
+                  $data['head-coaches'] = $this->fetchMemberEmails($leagueId, 'coach');
                   $data['my-coaches'] = $this->fetchMemberEmails($leagueId, 'coaches', $teamId);
                 } else {
                   $data['my-captain'] = $this->fetchMemberEmails($leagueId, 'captain', $teamId);
@@ -491,6 +494,12 @@ lm.position = ?";
     {
         $select = $this->select()->where('user_id = ?', $userId)->where('position = ?', 'director');
 
+        return (count($this->fetchAll($select)) > 0) ? true : false;
+    }
+
+    public function isALeagueHeadCoach($userId)
+    {
+        $select = $this->select()->where('user_id = ?', $userId)->where('position = ?', 'coach');
         return (count($this->fetchAll($select)) > 0) ? true : false;
     }
 

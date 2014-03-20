@@ -1516,23 +1516,27 @@ class LeagueController extends Zend_Controller_Action
                 $leagueEmailTable = new Model_DbTable_LeagueEmail();
                 $leagueEmailTable->log($post, $data);
 
+                $emails = array();
                 foreach($post['to'] as $to) {
                     foreach($data[$to] as $email) {
-                        if(empty($email)) {
+                        if(empty($email) || in_array($email, $emails)) {
                             continue;
                         }
+                        $emails[] = $email;
 
-                        $mail->clearRecipients();
                         if(APPLICATION_ENV == 'production') {
-                            $mail->addTo($email);
-                            $mail->setBodyHtml($post['content']);
-                        } else {
-                            $mail->addTo('kcin1018@gmail.com');
-                            $mail->setBodyHtml("TO: $email\r\n\r\n" . $post['content']);
+                            $mail->addBcc($email);
                         }
-                        $mail->send();
                     }
                 }
+
+                if(APPLICATION_ENV != 'production') {
+                    $mail->addTo('kcin1018@gmail.com');
+                    $post['content'] = '<pre>' . print_r($emails, true) . '</pre>' . $post['content'];
+                }
+
+                $mail->setBodyHtml($post['content']);
+                $mail->send();
 
                 $this->view->message('Email sent.', 'success');
                 $this->_redirect('league/' . $leagueId . '/email');
