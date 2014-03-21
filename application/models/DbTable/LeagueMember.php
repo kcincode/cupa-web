@@ -164,8 +164,6 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
     {
         $data = array();
 
-        $isHeadCoach = $this->isALeagueHeadCoach($user->id);
-
         $leagueInformationTable = new Model_DbTable_LeagueInformation();
         $leagueTeamTable = new Model_DbTable_LeagueTeam();
         $leagueInfo = $leagueInformationTable->fetchInformation($leagueId);
@@ -176,6 +174,7 @@ class Model_DbTable_LeagueMember extends Zend_Db_Table
         }
 
         if($user) {
+            $isHeadCoach = $this->isALeagueHeadCoach($user->id);
             $teamId = $this->fetchLeagueTeamFromUser($leagueId, $user);
 
             if($isDirector) {
